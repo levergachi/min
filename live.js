@@ -185,6 +185,7 @@ function localRoom(room) {
   const hb = () => { if (me) ch.postMessage({ t: "hi", uid: live.uid, data: me }); };
   const sweep = () => { const now = Date.now(); let ch2 = false; peers.forEach((v, k) => { if (now - v.seen > 6000) { peers.delete(k); ch2 = true; } }); if (ch2) firePeers(); };
   const t1 = setInterval(hb, 2000), t2 = setInterval(sweep, 2000);
+  const seaSubs = {}; const seaList = wk => { let m = {}; try { m = JSON.parse(localStorage.getItem('lv3d_season_' + wk) || '{}'); } catch (e) {} return Object.entries(m).map(([uid, v]) => Object.assign({ uid }, v)).sort((a, b) => b.p - a.p).slice(0, 10); };
   const gbKey = 'lv3d_gb_local', gbSubs = new Set(); const gbList = () => { try { return JSON.parse(localStorage.getItem(gbKey) || '[]'); } catch (e) { return []; } };
   ch.onmessage = ev => {
     const d = ev.data || {};
@@ -214,6 +215,8 @@ function localRoom(room) {
     onFx(f) { subs.fx.add(f); },
     gbAdd(nick, text) { const l = gbList(); l.push({ id: rid(), uid: live.uid, nick: clampStr(nick, 12), text: clampStr(text, 100), ts: Date.now() }); try { localStorage.setItem(gbKey, JSON.stringify(l.slice(-100))); } catch (e) {} ch.postMessage({ t: 'gb', uid: live.uid }); gbSubs.forEach(f => f(gbList())); return Promise.resolve(); },
     onGuestbook(f) { gbSubs.add(f); f(gbList()); },
+    seasonSet(wk, nick, p) { const k = 'lv3d_season_' + wk; let m = {}; try { m = JSON.parse(localStorage.getItem(k) || '{}'); } catch (e) {} m[live.uid] = { nick: clampStr(nick, 12), p: Math.max(0, Math.floor(p) || 0) }; try { localStorage.setItem(k, JSON.stringify(m)); } catch (e) {} (seaSubs[wk] || new Set()).forEach(f => f(seaList(wk))); return Promise.resolve(); },
+    onSeason(wk, f) { (seaSubs[wk] = seaSubs[wk] || new Set()).add(f); f(seaList(wk)); return () => seaSubs[wk].delete(f); },
     bumpMoktak() { moktak += 1; try { localStorage.setItem(mokKey, String(moktak)); } catch (e) {} ch.postMessage({ t: "mok", uid: live.uid, n: moktak }); subs.moktak.forEach(f => f(moktak)); },
     onMoktak(f) { subs.moktak.add(f); f(moktak); },
     // 공용 누적 카운터 (예: offer=시주함 동전, bell=종)
@@ -358,7 +361,7 @@ async function firebaseInit() {
           pose: clampStr(data.pose || "sit", 12), ts: D.serverTimestamp()
         };
         // 자유 이동 좌표(바닥 기준 %), 바라보는 방향, 걷는 중 여부
-        const cl = v => Math.max(0, Math.min(100, Math.round(Number(v) * 10) / 10));
+        const cl = v => Math.max(0, Math.min(100, Math.round(Number(v) * 100) / 100));
         if (isFinite(Number(data.x)) && isFinite(Number(data.y))) { clean.x = cl(data.x); clean.y = cl(data.y); }
         clean.dir = data.dir === "l" ? "l" : "r";
         clean.mv = !!data.mv;
@@ -406,6 +409,8 @@ async function firebaseInit() {
       },
       // 📖 방명록 (채널과 상관없이 하나)
       gbAdd(nick, text) { return D.push(D.ref(db, 'guestbook'), { uid: live.uid, nick: clampStr(nick, 12), text: clampStr(text, 100), ts: D.serverTimestamp() }); },
+      seasonSet(wk, nick, p) { if (!/^w[0-9]{6}$/.test(wk)) return Promise.resolve(); return D.set(D.ref(db, `season/${wk}/${live.uid}`), { nick: clampStr(nick, 12), p: Math.max(0, Math.min(1e7, Math.floor(p) || 0)), ts: D.serverTimestamp() }).catch(e => console.warn('season', e && e.code)); },
+      onSeason(wk, f) { if (!/^w[0-9]{6}$/.test(wk)) { f([]); return () => {}; } return D.onValue(D.query(D.ref(db, `season/${wk}`), D.orderByChild('p'), D.limitToLast(10)), s => { const arr = []; s.forEach(c => { arr.push(Object.assign({ uid: c.key }, c.val())); }); f(arr.sort((a, b) => b.p - a.p)); }, () => f([])); },
       onGuestbook(f) { D.onValue(D.query(D.ref(db, 'guestbook'), D.limitToLast(100)), s => { const arr = []; s.forEach(c => { arr.push(Object.assign({ id: c.key }, c.val())); }); f(arr); }); },
       sendFx(kind) { D.push(D.ref(db, `${R}/fx`), { uid: live.uid, kind: clampStr(kind, 20), ts: D.serverTimestamp() }); },
       onFx(f) {

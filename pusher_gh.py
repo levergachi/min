@@ -22,7 +22,7 @@ PRICES = {"KORU": "KORU", "SOXL": "SOXL", "NASDAQ": "^IXIC", "KOSPI": "^KS11", "
 HEAT = ["NVDA","MSFT","AAPL","AVGO","ORCL","PLTR","AMD","CSCO","IBM","CRM","MU","ADBE","QCOM","TXN","INTU","NOW","AMAT","LRCX","KLAC","ADI","ARM","INTC","ANET","PANW","CRWD","MRVL","DELL","SMCI","GOOGL","META","NFLX","TMUS","DIS","T","VZ","AMZN","TSLA","HD","MCD","BKNG","NKE","SBUX","JPM","V","MA","BAC","WFC","GS","MS","AXP","BLK","COIN","LLY","JNJ","ABBV","UNH","MRK","TMO","ISRG","PFE","WMT","COST","PG","KO","PEP","PM","GE","CAT","RTX","UBER","HON","BA","ETN","VRT","XOM","CVX","CEG","VST","NEE","TSM","ASML"]
 XQ = {s: s for s in HEAT}; XQ.update({"BTC": "BTC-USD", "TNX": "^TNX", "IEF": "IEF"})
 # v16: 리포트 센터용 지수·지표
-XQ.update({"SPX": "^GSPC", "DJI": "^DJI", "RUT": "^RUT", "VIX": "^VIX", "KOSDAQ": "^KQ11", "KOSPI": "^KS11", "NDX": "^NDX", "SOX": "^SOX", "DXY": "DX-Y.NYB", "WTI": "CL=F", "GOLD": "GC=F", "USDKRW": "KRW=X", "ETH": "ETH-USD", "SPY": "SPY", "QQQ": "QQQ", "SOXL": "SOXL", "KORU": "KORU", "TQQQ": "TQQQ"})
+XQ.update({"SPX": "^GSPC", "DJI": "^DJI", "RUT": "^RUT", "VIX": "^VIX", "KOSDAQ": "^KQ11", "KOSPI": "^KS11", "NDX": "^NDX", "NASDAQ": "^IXIC", "SOX": "^SOX", "DXY": "DX-Y.NYB", "WTI": "CL=F", "GOLD": "GC=F", "USDKRW": "KRW=X", "ETH": "ETH-USD", "SPY": "SPY", "QQQ": "QQQ", "SOXL": "SOXL", "KORU": "KORU", "TQQQ": "TQQQ"})
 # v16: 한국 대형주(국장 히트맵) — 키는 KS/KQ + 종목코드
 KR = ["005930","000660","373220","207940","005380","000270","068270","005490","035420","035720","105560","055550","012330","051910","006400","028260","003670","066570","096770","034020","012450","329180","009540","086790","015760","017670","032830","010130","011200","259960","042700","323410","000810","064350","010140","042660","003550","034730","018260","316140"]
 KQ = ["247540","086520","196170","028300","058470","263750","293490","357780"]
@@ -182,7 +182,8 @@ def rss(url, n=10):
 def news(fb):
     kr = rss("https://news.google.com/rss/search?q=%EC%A6%9D%EC%8B%9C+OR+%EC%BD%94%EC%8A%A4%ED%94%BC+OR+%EB%82%98%EC%8A%A4%EB%8B%A5+when:1d&hl=ko&gl=KR&ceid=KR:ko")
     us = rss("https://news.google.com/rss/search?q=stock+market+when:1d&hl=en-US&gl=US&ceid=US:en")
-    if kr or us: fb.patch({"mkt/news": {"kr": kr, "us": us, "ts": int(time.time() * 1000)}})
+    blog = rss("https://rss.blog.naver.com/leverage_expert.xml", 5)  # 레가 아저씨 NPC용 블로그 최신 글
+    if kr or us or blog: fb.patch({"mkt/news": {"kr": kr, "us": us, "blog": blog, "ts": int(time.time() * 1000)}})
 
 def main():
     global REQ
