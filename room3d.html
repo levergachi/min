@@ -2089,8 +2089,8 @@ function rpgFx(fx) {
 }
 function laser(a, B) { const s = a.root.position, e = B.g.position; const g = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(s.x, 1.9, s.z), new THREE.Vector3(e.x, 2.2, e.z)]); const l = new THREE.Line(g, new THREE.LineBasicMaterial({ color: 0x41f0ff, transparent: true, toneMapped: false })); scene.add(l); rpgPieces.push({ line: l, t: 0 }); }
 function bossCounter(k, n) {
-  const B = BOSS[k], it = INTER[k]; if (!B) return; const prev = B.hits; B.hits = n; bossDraw(k);
-  if (prev > 0 && Math.floor(n / it.hp) > Math.floor(prev / it.hp)) { // 격파!
+  const B = BOSS[k], it = INTER[k]; if (!B) return; const prev = B.hits, first = !B.init; B.init = 1; B.hits = n; bossDraw(k);
+  if (!first && Math.floor(n / it.hp) > Math.floor(prev / it.hp)) { // 격파!
     B.ko = 2.6; SND.ko(); const P = B.g.position; for (let i = 0; i < 5; i++) setTimeout(() => spawn(P.x, 2 + i * .6, P.z, 70, [0xff4d57, 0xffd76a, 0x2fd0ff][i % 3], 6, 3, 1.6, 3), i * 140);
     toast(`💥 ${it.name} 격파! (${Math.floor(n / it.hp)}번째)`); addLog(`💥 ${it.name} 격파! 함께 때린 개미들 모두 수고했어요 👏`, true);
     if (raidHits[k] && Date.now() - raidHits[k] < 15000) { const ex = it.exp || 30; addPts(ex); dropItem(it.lv >= 20 ? 2 : 1); setTimeout(() => floatAt(myAnt, `🏆 격파 보상 +${Math.round(ex * ptsMul(lvOf(G.pts)))}`, 'big'), 400); }
@@ -2448,8 +2448,8 @@ MOBS.forEach(m => {
 function mobHp(m) { return m.K.hp - (m.hits % m.K.hp); }
 function mobDraw(m) { const d = mobLabs[m.key]; d.querySelector('.hpb i').style.width = (mobHp(m) / m.K.hp * 100) + '%'; }
 function mobCounter(m, n) {
-  const prev = m.hits; m.hits = n; mobDraw(m);
-  if (prev > 0 && Math.floor(n / m.K.hp) > Math.floor(prev / m.K.hp)) { // 처치!
+  const prev = m.hits, first = !m.init; m.init = 1; m.hits = n; mobDraw(m);
+  if (!first && Math.floor(n / m.K.hp) > Math.floor(prev / m.K.hp)) { // 처치!
     m.dead = 2.2; const P = m.o.g.position; spawn(P.x, 1, P.z, 50, m.K.col, 5, 6, 1); ringFx(P.x, P.z, 0xffd76a, 4); try { SND.ko(); } catch (e) {}
     if (m.myHit && Date.now() - m.myHit < 12000) { addPts(m.K.exp); setTimeout(() => floatAt(myAnt, `🏆 ${m.K.name.split(' ').slice(1).join(' ')} 처치 +${Math.round(m.K.exp * ptsMul(lvOf(G.pts)))}`, 'big'), 300); if (Math.random() < .22 + m.K.lv * .006) dropItem(m.K.lv >= 20 ? 1 : 0); }
   }
@@ -2837,7 +2837,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '15';
+const APP_V = '15.1';
 {
   let shown = false;
   const check = async () => {
