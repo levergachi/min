@@ -35,7 +35,10 @@ const XMAP = { IEF: "IEF", BTC: "BINANCE:BTCUSDT" };
 export const XQ_KEYS = MKT.map(m => m[0]).concat(Object.keys(XMAP));
 const XSYM = k => XMAP[k] || k;
 export const CHART_KEYS = ["KORU", "SOXL", "NASDAQ", "TNX", "BTC"];
-const mkt = { q: {}, h: {} };
+const mkt = { q: {}, h: {}, fg: null, opt: {}, news: null };
+// v16: 이용자 '내 종목' 시세 요청 (송신기가 1분 안에 받아 옴, 미국 종목은 Finnhub 로 즉시)
+let reqImpl = null; const reqSeen = {};
+export function reqQuote(k) { k = String(k || '').toUpperCase(); if (!/^(KS|KQ)[0-9A-Z]{6}$|^[A-Z][A-Z0-9]{0,6}$/.test(k)) return false; if (reqSeen[k] && Date.now() - reqSeen[k] < 10 * 60000) return true; reqSeen[k] = Date.now(); if (reqImpl) reqImpl(k); return true; }
 const mktSubs = new Set();
 function emitMkt() { mktSubs.forEach(fn => { try { fn(mkt); } catch (e) { console.error(e); } }); }
 export function onMarket(fn) { mktSubs.add(fn); fn(mkt); return () => mktSubs.delete(fn); }
@@ -255,6 +258,10 @@ async function firebaseInit() {
     Object.keys(v).forEach(k => { const r = v[k]; if (r && r.p > 0) o[k] = { p: +r.p, pc: r.pc > 0 ? +r.pc : null, ts: +r.ts || 0, src: String(r.src || ""), wt: +r.wt || 0 }; });
     mkt.q = o; emitMkt();
   });
+  D.onValue(D.ref(db, "mkt/fg"), s => { mkt.fg = s.val() || null; emitMkt(); });
+  D.onValue(D.ref(db, "mkt/opt"), s => { mkt.opt = s.val() || {}; emitMkt(); });
+  D.onValue(D.ref(db, "mkt/news"), s => { mkt.news = s.val() || null; emitMkt(); });
+  reqImpl = async k => { try { await D.set(D.ref(db, "mkt/req/" + k), D.serverTimestamp()); } catch (e) {} if (CFG.finnhubKey && /^[A-Z][A-Z0-9]{0,6}$/.test(k)) { try { const q = await finnhubQuote(k); if (q && q.p > 0) await D.set(D.ref(db, "mkt/q/" + k), { p: q.p, pc: q.pc || 0, ts: q.ts || Date.now() }); } catch (e) {} } };
   D.onValue(D.ref(db, "mkt/h"), s => {
     const v = s.val() || {}; const o = {};
     Object.keys(v).forEach(k => { o[k] = parseHist(v[k]); });
@@ -363,6 +370,10 @@ async function firebaseInit() {
         if (/^[a-z]\d{1,2}-\d{1,2}-\d(,[a-z]\d{1,2}-\d{1,2}-\d){0,11}$/.test(data.gr || '')) clean.gr = data.gr; // 부위별 장비 12칸
         if (isFinite(Number(data.h)) && Number(data.h) > 0) clean.h = Math.max(0, Math.min(30, Math.round(Number(data.h) * 10) / 10)); // 높이(옥상·밧줄)
         if (Number.isInteger(data.hp) && data.hp >= 0 && data.hp < 100) clean.hp = data.hp; // 체력 %
+        if (/^(KS|KQ)[0-9A-Z]{6}$|^[A-Z][A-Z0-9]{0,6}$/.test(data.stk || '')) clean.stk = data.stk; // 내 대표 종목
+        if (typeof data.stn === 'string' && data.stn) clean.stn = clampStr(data.stn, 12);
+        if (isFinite(Number(data.stp)) && data.stp !== null && data.stp !== '') clean.stp = Math.max(-100, Math.min(9999, Math.round(Number(data.stp) * 10) / 10));
+        if ([1, 2].includes(data.stv)) clean.stv = data.stv;
         if (data.host === true) clean.host = true;
         D.set(meRef, clean).catch(e => console.error(e));
       },
