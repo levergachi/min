@@ -37,7 +37,14 @@ window.LEVER_CONFIG = {
   // link : 누르면 열릴 주소(예: 네이버 블로그) — 비워도 됨
   profile: { name: "레버가치전문가", photo: "", link: "" },
 
+  // ── 레버가치 채널 홍보 (상단 「📣 레버가치」 메뉴 · 후원 페이지 · 객장 입장 안내에 표시) ──
+  links: [
+    { icon: "📝", name: "네이버 블로그", desc: "미국주식·AI 인프라·레버리지 분석 글", url: "https://blog.naver.com/leverage_expert" },
+    { icon: "💬", name: "오픈카톡방", desc: "저점매수 신호봇 가입 · 같이 이야기해요", url: "https://open.kakao.com/o/gq92qKDi" },
+    { icon: "📈", name: "저점매수 신호 웹페이지", desc: "레버가치 신호봇 등급·성과 한눈에", url: "https://levergachi.github.io/" }
+  ],
+
   // ── 후원 (비워 두면 '후원하기' 버튼이 안 보임) ───────────────
-  // text: 후원 안내 문구(예: 은행명·계좌·예금주를 직접 적기)  link: 후원 페이지 주소(선택)
-  donate: { text: "", link: "" }
+  // bank·account·holder: 후원 계좌(QR·복사·토스 송금 버튼이 자동으로 생김)  text: 추가 안내 문구  link: 다른 후원 페이지(선택)
+  donate: { bank: "토스뱅크", account: "1000-0583-9441", holder: "김명선", text: "", link: "" }
 };

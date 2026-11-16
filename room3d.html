@@ -111,7 +111,7 @@ input,select{font-family:inherit}
 .toast.on{opacity:1}
 #nogl{display:none;position:fixed;inset:0;align-items:center;justify-content:center;text-align:center;padding:24px;z-index:20;background:var(--bg)}
 @media (max-width:820px){
-  header{top:34px;gap:4px}.logo{font-size:14px}.hb{padding:4px 7px;font-size:11px}#bLink{display:none}
+  header{top:34px;gap:4px}.logo{font-size:14px}.hb{padding:4px 7px;font-size:11px}#bLink,#bPrice{display:none}.lvx-don,.lvx-lnk,.lvx-pill{padding:4px 8px!important;font-size:11px!important}
   .lab .bd{font-size:9.5px;line-height:1.3;padding:1px 5px}.lab .bd .r{display:block}.lab .bd .r+.r:before{content:''}
   .lab .nm{font-size:11px;padding:1px 6px}.lab .tt{font-size:9.5px}.lab .say{max-width:150px;font-size:12px}
   .hud .small,.hud .ring{display:none}
@@ -130,6 +130,8 @@ input,select{font-family:inherit}
 @media (prefers-reduced-motion:reduce){.tape .run{animation:none}}
 
 .lab.lite .bd,.lab.lite .tt{display:none}.lab.lite .nm{font-size:10px;padding:0 5px;opacity:.9}
+.bgms{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0 12px}.bgms button{padding:10px;border-radius:10px;border:1px solid var(--line);background:#121a2a;color:var(--ink);font-weight:800;cursor:pointer;font-family:inherit;text-align:left}.bgms button.on{background:linear-gradient(90deg,#f5a524,#ff7a59);color:#1a1204;border-color:transparent}
+#vB,#vS{width:100%}
 .lab.host .nm{background:linear-gradient(90deg,#f5a524,#ffd76a);color:#1a1204;border-color:#ffd76a;box-shadow:0 0 12px rgba(255,215,106,.7)}
 .m.host{background:rgba(245,165,36,.14);border-left:3px solid #f5a524;padding-left:6px}
 .mbox.mkt{width:min(1180px,100%);padding:12px}.mbox.mkt canvas{width:100%;height:auto;display:block;border-radius:10px;margin-top:8px;background:#070d1a}
@@ -152,6 +154,7 @@ input,select{font-family:inherit}
     <button class="hb pe" id="bMkt">📊 시장</button>
     <button class="hb pe" id="bFw" style="display:none">🎆 축포</button>
     <button class="hb pe" id="bPrice">시세 입력</button>
+    <button class="hb pe" id="bBgm">🎵 음악</button>
     <button class="hb pe" id="bMute">🔔 소리 켬</button>
     <button class="hb pe" id="bMe">내 정보</button>
     <button class="hb pe" id="bLink">방 링크</button>
@@ -172,7 +175,7 @@ input,select{font-family:inherit}
       <div class="sect">몸짓 · 전광판을 향해</div>
       <div class="grid3">
         <button class="gbtn" data-fx="bow">🙇 절하기</button><button class="gbtn" data-fx="clap">👏 박수</button><button class="gbtn" data-fx="water">💧 물타기</button>
-        <button class="gbtn" data-fx="buy">🔴 매수연타</button><button class="gbtn" data-fx="jump">🦘 점프</button><button class="gbtn" data-fx="dance">🕺 춤</button>
+        <button class="gbtn" data-fx="buy">🔴 매수연타</button><button class="gbtn" data-fx="jump">🦘 점프</button><button class="gbtn" data-fx="dance">🕺 춤</button><button class="gbtn" data-fx="fire">🔥 파이어!</button><button class="gbtn" data-fx="ring">🔔 타종</button><button class="gbtn" data-fx="rocket">🚀 떡상기원</button>
       </div>
       <div class="sect">이모티콘</div>
       <div class="grid5">
@@ -197,6 +200,11 @@ input,select{font-family:inherit}
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="modal" id="mBgm"><div class="mbox"><h2>🎵 배경음악 · 효과음</h2><div class="sub">전부 직접 만든 합성음이에요 · «자동»은 시황에 따라 바뀝니다 (평온=주식시장, 파티=파이어, 우울=로파이)</div>
+  <div class="bgms" id="bgmList"></div>
+  <div class="f"><label>배경음악 크기</label><input type="range" id="vB" min="0" max="1" step="0.05"></div>
+  <div class="f"><label>효과음 크기</label><input type="range" id="vS" min="0" max="1" step="0.05"></div>
+  <button class="mbtn sec" data-close>닫기</button></div></div>
 <div class="modal" id="mMkt"><div class="mbox mkt"><div class="mh"><span>📊 시장 한눈에 — 히트맵 · 차트</span><button data-close>닫기 ✕</button></div><canvas id="cvHeat" width="1400" height="700"></canvas><canvas id="cvChart" width="1400" height="700"></canvas><div class="small" style="margin-top:8px;color:#8592a8">재미·참고용입니다. 시세는 Finnhub 무료 데이터(지연·마감가 포함), 차트는 접속자가 있는 동안 1분마다 기록한 값입니다. 투자 조언이 아닙니다.</div></div></div>
 
 <div class="modal" id="mEnter"><div class="mbox">
@@ -276,44 +284,118 @@ let G = Object.assign({ pts: 0, title: '', b108: { d: '', n: 0 } }, LS.get('lv3d
 let PROF = LS.get('lv3d_prof', null);
 const saveG = () => LS.set('lv3d_game', G);
 
-/* ================= 소리 ================= */
-let AC = null, muted = LS.get('lv3d_mute', false);
-function ac() { if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (AC && AC.state === 'suspended') AC.resume(); return AC; }
-function tone(freq, dur, type = 'sine', vol = .25, delay = 0, slide) {
-  if (muted) return; const a = ac(); if (!a) return;
-  const t = a.currentTime + delay, o = a.createOscillator(), g = a.createGain();
-  o.type = type; o.frequency.setValueAtTime(freq, t); if (slide) o.frequency.exponentialRampToValueAtTime(slide, t + dur);
-  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
-  o.connect(g).connect(a.destination); o.start(t); o.stop(t + dur + .02);
+/* ================= 소리 (전부 브라우저 합성 · 외부 음원 없음) ================= */
+let AC = null, muted = LS.get('lv3d_mute', false), BUS = null;
+const AUD = Object.assign({ bgm: 'auto', vb: .35, vs: .8 }, LS.get('lv3d_aud', {}));
+function ac() {
+  if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+  if (AC && !BUS) { const m = AC.createGain(), sf = AC.createGain(), bg = AC.createGain(), cp = AC.createDynamicsCompressor(); cp.threshold.value = -14; cp.ratio.value = 4; m.connect(cp).connect(AC.destination); sf.connect(m); bg.connect(m); BUS = { m, sf, bg }; applyVol(); }
+  if (AC && AC.state === 'suspended') AC.resume(); return AC;
 }
-function noise(dur, vol = .2, hp = 1200) {
-  if (muted) return; const a = ac(); if (!a) return;
-  const b = a.createBuffer(1, Math.floor(a.sampleRate * dur), a.sampleRate), d = b.getChannelData(0);
-  for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
-  const s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain(); f.type = 'highpass'; f.frequency.value = hp; g.gain.value = vol;
-  s.buffer = b; s.connect(f).connect(g).connect(a.destination); s.start();
+function applyVol() { if (!BUS) return; const t = AC.currentTime; BUS.m.gain.setTargetAtTime(muted ? 0 : 1, t, .05); BUS.sf.gain.setTargetAtTime(AUD.vs, t, .05); BUS.bg.gain.setTargetAtTime(AUD.vb, t, .2); }
+let NB = null; function nbuf() { if (!NB) { const a = AC; NB = a.createBuffer(1, a.sampleRate * 2, a.sampleRate); const d = NB.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; } return NB; }
+// 범용 음 생성기 (dest: 연결할 노드, t: 시작 시각)
+function N(dest, t, f, dur, type = 'sine', vol = .2, att = .005, slide, det = 0) {
+  const a = AC, o = a.createOscillator(), g = a.createGain(); o.type = type; o.frequency.setValueAtTime(f, t); if (det) o.detune.value = det;
+  if (slide) o.frequency.exponentialRampToValueAtTime(slide, t + dur);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + att); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g).connect(dest); o.start(t); o.stop(t + dur + .05); return o;
 }
+function NZ(dest, t, dur, vol = .2, ft = 'highpass', ff = 1200, q = .7, ff2) {
+  const a = AC, s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain(); s.buffer = nbuf(); s.loop = true;
+  f.type = ft; f.frequency.setValueAtTime(ff, t); if (ff2) f.frequency.exponentialRampToValueAtTime(ff2, t + dur); f.Q.value = q;
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  s.connect(f).connect(g).connect(dest); s.start(t, Math.random()); s.stop(t + dur + .05);
+}
+function sfx(fn) { if (muted) return; const a = ac(); if (!a || !BUS) return; try { fn(a.currentTime + .01, BUS.sf); } catch (e) {} }
+function tone(freq, dur, type = 'sine', vol = .25, delay = 0, slide) { sfx((t, d) => N(d, t + delay, freq, dur, type, vol, .005, slide)); }
+function noise(dur, vol = .2, hp = 1200) { sfx((t, d) => NZ(d, t, dur, vol, 'highpass', hp)); }
 const SND = {
-  tok() { tone(820, .12, 'triangle', .45, 0, 620); tone(410, .1, 'sine', .25); },
-  clink() { tone(2100, .18, 'sine', .18); tone(2900, .22, 'sine', .14, .05); },
-  clap() { noise(.08, .35, 1500); },
-  buy() { tone(1400, .04, 'square', .08); },
-  jump() { tone(300, .18, 'sine', .15, 0, 700); },
-  level() { [523, 659, 784, 1046].forEach((f, i) => tone(f, .22, 'triangle', .2, i * .09)); },
-  water() { noise(.4, .08, 3000); },
-  bow() { tone(196, .3, 'sine', .12); }
+  tok() { sfx((t, d) => { N(d, t, 820, .12, 'triangle', .45, .002, 620); N(d, t, 410, .1, 'sine', .25, .002); }); },
+  clink() { sfx((t, d) => { N(d, t, 2100, .18, 'sine', .18); N(d, t + .05, 2900, .22, 'sine', .14); }); },
+  clap() { sfx((t, d) => NZ(d, t, .08, .35, 'bandpass', 1500, 1.2)); },
+  buy() { sfx((t, d) => { N(d, t, 1400, .05, 'square', .07); N(d, t + .03, 2100, .05, 'square', .05); }); },
+  jump() { sfx((t, d) => { N(d, t, 260, .22, 'sine', .22, .005, 820); N(d, t, 520, .12, 'triangle', .06, .005, 1300); }); },
+  land() { sfx((t, d) => { N(d, t, 120, .14, 'sine', .3, .002, 50); NZ(d, t, .06, .12, 'lowpass', 700); }); },
+  step(run) { sfx((t, d) => { NZ(d, t, run ? .07 : .05, run ? .13 : .07, 'lowpass', run ? 900 : 600); N(d, t, run ? 95 : 80, .06, 'sine', run ? .12 : .07, .002, 50); }); },
+  level() { sfx((t, d) => [523, 659, 784, 1046].forEach((f, i) => N(d, t + i * .09, f, .3, 'triangle', .2))); },
+  water() { sfx((t, d) => { NZ(d, t, .5, .1, 'bandpass', 2500, 2, 900); for (let i = 0; i < 5; i++) N(d, t + .08 * i + Math.random() * .05, 700 + Math.random() * 600, .07, 'sine', .08, .002, 1500); }); },
+  bow() { sfx((t, d) => { N(d, t, 196, .5, 'sine', .14, .02); N(d, t, 294, .5, 'sine', .06, .02); }); },
+  send() { sfx((t, d) => { N(d, t, 600, .09, 'sine', .18, .003, 1250); N(d, t + .07, 1250, .12, 'triangle', .1); }); },
+  recv() { sfx((t, d) => { N(d, t, 880, .08, 'sine', .1); N(d, t + .08, 1175, .12, 'sine', .09); }); },
+  pop() { sfx((t, d) => N(d, t, 500 + Math.random() * 500, .12, 'sine', .16, .003, 1600 + Math.random() * 400)); },
+  bell() { sfx((t, d) => { [1, 2.76, 5.4].forEach((m, i) => N(d, t, 392 * m, 3.5 - i, 'sine', .18 / (i + 1), .003)); }); },
+  // 🔥 파이어!!! — 굉음 + 파워코드
+  fire() { sfx((t, d) => { NZ(d, t, 1.1, .35, 'lowpass', 300, .8, 4000); [110, 165, 220].forEach(f => { N(d, t + .15, f, .9, 'sawtooth', .07, .01, f * 1.02, -8); N(d, t + .15, f, .9, 'sawtooth', .07, .01, f * 1.02, 8); }); N(d, t + .15, 55, .7, 'sine', .4, .005, 40); }); },
+  // 🎆 축포: 휘파람 상승 + 폭발
+  firework() { sfx((t, d) => { N(d, t, 600, .7, 'sine', .07, .02, 2400); NZ(d, t + .7, .9, .4, 'lowpass', 2500, .5, 200); N(d, t + .7, 70, .5, 'sine', .35, .002, 35); for (let i = 0; i < 8; i++) NZ(d, t + .85 + Math.random() * .6, .05, .08, 'highpass', 5000); }); },
+  // 🌟 진화: 상승 효과음 → 쿵! → 장엄한 화음 → 반짝임
+  evolve() { sfx((t, d) => {
+    NZ(d, t, 1.25, .22, 'bandpass', 250, 1.5, 6000);
+    [262, 330, 392, 523, 659, 784, 1046, 1318].forEach((f, i) => N(d, t + i * .13, f, .25, 'square', .05));
+    const T = t + 1.25; N(d, T, 65, 1.4, 'sine', .55, .003, 30); NZ(d, T, .7, .3, 'lowpass', 1800, .5, 120);
+    [261.6, 329.6, 392, 523.3, 659.3].forEach(f => { N(d, T, f, 2.6, 'sawtooth', .045, .02, null, -9); N(d, T, f, 2.6, 'sawtooth', .045, .02, null, 9); N(d, T, f * 2, 2.2, 'triangle', .04, .02); });
+    for (let i = 0; i < 14; i++) N(d, T + .2 + i * .09, 1568 + Math.random() * 2600, .5, 'sine', .05, .003);
+  }); },
+  party() { sfx((t, d) => [[523, 0], [659, .12], [784, .24], [1046, .36], [784, .5], [1046, .62]].forEach(([f, o]) => N(d, t + o, f, .22, 'square', .07))); },
+  gloom() { sfx((t, d) => [[392, 0], [370, .45], [349, .9], [330, 1.35]].forEach(([f, o], i) => N(d, t + o, f, i === 3 ? 1.3 : .45, 'sawtooth', .07, .03, i === 3 ? 300 : null))); }
 };
+
+/* ---- 배경음악 (반복 생성) ---- */
+const BGM = {
+  mind: { name: '🪷 마음수양', bpm: 60, start(g, t) { const a = AC; this.nodes = [];
+      [110, 165, 220.5].forEach((f, i) => { const o = a.createOscillator(), gg = a.createGain(), lf = a.createOscillator(), lg = a.createGain(); o.frequency.value = f; gg.gain.value = .05; lf.frequency.value = .07 + i * .03; lg.gain.value = .03; lf.connect(lg).connect(gg.gain); o.connect(gg).connect(g); o.start(t); lf.start(t); this.nodes.push(o, lf); });
+      const w = a.createBufferSource(), wf = a.createBiquadFilter(), wg = a.createGain(); w.buffer = nbuf(); w.loop = true; wf.type = 'bandpass'; wf.frequency.value = 500; wf.Q.value = .6; wg.gain.value = .025; w.connect(wf).connect(wg).connect(g); w.start(t); this.nodes.push(w); },
+    step(i, t, g) { if (i % 8 === 0) { [1, 2.76, 5.4].forEach((m, k) => N(g, t, 264 * m, 7 - k * 2, 'sine', .09 / (k + 1), .004)); N(g, t, 266.5, 6, 'sine', .04, .004); }
+      if (Math.random() < .22) N(g, t, [1047, 1175, 1319, 1568, 1760][Math.floor(Math.random() * 5)], 3, 'sine', .025, .01); } },
+  temple: { name: '🙏 산사 (목탁·종)', bpm: 72, start(g, t) { const a = AC; this.nodes = []; const o = a.createOscillator(), f = a.createBiquadFilter(), gg = a.createGain(), v = a.createOscillator(), vg = a.createGain(); o.type = 'sawtooth'; o.frequency.value = 98; f.type = 'lowpass'; f.frequency.value = 380; gg.gain.value = .045; v.frequency.value = 4.5; vg.gain.value = 1.5; v.connect(vg).connect(o.frequency); o.connect(f).connect(gg).connect(g); o.start(t); v.start(t); this.nodes.push(o, v); },
+    step(i, t, g) { const acc = i % 4 === 0; N(g, t, acc ? 760 : 820, .12, 'triangle', acc ? .3 : .18, .002, 600); N(g, t, 400, .09, 'sine', .12, .002);
+      if (i % 16 === 0) [1, 2.0, 2.92, 4.1].forEach((m, k) => N(g, t, 82 * m, 6 - k, 'sine', .14 / (k + 1), .004)); } },
+  market: { name: '📈 주식시장 (객장 웅성)', bpm: 120, start(g, t) { const a = AC; this.nodes = []; const s = a.createBufferSource(), f = a.createBiquadFilter(), gg = a.createGain(), l = a.createOscillator(), lg = a.createGain(); s.buffer = nbuf(); s.loop = true; f.type = 'bandpass'; f.frequency.value = 520; f.Q.value = .9; gg.gain.value = .07; l.frequency.value = .3; lg.gain.value = .025; l.connect(lg).connect(gg.gain); s.connect(f).connect(gg).connect(g); s.start(t); l.start(t); this.nodes.push(s, l); },
+    step(i, t, g) { if (i % 2 === 0) N(g, t, 55, .25, 'sine', .08, .003, 45); if (i % 2 === 1) NZ(g, t, .03, .02, 'highpass', 8000);
+      if (Math.random() < .25) N(g, t, 1200 + Math.floor(Math.random() * 6) * 160, .05, 'square', .02);
+      if (Math.random() < .35) NZ(g, t + Math.random() * .2, .02, .03, 'highpass', 3000);
+      if (Math.random() < .18) NZ(g, t, .5 + Math.random() * .5, .045, 'bandpass', 300 + Math.random() * 900, 3);
+      if (i % 96 === 40) for (let k = 0; k < 8; k++) { N(g, t + k * .1, 440, .05, 'sine', .03); N(g, t + k * .1 + .05, 480, .05, 'sine', .03); } } },
+  fire: { name: '🔥 파이어!!! (불장)', bpm: 128, sub: 4, start() { this.nodes = []; },
+    step(i, t, g) { const bar = Math.floor(i / 16) % 4, st = i % 16, roots = [55, 43.65, 65.41, 49], r = roots[bar];
+      if (st % 4 === 0) { N(g, t, 150, .28, 'sine', .5, .002, 42); }
+      if (st === 4 || st === 12) NZ(g, t, .16, .2, 'bandpass', 1800, .9);
+      if (st % 4 === 2) NZ(g, t, .09, .07, 'highpass', 7000); else if (st % 2 === 1) NZ(g, t, .03, .03, 'highpass', 9000);
+      if (st % 2 === 1) { N(g, t, r * 2, .12, 'sawtooth', .07, .004, null, -6); N(g, t, r * 2, .12, 'sawtooth', .07, .004, null, 6); }
+      if (st === 0 || st === 6 || st === 10) [1, 1.26, 1.5, 2].forEach(m => { N(g, t, r * 4 * m, .22, 'sawtooth', .022, .005, null, -10); N(g, t, r * 4 * m, .22, 'sawtooth', .022, .005, null, 10); });
+      if (bar === 3 && st >= 8) N(g, t, 300 + (st - 8) * 140, .1, 'square', .02); } },
+  lofi: { name: '🌧 존버 로파이', bpm: 76, sub: 2, start(g, t) { const a = AC; this.nodes = []; const s = a.createBufferSource(), f = a.createBiquadFilter(), gg = a.createGain(); s.buffer = nbuf(); s.loop = true; f.type = 'highpass'; f.frequency.value = 2500; gg.gain.value = .03; s.connect(f).connect(gg).connect(g); s.start(t); this.nodes.push(s); },
+    step(i, t, g) { const bar = Math.floor(i / 8) % 4, st = i % 8, ch = [[174.6, 220, 261.6, 329.6], [164.8, 196, 246.9, 293.7], [146.8, 174.6, 220, 261.6], [130.8, 164.8, 196, 246.9]][bar];
+      if (st === 0) ch.forEach((f, k) => { N(g, t + k * .02, f, 3.2, 'sine', .05, .03); N(g, t + k * .02, f * 2, 2, 'triangle', .012, .03); });
+      if (st === 0 || st === 5) N(g, t, 110, .3, 'sine', .3, .003, 45);
+      if (st === 2 || st === 6) NZ(g, t, .12, .07, 'lowpass', 2200);
+      if (Math.random() < .3) NZ(g, t + Math.random() * .3, .01, .05, 'highpass', 4000);
+      if (st === 3 && Math.random() < .5) N(g, t, ch[3] * 2, .5, 'sine', .03, .01); } }
+};
+let bgmCur = null, bgmG = null, bgmTimer = null, bgmStep = 0, bgmNext = 0;
+function bgmWant() { if (AUD.bgm === 'off') return null; if (AUD.bgm !== 'auto') return AUD.bgm; return weather === 'party' ? 'fire' : weather === 'gloom' ? 'lofi' : 'market'; }
+function bgmStop() { if (!bgmG) return; const g = bgmG, tr = BGM[bgmCur]; g.gain.setTargetAtTime(0, AC.currentTime, .4); setTimeout(() => { try { (tr.nodes || []).forEach(n => n.stop()); g.disconnect(); } catch (e) {} }, 2500); bgmG = null; bgmCur = null; clearInterval(bgmTimer); bgmTimer = null; }
+function bgmUpdate() {
+  if (!AC || !entered) return; const w = muted ? null : bgmWant(); if (w === bgmCur) return; bgmStop(); if (!w) return;
+  const tr = BGM[w]; bgmCur = w; bgmG = AC.createGain(); bgmG.gain.value = 0; bgmG.connect(BUS.bg); bgmG.gain.setTargetAtTime(1, AC.currentTime, .6);
+  tr.start(bgmG, AC.currentTime + .05); bgmStep = 0; bgmNext = AC.currentTime + .1; const g = bgmG;
+  bgmTimer = setInterval(() => { if (document.hidden) return; const dt = 60 / tr.bpm / (tr.sub || 1); while (bgmNext < AC.currentTime + .25) { if (bgmNext < AC.currentTime) bgmNext = AC.currentTime + .02; try { tr.step(bgmStep, bgmNext, g); } catch (e) {} bgmStep++; bgmNext += dt; } }, 60);
+}
 function setMuteBtn() { $('bMute').textContent = muted ? '🔕 소리 끔' : '🔔 소리 켬'; }
-$('bMute').onclick = () => { muted = !muted; LS.set('lv3d_mute', muted); setMuteBtn(); if (!muted) SND.tok(); };
+$('bMute').onclick = () => { muted = !muted; LS.set('lv3d_mute', muted); setMuteBtn(); ac(); applyVol(); bgmUpdate(); if (!muted) SND.tok(); };
 setMuteBtn();
 
 /* ================= 렌더러 ================= */
 let renderer;
 try {
-  renderer = new THREE.WebGLRenderer({ canvas: $('gl'), antialias: !TOUCH, powerPreference: 'high-performance' });
+  renderer = new THREE.WebGLRenderer({ canvas: $('gl'), antialias: true, powerPreference: 'high-performance' });
   if (!renderer.getContext()) throw new Error('no ctx');
 } catch (e) { $('nogl').style.display = 'flex'; $('ui').style.display = 'none'; throw e; }
-renderer.setPixelRatio(Math.min(devicePixelRatio || 1, TOUCH ? 1 : 1.5));
+// 화질: 휴대폰도 선명하게(최대 2배). 프레임이 떨어지면 자동으로 한 단계씩 낮춤
+let PR = Math.min(devicePixelRatio || 1, TOUCH ? 2 : 1.75); renderer.setPixelRatio(PR);
+let prLowT = 0;
+function adaptPR(fps, dt) { if (fps > 0 && fps < 32) { prLowT += dt; if (prLowT > 3 && PR > 1) { PR = Math.max(1, PR - .35); renderer.setPixelRatio(PR); renderer.setSize(innerWidth, innerHeight, false); prLowT = 0; } } else prLowT = 0; }
 renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
 const scene = new THREE.Scene();
 const FOG_CALM = new THREE.Color(0x060b18), FOG_GLOOM = new THREE.Color(0x0b1019), FOG_PARTY = new THREE.Color(0x160d33);
@@ -566,7 +648,7 @@ function computeWeather() {
   const ch = ['KORU', 'SOXL'].map(k => qChg(prices[k])).filter(isFinite);
   const avg = ch.length ? ch.reduce((a, b) => a + b, 0) / ch.length : null;
   const mode = avg == null ? 'calm' : avg >= .10 ? 'party' : avg <= -.10 ? 'gloom' : 'calm';
-  weatherChg = avg; if (mode !== weather) { weather = mode; applyWeather(); }
+  weatherChg = avg; if (mode !== weather) { const prev = weather; weather = mode; applyWeather(); if (entered) { if (mode === 'party') SND.party(); else if (mode === 'gloom') SND.gloom(); } bgmUpdate(); }
   const parts2 = ['KORU', 'SOXL'].filter(k => isFinite(qChg(prices[k]))).map(k => k + ' ' + pct(qChg(prices[k])));
   const w = $('wx'); w.textContent = '';
   const b = el('b', null, avg == null ? '시황: 등락 데이터 없음 → 평온' : weather === 'party' ? '시황: 🎉 파티 모드' : weather === 'gloom' ? '시황: 🌧 우울 모드' : '시황: 평온');
@@ -653,7 +735,7 @@ function animAnt(a, dt, t) {
   a.phase += dt * (a.moving ? (a.run ? 15 : 10) : 0);
   const sw = a.moving ? Math.sin(a.phase) * (a.run ? .9 : .65) : 0, bob = a.moving && !REDUCE ? Math.abs(Math.sin(a.phase)) * .08 : 0;
   // 점프 (fx 기반 포물선)
-  let jy = 0; if (a.jumpT >= 0) { a.jumpT += dt; const u = a.jumpT / .7; if (u >= 1) a.jumpT = -1; else jy = 4 * 1.5 * u * (1 - u); }
+  let jy = 0; if (a.jumpT >= 0) { a.jumpT += dt; const u = a.jumpT / .7; if (u >= 1) { a.jumpT = -1; if (a === myAnt) SND.land(); } else jy = 4 * 1.5 * u * (1 - u); }
   a.body.position.y = (a.sit ? -.42 : 0) + bob + jy;
   a.shadow.scale.setScalar(.6 * (1 - Math.min(.5, jy / 3))); a.shadow.material.opacity = .38;
   a.legs.forEach((l, i) => { if (a.sit) { l.rotation.set(-1.4, 0, (i % 2 ? -1 : 1) * .35); } else { l.rotation.set((i === 0 || i === 3 ? sw : -sw), 0, 0); } });
@@ -669,7 +751,10 @@ function animAnt(a, dt, t) {
     if (e > a.act.d) a.act = null;
     else if (k === 'bow') { ux = Math.sin(Math.PI * u) * 1.05; hx = Math.sin(Math.PI * u) * .3; }
     else if (k === 'clap') { const c = Math.abs(Math.sin(e * 22)) * .45; ar = [[-1.35, 0, .25 + c], [-1.35, 0, -.25 - c]]; }
-    else if (k === 'moktak') { ar[1] = [-1.7 + Math.abs(Math.sin(e * 12)) * .9, 0, -.3]; }
+    else if (k === 'fire') { a.act = { k: 'cheer', t0: t, d: 1.6 }; SND.fire(); floatAt(a, '🔥 파이어!!!', 'big'); for (let i = 0; i < 6; i++) setTimeout(() => spawn(P.x + (Math.random() - .5), .5, P.z + (Math.random() - .5), 40, i % 2 ? 0xff4d1a : 0xffb020, 2.5, -2.5, 1.1, 3), i * 120); }
+  else if (k === 'ring') { a.act = { k: 'bow', t0: t, d: 1 }; SND.bell(); floatAt(a, '🔔'); spawn(P.x, 2.2, P.z, 30, 0xffe27a, 2, 0, 1.2); }
+  else if (k === 'rocket') { a.act = { k: 'cheer', t0: t, d: 1.4 }; SND.jump(); setTimeout(() => SND.firework(), 150); floatAt(a, '🚀 떡상 가즈아!', 'big'); spawn(P.x, 1, P.z, 60, 0xff4d57, 3, -1, 1.4, 6); }
+  else if (k === 'moktak') { ar[1] = [-1.7 + Math.abs(Math.sin(e * 12)) * .9, 0, -.3]; }
     else if (k === 'water') { a.can.visible = true; ux = .25; ar[1] = [-1.45, 0, -.15]; a.can.rotation.x = .6 + Math.sin(u * Math.PI) * .5; }
     else if (k === 'buy') { const c = Math.sin(e * 32) * .35; ar = [[-1.25 + c, 0, .35], [-1.25 - c, 0, -.35]]; }
     else if (k === 'dance') { ux = Math.sin(e * 8) * .2; a.upper.rotation.z = Math.sin(e * 8) * .25; ar = [[-2.4 + Math.sin(e * 8) * .6, 0, .4], [-2.4 - Math.sin(e * 8) * .6, 0, -.4]]; }
@@ -851,7 +936,7 @@ function updHud() {
   $('hBar').style.width = (nxt ? (G.pts - cur) / (nxt - cur) * 100 : 100) + '%';
   $('hNext').textContent = nxt ? `다음 레벨(${LV[i + 1][1]})까지 ${fmt(nxt - G.pts, 0)}` : '최고 경지 — 원복 성불';
 }
-const FX_PTS = { bow: [4, 700], water: [3, 700], jump: [1, 4000], cheer: [2, 1500] };
+const FX_PTS = { bow: [4, 700], water: [3, 700], jump: [1, 4000], cheer: [2, 1500], fire: [2, 1500], ring: [2, 2000], rocket: [2, 1500] };
 function doFx(kind) {
   if (!entered) return;
   if (kind === 'jump' && !cd('jump', 650)) return;
@@ -863,13 +948,39 @@ document.querySelectorAll('[data-fx]').forEach(b => b.onclick = () => doFx(b.dat
 document.querySelectorAll('[data-emo]').forEach(b => b.onclick = () => { if (cd('emo', 400)) doFx('emo:' + b.dataset.emo); });
 
 function antOf(uid) { if (uid === live.uid) return myAnt; const r = remotes.get(uid); return r ? r.ant : null; }
-function hostFw() { const pal = [0xffd76a, 0xff4fd8, 0x2fd0ff, 0xff4d57, 0x7dff9e]; for (let i = 0; i < 7; i++) setTimeout(() => spawn((Math.random() - .5) * 20, 5 + Math.random() * 5, -11 + Math.random() * 4, 90, pal[i % 5], 6, 3, 1.8, 2), i * 260); toast('🎆 방장님의 축포!'); try { SND.level(); } catch (e) {} }
+function hostFw() { for (let i = 0; i < 4; i++) setTimeout(() => SND.firework(), i * 450); const pal = [0xffd76a, 0xff4fd8, 0x2fd0ff, 0xff4d57, 0x7dff9e]; for (let i = 0; i < 7; i++) setTimeout(() => spawn((Math.random() - .5) * 20, 5 + Math.random() * 5, -11 + Math.random() * 4, 90, pal[i % 5], 6, 3, 1.8, 2), i * 260); toast('🎆 방장님의 축포!'); try { SND.level(); } catch (e) {} }
+/* ---- 진화 연출: 빛기둥 + 충격파 + 금빛 조명 + 화면 섬광 ---- */
+const evoList = [];
+const pillarGeo = new THREE.CylinderGeometry(.9, 1.4, 14, 24, 1, true), ringGeo = new THREE.RingGeometry(.8, 1.1, 48);
+function evolveFx(a, mine) {
+  SND.evolve(); const P = a.root.position;
+  const pm = new THREE.MeshBasicMaterial({ color: 0xffe27a, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false });
+  const pil = new THREE.Mesh(pillarGeo, pm); pil.position.set(P.x, 7, P.z); scene.add(pil);
+  const rm = new THREE.MeshBasicMaterial({ color: 0xfff1b0, transparent: true, opacity: .9, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false });
+  const ring = new THREE.Mesh(ringGeo, rm); ring.rotation.x = -Math.PI / 2; ring.position.set(P.x, .05, P.z); scene.add(ring);
+  const L = new THREE.PointLight(0xffd76a, 0, 14, 1.5); L.position.set(P.x, 2.5, P.z); scene.add(L);
+  evoList.push({ pil, pm, ring, rm, L, a, t: 0 });
+  for (let i = 0; i < 5; i++) setTimeout(() => spawn(P.x, .3 + i * 1.2, P.z, 50, i % 2 ? 0xffd76a : 0xffffff, 2.2, -1.5, 1.6, 2.5), 1250 + i * 120);
+  if (mine) { const F = $('flash'); setTimeout(() => { F.style.background = '#ffe9a0'; F.style.opacity = '.55'; setTimeout(() => { F.style.opacity = '0'; setTimeout(() => { F.style.background = ''; }, 300); }, 160); }, 1250); }
+}
+function tickEvo(dt) {
+  for (let i = evoList.length - 1; i >= 0; i--) {
+    const e = evoList[i]; e.t += dt; const t = e.t, P = e.a.root.position;
+    e.pil.position.x = P.x; e.pil.position.z = P.z; e.L.position.set(P.x, 2.5, P.z); e.ring.position.x = P.x; e.ring.position.z = P.z;
+    const up = Math.min(1, t / 1.25), boom = Math.max(0, t - 1.25);
+    e.pm.opacity = t < 1.25 ? up * .35 : Math.max(0, .85 - boom * .4); e.pil.scale.set(t < 1.25 ? .35 + up * .3 : 1 + boom * .3, 1, t < 1.25 ? .35 + up * .3 : 1 + boom * .3); e.pil.rotation.y += dt * 3;
+    e.ring.scale.setScalar(boom > 0 ? 1 + boom * 9 : .01); e.rm.opacity = boom > 0 ? Math.max(0, .9 - boom * .7) : 0;
+    e.L.intensity = t < 1.25 ? up * 20 : Math.max(0, 80 - boom * 35);
+    e.a.root.position.y = t > 1.0 && t < 2.4 ? Math.sin((t - 1.0) / 1.4 * Math.PI) * .9 : 0;
+    if (t > 3.2) { scene.remove(e.pil, e.ring, e.L); e.pm.dispose(); e.rm.dispose(); e.a.root.position.y = 0; evoList.splice(i, 1); }
+  }
+}
 function onFxCb(fx) {
   if (fx.kind === 'hostfw') { if (fx.uid !== live.uid) hostFw(); return; }
   fxLog.push(fx.kind + '@' + fx.uid); if (fxLog.length > 60) fxLog.shift();
   const a = antOf(fx.uid); if (!a) return; const t = clock.elapsedTime, k = String(fx.kind || '');
   const P = a.root.position;
-  if (k.startsWith('emo:')) { floatAt(a, k.slice(4)); return; }
+  if (k.startsWith('emo:')) { floatAt(a, k.slice(4)); SND.pop(); return; }
   if (k === 'jump') { a.jumpT = 0; SND.jump(); }
   else if (k === 'bow') { a.act = { k: 'bow', t0: t, d: 1 }; SND.bow(); }
   else if (k === 'clap') { a.act = { k: 'clap', t0: t, d: 1.2 }; [0, .15, .3, .45].forEach(d => setTimeout(SND.clap, d * 1000)); floatAt(a, '👏'); }
@@ -882,8 +993,8 @@ function onFxCb(fx) {
     coins.push({ m: c, from: new THREE.Vector3(P.x, 1.6, P.z), to: new THREE.Vector3(INTER.offer.X, 1.45, INTER.offer.Z - .6), t: 0 });
   }
   else if (k === 'fortune') { floatAt(a, '📜'); }
-  else if (k === 'levelup') { a.act = { k: 'cheer', t0: t, d: 1.6 }; spawn(P.x, 1.5, P.z, 80, 0xffd76a, 4, 3, 1.4, 2); SND.level(); floatAt(a, 'LEVEL UP!', 'big'); }
-  else if (k === 'b108') { a.act = { k: 'cheer', t0: t, d: 2.5 }; for (let i = 0; i < 4; i++) setTimeout(() => spawn(P.x, 2 + i * .5, P.z, 90, i % 2 ? 0xffd76a : 0xf5a524, 5, 2.5, 1.6, 2), i * 250); SND.level(); floatAt(a, '108배 완주!', 'big'); }
+  else if (k === 'levelup') { a.act = { k: 'cheer', t0: t, d: 2.4 }; evolveFx(a, fx.uid === live.uid); floatAt(a, '✨ 진화! ✨', 'big'); }
+  else if (k === 'b108') { a.act = { k: 'cheer', t0: t, d: 2.5 }; for (let i = 0; i < 4; i++) setTimeout(() => spawn(P.x, 2 + i * .5, P.z, 90, i % 2 ? 0xffd76a : 0xf5a524, 5, 2.5, 1.6, 2), i * 250); SND.level(); SND.bell(); floatAt(a, '108배 완주!', 'big'); }
 }
 
 /* ================= 피어 ================= */
@@ -977,7 +1088,7 @@ function addLog(m, sys) {
   logEl.appendChild(d); while (logEl.children.length > 80) logEl.firstChild.remove(); logEl.scrollTop = logEl.scrollHeight;
 }
 function onChatCb(m) {
-  addLog(m); if (m.host && String(m.text || '').indexOf('📢') === 0) toast(m.text);
+  addLog(m); if (m.uid !== live.uid && entered && cd('recv', 600)) SND.recv(); if (m.host && String(m.text || '').indexOf('📢') === 0) toast(m.text);
   const L = m.uid === live.uid ? myLabel : (remotes.get(m.uid) || {}).L;
   if (L) { L.say.textContent = m.text || ''; L.say.style.display = ''; clearTimeout(L.sayT); L.sayT = setTimeout(() => { L.say.style.display = 'none'; }, 5000); }
 }
@@ -985,7 +1096,7 @@ let lastChat = 0;
 $('chatForm').onsubmit = e => {
   e.preventDefault(); const v = $('chatIn').value.trim(); if (!v || !room) return;
   if (performance.now() - lastChat < 1500) { toast('천천히 — 1.5초에 한 번'); return; }
-  lastChat = performance.now(); { let tx = v.slice(0, 120); if (HOST && /^\/공지\s/.test(tx)) tx = '📢 ' + tx.replace(/^\/공지\s+/, ''); room.sendChat(tx, { host: HOST }); } if (cd('pts-chat', 8000)) addPts(2); $('chatIn').value = ''; $('chatIn').blur();
+  lastChat = performance.now(); { let tx = v.slice(0, 120); if (HOST && /^\/공지\s/.test(tx)) tx = '📢 ' + tx.replace(/^\/공지\s+/, ''); room.sendChat(tx, { host: HOST }); } if (cd('pts-chat', 8000)) addPts(2); SND.send(); $('chatIn').value = ''; $('chatIn').blur();
 };
 
 /* ================= UI 패널·모달 ================= */
@@ -1157,6 +1268,10 @@ function mkRedraw() {
 function mkSoon() { if (!mkTimer) mkTimer = setTimeout(() => { mkTimer = null; mkRedraw(); }, 400); }
 onMarket(m => { MK.q = m.q; MK.h = m.h; mkSoon(); });
 setInterval(mkRedraw, 30000); mkRedraw();
+function renderBgm() { const L = $('bgmList'); L.textContent = ''; [['auto', '🤖 자동 (시황 따라)'], ...Object.keys(BGM).map(k => [k, BGM[k].name]), ['off', '🔇 음악 끄기']].forEach(([k, n]) => { const b = el('button', AUD.bgm === k ? 'on' : '', n); b.type = 'button'; b.onclick = () => { AUD.bgm = k; LS.set('lv3d_aud', AUD); if (muted && k !== 'off') { muted = false; LS.set('lv3d_mute', false); setMuteBtn(); } ac(); applyVol(); bgmUpdate(); renderBgm(); }; L.appendChild(b); }); $('vB').value = AUD.vb; $('vS').value = AUD.vs; }
+$('bBgm').onclick = () => { ac(); renderBgm(); openModal('mBgm'); };
+$('vB').oninput = e => { AUD.vb = +e.target.value; LS.set('lv3d_aud', AUD); ac(); applyVol(); };
+$('vS').oninput = e => { AUD.vs = +e.target.value; LS.set('lv3d_aud', AUD); ac(); applyVol(); SND.pop(); };
 $('bMkt').onclick = () => { openModal('mMkt'); mkRedraw(); };
 $('bFw').onclick = () => { if (!HOST || !room || !cd('fw', 4000)) return; room.sendFx('hostfw'); hostFw(); };
 
@@ -1168,12 +1283,15 @@ function enter() {
   const sp = toW(10 + Math.random() * 80, 72 + Math.random() * 24); // 많은 인원이 한곳에 겹치지 않게 넓게 퍼뜨려 등장 ME.X = sp.x; ME.Z = sp.z; ME.ry = Math.PI; myAnt.root.rotation.y = Math.PI;
   cam.yaw = 0; cam.tx = ME.X; cam.tz = ME.Z;
   room.onPeers(onPeersCb);
-  room.onChat(onChatCb, hist => { hist.forEach(m => addLog(m)); addLog('객장에 들어왔습니다. 전광판을 향해 🙏', true); });
+  room.onChat(onChatCb, hist => { hist.forEach(m => addLog(m)); addLog('객장에 들어왔습니다. 전광판을 향해 🙏', true); try { const L = LVX.linkList(); if (L.length) addLog('📣 레버가치전문가 — ' + L.map(l => l.icon + l.name).join(' · ') + ' (상단 「📣 레버가치」 버튼)', true); } catch (e) {} });
   room.onFx(onFxCb);
   room.onMoktak(n => { mokCount = n; olabs.moktak.textContent = '목탁 · ' + fmt(n, 0) + '회'; });
   room.onCounter('offer', n => { offerCount = n; olabs.offer.textContent = '시주함 · 누적 ' + fmt(n, 0) + '닢'; });
   ['koru', 'soxl'].forEach(k => room.onVotes(k + '-' + kstDate(), (c, mine) => { votes[k] = { up: c.up, down: c.down, mine }; drawVoteBoard(); if ($('mVote').classList.contains('on')) renderVoteModal(); }));
   sync(true); fillLabel(myLabel, myData(), true);
+  ac(); applyVol(); setTimeout(bgmUpdate, 600);
+  setInterval(() => sync(true), 25000); // 살아 있다는 신호(유령 방지)
+  addEventListener('pagehide', () => { try { room.leave(); } catch (e) {} });
   setInterval(() => { if (entered && document.visibilityState === 'visible') addPts(3); }, 60000);
   { const dk = 'lv3d_daily'; if (LS.get(dk, '') !== kstDate()) { LS.set(dk, kstDate()); setTimeout(() => { toast('🎁 오늘 첫 입장 보너스 +20'); addPts(20); }, 1500); } }
 }
@@ -1215,14 +1333,15 @@ initLive().then(async l => {
 /* ================= 루프 ================= */
 const clock = new THREE.Clock();
 const confD = new THREE.Object3D();
-let frames = 0, fps = 0, fpsT = 0;
+let frames = 0, fps = 0, fpsT = 0, lastStep = 0;
 function resize() { VW = innerWidth; VH = innerHeight; renderer.setSize(VW, VH, false); camera.aspect = VW / VH; camera.fov = VW < VH ? 68 : 55; camera.updateProjectionMatrix(); }
 addEventListener('resize', resize); resize();
 const tmpV = new THREE.Vector3();
 function loop() {
   const dt = Math.min(.05, clock.getDelta()), t = clock.elapsedTime;
-  frames++; fpsT += dt; if (fpsT > 1) { fps = frames / fpsT; frames = 0; fpsT = 0; }
-  if (entered) { updatePlayer(dt); animAnt(myAnt, dt, t); }
+  frames++; fpsT += dt; if (fpsT > 1) { fps = frames / fpsT; frames = 0; fpsT = 0; } adaptPR(fps, dt);
+  if (entered) { updatePlayer(dt); animAnt(myAnt, dt, t); const stp = Math.floor(myAnt.phase / Math.PI); if (stp !== lastStep) { lastStep = stp; if (myAnt.moving && myAnt.jumpT < 0) SND.step(myAnt.run); } }
+  tickEvo(dt);
   updateRemotes(dt); remotes.forEach(r => { if (r.ant) { if (r.dist > LEG_FAR) r.ant.moving = false; animAnt(r.ant, dt, t); } });
   // 카메라
   const tgtX = entered ? ME.X : 0, tgtZ = entered ? ME.Z : 6, kk = 1 - Math.exp(-dt * 8);
@@ -1274,7 +1393,7 @@ window.__room3d = {
   inter: INTER, near: () => findNear(), use: k => useInter(k), fortune: () => fortuneFor(live.uid), offer: () => offerCount, votes: () => JSON.parse(JSON.stringify(votes)),
   inject: list => { fakePeers = list.filter(d => String(d.uid).startsWith('f')); onPeersCb(peersData.filter(d => !String(d.uid).startsWith('f'))); }, // 테스트 전용: 화면 부하 확인(데이터를 만들지 않음)
   room: () => ROOM, lod: () => ({ detail: [...remotes.values()].filter(r => r.ant).length, pawns: pawnBody.count, labels: [...remotes.values()].filter(r => r.L && r.L.d.style.visibility !== 'hidden').length }),
-  host: () => HOST, setHost: v => { HOST = !!v; $('bFw').style.display = HOST ? '' : 'none'; setAntLook(myAnt, PROF.color, PROF.hb, G.pts, HOST); fillLabel(myLabel, myData(), true); sync(true); }, setMarket: (q, h) => { MK.q = q || {}; MK.h = h || {}; mkRedraw(); }, fxLog, tier: t => { applyTier(myAnt, t); return myAnt.tier; }, pts: () => G.pts, fps: () => fps, seats: SEATS, sitOn: i => sitOn(i), screenOf: uid => { const r = uid === live.uid ? { cur: { x: ME.X, z: ME.Z } } : remotes.get(uid); return r ? project(r.cur.x, 1, r.cur.z) : null; }
+  evo: () => { evolveFx(myAnt, true); return true; }, bgm: () => ({ cur: bgmCur, ac: AC && AC.state }), host: () => HOST, setHost: v => { HOST = !!v; $('bFw').style.display = HOST ? '' : 'none'; setAntLook(myAnt, PROF.color, PROF.hb, G.pts, HOST); fillLabel(myLabel, myData(), true); sync(true); }, setMarket: (q, h) => { MK.q = q || {}; MK.h = h || {}; mkRedraw(); }, fxLog, tier: t => { applyTier(myAnt, t); return myAnt.tier; }, pts: () => G.pts, fps: () => fps, seats: SEATS, sitOn: i => sitOn(i), screenOf: uid => { const r = uid === live.uid ? { cur: { x: ME.X, z: ME.Z } } : remotes.get(uid); return r ? project(r.cur.x, 1, r.cur.z) : null; }
 };
 </script>
 </body>

@@ -29,6 +29,17 @@
     ".lvx-prof img{width:30px;height:30px;border-radius:50%;object-fit:cover;border:2px solid #fff;box-shadow:0 0 0 2px #ffb020}",
     ".lvx-prof.big img{width:44px;height:44px}",
     ".lvx-don{font-family:inherit;font-weight:800;font-size:12.5px;padding:7px 12px;border-radius:999px;border:0;background:linear-gradient(135deg,#ff8a65,#ffb74d);color:#fff;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(255,120,60,.3)}",
+    ".lvx-don{background:linear-gradient(135deg,#ffd76a,#ff9f1c)!important;color:#2a1600!important;box-shadow:0 0 14px rgba(255,190,60,.65)!important;animation:lvxPulse 2.4s ease-in-out infinite}",
+    "@keyframes lvxPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}",
+    ".lvx-qr{display:block;width:190px;height:190px;margin:4px auto 4px;background:#fff;border-radius:12px;padding:6px;border:1px solid #e3e8f2}",
+    ".lvx-qrt{text-align:center;font-size:12.5px;color:#46506a;margin-bottom:10px}",
+    ".lvx-acct{background:#f3f7ff;border:1px solid #cfe0ff;border-radius:12px;padding:10px;text-align:center;margin-bottom:10px;user-select:all}",
+    ".lvx-acct .b{font-size:13px;color:#3a4a6a;font-weight:700}.lvx-acct .n{font-size:24px;font-weight:900;letter-spacing:1px;color:#0b1b3a;font-family:ui-monospace,Menlo,Consolas,monospace;margin-top:2px}",
+    ".lvx-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px}",
+    ".lvx-btn.toss{background:#0064ff!important;color:#fff!important;text-align:center;text-decoration:none}",
+    ".lvx-lnk{font-family:inherit;font-weight:800;font-size:12.5px;padding:7px 12px;border-radius:999px;border:0;background:linear-gradient(135deg,#03c75a,#1ec8ff);color:#fff;cursor:pointer;white-space:nowrap;box-shadow:0 0 12px rgba(3,199,90,.5)}",
+    ".lvx-lk{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:12px;border:1px solid #e3e8f2;background:#f7f9fd;color:#1d2433;text-decoration:none;margin-bottom:8px}",
+    ".lvx-lk:hover{border-color:#03c75a;background:#effcf4}.lvx-lk .i{font-size:24px}.lvx-lk .t{flex:1;display:flex;flex-direction:column;gap:2px}.lvx-lk b{font-size:15px}.lvx-lk small{color:#66708a;font-size:12px}.lvx-lk .go{font-weight:900;color:#03c75a}",
     ".lvx-modal{position:fixed;inset:0;z-index:90;background:rgba(30,40,60,.42);display:flex;align-items:center;justify-content:center;padding:14px;font-family:inherit}",
     ".lvx-box{width:min(460px,100%);max-height:calc(100vh - 28px);overflow:auto;background:#fff;color:#1d2433;border-radius:18px;padding:18px;box-shadow:0 20px 60px rgba(30,50,90,.3)}",
     ".lvx-box h3{margin:0 0 4px;font-size:19px;text-align:center}",
@@ -47,7 +58,7 @@
     ".lvx-msg{min-height:18px;color:#d0343a;font-size:12.5px;text-align:center;margin-top:8px}",
     ".lvx-note{font-size:11px;color:#8a93a8;text-align:center;margin-top:6px;line-height:1.5}",
     ".lvx-dtext{white-space:pre-wrap;word-break:break-all;font-size:14px;line-height:1.6;background:#f7f9fd;border-radius:10px;padding:10px 12px;margin:8px 0}",
-    ".lvx-btn{display:block;width:100%;text-align:center;padding:11px;border-radius:12px;border:0;background:#2f6bff;color:#fff;font-weight:800;font-family:inherit;cursor:pointer;text-decoration:none;margin-top:8px}",
+    ".lvx-btn{box-sizing:border-box;display:block;width:100%;text-align:center;padding:11px;border-radius:12px;border:0;background:#2f6bff;color:#fff;font-weight:800;font-family:inherit;cursor:pointer;text-decoration:none;margin-top:8px}",
     ".lvx-btn.sec{background:#eef1f7;color:#3a4256}"
   ].join("\n");
   var st = document.createElement("style"); st.textContent = css; (document.head || document.documentElement).appendChild(st);
@@ -85,16 +96,60 @@
     a.appendChild(el("span", null, String(p.name || "").slice(0, 20)));
     return a;
   }
+  function copyText(t, done) {
+    function fb() { var ta = el("textarea"); ta.value = t; ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); } catch (e) {} ta.remove(); done(); }
+    try { if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(t).then(done, fb); else fb(); } catch (e) { fb(); }
+  }
+  function tossLink(d) { return "supertoss://send?bank=" + encodeURIComponent(d.bank || "") + "&accountNo=" + String(d.account || "").replace(/\D/g, "") + "&origin=qr"; }
+  function donateBox(box, d) {
+    var acct = String(d.account || "").trim(), bank = String(d.bank || "").trim(), holder = String(d.holder || "").trim();
+    if (!acct) return;
+    var qr = el("img", "lvx-qr"); qr.src = "donate_qr.svg"; qr.alt = "후원 QR 코드"; box.appendChild(qr);
+    box.appendChild(el("div", "lvx-qrt", "📱 휴대폰 카메라로 찍으면 송금 화면이 열려요"));
+    var card = el("div", "lvx-acct");
+    card.appendChild(el("div", "b", bank + (holder ? " · 예금주 " + holder : "")));
+    card.appendChild(el("div", "n", acct)); box.appendChild(card);
+    var row = el("div", "lvx-row");
+    var c1 = el("button", "lvx-btn", "📋 계좌번호 복사"); c1.type = "button";
+    c1.onclick = function () { copyText(bank + " " + acct, function () { c1.textContent = "✅ 복사됐어요! 은행 앱에 붙여넣기"; setTimeout(function () { c1.textContent = "📋 계좌번호 복사"; }, 2500); }); };
+    row.appendChild(c1);
+    { var t = el("a", "lvx-btn toss", "💙 토스로 바로 송금"); t.href = tossLink(d); row.appendChild(t); }
+    box.appendChild(row);
+    box.appendChild(el("div", "s", "‘토스로 바로 송금’은 토스 앱이 설치된 휴대폰에서 열립니다. 안 열리면 계좌번호를 복사해 쓰세요."));
+  }
   function donateBtn() {
-    var d = CFG.donate || {}; var txt = String(d.text || "").trim(), link = safeLink(d.link);
-    if (!txt && !link) return null;
-    var b = el("button", "lvx-don", "☕ 후원하기"); b.type = "button"; b.id = "lvxDonate";
+    var d = CFG.donate || {}; var txt = String(d.text || "").trim(), link = safeLink(d.link), acct = String(d.account || "").trim();
+    if (!txt && !link && !acct) return null;
+    var b = el("button", "lvx-don", "☕ 후원"); b.type = "button"; b.id = "lvxDonate"; b.title = "후원 계좌 · QR";
     b.onclick = function () {
       var m = el("div", "lvx-modal"), box = el("div", "lvx-box"); m.appendChild(box);
-      box.appendChild(el("h3", null, "☕ 후원하기"));
-      box.appendChild(el("div", "s", "객장 운영을 응원해 주셔서 감사합니다"));
+      box.appendChild(el("h3", null, "☕ 레버가치전문가 후원하기"));
+      box.appendChild(el("div", "s", "객장 운영을 응원해 주셔서 감사합니다 🙏 커피 한 잔이면 충분해요"));
+      donateBox(box, d);
       if (txt) box.appendChild(el("div", "lvx-dtext", txt.slice(0, 400)));
       if (link) { var a = el("a", "lvx-btn", "후원 페이지 열기"); a.href = link; a.target = "_blank"; a.rel = "noopener"; box.appendChild(a); }
+      var c = el("button", "lvx-btn sec", "닫기"); c.type = "button"; c.onclick = function () { m.remove(); }; box.appendChild(c);
+      m.addEventListener("pointerdown", function (e) { if (e.target === m) m.remove(); });
+      document.body.appendChild(m);
+    };
+    return b;
+  }
+  function linkList() { return (CFG.links || []).map(function (l) { return { icon: String(l.icon || "🔗").slice(0, 4), name: String(l.name || "").slice(0, 30), desc: String(l.desc || "").slice(0, 60), url: safeLink(l.url) }; }).filter(function (l) { return l.url && l.name; }); }
+  function linkCards(box) {
+    linkList().forEach(function (l) {
+      var a = el("a", "lvx-lk"); a.href = l.url; a.target = "_blank"; a.rel = "noopener";
+      a.appendChild(el("span", "i", l.icon)); var t = el("span", "t"); t.appendChild(el("b", null, l.name)); t.appendChild(el("small", null, l.desc)); a.appendChild(t); a.appendChild(el("span", "go", "→"));
+      box.appendChild(a);
+    });
+  }
+  function linksBtn() {
+    if (!linkList().length) return null;
+    var b = el("button", "lvx-lnk", "📣 레버가치"); b.type = "button"; b.id = "lvxLinks"; b.title = "블로그 · 오픈카톡 · 신호 웹페이지";
+    b.onclick = function () {
+      var m = el("div", "lvx-modal"), box = el("div", "lvx-box"); m.appendChild(box);
+      box.appendChild(el("h3", null, "📣 레버가치전문가 채널"));
+      box.appendChild(el("div", "s", "분석 글·신호봇·수다방까지 — 놀러 오세요!"));
+      linkCards(box);
       var c = el("button", "lvx-btn sec", "닫기"); c.type = "button"; c.onclick = function () { m.remove(); }; box.appendChild(c);
       m.addEventListener("pointerdown", function (e) { if (e.target === m) m.remove(); });
       document.body.appendChild(m);
@@ -104,6 +159,7 @@
   function decorate(container) { // 헤더에 프로필·후원 붙이기
     if (!container) return;
     var p = profileEl(false); if (p) container.insertBefore(p, container.children[1] || null);
+    var lk = linksBtn(); if (lk) container.appendChild(lk);
     var d = donateBtn(); if (d) container.appendChild(d);
   }
 
@@ -171,6 +227,6 @@
   window.LVX = {
     CAP: CAP, CHANNELS: CHS, chNo: chNo, chLabel: chLabel, roomFromUrl: roomFromUrl,
     pickChannel: pickChannel, countOnce: countOnce, helpPill: helpPill, showGuide: showGuide, hideGuide: hideGuide,
-    profileEl: profileEl, donateBtn: donateBtn, decorate: decorate, forceCounts: window.LVX_FORCE || null
+    profileEl: profileEl, donateBtn: donateBtn, donateBox: donateBox, linkCards: linkCards, linkList: linkList, decorate: decorate, forceCounts: window.LVX_FORCE || null
   };
 })();

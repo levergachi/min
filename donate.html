@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>☕ 레버가치전문가 후원 — 원복 객장</title>
+<link rel="icon" href="data:,">
+<style>
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;background:radial-gradient(circle at 50% 0,#1a2550,#060b18 70%);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;color:#1d2433}
+.card{width:min(420px,100%);background:#fff;border-radius:20px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+h1{font-size:21px;text-align:center;margin:0 0 4px}.sub{text-align:center;color:#66708a;font-size:13px;margin-bottom:14px}
+.lvx-qr,.lvx-qrt{display:none!important}
+.back{display:block;text-align:center;margin-top:12px;color:#2f6bff;font-weight:700;text-decoration:none;font-size:14px}
+</style>
+</head>
+<body>
+<div class="card" id="c">
+  <h1>☕ 레버가치전문가 후원</h1>
+  <div class="sub">원복 객장·원복 계산기 운영을 응원해 주셔서 감사합니다 🙏</div>
+</div>
+<script src="config.js"></script>
+<script src="extras.js"></script>
+<script>
+(function () {
+  var c = document.getElementById('c');
+  try { LVX.donateBox(c, (window.LEVER_CONFIG || {}).donate || {}); } catch (e) { c.appendChild(document.createTextNode('후원 정보를 불러오지 못했습니다.')); }
+  try { var h = document.createElement('div'); h.style.cssText = 'margin:14px 0 6px;font-weight:800;text-align:center'; h.textContent = '📣 레버가치전문가 채널'; c.appendChild(h); LVX.linkCards(c); } catch (e) {}
+  var a = document.createElement('a'); a.className = 'back'; a.href = 'room3d.html'; a.textContent = '🐜 원복 객장으로 가기 →'; c.appendChild(a);
+})();
+</script>
+</body>
+</html>

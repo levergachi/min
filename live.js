@@ -61,6 +61,7 @@ export const CHANNELS = Array.from({ length: N_CHANNELS }, (_, i) => "ch" + (i +
 export function channelNo(room) { const m = /^ch(\d{1,2})$/.exec(String(room || "")); return m ? +m[1] : 0; }
 const REFRESH = Math.max(10, Number(CFG.priceRefreshSec) || 15) * 1000;
 const PUSHER_FRESH_MS = 90 * 1000;
+const STALE_MS = 75 * 1000; // 이 시간 동안 신호가 없으면 나간 사람으로 보고 숨김(유령 방지)
 
 function rid() { return Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4); }
 function clampStr(s, n) { return String(s == null ? "" : s).replace(/[\u0000-\u001f]/g, "").slice(0, n); }
@@ -312,7 +313,8 @@ async function firebaseInit() {
 
   live.channelCounts = (cb) => {
     const counts = CHANNELS.map(() => 0); const offs = [];
-    CHANNELS.forEach((name, i) => { offs.push(D.onValue(D.ref(db, "rooms/" + name + "/users"), s => { const v = s.val(); counts[i] = v ? Object.keys(v).length : 0; cb(counts.slice()); }, () => {})); });
+    const alive = v => v ? Object.values(v).filter(u => u && (!u.ts || now() - u.ts < STALE_MS)).length : 0;
+    CHANNELS.forEach((name, i) => { offs.push(D.onValue(D.ref(db, "rooms/" + name + "/users"), s => { counts[i] = alive(s.val()); cb(counts.slice()); }, () => {})); });
     cb(counts.slice());
     return () => offs.forEach(f => { try { f(); } catch (e) {} });
   };
@@ -350,8 +352,9 @@ async function firebaseInit() {
       onPeers(f) {
         // 인원이 많아도 가볍게: 개별 변경(child 이벤트)만 받아 모았다가 최대 10번/초로 전달
         const map = new Map(); let t = null;
-        const flush = () => { t = null; const arr = []; map.forEach((v, k) => arr.push(Object.assign({ uid: k, you: k === live.uid }, v))); f(arr); };
+        const flush = () => { t = null; const arr = []; const tn = now(); map.forEach((v, k) => { if (k !== live.uid && v.ts && tn - v.ts > STALE_MS) return; arr.push(Object.assign({ uid: k, you: k === live.uid }, v)); }); f(arr); };
         const soon = () => { if (!t) t = setTimeout(flush, 100); };
+        setInterval(soon, 15000); // 오래 조용한 사람(유령) 주기적으로 걸러내기
         const ref = D.ref(db, `${R}/users`);
         D.onChildAdded(ref, s => { map.set(s.key, s.val() || {}); soon(); });
         D.onChildChanged(ref, s => { map.set(s.key, s.val() || {}); soon(); });
