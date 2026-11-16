@@ -53,7 +53,7 @@
      ".read": true,
      "$name": {
       ".write": "auth != null",
-      ".validate": "$name.matches(/^[a-z0-9]{1,16}$/) && newData.isNumber() && newData.val() > (data.exists() ? data.val() : 0) && newData.val() <= (data.exists() ? data.val() : 0) + 1000"
+      ".validate": "$name.matches(/^[a-z0-9]{1,16}$/) && newData.isNumber() && newData.val() > (data.exists() ? data.val() : 0) && newData.val() <= (data.exists() ? data.val() : 0) + 100000"
      }
     },
     "votes": {

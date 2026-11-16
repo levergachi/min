@@ -210,7 +210,7 @@ function localRoom(room) {
     bumpMoktak() { moktak += 1; try { localStorage.setItem(mokKey, String(moktak)); } catch (e) {} ch.postMessage({ t: "mok", uid: live.uid, n: moktak }); subs.moktak.forEach(f => f(moktak)); },
     onMoktak(f) { subs.moktak.add(f); f(moktak); },
     // 공용 누적 카운터 (예: offer=시주함 동전, bell=종)
-    bumpCounter(name, n) { n = Math.max(1, Math.min(1000, Math.floor(n) || 1)); name = clampStr(name, 16); counters[name] = (counters[name] || 0) + n; try { localStorage.setItem(cntKey, JSON.stringify(counters)); } catch (e) {} ch.postMessage({ t: "cnt", uid: live.uid, name, n: counters[name] }); (cntSubs[name] || []).forEach(f => f(counters[name])); },
+    bumpCounter(name, n) { n = Math.max(1, Math.min(99999, Math.floor(n) || 1)); name = clampStr(name, 16); counters[name] = (counters[name] || 0) + n; try { localStorage.setItem(cntKey, JSON.stringify(counters)); } catch (e) {} ch.postMessage({ t: "cnt", uid: live.uid, name, n: counters[name] }); (cntSubs[name] || []).forEach(f => f(counters[name])); },
     onCounter(name, f) { (cntSubs[name] = cntSubs[name] || []).push(f); f(counters[name] || 0); return () => { cntSubs[name] = (cntSubs[name] || []).filter(x => x !== f); }; },
     // 투표: topic 별로 1인 1표(바꾸기 가능), choice = 'up' | 'down'
     vote(topic, choice) { if (choice !== "up" && choice !== "down") return; const t = votes[topic] = votes[topic] || {}; t[live.uid] = choice; try { localStorage.setItem(voteKey, JSON.stringify(votes)); } catch (e) {} ch.postMessage({ t: "vote", uid: live.uid, topic, choice }); fireVotes(topic); },
@@ -382,7 +382,7 @@ async function firebaseInit() {
       },
       onChat(f, history) {
         let first = true; const seen = new Set();
-        const q = D.query(D.ref(db, `${R}/chat`), D.limitToLast(50));
+        const q = D.query(D.ref(db, `${R}/chat`), D.limitToLast(200));
         D.onValue(q, s => {
           const arr = []; s.forEach(c => { arr.push(Object.assign({ id: c.key }, c.val())); });
           if (first) { first = false; arr.forEach(m => seen.add(m.id)); if (history) history(arr); return; }
@@ -401,7 +401,7 @@ async function firebaseInit() {
       },
       bumpMoktak() { D.runTransaction(D.ref(db, `${R}/moktak`), n => (n || 0) + 1).catch(() => {}); },
       onMoktak(f) { D.onValue(D.ref(db, `${R}/moktak`), s => f(s.val() || 0)); },
-      bumpCounter(name, k) { k = Math.max(1, Math.min(1000, Math.floor(k) || 1)); name = String(name).replace(/[^a-z0-9]/g, "").slice(0, 16); if (!name) return; D.runTransaction(D.ref(db, `${R}/counters/${name}`), n => (n || 0) + k).catch(() => {}); },
+      bumpCounter(name, k) { k = Math.max(1, Math.min(99999, Math.floor(k) || 1)); name = String(name).replace(/[^a-z0-9]/g, "").slice(0, 16); if (!name) return; D.runTransaction(D.ref(db, `${R}/counters/${name}`), n => (n || 0) + k).catch(() => {}); },
       onCounter(name, f) { name = String(name).replace(/[^a-z0-9]/g, "").slice(0, 16); return D.onValue(D.ref(db, `${R}/counters/${name}`), s => f(s.val() || 0)); },
       vote(topic, choice) { topic = String(topic).replace(/[^a-z0-9-]/g, "").slice(0, 32); if (!topic || (choice !== "up" && choice !== "down")) return; D.set(D.ref(db, `${R}/votes/${topic}/${live.uid}`), choice).catch(() => {}); },
       onVotes(topic, f) { topic = String(topic).replace(/[^a-z0-9-]/g, "").slice(0, 32); D.onValue(D.ref(db, `${R}/votes/${topic}`), s => { const v = s.val() || {}; const c = { up: 0, down: 0 }; Object.values(v).forEach(x => { if (x === "up" || x === "down") c[x]++; }); f(c, v[live.uid] || null); }); },
