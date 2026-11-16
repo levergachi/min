@@ -323,6 +323,9 @@ async function firebaseInit() {
     return () => offs.forEach(f => { try { f(); } catch (e) {} });
   };
   // 방장 인증: 비밀 코드는 DB 규칙(콘솔)에만 있고, 맞아야 hosts/<uid> 가 써진다
+  // 🔐 아이디·비밀번호 저장(키 = SHA-256(아이디|비번) → 목록 조회 불가, 아는 사람만 읽고 씀)
+  live.saveGet = async (key) => { const s = await D.get(D.ref(db, "saves/" + key)); return s.val(); };
+  live.savePut = async (key, data) => { await D.set(D.ref(db, "saves/" + key), data); return true; };
   live.claimHost = async (code) => {
     try { await D.set(D.ref(db, "hosts/" + live.uid), { code: String(code || "").slice(0, 40) }); return true; }
     catch (e) { return false; }
@@ -350,6 +353,7 @@ async function firebaseInit() {
         if (data.pts > 0) clean.pts = Math.min(1e7, Math.floor(Number(data.pts)) || 0);
         if (data.hb) clean.hb = clampStr(data.hb, 6);
         if (data.title) clean.title = clampStr(data.title, 12);
+        if (/^[wh]\d{1,2}-\d{1,2}-\d$/.test(data.wp || '')) clean.wp = data.wp; if (/^[wh]\d{1,2}-\d{1,2}-\d$/.test(data.ht || '')) clean.ht = data.ht;
         if (data.host === true) clean.host = true;
         D.set(meRef, clean).catch(e => console.error(e));
       },
@@ -403,6 +407,7 @@ async function firebaseInit() {
 }
 
 live.claimHost = async () => false;
+if (!live.saveGet) { live.saveGet = async k => { try { return JSON.parse(localStorage.getItem('lv_save_' + k) || 'null'); } catch (e) { return null; } }; live.savePut = async (k, d) => { localStorage.setItem('lv_save_' + k, JSON.stringify(d)); return true; }; }
 
 export function initLive() {
   if (ready) return ready;

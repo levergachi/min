@@ -21,7 +21,7 @@
           ".read": true,
           "$uid": {
             ".write": "auth != null && auth.uid === $uid",
-            ".validate": "newData.child('nick').isString() && newData.child('nick').val().length >= 1 && newData.child('nick').val().length <= 12 && (!newData.child('x').exists() || (newData.child('x').isNumber() && newData.child('x').val() >= 0 && newData.child('x').val() <= 100)) && (!newData.child('y').exists() || (newData.child('y').isNumber() && newData.child('y').val() >= 0 && newData.child('y').val() <= 100)) && (!newData.child('pts').exists() || (newData.child('pts').isNumber() && newData.child('pts').val() >= 0 && newData.child('pts').val() <= 10000000)) && (!newData.child('hb').exists() || (newData.child('hb').isString() && newData.child('hb').val().length <= 6)) && (!newData.child('title').exists() || (newData.child('title').isString() && newData.child('title').val().length <= 12))"
+            ".validate": "newData.child('nick').isString() && newData.child('nick').val().length >= 1 && newData.child('nick').val().length <= 12 && (!newData.child('x').exists() || (newData.child('x').isNumber() && newData.child('x').val() >= 0 && newData.child('x').val() <= 100)) && (!newData.child('y').exists() || (newData.child('y').isNumber() && newData.child('y').val() >= 0 && newData.child('y').val() <= 100)) && (!newData.child('pts').exists() || (newData.child('pts').isNumber() && newData.child('pts').val() >= 0 && newData.child('pts').val() <= 10000000)) && (!newData.child('hb').exists() || (newData.child('hb').isString() && newData.child('hb').val().length <= 6)) && (!newData.child('title').exists() || (newData.child('title').isString() && newData.child('title').val().length <= 12)) && (!newData.child('host').exists() || (newData.child('host').val() === true && root.child('hosts').child(auth.uid).exists()))"
           }
         },
         "chat": {
@@ -31,7 +31,7 @@
           ],
           "$msg": {
             ".write": "auth != null && !data.exists()",
-            ".validate": "newData.child('uid').val() === auth.uid && newData.child('text').isString() && newData.child('text').val().length >= 1 && newData.child('text').val().length <= 120 && newData.child('nick').isString() && newData.child('nick').val().length <= 12 && newData.child('ts').val() <= now"
+            ".validate": "newData.child('uid').val() === auth.uid && newData.child('text').isString() && newData.child('text').val().length >= 1 && newData.child('text').val().length <= 120 && newData.child('nick').isString() && newData.child('nick').val().length <= 12 && newData.child('ts').val() <= now && (!newData.child('host').exists() || (newData.child('host').val() === true && root.child('hosts').child(auth.uid).exists()))"
           }
         },
         "fx": {
@@ -63,6 +63,34 @@
             }
           }
         }
+      }
+    },
+    "mkt": {
+      ".read": true,
+      "q": {
+        "$s": {
+          ".write": "auth != null && $s.matches(/^[A-Z0-9]{1,8}$/)",
+          ".validate": "newData.hasChildren(['p','ts']) && newData.child('p').isNumber() && newData.child('p').val() > 0 && newData.child('p').val() < 10000000 && newData.child('ts').isNumber()"
+        }
+      },
+      "h": {
+        "$k": {
+          ".write": "auth != null && $k.matches(/^[A-Z0-9]{1,8}$/)",
+          ".validate": "newData.isString() && newData.val().length <= 5000"
+        }
+      }
+    },
+    "hosts": {
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid && newData.child('code').val() === 'CHANGE_ME_HOST_CODE'",
+        ".validate": "newData.child('code').isString()"
+      }
+    },
+    "saves": {
+      "$k": {
+        ".read": "auth != null && $k.matches(/^[a-f0-9]{64}$/)",
+        ".write": "auth != null && $k.matches(/^[a-f0-9]{64}$/)",
+        ".validate": "newData.hasChildren(['nick','pts']) && newData.child('pts').isNumber() && newData.child('pts').val() >= 0 && newData.child('pts').val() <= 10000000 && newData.child('nick').isString() && newData.child('nick').val().length <= 16 && (!newData.child('inv').exists() || (newData.child('inv').isString() && newData.child('inv').val().length <= 6000)) && (!newData.child('eq').exists() || (newData.child('eq').isString() && newData.child('eq').val().length <= 30))"
       }
     }
   }
