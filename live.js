@@ -20,13 +20,15 @@ const ALL = SYMS.concat(IDX);
 const FINNHUB_MAP = { KORU: "KORU", SOXL: "SOXL", NASDAQ: "QQQ", KOSPI: "EWY", SOX: "SOXX" };
 // ---- 시장 보드(히트맵·차트·테이프)용 종목. w = 대략적인 시총 비중(타일 면적용, 상대값) ----
 export const MKT = [
-  ["AAPL", "애플", "빅테크", 3500], ["MSFT", "마이크로소프트", "빅테크", 3300], ["GOOGL", "알파벳", "빅테크", 2100], ["AMZN", "아마존", "빅테크", 2000],
-  ["META", "메타", "빅테크", 1500], ["TSLA", "테슬라", "빅테크", 1000], ["NFLX", "넷플릭스", "빅테크", 400],
-  ["NVDA", "엔비디아", "반도체", 4000], ["AVGO", "브로드컴", "반도체", 1300], ["TSM", "TSMC", "반도체", 1000], ["ASML", "ASML", "반도체", 280], ["AMD", "AMD", "반도체", 250],
-  ["MU", "마이크론", "반도체", 200], ["QCOM", "퀄컴", "반도체", 170], ["TXN", "TI", "반도체", 170], ["ARM", "ARM", "반도체", 150], ["INTC", "인텔", "반도체", 100],
-  ["ORCL", "오라클", "AI인프라", 600], ["PLTR", "팔란티어", "AI인프라", 350], ["ANET", "아리스타", "AI인프라", 150], ["CEG", "컨스텔레이션", "AI인프라", 90], ["DELL", "델", "AI인프라", 90], ["VRT", "버티브", "AI인프라", 50], ["SMCI", "슈퍼마이크로", "AI인프라", 30],
-  ["JPM", "JP모건", "금융", 700], ["V", "비자", "금융", 600], ["MA", "마스터카드", "금융", 450], ["BAC", "BofA", "금융", 330], ["GS", "골드만", "금융", 200],
-  ["LLY", "일라이릴리", "헬스·소비·에너지", 700], ["WMT", "월마트", "헬스·소비·에너지", 700], ["XOM", "엑슨모빌", "헬스·소비·에너지", 450], ["COST", "코스트코", "헬스·소비·에너지", 400], ["UNH", "유나이티드헬스", "헬스·소비·에너지", 400], ["JNJ", "J&J", "헬스·소비·에너지", 380], ["KO", "코카콜라", "헬스·소비·에너지", 300]
+  ["NVDA", "엔비디아", "기술", 4500], ["MSFT", "마이크로소프트", "기술", 3600], ["AAPL", "애플", "기술", 3800], ["AVGO", "브로드컴", "기술", 1600], ["ORCL", "오라클", "기술", 700], ["PLTR", "팔란티어", "기술", 450], ["AMD", "AMD", "기술", 380], ["CSCO", "시스코", "기술", 280], ["IBM", "IBM", "기술", 260], ["CRM", "세일즈포스", "기술", 240], ["MU", "마이크론", "기술", 250], ["ADBE", "어도비", "기술", 150], ["QCOM", "퀄컴", "기술", 180], ["TXN", "TI", "기술", 170], ["INTU", "인튜이트", "기술", 180], ["NOW", "서비스나우", "기술", 190], ["AMAT", "어플라이드", "기술", 200], ["LRCX", "램리서치", "기술", 180], ["KLAC", "KLA", "기술", 130], ["ADI", "ADI", "기술", 120], ["ARM", "ARM", "기술", 150], ["INTC", "인텔", "기술", 180], ["ANET", "아리스타", "기술", 170], ["PANW", "팔로알토", "기술", 130], ["CRWD", "크라우드스트라이크", "기술", 120], ["MRVL", "마벨", "기술", 80], ["DELL", "델", "기술", 90], ["SMCI", "슈퍼마이크로", "기술", 30],
+  ["GOOGL", "알파벳", "커뮤니케이션", 3400], ["META", "메타", "커뮤니케이션", 1700], ["NFLX", "넷플릭스", "커뮤니케이션", 450], ["TMUS", "T모바일", "커뮤니케이션", 260], ["DIS", "디즈니", "커뮤니케이션", 200], ["T", "AT&T", "커뮤니케이션", 190], ["VZ", "버라이즌", "커뮤니케이션", 170],
+  ["AMZN", "아마존", "경기소비재", 2400], ["TSLA", "테슬라", "경기소비재", 1400], ["HD", "홈디포", "경기소비재", 380], ["MCD", "맥도날드", "경기소비재", 220], ["BKNG", "부킹", "경기소비재", 170], ["NKE", "나이키", "경기소비재", 90], ["SBUX", "스타벅스", "경기소비재", 100],
+  ["JPM", "JP모건", "금융", 820], ["V", "비자", "금융", 680], ["MA", "마스터카드", "금융", 520], ["BAC", "BofA", "금융", 380], ["WFC", "웰스파고", "금융", 270], ["GS", "골드만", "금융", 250], ["MS", "모건스탠리", "금융", 240], ["AXP", "아멕스", "금융", 220], ["BLK", "블랙록", "금융", 170], ["COIN", "코인베이스", "금융", 80],
+  ["LLY", "일라이릴리", "헬스케어", 900], ["JNJ", "J&J", "헬스케어", 460], ["ABBV", "애브비", "헬스케어", 400], ["UNH", "유나이티드헬스", "헬스케어", 300], ["MRK", "머크", "헬스케어", 250], ["TMO", "써모피셔", "헬스케어", 210], ["ISRG", "인튜이티브", "헬스케어", 190], ["PFE", "화이자", "헬스케어", 150],
+  ["WMT", "월마트", "필수소비재", 850], ["COST", "코스트코", "필수소비재", 420], ["PG", "P&G", "필수소비재", 360], ["KO", "코카콜라", "필수소비재", 300], ["PEP", "펩시", "필수소비재", 200], ["PM", "필립모리스", "필수소비재", 240],
+  ["GE", "GE에어로", "산업재", 300], ["CAT", "캐터필러", "산업재", 250], ["RTX", "RTX", "산업재", 230], ["UBER", "우버", "산업재", 190], ["HON", "하니웰", "산업재", 140], ["BA", "보잉", "산업재", 160], ["ETN", "이튼", "산업재", 140], ["VRT", "버티브", "산업재", 60],
+  ["XOM", "엑슨모빌", "에너지·유틸", 480], ["CVX", "셰브론", "에너지·유틸", 290], ["CEG", "컨스텔레이션", "에너지·유틸", 110], ["VST", "비스트라", "에너지·유틸", 65], ["NEE", "넥스트에라", "에너지·유틸", 160],
+  ["TSM", "TSMC", "해외 반도체", 1400], ["ASML", "ASML", "해외 반도체", 350]
 ];
 // 차트·테이프용 추가 시세 (키 → Finnhub 심볼). 10년 국채 수익률은 무료로 못 받아 '미국채 7-10년 ETF(IEF)'로 대용한다.
 const XMAP = { IEF: "IEF", BTC: "BINANCE:BTCUSDT" };
@@ -208,8 +210,8 @@ function localRoom(room) {
     bumpMoktak() { moktak += 1; try { localStorage.setItem(mokKey, String(moktak)); } catch (e) {} ch.postMessage({ t: "mok", uid: live.uid, n: moktak }); subs.moktak.forEach(f => f(moktak)); },
     onMoktak(f) { subs.moktak.add(f); f(moktak); },
     // 공용 누적 카운터 (예: offer=시주함 동전, bell=종)
-    bumpCounter(name) { name = clampStr(name, 16); counters[name] = (counters[name] || 0) + 1; try { localStorage.setItem(cntKey, JSON.stringify(counters)); } catch (e) {} ch.postMessage({ t: "cnt", uid: live.uid, name, n: counters[name] }); (cntSubs[name] || []).forEach(f => f(counters[name])); },
-    onCounter(name, f) { (cntSubs[name] = cntSubs[name] || []).push(f); f(counters[name] || 0); },
+    bumpCounter(name, n) { n = Math.max(1, Math.min(1000, Math.floor(n) || 1)); name = clampStr(name, 16); counters[name] = (counters[name] || 0) + n; try { localStorage.setItem(cntKey, JSON.stringify(counters)); } catch (e) {} ch.postMessage({ t: "cnt", uid: live.uid, name, n: counters[name] }); (cntSubs[name] || []).forEach(f => f(counters[name])); },
+    onCounter(name, f) { (cntSubs[name] = cntSubs[name] || []).push(f); f(counters[name] || 0); return () => { cntSubs[name] = (cntSubs[name] || []).filter(x => x !== f); }; },
     // 투표: topic 별로 1인 1표(바꾸기 가능), choice = 'up' | 'down'
     vote(topic, choice) { if (choice !== "up" && choice !== "down") return; const t = votes[topic] = votes[topic] || {}; t[live.uid] = choice; try { localStorage.setItem(voteKey, JSON.stringify(votes)); } catch (e) {} ch.postMessage({ t: "vote", uid: live.uid, topic, choice }); fireVotes(topic); },
     onVotes(topic, f) { (voteSubs[topic] = voteSubs[topic] || []).push(f); fireVotes(topic); },
@@ -354,6 +356,9 @@ async function firebaseInit() {
         if (data.hb) clean.hb = clampStr(data.hb, 6);
         if (data.title) clean.title = clampStr(data.title, 12);
         if (/^[wh]\d{1,2}-\d{1,2}-\d$/.test(data.wp || '')) clean.wp = data.wp; if (/^[wh]\d{1,2}-\d{1,2}-\d$/.test(data.ht || '')) clean.ht = data.ht;
+        if (/^[a-z]\d{1,2}-\d{1,2}-\d(,[a-z]\d{1,2}-\d{1,2}-\d){0,11}$/.test(data.gr || '')) clean.gr = data.gr; // 부위별 장비 12칸
+        if (isFinite(Number(data.h)) && Number(data.h) > 0) clean.h = Math.max(0, Math.min(30, Math.round(Number(data.h) * 10) / 10)); // 높이(옥상·밧줄)
+        if (Number.isInteger(data.hp) && data.hp >= 0 && data.hp < 100) clean.hp = data.hp; // 체력 %
         if (data.host === true) clean.host = true;
         D.set(meRef, clean).catch(e => console.error(e));
       },
@@ -396,8 +401,8 @@ async function firebaseInit() {
       },
       bumpMoktak() { D.runTransaction(D.ref(db, `${R}/moktak`), n => (n || 0) + 1).catch(() => {}); },
       onMoktak(f) { D.onValue(D.ref(db, `${R}/moktak`), s => f(s.val() || 0)); },
-      bumpCounter(name) { name = String(name).replace(/[^a-z0-9]/g, "").slice(0, 16); if (!name) return; D.runTransaction(D.ref(db, `${R}/counters/${name}`), n => (n || 0) + 1).catch(() => {}); },
-      onCounter(name, f) { name = String(name).replace(/[^a-z0-9]/g, "").slice(0, 16); D.onValue(D.ref(db, `${R}/counters/${name}`), s => f(s.val() || 0)); },
+      bumpCounter(name, k) { k = Math.max(1, Math.min(1000, Math.floor(k) || 1)); name = String(name).replace(/[^a-z0-9]/g, "").slice(0, 16); if (!name) return; D.runTransaction(D.ref(db, `${R}/counters/${name}`), n => (n || 0) + k).catch(() => {}); },
+      onCounter(name, f) { name = String(name).replace(/[^a-z0-9]/g, "").slice(0, 16); return D.onValue(D.ref(db, `${R}/counters/${name}`), s => f(s.val() || 0)); },
       vote(topic, choice) { topic = String(topic).replace(/[^a-z0-9-]/g, "").slice(0, 32); if (!topic || (choice !== "up" && choice !== "down")) return; D.set(D.ref(db, `${R}/votes/${topic}/${live.uid}`), choice).catch(() => {}); },
       onVotes(topic, f) { topic = String(topic).replace(/[^a-z0-9-]/g, "").slice(0, 32); D.onValue(D.ref(db, `${R}/votes/${topic}`), s => { const v = s.val() || {}; const c = { up: 0, down: 0 }; Object.values(v).forEach(x => { if (x === "up" || x === "down") c[x]++; }); f(c, v[live.uid] || null); }); },
       leave() { D.remove(meRef).catch(() => {}); }

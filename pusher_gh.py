@@ -19,8 +19,7 @@ ET, KST = ZoneInfo("America/New_York"), ZoneInfo("Asia/Seoul")
 
 # 사이트 키 → 야후 심볼
 PRICES = {"KORU": "KORU", "SOXL": "SOXL", "NASDAQ": "^IXIC", "KOSPI": "^KS11", "SOX": "^SOX", "USDKRW": "KRW=X"}
-HEAT = ["AAPL","MSFT","GOOGL","AMZN","META","TSLA","NFLX","NVDA","AVGO","TSM","ASML","AMD","MU","QCOM","TXN","ARM","INTC",
-        "ORCL","PLTR","ANET","CEG","DELL","VRT","SMCI","JPM","V","MA","BAC","GS","LLY","WMT","XOM","COST","UNH","JNJ","KO"]
+HEAT = ["NVDA","MSFT","AAPL","AVGO","ORCL","PLTR","AMD","CSCO","IBM","CRM","MU","ADBE","QCOM","TXN","INTU","NOW","AMAT","LRCX","KLAC","ADI","ARM","INTC","ANET","PANW","CRWD","MRVL","DELL","SMCI","GOOGL","META","NFLX","TMUS","DIS","T","VZ","AMZN","TSLA","HD","MCD","BKNG","NKE","SBUX","JPM","V","MA","BAC","WFC","GS","MS","AXP","BLK","COIN","LLY","JNJ","ABBV","UNH","MRK","TMO","ISRG","PFE","WMT","COST","PG","KO","PEP","PM","GE","CAT","RTX","UBER","HON","BA","ETN","VRT","XOM","CVX","CEG","VST","NEE","TSM","ASML"]
 XQ = {s: s for s in HEAT}; XQ.update({"BTC": "BTC-USD", "TNX": "^TNX", "IEF": "IEF"})
 HIST = {"KORU": "KORU", "SOXL": "SOXL", "NASDAQ": "^IXIC", "TNX": "^TNX", "BTC": "BTC-USD"}
 US_STOCKS = set(HEAT) | {"KORU", "SOXL", "IEF"}
