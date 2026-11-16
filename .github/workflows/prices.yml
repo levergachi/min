@@ -1,0 +1,19 @@
+name: price-pusher
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+concurrency:
+  group: price-pusher
+  cancel-in-progress: true
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -q yfinance requests
+      - run: python pusher_gh.py
