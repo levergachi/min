@@ -20,7 +20,7 @@ window.LEVER_CONFIG = {
   },
 
   // https://finnhub.io 무료 API 키 (없으면 빈 문자열)
-  finnhubKey: "",
+  finnhubKey:"dbtf0r9r01qnliuuevpgdbtf0r9r01qnliuuevq0",
 
   // 시세 갱신 주기(초). Finnhub 무료 한도(분당 60회)를 넘지 않도록 10초 이상 권장
   priceRefreshSec: 15,
