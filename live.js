@@ -32,7 +32,7 @@ export const MKT = [
 const XMAP = { IEF: "IEF", BTC: "BINANCE:BTCUSDT" };
 export const XQ_KEYS = MKT.map(m => m[0]).concat(Object.keys(XMAP));
 const XSYM = k => XMAP[k] || k;
-export const CHART_KEYS = ["KORU", "SOXL", "NASDAQ", "IEF", "BTC"];
+export const CHART_KEYS = ["KORU", "SOXL", "NASDAQ", "TNX", "BTC"];
 const mkt = { q: {}, h: {} };
 const mktSubs = new Set();
 function emitMkt() { mktSubs.forEach(fn => { try { fn(mkt); } catch (e) { console.error(e); } }); }
@@ -60,7 +60,8 @@ export const N_CHANNELS = Math.max(1, Math.min(30, Math.floor(Number(CFG.channel
 export const CHANNELS = Array.from({ length: N_CHANNELS }, (_, i) => "ch" + (i + 1));
 export function channelNo(room) { const m = /^ch(\d{1,2})$/.exec(String(room || "")); return m ? +m[1] : 0; }
 const REFRESH = Math.max(10, Number(CFG.priceRefreshSec) || 15) * 1000;
-const PUSHER_FRESH_MS = 90 * 1000;
+const PUSHER_FRESH_MS = 3 * 60 * 1000; // 송신기(야후·프리/애프터 포함)가 최근 3분 안에 쓴 값은 Finnhub 로 덮지 않음
+const wtOf = q => (q && (q.wt || q.ts)) || 0;
 const STALE_MS = 75 * 1000; // 이 시간 동안 신호가 없으면 나간 사람으로 보고 숨김(유령 방지)
 
 function rid() { return Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4); }
@@ -238,14 +239,14 @@ async function firebaseInit() {
   live.priceSource = "db";
   D.onValue(D.ref(db, "prices"), s => {
     const v = s.val() || {}; const out = {};
-    ALL.forEach(k => { if (v[k] && v[k].p > 0) { out[k] = { p: +v[k].p, pc: v[k].pc > 0 ? +v[k].pc : null, ts: +v[k].ts || 0, src: String(v[k].src || "db") }; if (v[k].proxy) out[k].proxy = String(v[k].proxy).slice(0, 8); } });
+    ALL.forEach(k => { if (v[k] && v[k].p > 0) { out[k] = { p: +v[k].p, pc: v[k].pc > 0 ? +v[k].pc : null, ts: +v[k].ts || 0, src: String(v[k].src || "db") }; if (v[k].proxy) out[k].proxy = String(v[k].proxy).slice(0, 8); if (v[k].wt) out[k].wt = +v[k].wt; } });
     if (Object.keys(out).length) emitPrices(out);
   });
 
   // ---- 시장 보드 구독(mkt/q, mkt/h) ----
   D.onValue(D.ref(db, "mkt/q"), s => {
     const v = s.val() || {}; const o = {};
-    Object.keys(v).forEach(k => { const r = v[k]; if (r && r.p > 0) o[k] = { p: +r.p, pc: r.pc > 0 ? +r.pc : null, ts: +r.ts || 0 }; });
+    Object.keys(v).forEach(k => { const r = v[k]; if (r && r.p > 0) o[k] = { p: +r.p, pc: r.pc > 0 ? +r.pc : null, ts: +r.ts || 0, src: String(r.src || ""), wt: +r.wt || 0 }; });
     mkt.q = o; emitMkt();
   });
   D.onValue(D.ref(db, "mkt/h"), s => {
@@ -259,7 +260,7 @@ async function firebaseInit() {
     const leaseRef = D.ref(db, "priceLease");
     const tick = async () => {
       // 노트북 송신기가 최근에 썼으면 양보
-      const fresh = SYMS.every(k => lastPrices[k] && lastPrices[k].src === "pusher" && now() - lastPrices[k].ts < PUSHER_FRESH_MS);
+      const fresh = SYMS.every(k => lastPrices[k] && lastPrices[k].src === "pusher" && now() - wtOf(lastPrices[k]) < PUSHER_FRESH_MS);
       if (fresh) return;
       let mine = false;
       try {
@@ -274,7 +275,7 @@ async function firebaseInit() {
       for (const s of Object.keys(FINNHUB_MAP)) {
         // 송신기가 진짜 지수를 최근에 썼으면 대용 ETF로 덮어쓰지 않음
         const cur = lastPrices[s];
-        if (cur && cur.src === "pusher" && now() - cur.ts < PUSHER_FRESH_MS) continue;
+        if (cur && cur.src === "pusher" && now() - wtOf(cur) < PUSHER_FRESH_MS) continue;
         try { const q = await finnhubKey(s); const row = { p: q.p, pc: q.pc, ts: q.ts, src: "finnhub" }; if (q.proxy) row.proxy = q.proxy; await D.set(D.ref(db, "prices/" + s), row); live.error = null; }
         catch (e) { live.error = "시세 조회 실패: " + e.message; }
       }
@@ -288,12 +289,15 @@ async function firebaseInit() {
       } catch (e) { return; }
       for (let i = 0; i < 6; i++) {
         const k = XQ_KEYS[xi % XQ_KEYS.length]; xi++;
+        const ex = mkt.q[k]; if (ex && ex.src === "pusher" && now() - wtOf(ex) < PUSHER_FRESH_MS) continue; // 송신기 값(프리·애프터 포함) 우선
         try { const q = await finnhubX(k); await D.set(D.ref(db, "mkt/q/" + k), { p: q.p, pc: q.pc || 0, ts: q.ts }); } catch (e) { /* 개별 실패는 무시 */ }
       }
       nTick++;
-      if (nTick % 4 === 0) {
+      const pusherAlive = Object.values(lastPrices).some(q => q && q.src === "pusher" && now() - wtOf(q) < 10 * 60 * 1000);
+      if (nTick % 4 === 0 && !pusherAlive) {
         const t = histMin(now());
         for (const k of CHART_KEYS) {
+          if (k === "NASDAQ" && lastPrices.NASDAQ && lastPrices.NASDAQ.proxy) continue; // 대용 ETF 값은 지수 차트에 섞지 않음
           const cur = k === "KORU" || k === "SOXL" || k === "NASDAQ" ? (lastPrices[k] && lastPrices[k].p) : (mkt.q[k] && mkt.q[k].p);
           if (!(cur > 0)) continue;
           const arr = (mkt.h[k] || []).slice(); const last = arr[arr.length - 1];
