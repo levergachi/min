@@ -26,7 +26,14 @@ export const META = {
   SOX:    { label: "필라델피아 반도체", unit: "pt", dec: 2, proxyLabel: "반도체 대용(SOXX)" },
   USDKRW: { label: "원/달러", unit: "원", dec: 1 }
 };
-const CFG = Object.assign({ firebase: null, finnhubKey: "", priceRefreshSec: 15 }, window.LEVER_CONFIG || {});
+const CFG = Object.assign({ firebase: null, finnhubKey: "", priceRefreshSec: 15, roomCapacity: 300, channels: 10 }, window.LEVER_CONFIG || {});
+// 채널(방) — ch1 … chN. 2D·3D 가 같은 이름을 써서 같은 채널끼리 만남.
+// ※ Firebase 무료(Spark) 요금제는 데이터베이스 전체 '동시 접속 100명' 제한이 있음.
+//   채널 정원(roomCapacity)을 300으로 두어도, Spark 에서는 사이트 전체 동시 접속이 100명에서 막힘 → Blaze(종량제)로 바꾸면 해제.
+export const ROOM_CAP = Math.max(2, Math.min(2000, Math.floor(Number(CFG.roomCapacity) || 300)));
+export const N_CHANNELS = Math.max(1, Math.min(30, Math.floor(Number(CFG.channels) || 10)));
+export const CHANNELS = Array.from({ length: N_CHANNELS }, (_, i) => "ch" + (i + 1));
+export function channelNo(room) { const m = /^ch(\d{1,2})$/.exec(String(room || "")); return m ? +m[1] : 0; }
 const REFRESH = Math.max(10, Number(CFG.priceRefreshSec) || 15) * 1000;
 const PUSHER_FRESH_MS = 90 * 1000;
 
@@ -119,6 +126,14 @@ function localInit() {
   } else live.priceSource = "manual";
 
   live.joinRoom = (room) => localRoom(room);
+  // 각 채널 인원 (같은 브라우저 탭의 접속 신호를 엿들어 셈)
+  live.channelCounts = (cb) => {
+    const seen = CHANNELS.map(() => new Map()); const chs = [];
+    CHANNELS.forEach((name, i) => { try { const c = new BroadcastChannel("levergachi-room-" + name); c.onmessage = ev => { const d = ev.data || {}; if (d.t === "hi" && d.uid) seen[i].set(d.uid, Date.now()); else if (d.t === "bye") seen[i].delete(d.uid); }; c.postMessage({ t: "who", uid: "probe-" + rid() }); chs.push(c); } catch (e) {} });
+    const emit = () => { const now = Date.now(); cb(seen.map(m => { let n = 0; m.forEach(t => { if (now - t < 6000) n++; }); return n; })); };
+    emit(); const t = setInterval(emit, 800);
+    return () => { clearInterval(t); chs.forEach(c => { try { c.close(); } catch (e) {} }); };
+  };
 }
 
 function localRoom(room) {
@@ -230,6 +245,12 @@ async function firebaseInit() {
 
   live.setManualPrice = function (sym, p, pc) { p = Number(p); if (p > 0) emitPrices({ [sym]: { p, pc: Number(pc) > 0 ? Number(pc) : null, ts: Date.now(), src: "manual" } }); };
 
+  live.channelCounts = (cb) => {
+    const counts = CHANNELS.map(() => 0); const offs = [];
+    CHANNELS.forEach((name, i) => { offs.push(D.onValue(D.ref(db, "rooms/" + name + "/users"), s => { const v = s.val(); counts[i] = v ? Object.keys(v).length : 0; cb(counts.slice()); }, () => {})); });
+    cb(counts.slice());
+    return () => offs.forEach(f => { try { f(); } catch (e) {} });
+  };
   live.joinRoom = (room) => {
     const R = "rooms/" + room;
     const meRef = D.ref(db, `${R}/users/${live.uid}`);
@@ -256,11 +277,15 @@ async function firebaseInit() {
         D.set(meRef, clean).catch(e => console.error(e));
       },
       onPeers(f) {
-        D.onValue(D.ref(db, `${R}/users`), s => {
-          const v = s.val() || {}; const arr = [];
-          Object.keys(v).forEach(k => arr.push(Object.assign({ uid: k, you: k === live.uid }, v[k])));
-          f(arr);
-        });
+        // 인원이 많아도 가볍게: 개별 변경(child 이벤트)만 받아 모았다가 최대 10번/초로 전달
+        const map = new Map(); let t = null;
+        const flush = () => { t = null; const arr = []; map.forEach((v, k) => arr.push(Object.assign({ uid: k, you: k === live.uid }, v))); f(arr); };
+        const soon = () => { if (!t) t = setTimeout(flush, 100); };
+        const ref = D.ref(db, `${R}/users`);
+        D.onChildAdded(ref, s => { map.set(s.key, s.val() || {}); soon(); });
+        D.onChildChanged(ref, s => { map.set(s.key, s.val() || {}); soon(); });
+        D.onChildRemoved(ref, s => { map.delete(s.key); soon(); });
+        D.get(ref).then(() => soon()).catch(() => soon());
       },
       sendChat(text) {
         const t = clampStr(text, 120).trim(); if (!t) return;

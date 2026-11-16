@@ -98,6 +98,25 @@ details.adv .in{padding:0 16px 16px}
 h1 small{font-size:11px;font-weight:600;color:var(--acc);border:1px solid rgba(245,165,36,.4);border-radius:4px;padding:1px 6px;margin-left:8px;vertical-align:middle;font-family:var(--mono)}
 footer{font-size:11.5px;color:var(--mute);margin-top:18px;line-height:1.6}
 .sr{position:absolute;left:-9999px}
+
+/* ===== 밝은 테마 (덮어쓰기) ===== */
+:root{color-scheme:light;--bg:#f3f7fd;--card:#ffffff;--card2:#f6f8fc;--ink:#1d2433;--ink2:#46506a;--mute:#6b7690;--line:#e1e6ef;--acc:#ff8a1f;--acc2:#fff3e2;--accInk:#ffffff;--up:#e5383b;--down:#2563eb;--warn:#fff6dc;--warnInk:#7a4b00;--err:#fdecec;--errInk:#9b1c1c;--surface:#ffffff}
+body{background:linear-gradient(180deg,#e6f2ff 0,#f6f9ff 340px,#fffaf2 100%) fixed;background-size:auto}
+.card,details.adv,.mkt .m{box-shadow:0 4px 16px rgba(30,50,90,.06);border-radius:16px}
+.tabs{background:rgba(243,247,253,.92)}
+.tab.on{background:linear-gradient(90deg,#ff7a59,#ffb020);border-color:transparent;color:#fff}
+.btn.pri{background:linear-gradient(90deg,#ff7a59,#ffb020);border-color:transparent;color:#fff}
+.kpi.main{background:linear-gradient(180deg,#fff4e3,#fffaf3);border:2px solid #ffb020;box-shadow:0 6px 18px rgba(255,150,40,.15)}
+.kpi.main .v{color:#d9580f;text-shadow:none}
+.chip{background:#fff3e2;color:#c25e00;border-color:#ffd59a}
+.tape{background:#1d2433;border-color:#1d2433}
+.tape span.it{color:#d7deea}.tape span.it b{color:#ffc46b}
+.tape .up{color:#ff6b6e}.tape .down{color:#7aa7ff}
+h1 small{color:#c25e00;border-color:#ffc46b}
+.navbtn.go{background:linear-gradient(90deg,#ff7a59,#ffb020);color:#fff;border-color:transparent;font-weight:800;box-shadow:0 3px 10px rgba(255,120,40,.3)}
+input:focus,select:focus,textarea:focus{box-shadow:0 0 0 3px rgba(255,138,31,.2)}
+.mx td.sel{outline-color:#ff8a1f}
+.hdrr{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -105,7 +124,7 @@ footer{font-size:11.5px;color:var(--mute);margin-top:18px;line-height:1.6}
 <div class="wrap">
   <header class="top">
     <h1><span class="livedot" id="liveDot"></span>3배 레버리지 원복 계산기<small>KORU·SOXL</small></h1>
-    <span style="display:flex;gap:6px"><a class="navbtn" href="room3d.html">🪷 3D 객장 입장</a><a class="navbtn" href="room.html">2D</a></span>
+    <span class="hdrr" id="hdrR"><a class="navbtn go" href="room3d.html">🪷 원복 객장 입장</a></span>
   </header>
 
   <div class="tabs" role="tablist">
@@ -251,6 +270,7 @@ footer{font-size:11.5px;color:var(--mute);margin-top:18px;line-height:1.6}
 </div>
 
 <script src="config.js" onerror="window.LEVER_CONFIG=window.LEVER_CONFIG||{}"></script>
+<script src="extras.js"></script>
 <script src="calc-core.js"></script>
 <script>
 (function(){
@@ -588,6 +608,7 @@ $("simBtn").addEventListener("click",runSim);
 var rt;window.addEventListener("resize",function(){clearTimeout(rt);rt=setTimeout(function(){render();},150);});
 
 load();fill();render();renderLive();
+try{LVX.decorate(document.getElementById('hdrR'));LVX.helpPill(document.getElementById('hdrR'),'calc');}catch(e){}
 window.__calc={setPrices:function(p){livePrices=Object.assign({},livePrices,p);renderLive();applyLive();},S:S,get cur(){return cur;},LC:LC,render:render,lastRes:function(){return lastRes;}};
 
 /* live.js 는 선택 사항(파일로 직접 열면 모듈이 막힐 수 있음) */
