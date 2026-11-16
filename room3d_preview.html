@@ -957,13 +957,13 @@ const typing = () => { const a = document.activeElement; return a && (a.tagName 
 addEventListener('keydown', e => {
   if (typing()) { if (e.key === 'Escape') document.activeElement.blur(); return; }
   if (document.querySelector('.modal.on')) { if (e.key === 'Escape') closeModals(); return; }
-  const k = e.key.toLowerCase();
+  const k = (e.key || "").toLowerCase(); if (!k) return;
   if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift'].includes(k)) { keys.add(k); e.preventDefault(); }
   if (k === ' ') { e.preventDefault(); if (!e.repeat) doFx('jump'); }
   if (k === 'e' && (!e.repeat || (nearKey && /boss|wboss/.test(INTER[nearKey].type || '')))) useNearest();
   if (k === 'enter') { e.preventDefault(); openPanel('tChat'); $('chatIn').focus(); }
 });
-addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
+addEventListener("keyup", e => keys.delete((e.key || "").toLowerCase()));
 addEventListener('blur', () => keys.clear());
 // 조이스틱
 const joy = { x: 0, y: 0, id: null };
