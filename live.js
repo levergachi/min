@@ -182,6 +182,7 @@ function localRoom(room) {
   const hb = () => { if (me) ch.postMessage({ t: "hi", uid: live.uid, data: me }); };
   const sweep = () => { const now = Date.now(); let ch2 = false; peers.forEach((v, k) => { if (now - v.seen > 6000) { peers.delete(k); ch2 = true; } }); if (ch2) firePeers(); };
   const t1 = setInterval(hb, 2000), t2 = setInterval(sweep, 2000);
+  const gbKey = 'lv3d_gb_local', gbSubs = new Set(); const gbList = () => { try { return JSON.parse(localStorage.getItem(gbKey) || '[]'); } catch (e) { return []; } };
   ch.onmessage = ev => {
     const d = ev.data || {};
     if (d.uid === live.uid) return;
@@ -190,6 +191,7 @@ function localRoom(room) {
     else if (d.t === "chat") { chat.push(d.msg); chat = chat.slice(-50); subs.chat.forEach(f => f(d.msg)); }
     else if (d.t === "fx") subs.fx.forEach(f => f(d.fx));
     else if (d.t === "mok") { moktak = Math.max(moktak, d.n); subs.moktak.forEach(f => f(moktak)); }
+    else if (d.t === "gb") { gbSubs.forEach(f => f(gbList())); }
     else if (d.t === "cnt") { counters[d.name] = Math.max(counters[d.name] || 0, d.n); (cntSubs[d.name] || []).forEach(f => f(counters[d.name])); }
     else if (d.t === "vote") { const t = votes[d.topic] = votes[d.topic] || {}; t[d.uid] = d.choice; fireVotes(d.topic); }
     else if (d.t === "who") hb();
@@ -201,12 +203,14 @@ function localRoom(room) {
     onPeers(f) { subs.peers.add(f); firePeers(); },
     sendChat(text) {
       const msg = { id: rid(), uid: live.uid, nick: me ? me.nick : "?", text: clampStr(text, 120), ts: Date.now() };
-      chat.push(msg); chat = chat.slice(-50); try { localStorage.setItem(chatKey, JSON.stringify(chat)); } catch (e) {}
+      chat.push(msg); chat = chat.slice(-200); try { localStorage.setItem(chatKey, JSON.stringify(chat)); } catch (e) {}
       ch.postMessage({ t: "chat", uid: live.uid, msg }); subs.chat.forEach(f => f(msg));
     },
     onChat(f, history) { subs.chat.add(f); if (history) history(chat.slice()); },
     sendFx(kind) { const fx = { id: rid(), uid: live.uid, kind: clampStr(kind, 20), ts: Date.now() }; ch.postMessage({ t: "fx", uid: live.uid, fx }); subs.fx.forEach(f => f(fx)); },
     onFx(f) { subs.fx.add(f); },
+    gbAdd(nick, text) { const l = gbList(); l.push({ id: rid(), uid: live.uid, nick: clampStr(nick, 12), text: clampStr(text, 100), ts: Date.now() }); try { localStorage.setItem(gbKey, JSON.stringify(l.slice(-100))); } catch (e) {} ch.postMessage({ t: 'gb', uid: live.uid }); gbSubs.forEach(f => f(gbList())); return Promise.resolve(); },
+    onGuestbook(f) { gbSubs.add(f); f(gbList()); },
     bumpMoktak() { moktak += 1; try { localStorage.setItem(mokKey, String(moktak)); } catch (e) {} ch.postMessage({ t: "mok", uid: live.uid, n: moktak }); subs.moktak.forEach(f => f(moktak)); },
     onMoktak(f) { subs.moktak.add(f); f(moktak); },
     // 공용 누적 카운터 (예: offer=시주함 동전, bell=종)
@@ -389,6 +393,9 @@ async function firebaseInit() {
           arr.forEach(m => { if (!seen.has(m.id)) { seen.add(m.id); f(m); } });
         });
       },
+      // 📖 방명록 (채널과 상관없이 하나)
+      gbAdd(nick, text) { return D.push(D.ref(db, 'guestbook'), { uid: live.uid, nick: clampStr(nick, 12), text: clampStr(text, 100), ts: D.serverTimestamp() }); },
+      onGuestbook(f) { D.onValue(D.query(D.ref(db, 'guestbook'), D.limitToLast(100)), s => { const arr = []; s.forEach(c => { arr.push(Object.assign({ id: c.key }, c.val())); }); f(arr); }); },
       sendFx(kind) { D.push(D.ref(db, `${R}/fx`), { uid: live.uid, kind: clampStr(kind, 20), ts: D.serverTimestamp() }); },
       onFx(f) {
         const q = D.query(D.ref(db, `${R}/fx`), D.limitToLast(20));

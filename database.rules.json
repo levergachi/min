@@ -95,6 +95,16 @@
     ".write": "auth != null && $k.matches(/^[a-f0-9]{64}$/)",
     ".validate": "newData.hasChildren(['nick','pts']) && newData.child('pts').isNumber() && newData.child('pts').val() >= 0 && newData.child('pts').val() <= 10000000 && newData.child('nick').isString() && newData.child('nick').val().length <= 16 && (!newData.child('inv').exists() || (newData.child('inv').isString() && newData.child('inv').val().length <= 6000)) && (!newData.child('eq').exists() || (newData.child('eq').isString() && newData.child('eq').val().length <= 200))"
    }
+  },
+  "guestbook": {
+   ".read": true,
+   ".indexOn": [
+    "ts"
+   ],
+   "$id": {
+    ".write": "auth != null && !data.exists()",
+    ".validate": "newData.child('uid').val() === auth.uid && newData.child('nick').isString() && newData.child('nick').val().length >= 1 && newData.child('nick').val().length <= 12 && newData.child('text').isString() && newData.child('text').val().length >= 1 && newData.child('text').val().length <= 100 && newData.child('ts').isNumber() && newData.child('ts').val() <= now + 60000"
+   }
   }
  }
 }
