@@ -7,8 +7,8 @@
 (function () {
   "use strict";
   var CFG = window.LEVER_CONFIG || {};
-  var CAP = Math.max(2, Math.min(2000, Math.floor(Number(CFG.roomCapacity) || 300)));
-  var NCH = Math.max(1, Math.min(30, Math.floor(Number(CFG.channels) || 10)));
+  var CAP = Math.max(2, Math.min(2000, Math.floor(Number(CFG.roomCapacity) || 100)));
+  var NCH = Math.max(1, Math.min(30, Math.floor(Number(CFG.channels) || 3)));
   function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
   function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
   function safeUrl(u) { u = String(u || "").trim(); if (!u) return ""; if (/^(https?:)?\/\//i.test(u) || /^[\w\-./]+\.(png|jpe?g|webp|gif|svg)$/i.test(u)) return u; return ""; }

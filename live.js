@@ -18,6 +18,31 @@ const IDX = ["NASDAQ", "KOSPI", "SOX", "USDKRW"];      // 지수·환율
 const ALL = SYMS.concat(IDX);
 // Finnhub 무료 키로는 지수 시세가 안 나오므로 '대용 ETF'를 쓰고, 반드시 proxy 표시를 붙인다
 const FINNHUB_MAP = { KORU: "KORU", SOXL: "SOXL", NASDAQ: "QQQ", KOSPI: "EWY", SOX: "SOXX" };
+// ---- 시장 보드(히트맵·차트·테이프)용 종목. w = 대략적인 시총 비중(타일 면적용, 상대값) ----
+export const MKT = [
+  ["AAPL", "애플", "빅테크", 3500], ["MSFT", "마이크로소프트", "빅테크", 3300], ["GOOGL", "알파벳", "빅테크", 2100], ["AMZN", "아마존", "빅테크", 2000],
+  ["META", "메타", "빅테크", 1500], ["TSLA", "테슬라", "빅테크", 1000], ["NFLX", "넷플릭스", "빅테크", 400],
+  ["NVDA", "엔비디아", "반도체", 4000], ["AVGO", "브로드컴", "반도체", 1300], ["TSM", "TSMC", "반도체", 1000], ["ASML", "ASML", "반도체", 280], ["AMD", "AMD", "반도체", 250],
+  ["MU", "마이크론", "반도체", 200], ["QCOM", "퀄컴", "반도체", 170], ["TXN", "TI", "반도체", 170], ["ARM", "ARM", "반도체", 150], ["INTC", "인텔", "반도체", 100],
+  ["ORCL", "오라클", "AI인프라", 600], ["PLTR", "팔란티어", "AI인프라", 350], ["ANET", "아리스타", "AI인프라", 150], ["CEG", "컨스텔레이션", "AI인프라", 90], ["DELL", "델", "AI인프라", 90], ["VRT", "버티브", "AI인프라", 50], ["SMCI", "슈퍼마이크로", "AI인프라", 30],
+  ["JPM", "JP모건", "금융", 700], ["V", "비자", "금융", 600], ["MA", "마스터카드", "금융", 450], ["BAC", "BofA", "금융", 330], ["GS", "골드만", "금융", 200],
+  ["LLY", "일라이릴리", "헬스·소비·에너지", 700], ["WMT", "월마트", "헬스·소비·에너지", 700], ["XOM", "엑슨모빌", "헬스·소비·에너지", 450], ["COST", "코스트코", "헬스·소비·에너지", 400], ["UNH", "유나이티드헬스", "헬스·소비·에너지", 400], ["JNJ", "J&J", "헬스·소비·에너지", 380], ["KO", "코카콜라", "헬스·소비·에너지", 300]
+];
+// 차트·테이프용 추가 시세 (키 → Finnhub 심볼). 10년 국채 수익률은 무료로 못 받아 '미국채 7-10년 ETF(IEF)'로 대용한다.
+const XMAP = { IEF: "IEF", BTC: "BINANCE:BTCUSDT" };
+export const XQ_KEYS = MKT.map(m => m[0]).concat(Object.keys(XMAP));
+const XSYM = k => XMAP[k] || k;
+export const CHART_KEYS = ["KORU", "SOXL", "NASDAQ", "IEF", "BTC"];
+const mkt = { q: {}, h: {} };
+const mktSubs = new Set();
+function emitMkt() { mktSubs.forEach(fn => { try { fn(mkt); } catch (e) { console.error(e); } }); }
+export function onMarket(fn) { mktSubs.add(fn); fn(mkt); return () => mktSubs.delete(fn); }
+export function getMarket() { return mkt; }
+const parseHist = str => String(str || "").split(";").map(x => x.split(",")).filter(a => a.length === 2).map(a => [+a[0], +a[1]]).filter(a => isFinite(a[0]) && a[1] > 0);
+const T0 = 1767225600000; // 2026-01-01 (분 단위 인덱스 기준)
+export const histMin = ms => Math.floor((ms - T0) / 60000);
+export const histMs = m => T0 + m * 60000;
+
 export const META = {
   KORU:   { label: "KORU", unit: "$", dec: 2 },
   SOXL:   { label: "SOXL", unit: "$", dec: 2 },
@@ -26,12 +51,12 @@ export const META = {
   SOX:    { label: "필라델피아 반도체", unit: "pt", dec: 2, proxyLabel: "반도체 대용(SOXX)" },
   USDKRW: { label: "원/달러", unit: "원", dec: 1 }
 };
-const CFG = Object.assign({ firebase: null, finnhubKey: "", priceRefreshSec: 15, roomCapacity: 300, channels: 10 }, window.LEVER_CONFIG || {});
+const CFG = Object.assign({ firebase: null, finnhubKey: "", priceRefreshSec: 15, roomCapacity: 100, channels: 3 }, window.LEVER_CONFIG || {});
 // 채널(방) — ch1 … chN. 2D·3D 가 같은 이름을 써서 같은 채널끼리 만남.
 // ※ Firebase 무료(Spark) 요금제는 데이터베이스 전체 '동시 접속 100명' 제한이 있음.
 //   채널 정원(roomCapacity)을 300으로 두어도, Spark 에서는 사이트 전체 동시 접속이 100명에서 막힘 → Blaze(종량제)로 바꾸면 해제.
-export const ROOM_CAP = Math.max(2, Math.min(2000, Math.floor(Number(CFG.roomCapacity) || 300)));
-export const N_CHANNELS = Math.max(1, Math.min(30, Math.floor(Number(CFG.channels) || 10)));
+export const ROOM_CAP = Math.max(2, Math.min(2000, Math.floor(Number(CFG.roomCapacity) || 100)));
+export const N_CHANNELS = Math.max(1, Math.min(30, Math.floor(Number(CFG.channels) || 3)));
 export const CHANNELS = Array.from({ length: N_CHANNELS }, (_, i) => "ch" + (i + 1));
 export function channelNo(room) { const m = /^ch(\d{1,2})$/.exec(String(room || "")); return m ? +m[1] : 0; }
 const REFRESH = Math.max(10, Number(CFG.priceRefreshSec) || 15) * 1000;
@@ -73,6 +98,7 @@ async function finnhubQuote(sym) {
   if (!(j && j.c > 0)) throw new Error("finnhub empty");
   return { p: +j.c, pc: j.pc > 0 ? +j.pc : null, ts: j.t ? j.t * 1000 : Date.now(), src: "finnhub" };
 }
+async function finnhubX(key) { const q = await finnhubQuote(XSYM(key)); return { p: q.p, pc: q.pc, ts: q.ts }; }
 async function finnhubKey(key) {
   const tk = FINNHUB_MAP[key]; if (!tk) throw new Error("no map");
   const q = await finnhubQuote(tk);
@@ -215,6 +241,18 @@ async function firebaseInit() {
     if (Object.keys(out).length) emitPrices(out);
   });
 
+  // ---- 시장 보드 구독(mkt/q, mkt/h) ----
+  D.onValue(D.ref(db, "mkt/q"), s => {
+    const v = s.val() || {}; const o = {};
+    Object.keys(v).forEach(k => { const r = v[k]; if (r && r.p > 0) o[k] = { p: +r.p, pc: r.pc > 0 ? +r.pc : null, ts: +r.ts || 0 }; });
+    mkt.q = o; emitMkt();
+  });
+  D.onValue(D.ref(db, "mkt/h"), s => {
+    const v = s.val() || {}; const o = {};
+    Object.keys(v).forEach(k => { o[k] = parseHist(v[k]); });
+    mkt.h = o; emitMkt();
+  });
+
   // ---- Finnhub 대표 조회(lease) ----
   if (CFG.finnhubKey) {
     const leaseRef = D.ref(db, "priceLease");
@@ -240,6 +278,33 @@ async function firebaseInit() {
         catch (e) { live.error = "시세 조회 실패: " + e.message; }
       }
     };
+    let xi = 0, nTick = 0;
+    const tickX = async () => {
+      // 대표(lease 보유자)만 추가 종목을 돌려가며 조회: 한 번에 6개 → 분당 총 ~45회로 무료 한도(60) 이내
+      try {
+        const lr = await D.get(leaseRef); const lv = lr.val();
+        if (!(lv && lv.uid === live.uid && lv.until > now())) return;
+      } catch (e) { return; }
+      for (let i = 0; i < 6; i++) {
+        const k = XQ_KEYS[xi % XQ_KEYS.length]; xi++;
+        try { const q = await finnhubX(k); await D.set(D.ref(db, "mkt/q/" + k), { p: q.p, pc: q.pc || 0, ts: q.ts }); } catch (e) { /* 개별 실패는 무시 */ }
+      }
+      nTick++;
+      if (nTick % 4 === 0) {
+        const t = histMin(now());
+        for (const k of CHART_KEYS) {
+          const cur = k === "KORU" || k === "SOXL" || k === "NASDAQ" ? (lastPrices[k] && lastPrices[k].p) : (mkt.q[k] && mkt.q[k].p);
+          if (!(cur > 0)) continue;
+          const arr = (mkt.h[k] || []).slice(); const last = arr[arr.length - 1];
+          if (last && last[0] >= t) continue;
+          if (last && last[1] === cur && t - last[0] < 15) continue; // 장 마감 중 같은 값은 15분에 한 번만
+          arr.push([t, cur]); const keep = arr.slice(-240);
+          const str = keep.map(a => a[0] + "," + (a[1] >= 1000 ? a[1].toFixed(1) : a[1].toFixed(3))).join(";");
+          try { await D.set(D.ref(db, "mkt/h/" + k), str); } catch (e) {}
+        }
+      }
+    };
+    setTimeout(() => { tickX(); setInterval(tickX, REFRESH); }, 4000);
     tick(); setInterval(tick, REFRESH);
   }
 
@@ -250,6 +315,11 @@ async function firebaseInit() {
     CHANNELS.forEach((name, i) => { offs.push(D.onValue(D.ref(db, "rooms/" + name + "/users"), s => { const v = s.val(); counts[i] = v ? Object.keys(v).length : 0; cb(counts.slice()); }, () => {})); });
     cb(counts.slice());
     return () => offs.forEach(f => { try { f(); } catch (e) {} });
+  };
+  // 방장 인증: 비밀 코드는 DB 규칙(콘솔)에만 있고, 맞아야 hosts/<uid> 가 써진다
+  live.claimHost = async (code) => {
+    try { await D.set(D.ref(db, "hosts/" + live.uid), { code: String(code || "").slice(0, 40) }); return true; }
+    catch (e) { return false; }
   };
   live.joinRoom = (room) => {
     const R = "rooms/" + room;
@@ -274,6 +344,7 @@ async function firebaseInit() {
         if (data.pts > 0) clean.pts = Math.min(1e7, Math.floor(Number(data.pts)) || 0);
         if (data.hb) clean.hb = clampStr(data.hb, 6);
         if (data.title) clean.title = clampStr(data.title, 12);
+        if (data.host === true) clean.host = true;
         D.set(meRef, clean).catch(e => console.error(e));
       },
       onPeers(f) {
@@ -287,9 +358,11 @@ async function firebaseInit() {
         D.onChildRemoved(ref, s => { map.delete(s.key); soon(); });
         D.get(ref).then(() => soon()).catch(() => soon());
       },
-      sendChat(text) {
+      sendChat(text, opt) {
         const t = clampStr(text, 120).trim(); if (!t) return;
-        D.push(D.ref(db, `${R}/chat`), { uid: live.uid, nick: me ? clampStr(me.nick, 12) : "?", text: t, ts: D.serverTimestamp() });
+        const row = { uid: live.uid, nick: me ? clampStr(me.nick, 12) : "?", text: t, ts: D.serverTimestamp() };
+        if (opt && opt.host && me && me.host === true) row.host = true;
+        D.push(D.ref(db, `${R}/chat`), row);
       },
       onChat(f, history) {
         let first = true; const seen = new Set();
@@ -321,6 +394,8 @@ async function firebaseInit() {
     return api;
   };
 }
+
+live.claimHost = async () => false;
 
 export function initLive() {
   if (ready) return ready;

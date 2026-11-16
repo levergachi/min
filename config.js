@@ -29,8 +29,8 @@ window.LEVER_CONFIG = {
   // 채널 수(ch1 … chN)와 채널 하나의 정원. 꽉 찬 채널은 입장이 막히고 다른 채널로 안내됩니다.
   // ※ Firebase 무료(Spark) 요금제는 사이트 전체 '동시 접속 100명' 제한이 있습니다.
   //   그 이상 받으려면 Firebase 콘솔에서 Blaze(종량제)로 바꾸세요.
-  channels: 10,
-  roomCapacity: 300,
+  channels: 3,
+  roomCapacity: 100,
 
   // ── 운영자 프로필 (비워 두면 안 보임) ───────────────────────
   // photo: 저장소에 올린 사진 파일 이름(예: "profile.jpg") 또는 https:// 주소
