@@ -269,8 +269,8 @@ input:focus,select:focus,textarea:focus{box-shadow:0 0 0 3px rgba(255,138,31,.2)
   </footer>
 </div>
 
-<script src="config.js" onerror="window.LEVER_CONFIG=window.LEVER_CONFIG||{}"></script>
-<script src="extras.js"></script>
+<script src="config.js?v=11" onerror="window.LEVER_CONFIG=window.LEVER_CONFIG||{}"></script>
+<script src="extras.js?v=11"></script>
 <script src="calc-core.js"></script>
 <script>
 (function(){
@@ -613,7 +613,7 @@ window.__calc={setPrices:function(p){livePrices=Object.assign({},livePrices,p);r
 
 /* live.js 는 선택 사항(파일로 직접 열면 모듈이 막힐 수 있음) */
 try{
-  import("./live.js").then(function(mod){
+  import("./live.js?v=11").then(function(mod){
     window.__usSession=mod.usSession;
     return mod.initLive().then(function(l){liveInfo=l;mod.onPrices(function(p){livePrices=p;renderLive();applyLive();});renderLive();});
   }).catch(function(e){console.warn("실시간 모듈 없음",e);});

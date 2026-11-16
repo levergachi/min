@@ -10,11 +10,11 @@
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 #gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;transition:filter .9s}
-body.gloom #gl{filter:saturate(.4) brightness(.78) contrast(1.05)}
+body.gloom #gl{filter:saturate(.6) brightness(1.08) contrast(1.02)}
 body.party #gl{filter:saturate(1.2) brightness(1.06)}
 #flash{position:fixed;inset:0;background:#dfe8ff;opacity:0;pointer-events:none;transition:opacity .12s;z-index:3}
 #labels{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:2}
-.lab{position:absolute;left:0;top:0;text-align:center;white-space:nowrap;will-change:transform;display:flex;flex-direction:column;align-items:center;gap:2px}
+.lab{position:absolute;left:0;top:0;text-align:center;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:2px}
 .lab .say{background:#fff;color:#111;font-size:13px;padding:5px 9px;border-radius:12px;max-width:220px;white-space:normal;word-break:break-all;box-shadow:0 3px 10px rgba(0,0,0,.4);margin-bottom:3px;position:relative}
 .lab .say:after{content:"";position:absolute;left:50%;bottom:-6px;margin-left:-6px;border:6px solid transparent;border-bottom:0;border-top-color:#fff}
 .lab .bd{font-family:var(--mono);font-size:11px;background:rgba(6,10,16,.85);border:1px solid var(--line);border-radius:6px;padding:1px 6px;color:var(--ink2)}
@@ -149,6 +149,8 @@ input,select{font-family:inherit}
 #mkPad .mks{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}#mkPad .mks button{padding:5px 9px;border-radius:999px;border:1px solid #6b4a12;background:#2a1d08;color:#ffe2a8;font-family:inherit;font-size:12px;cursor:pointer}#mkPad .mks button.on{background:#f5a524;color:#1a1204;border-color:#f5a524}
 #mkPad .mkr{display:grid;grid-template-columns:2fr 1fr;gap:8px}#mkTap{height:84px;border-radius:50%/40%;border:0;background:radial-gradient(circle at 40% 35%,#c7843a,#6b3a12);color:#ffe2a8;font-size:28px;font-weight:900;cursor:pointer;box-shadow:inset 0 -6px 0 rgba(0,0,0,.35);touch-action:manipulation;user-select:none}#mkTap:active,#mkTap.hit{transform:scale(.94);filter:brightness(1.25)}
 #mkDrop{border-radius:14px;border:0;background:linear-gradient(135deg,#ff4fd8,#2fd0ff);color:#fff;font-weight:900;font-size:14px;cursor:pointer}
+#wxWhy{position:fixed;left:50%;top:84px;transform:translateX(-50%);z-index:4;pointer-events:none;padding:7px 14px;border-radius:999px;font-weight:800;font-size:13.5px;white-space:nowrap;display:none;box-shadow:0 4px 18px rgba(0,0,0,.4)}#wxWhy.gloom{display:block;background:rgba(30,60,120,.88);color:#dbe8ff;border:1px solid #5d8bff}#wxWhy.party{display:block;background:rgba(150,20,90,.88);color:#ffe0f2;border:1px solid #ff6fd0}
+@media (max-width:820px){#wxWhy{top:auto;bottom:206px;font-size:11.5px;padding:5px 10px;white-space:normal;max-width:92vw;text-align:center}}
 .lab.host .nm{background:linear-gradient(90deg,#f5a524,#ffd76a);color:#1a1204;border-color:#ffd76a;box-shadow:0 0 12px rgba(255,215,106,.7)}
 .m.host{background:rgba(245,165,36,.14);border-left:3px solid #f5a524;padding-left:6px}
 .mbox.mkt{width:min(1180px,100%);padding:12px}.mbox.mkt canvas{width:100%;height:auto;display:block;border-radius:10px;margin-top:8px;background:#070d1a}
@@ -179,6 +181,7 @@ input,select{font-family:inherit}
     <a class="hb pri pe" href="index.html">계산기 →</a>
   </header>
   <div class="banners pe" id="banners"></div>
+  <div id="wxWhy"></div>
   <div class="hud pe" id="hud">
     <div class="hst" id="hStage">🧬 진화 1/12단계</div><div><span class="lv" id="hLv">개미</span> · <b id="hPts">0</b> 공덕</div>
     <div class="bar"><i id="hBar"></i></div>
@@ -262,11 +265,13 @@ input,select{font-family:inherit}
   <div class="pg" id="pg"><div class="small">종목</div><div class="small">현재가</div><div class="small">전일 종가(선택)</div></div>
   <button class="mbtn" id="pGo">적용</button><button class="mbtn sec" data-close>닫기</button></div></div>
 
-<script src="config.js" onerror="window.LEVER_CONFIG=window.LEVER_CONFIG||{}"></script>
-<script src="extras.js"></script>
+<script src="config.js?v=11" onerror="window.LEVER_CONFIG=window.LEVER_CONFIG||{}"></script>
+<script src="extras.js?v=11"></script>
+<script>/* 업데이트 직후 예전 파일이 섞여 멈추면 안내 */
+setTimeout(function(){ if (window.__room3d) return; var d=document.createElement("div"); d.style.cssText="position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);z-index:99;background:#111a2b;color:#fff;border:2px solid #f5a524;border-radius:16px;padding:18px 20px;text-align:center;font:15px/1.5 sans-serif;max-width:90vw"; d.innerHTML="<b>🔄 사이트가 업데이트됐어요</b><br>예전 파일이 남아 있어 객장이 안 열렸어요.<br><button style=\"margin-top:10px;padding:10px 18px;border:0;border-radius:10px;background:#f5a524;font-weight:800;cursor:pointer\">새로고침해서 입장</button>"; d.querySelector("button").onclick=function(){ location.replace(location.pathname+"?room="+(new URLSearchParams(location.search).get("room")||"")+"&r="+Date.now()); }; document.body.appendChild(d); }, 9000);</script>
 <script type="module">
-import * as THREE from './vendor/three.module.min.js';
-import { initLive, onPrices, onMarket, live, usSession, META, MKT, histMin } from './live.js';
+import * as THREE from './vendor/three.module.min.js?v=169';
+import { initLive, onPrices, onMarket, live, usSession, META, MKT, histMin } from './live.js?v=11';
 
 /* ================= 공통 ================= */
 const $ = id => document.getElementById(id);
@@ -453,7 +458,7 @@ let prLowT = 0;
 function adaptPR(fps, dt) { if (fps > 0 && fps < 32) { prLowT += dt; if (prLowT > 3 && PR > 1) { PR = Math.max(1, PR - .35); renderer.setPixelRatio(PR); renderer.setSize(innerWidth, innerHeight, false); prLowT = 0; } } else prLowT = 0; }
 renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
 const scene = new THREE.Scene();
-const FOG_CALM = new THREE.Color(0x060b18), FOG_GLOOM = new THREE.Color(0x0b1019), FOG_PARTY = new THREE.Color(0x160d33);
+const FOG_CALM = new THREE.Color(0x060b18), FOG_GLOOM = new THREE.Color(0x1a2233), FOG_PARTY = new THREE.Color(0x160d33);
 scene.background = FOG_CALM.clone();
 scene.fog = new THREE.FogExp2(0x060b18, 0.013);
 const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 200);
@@ -693,7 +698,7 @@ for (let i = 0; i < RAIN_N; i++) { const x = (Math.random() - .5) * 50, y = Math
 rainGeo.setAttribute('position', new THREE.BufferAttribute(rainP, 3));
 const rain = new THREE.LineSegments(rainGeo, new THREE.LineBasicMaterial({ color: 0x9fb4d8, transparent: true, opacity: .45 })); rain.visible = false; scene.add(rain);
 const clouds = new THREE.Group(); clouds.visible = false; scene.add(clouds);
-const cloudM = mat(0x2b303b, { roughness: 1, transparent: true, opacity: .92 });
+const cloudM = mat(0x4a5266, { roughness: 1, transparent: true, opacity: .75 });
 for (let i = 0; i < 9; i++) { const c = new THREE.Group(); c.position.set(-20 + i * 5 + Math.random() * 2, 14 + Math.random() * 2, -10 + (i % 3) * 9); for (let j = 0; j < 4; j++) c.add(mesh(GEO.sphL, cloudM, [2.2 + Math.random(), 1.1, 1.8], [j * 1.8 - 2.7, Math.random() * .6, Math.random()])); clouds.add(c); }
 const CONF_N = 420, confetti = new THREE.InstancedMesh(new THREE.PlaneGeometry(.2, .12), new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, toneMapped: false }), CONF_N);
 const confS = []; { const pal = [0xffd76a, 0xf5a524, 0xff4d57, 0xffffff, 0xffe9a8]; for (let i = 0; i < CONF_N; i++) { confS.push({ x: (Math.random() - .5) * 40, y: Math.random() * 16, z: (Math.random() - .5) * 30, r: Math.random() * 6, s: .6 + Math.random() }); confetti.setColorAt(i, new THREE.Color(pal[i % pal.length])); } }
@@ -721,19 +726,20 @@ function computeWeather() {
   const parts2 = ['KORU', 'SOXL'].filter(k => isFinite(qChg(prices[k]))).map(k => k + ' ' + pct(qChg(prices[k])));
   const w = $('wx'); w.textContent = '';
   const b = el('b', null, avg == null ? '시황: 등락 데이터 없음 → 평온' : weather === 'party' ? '시황: 🎉 파티 모드' : weather === 'gloom' ? '시황: 🌧 우울 모드' : '시황: 평온');
+  { const Y = $('wxWhy'); Y.className = weather; const worst = ['KORU', 'SOXL'].map(k => [k, qChg(prices[k])]).filter(x => isFinite(x[1])).sort((a, b) => weather === 'party' ? b[1] - a[1] : a[1] - b[1]); Y.textContent = weather === 'gloom' ? `🌧 지금 비가 오는 이유: ${worst.map(x => x[0] + ' ' + pct(x[1])).join(' · ')} 폭락 중 (3배 레버리지 −10% 이하 = 우울 모드)` : weather === 'party' ? `🎉 파티 중인 이유: ${worst.map(x => x[0] + ' ' + pct(x[1])).join(' · ')} 급등! (+10% 이상 = 파티 모드)` : ''; }
   w.append(b, el('br'), document.createTextNode((parts2.length ? parts2.join(' · ') + ' (전일 대비) · ' : '') + '3배 레버리지 기준 ±10% 이상일 때 바뀝니다'));
 }
 function applyWeather() {
   document.body.classList.toggle('gloom', weather === 'gloom'); document.body.classList.toggle('party', weather === 'party');
   rain.visible = clouds.visible = weather === 'gloom'; confetti.visible = weather === 'party';
   hemi.intensity = HEMI_BASE();
-  sun.intensity = weather === 'gloom' ? .35 : weather === 'party' ? 1.3 : .95;
-  boardLight.intensity = weather === 'party' ? 70 : weather === 'gloom' ? 16 : 30;
+  sun.intensity = weather === 'gloom' ? .9 : weather === 'party' ? 1.3 : .95;
+  boardLight.intensity = weather === 'party' ? 70 : weather === 'gloom' ? 34 : 30;
   boardLight.color.set(weather === 'party' ? 0xff7ad9 : weather === 'gloom' ? 0x5d6f95 : 0x6fd6ff);
   scene.background.copy(weather === 'gloom' ? FOG_GLOOM : weather === 'party' ? FOG_PARTY : FOG_CALM); scene.fog.color.copy(scene.background);
-  scene.fog.density = weather === 'gloom' ? .03 : .013;
+  scene.fog.density = weather === 'gloom' ? .016 : .013;
 }
-function HEMI_BASE() { return weather === 'gloom' ? .6 : weather === 'party' ? 1.9 : 1.55; }
+function HEMI_BASE() { return weather === 'gloom' ? 1.5 : weather === 'party' ? 1.9 : 1.55; }
 
 /* ================= 개미 캐릭터 ================= */
 function hbTexture(text) {
@@ -1719,7 +1725,7 @@ window.__room3d = {
   peerPos: uid => { const r = remotes.get(uid); return r ? { X: r.cur.x, Z: r.cur.z, moving: r.moving, walking: r.ant ? r.ant.moving : r.moving, detail: !!r.ant } : null; },
   weather: () => weather, teleport: (x, y) => { const w = toW(x, y); ME.X = w.x; ME.Z = w.z; ME.seat = -1; sync(true); }, tp: (X, Z) => { ME.X = X; ME.Z = Z; ME.seat = -1; sync(true); },
   inter: INTER, near: () => findNear(), use: k => useInter(k), fortune: () => fortuneFor(live.uid), offer: () => offerCount, votes: () => JSON.parse(JSON.stringify(votes)),
-  give: () => { for (let i = 0; i < 6; i++) dropItem(i % 3); return G.inv.length; }, say: (uid, nick, text) => onChatCb({ uid, nick, text, ts: Date.now() }), fx: (uid, kind) => onFxCb({ uid, kind, ts: Date.now() }),
+  give: () => { for (let i = 0; i < 6; i++) dropItem(i % 3); return G.inv.length; }, say: (uid, nick, text, hold) => { onChatCb({ uid, nick, text, ts: Date.now() }); const L = uid === live.uid ? myLabel : (remotes.get(uid) || {}).L; if (hold && L) { clearTimeout(L.sayT); L.sayT = setTimeout(() => { L.say.style.display = 'none'; }, hold); } }, fx: (uid, kind) => onFxCb({ uid, kind, ts: Date.now() }),
   inject: list => { fakePeers = list.filter(d => String(d.uid).startsWith('f')); onPeersCb(peersData.filter(d => !String(d.uid).startsWith('f'))); }, // 테스트 전용: 화면 부하 확인(데이터를 만들지 않음)
   room: () => ROOM, lod: () => ({ detail: [...remotes.values()].filter(r => r.ant).length, pawns: pawnBody.count, labels: [...remotes.values()].filter(r => r.L && r.L.d.style.visibility !== 'hidden').length }),
   evo: () => { evolveFx(myAnt, true); return true; }, bgm: () => ({ cur: bgmCur, ac: AC && AC.state }), host: () => HOST, setHost: v => { HOST = !!v; $('bFw').style.display = HOST ? '' : 'none'; setAntLook(myAnt, PROF.color, PROF.hb, G.pts, HOST); fillLabel(myLabel, myData(), true); sync(true); }, setMarket: (q, h) => { MK.q = q || {}; MK.h = h || {}; mkRedraw(); }, fxLog, tier: t => { applyTier(myAnt, t); return myAnt.tier; }, pts: () => G.pts, fps: () => fps, seats: SEATS, sitOn: i => sitOn(i), screenOf: uid => { const r = uid === live.uid ? { cur: { x: ME.X, z: ME.Z } } : remotes.get(uid); return r ? project(r.cur.x, 1, r.cur.z) : null; }
