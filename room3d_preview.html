@@ -1674,7 +1674,7 @@ function castSkill(s) {
   if (s === 2) { if (wbNear) hits.push([WB.key, dmg, null]); for (const k in BOSS) { const it = INTER[k]; if (Math.hypot(it.X - ME.X, it.Z - ME.Z) < 11) hits.push([k, dmg, k]); } }
   else { let best = null, bd = 11; for (const k in BOSS) { const it = INTER[k], d = Math.hypot(it.X - ME.X, it.Z - ME.Z); if (d < bd) { bd = d; best = k; } } if (wbNear) hits.push([WB.key, dmg, null]); else if (best) hits.push([best, dmg, best]); }
   if (typeof MOBS !== 'undefined') { if (s === 2) MOBS.forEach(m => { if (m.dead <= 0 && Math.hypot(m.x - ME.X, m.z - ME.Z) < 11) hits.push([m.key, dmg, 'mob' + m.i]); }); else if (!hits.length) { const m = mobAt(ME.X, ME.Z, 11); if (m) hits.push([m.key, dmg, 'mob' + m.i]); } }
-  hits.forEach(([key, d, bk], j) => { if (bk && bk.startsWith('mob')) { const m = MOBS[+bk.slice(3)]; room.bumpCounter(key, d); m.myHit = Date.now(); setTimeout(() => room.sendFx(`mh:${m.i}:${d}c`), 500 + j * 90); return; } room.bumpCounter(key, d); if (bk) { raidHits[bk] = Date.now(); setTimeout(() => room.sendFx(`hit:${bk}:${d}c`), 600 + j * 120); } else { WB.mine += d; setTimeout(() => room.sendFx(`wbh:${d}c`), 600); } });
+  hits.forEach(([key, d, bk], j) => { if (bk && !bk.startsWith('mob')) raidHits[bk] = Date.now(); else if (!bk && WB) WB.mine += d; if (bk && bk.startsWith('mob')) { const m = MOBS[+bk.slice(3)]; m.myHit = Date.now(); room.bumpCounter(key, d); setTimeout(() => room.sendFx(`mh:${m.i}:${d}c`), 500 + j * 90); return; } room.bumpCounter(key, d); if (bk) { setTimeout(() => room.sendFx(`hit:${bk}:${d}c`), 600 + j * 120); } else { setTimeout(() => room.sendFx(`wbh:${d}c`), 600); } });
   if (cd('pts-sk' + s, 1500)) addPts(6 + s * 4 + (hits.length ? 6 : 0));
 }
 function updSkBtn() {
@@ -2072,8 +2072,8 @@ function useRpg(k) {
   if (it.type === 'crate') { const C = CRATE[k]; if (C.broken || !cd('atk', 280)) return; room.sendFx('brk:' + k); breakCrate(k, true); addPts(8); if (Math.random() < .3) dropItem(0); return; }
   if (!cd('atk', 280)) return;
   const tier = lvOf(G.pts); let dmg = Math.round(atkOf(tier) * (BUFF.until > Date.now() ? 1.5 : 1)); const crit = Math.random() < .15 + tier * .01; if (crit) dmg *= 2; dmg = Math.min(dmg, 99999);
+  raidHits[k] = Date.now(); // 먼저 기록: 파이어베이스는 쓰는 순간 바로 격파 이벤트를 부를 수 있음
   room.bumpCounter(k, dmg);
-  raidHits[k] = Date.now();
   room.sendFx(`hit:${k}:${dmg}${crit ? 'c' : ''}`);
   if (cd('pts-hit', 250)) addPts(3 + Math.floor((INTER[k].lv || 1) / 2)); // 평타도 경험치 쑥쑥
   if (Math.random() < .02 + (INTER[k].lv || 1) * .001) dropItem(INTER[k].lv >= 20 ? 1 : 0);
@@ -2271,7 +2271,7 @@ const every3 = () => 4;
 function wbHit() {
   if (!WB || WB.dead || !cd('atk', 280)) return; ME.ry = Math.atan2(WB_POS.x - ME.X, WB_POS.z - ME.Z);
   const tier = lvOf(G.pts); let dmg = Math.round(atkOf(tier) * (BUFF.until > Date.now() ? 1.5 : 1)); const crit = Math.random() < .15 + tier * .01; if (crit) dmg *= 2; dmg = Math.max(1, Math.min(dmg, 99999));
-  room.bumpCounter(WB.key, dmg); WB.mine += dmg; room.sendFx(`wbh:${dmg}${crit ? 'c' : ''}`); if (cd('pts-hit', 250)) addPts(5); if (Math.random() < .03) dropItem(0);
+  WB.mine += dmg; room.bumpCounter(WB.key, dmg); room.sendFx(`wbh:${dmg}${crit ? 'c' : ''}`); if (cd('pts-hit', 250)) addPts(5); if (Math.random() < .03) dropItem(0);
 }
 function wbFx(fx) {
   if (!WB) return; const dmg = parseInt(String(fx.kind).slice(4), 10) || 1, crit = /c$/.test(fx.kind); WB.contrib[fx.uid] = (WB.contrib[fx.uid] || 0) + dmg;
@@ -2465,7 +2465,7 @@ function mobAt(x, z, R) { let best = null, bd = R; MOBS.forEach(m => { if (m.dea
 function hitMob(m) {
   if (!m || m.dead > 0 || !cd('atk', 260)) return; ME.ry = Math.atan2(m.x - ME.X, m.z - ME.Z);
   const tier = lvOf(G.pts); let dmg = Math.round(atkOf(tier) * (BUFF.until > Date.now() ? 1.5 : 1)); const crit = Math.random() < .15 + tier * .01; if (crit) dmg *= 2; dmg = Math.min(dmg, 99999);
-  room.bumpCounter(m.key, dmg); m.myHit = Date.now(); room.sendFx(`mh:${m.i}:${dmg}${crit ? 'c' : ''}`);
+  m.myHit = Date.now(); room.bumpCounter(m.key, dmg); room.sendFx(`mh:${m.i}:${dmg}${crit ? 'c' : ''}`);
   if (cd('pts-hit', 250)) addPts(3 + Math.floor(m.K.lv / 2)); if (Math.random() < .02) dropItem(0);
 }
 function mobFx(fx) { const p = String(fx.kind).split(':'), m = MOBS[parseInt(p[1], 10)]; if (!m) return; const dmg = parseInt(p[2], 10) || 1, crit = /c$/.test(p[2] || ''); const a = antOf(fx.uid); if (a) a.act = { k: 'punch', t0: clock.elapsedTime, d: .45 };
@@ -2844,7 +2844,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '15.1';
+const APP_V = '15.2';
 {
   let shown = false;
   const check = async () => {
