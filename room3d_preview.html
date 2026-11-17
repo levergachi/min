@@ -306,6 +306,25 @@ input,select{font-family:inherit}
 #evoMini b{color:#ffd76a;font-size:16px}#evoMini span{font-size:13px}#evoMini small{font-size:12px;color:#bfe9ff}
 #evoMini.on{animation:evm 5s ease forwards;pointer-events:auto;cursor:pointer}@keyframes evm{0%{opacity:0;transform:translate(-50%,-20px)}8%{opacity:1;transform:translate(-50%,0)}85%{opacity:1}100%{opacity:0;transform:translate(-50%,-10px)}}
 @media (max-width:820px){#evoMini{top:230px}}
+
+.lookBar{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:9px 11px;border-radius:12px;background:linear-gradient(135deg,rgba(182,156,255,.14),rgba(65,201,255,.1));border:1px solid rgba(182,156,255,.35)}.lookBar b{color:#d9c8ff}.lookBar span{font-size:12.5px;color:#c7d0e6;flex:1 1 200px}
+.dex .c .lookB{margin-top:6px;width:100%;font-size:12px;padding:6px 4px}.dex .c .lookB.on{border-color:#b69cff!important;color:#e2d6ff!important;background:rgba(182,156,255,.15)}
+.hud .hlook{font-size:11px;color:#c9b6ff;font-weight:700;margin-top:2px}
+@media (max-width:820px){.hud .hlook{order:4;flex:1 1 100%;font-size:10px}}
+
+#kickOv{display:none;position:fixed;inset:0;z-index:999;background:rgba(5,8,16,.94);color:#fff;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:20px}#kickOv.on{display:flex}#kickOv b{font-size:26px;color:#ff8a8a}#kickOv span{font-size:16px}#kickOv small{color:#8fa3c8}
+.hoList{display:flex;flex-direction:column;gap:6px;max-height:40vh;overflow:auto;margin:6px 0}.hoList .sb2 .gbtn{padding:7px 8px;font-size:12.5px}
+.hoCfg{display:flex;flex-direction:column;gap:7px}.hoT{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;align-items:center;padding:9px 11px;border-radius:11px;background:rgba(255,255,255,.05)}.hoT b{font-size:14px}.hoT span{grid-column:1/-1;font-size:12px;color:#9fb3d9}.hoT select{grid-column:1/-1;background:#0f1626;color:#fff;border:1px solid #33405e;border-radius:8px;padding:6px}
+
+#heatTabs{margin:4px 0 6px}
+.sigBody{display:flex;flex-direction:column;gap:6px;max-height:56vh;overflow:auto}
+.sigRow{background:rgba(255,255,255,.04);border-radius:11px;padding:7px 10px}.sigRow summary{display:flex;align-items:center;gap:8px;cursor:pointer;list-style:none}.sigRow summary::-webkit-details-marker{display:none}
+.sigRow .rk{width:20px;text-align:right;color:#8592a8;font-weight:800}.sigRow .gB{min-width:34px;text-align:center;border-radius:7px;color:#0a0f1c;padding:2px 5px;font-size:13px}.sigRow .nm{flex:1;font-weight:800;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sigRow .sc{font-weight:900;color:#ffd76a;white-space:nowrap}
+.sigRow .sv{margin-top:6px;font-weight:800;color:#bfe9ff;font-size:13px}.sigRow .sx{font-size:12.5px;color:#c7d0e6;margin-top:3px;line-height:1.5}
+.sbarR{display:grid;grid-template-columns:120px 1fr;gap:2px 8px;align-items:center;margin-top:5px;font-size:12px;color:#c7d0e6}.sbarR small{grid-column:1/-1;color:#8fa3c8}.sbar{position:relative;height:8px;border-radius:5px;background:#1a2236;overflow:visible}.sbar i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,#41c9ff,#2fe07a)}.sbar u{position:absolute;top:-3px;width:2px;height:14px;background:#ffd76a}
+@media (max-width:820px){.sbarR{grid-template-columns:96px 1fr}}
+
+.dexTabs{flex-wrap:nowrap!important;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}.dexTabs button{flex:0 0 auto!important;min-width:0!important;white-space:nowrap;font-size:12.5px!important;padding:8px 10px!important}
 </style>
 </head>
 <body>
@@ -324,7 +343,7 @@ input,select{font-family:inherit}
     <button class="hb pe hot" id="bRep">📈 시장 리포트</button><button class="hb pe hot2" id="bGb">📖 방명록</button><button class="hb pe" id="bSea">🏆 주간 랭킹</button><button class="hb pe" id="bAtt">📅 출석</button><button class="hb pe" id="bMkt">📊 히트맵</button><button class="hb pe" id="bEco">🔋 절전</button>
     <button class="hb pe" id="bFw" style="display:none">🎆 축포</button>
     <button class="hb pe" id="bPrice">시세 입력</button>
-    <button class="hb pe" id="bBag">🎒 가방</button><button class="hb pe hot2" id="bMap">🗺 지도·이동</button><button class="hb pe" id="bPhoto">📸 사진</button><button class="hb pe hot2" id="bApp">📲 앱 설치</button><button class="hb pe hot" id="bHostEd" style="display:none">📌 공지·후원 문구</button>
+    <button class="hb pe" id="bBag">🎒 가방</button><button class="hb pe hot2" id="bMap">🗺 지도·이동</button><button class="hb pe" id="bPhoto">📸 사진</button><button class="hb pe hot2" id="bApp">📲 앱 설치</button><button class="hb pe hot" id="bHostEd" style="display:none">👑 방장 관리</button>
     <button class="hb pe" id="bBgm">🎵 음악</button>
     <button class="hb pe" id="bMute">🔔 소리 켬</button>
     <button class="hb pe" id="bMe">내 정보</button>
@@ -335,7 +354,7 @@ input,select{font-family:inherit}
   <div id="wxWhy"></div>
   <div class="hud pe" id="hud">
     <div class="hst" id="hStock" style="display:none"></div><div class="hst" id="hStage">🧬 진화 1/100단계</div><div class="hpw"><div class="hpbar"><i id="hHpB"></i></div><span id="hHpT">❤ 100/100</span></div><div class="hlv"><span class="lv" id="hLv">개미</span> · <b id="hPts">0</b> 공덕 <span class="hcoin" id="hCoin">🪙 0</span></div>
-    <div class="bar"><i id="hBar"></i></div><div class="hnx" id="hNx"></div>
+    <div class="bar"><i id="hBar"></i></div><div class="hnx" id="hNx"></div><div class="hlook" id="hLook"></div>
     <div class="small hn" id="hNext">다음 레벨까지 50</div><div class="hrk" id="hRank"></div><div class="hdex">🔍 눌러서 진화 도감 보기</div>
     <div class="ring" id="ring"><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="18" fill="none" stroke="#1b2536" stroke-width="5"/><circle id="ringC" cx="22" cy="22" r="18" fill="none" stroke="#f5a524" stroke-width="5" stroke-linecap="round" stroke-dasharray="113.1" stroke-dashoffset="113.1"/></svg><div><b id="ringN">0</b> / 108배<div class="small">108배 방석에서 E</div></div></div>
     <div class="wx" id="wx">시황: 데이터 없음 → 평온</div>
@@ -401,12 +420,19 @@ input,select{font-family:inherit}
 <div class="modal" id="mAtt"><div class="mbox" style="width:min(480px,100%)"><h2>📅 출석 체크</h2><div class="sub">하루 한 번 입장하면 자동 출석! 7일 연속이면 🎁 전설 상자</div><div class="att7" id="attGrid"></div><div id="attTxt" class="small"></div><button class="mbtn sec" data-close>닫기</button></div></div>
 <div class="modal" id="mSea"><div class="mbox" style="width:min(480px,100%)"><h2>🏆 주간 시즌 랭킹</h2><div class="sub">이번 주(월요일 0시 시작)에 모은 공덕 순위 · 모든 채널 통합 · 매주 월요일 초기화<br>지난주 1~3위는 🥇🥈🥉 칭호를 받아요</div><div id="seaBody"></div><button class="mbtn sec" data-close>닫기</button></div></div>
 <div class="modal" id="mGb"><div class="mbox" style="width:min(560px,100%)"><h2>📖 원복 방명록</h2><div class="sub">한 줄 인사·응원·원복 다짐을 남겨 주세요 (100자 · 하루 첫 글 공덕 보너스)</div><div class="gbin"><input id="gbIn" maxlength="100" placeholder="예) 다들 원복 가즈아! 🚀"><button type="button" id="gbGo">남기기</button></div><div class="gbl" id="gbList"></div><button class="mbtn sec" data-close>닫기</button></div></div>
-<div id="megaBan"></div><div id="evoMini"></div><div class="modal" id="mEvo"><div class="mbox" style="width:min(460px,100%)"><h2 id="evoTitle">🎉 진화!</h2><div class="sub">새로 생긴 능력과 버프예요 — 계속 키우면 더 강해져요!</div><div id="evoBody"></div><button class="mbtn" data-close>좋아요! 💪</button></div></div><button type="button" id="pkBtn" class="pe">⚔<span>결투 공격</span></button><div id="duelBar"></div>
+<div id="megaBan"></div><div class="modal" id="mSig"><div class="mbox" style="width:min(560px,100%)"><h2>🤖 레버가치 저점반전 신호 TOP 10</h2><div class="sub" id="sigSub"></div><div id="sigBody" class="sigBody"></div>
+  <div class="enhBtns" style="margin-top:8px"><button type="button" class="gbtn hot" id="sigWeb" style="flex:1">🌐 신호 웹페이지 열기</button><button type="button" class="gbtn" id="sigLinks" style="flex:1">📣 오픈채팅·블로그</button></div>
+  <div class="small" style="margin-top:6px">등급: S > A > B+ … · 점수 = 바닥 다지기 + 회사 체력 + 반등 신호 · 재미용 참고 정보이며 투자 조언이 아니에요</div><button class="mbtn sec" data-close>닫기</button></div></div><div id="kickOv"><b>👢 강퇴되었어요</b><span></span><small>시간이 지나면 자동으로 다시 들어올 수 있어요</small></div><div id="evoMini"></div><div class="modal" id="mEvo"><div class="mbox" style="width:min(460px,100%)"><h2 id="evoTitle">🎉 진화!</h2><div class="sub">새로 생긴 능력과 버프예요 — 계속 키우면 더 강해져요!</div><div id="evoBody"></div><button class="mbtn" data-close>좋아요! 💪</button></div></div><button type="button" id="pkBtn" class="pe">⚔<span>결투 공격</span></button><div id="duelBar"></div>
 <div class="modal" id="mDuel"><div class="mbox" style="width:min(480px,100%)"><h2>🤺 1:1 결투 신청</h2><div class="sub" id="duelInfo"></div><div id="duelList" style="display:flex;flex-direction:column;gap:7px;max-height:50vh;overflow:auto"></div><button class="mbtn sec" data-close>닫기</button></div></div><div id="noticeBar"><b>📌 방장 공지</b><span id="noticeTx"></span><button type="button" id="noticeX">✕</button></div>
-<div class="modal" id="mHostEd"><div class="mbox" style="width:min(480px,100%)"><h2>📌 방장 전용 — 공지·후원 문구</h2><div class="sub">저장하면 모든 방의 개미들에게 바로 보여요 (방장 코드로 입장했을 때만 저장돼요)</div>
-  <div class="sect">📌 공지사항 (300자 · 비우면 공지 내리기)</div><textarea id="heNotice" maxlength="300" rows="4" placeholder="예) 오늘 밤 11시 30분 미장 개장 러시 레이드 같이 해요!"></textarea>
+<div class="modal" id="mHostEd"><div class="mbox" style="width:min(540px,100%)"><h2>👑 방장 관리</h2><div class="sub">방장 코드로 입장했을 때만 저장·적용돼요 · 모든 방 개미들에게 바로 반영</div>
+  <div class="shopTabs" id="hoTabs"><button type="button" data-t="n" class="on">📌 공지·후원</button><button type="button" data-t="u">👥 접속자 관리</button><button type="button" data-t="c">🛠 방 설정</button></div>
+  <div id="hoN"><div class="sect">📌 공지사항 (300자 · 비우면 공지 내리기)</div><textarea id="heNotice" maxlength="300" rows="4" placeholder="예) 오늘 밤 11시 30분 미장 개장 러시 레이드 같이 해요!"></textarea>
   <div class="sect">☕ 후원 안내 문구 (150자)</div><input id="heDonate" maxlength="150" placeholder="100원이라도 감사하게 받겠습니다 🙏">
-  <div class="enhBtns" style="margin-top:10px"><button type="button" class="gbtn hot big" id="heSave">💾 저장하고 바로 반영</button></div><div class="small" id="heMsg"></div>
+  <div class="enhBtns" style="margin-top:10px"><button type="button" class="gbtn hot big" id="heSave">💾 저장하고 바로 반영</button></div></div>
+  <div id="hoU" style="display:none"><div class="small">강퇴: 그 시간 동안 방에 못 들어오고, 다른 개미들 화면에서도 사라져요 · 채팅 금지: 그 개미의 말이 아무에게도 안 보여요</div><div id="hoList" class="hoList"></div><div class="sect">⛔ 제재 중</div><div id="hoBans" class="hoList"></div></div>
+  <div id="hoC" style="display:none"><div class="hoCfg" id="hoCfg"></div>
+    <div class="enhBtns" style="margin-top:10px"><button type="button" class="gbtn hot" id="hoRaid" style="flex:1">🌋 레이드 지금 소환</button><button type="button" class="gbtn hot" id="hoFw" style="flex:1">🎆 축포 쏘기</button></div></div>
+  <div class="small" id="heMsg"></div>
   <button class="mbtn sec" data-close>닫기</button></div></div><div class="modal" id="mEnh"><div class="mbox" style="width:min(540px,100%)"><h2>🔨 개미 강화소</h2><div class="sub">장비 하나하나 누를 필요 없이 <b>내 캐릭터</b>를 한 번에 강화 · 최대 <b>+20</b></div>
   <div class="enhTop"><div class="enhLv" id="enhLv">+0</div><div class="enhRight"><div class="enhBarW"><i id="enhBar"></i></div><div class="enhSt" id="enhSt"></div></div></div>
   <div class="enhInfo" id="enhInfo"></div><div class="enhres" id="enhRes"></div>
@@ -438,7 +464,7 @@ input,select{font-family:inherit}
   <div class="f"><label>배경음악 크기</label><input type="range" id="vB" min="0" max="1" step="0.05"></div>
   <div class="f"><label>효과음 크기</label><input type="range" id="vS" min="0" max="1" step="0.05"></div>
   <button class="mbtn sec" data-close>닫기</button></div></div>
-<div class="modal" id="mMkt"><div class="mbox mkt"><div class="mh"><span>📊 시장 한눈에 — 히트맵 · 차트</span><button data-close>닫기 ✕</button></div><canvas id="cvHeat" width="1600" height="900"></canvas><canvas id="cvChart" width="1400" height="700"></canvas><div class="small" style="margin-top:8px;color:#8592a8">재미·참고용입니다. 시세는 야후 파이낸스(자동 수집기)·Finnhub 등 무료 데이터(지연·마감가 포함), 차트는 접속자가 있는 동안 1분마다 기록한 값입니다. 투자 조언이 아닙니다.</div></div></div>
+<div class="modal" id="mMkt"><div class="mbox mkt"><div class="mh"><span>📊 시장 한눈에 — 히트맵 · 차트</span><button data-close>닫기 ✕</button></div><div class="shopTabs" id="heatTabs"><button type="button" data-k="us" class="on">🇺🇸 미국장</button><button type="button" data-k="kr">🇰🇷 국장</button></div><canvas id="cvHeat" width="1600" height="900"></canvas><canvas id="cvChart" width="1400" height="700"></canvas><div class="small" style="margin-top:8px;color:#8592a8">재미·참고용입니다. 시세는 야후 파이낸스(자동 수집기)·Finnhub 등 무료 데이터(지연·마감가 포함), 차트는 접속자가 있는 동안 1분마다 기록한 값입니다. 투자 조언이 아닙니다.</div></div></div>
 
 <div class="modal" id="mEnter"><div class="mbox">
   <h2>🐜 원복 객장 입장</h2><div class="sub">전광판 앞에서 다 같이 원복을 기원합니다. 평단은 선택이며 내 기기에만 저장됩니다.</div>
@@ -474,7 +500,7 @@ input,select{font-family:inherit}
 setTimeout(function(){ if (window.__room3d) return; var d=document.createElement("div"); d.style.cssText="position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);z-index:99;background:#111a2b;color:#fff;border:2px solid #f5a524;border-radius:16px;padding:18px 20px;text-align:center;font:15px/1.5 sans-serif;max-width:90vw"; d.innerHTML="<b>🔄 사이트가 업데이트됐어요</b><br>예전 파일이 남아 있어 객장이 안 열렸어요.<br><button style=\"margin-top:10px;padding:10px 18px;border:0;border-radius:10px;background:#f5a524;font-weight:800;cursor:pointer\">새로고침해서 입장</button>"; d.querySelector("button").onclick=function(){ location.replace(location.pathname+"?room="+(new URLSearchParams(location.search).get("room")||"")+"&r="+Date.now()); }; document.body.appendChild(d); }, 9000);</script>
 <script type="module">
 import * as THREE from './vendor/three.module.min.js?v=169';
-import { initLive, onPrices, onMarket, live, usSession, META, MKT, histMin, reqQuote } from './live.js?v=19';
+import { initLive, onPrices, onMarket, live, usSession, META, MKT, histMin, reqQuote } from './live.js?v=20';
 
 /* ================= 공통 ================= */
 const $ = id => document.getElementById(id);
@@ -764,7 +790,8 @@ const INTER = {
   rope: { name: '🪢 밧줄 타기 (옥상)', X: 12.85, Z: 15.2, type: 'rope', h: 2.6 },
   fish: { name: '🎣 낚시하기', X: -57.5, Z: 4, type: 'fish', h: 2.4 }, gb: { name: '📖 방명록 (E)', X: 8.4, Z: -1.6, h: 5.2 },
   npc: { name: '🧓 레가 아저씨 (E)', X: -12.6, Z: -4.4, type: 'npc', h: 3.1 }, portal: { name: '🌀 순간이동 포털 (E)', X: -8.5, Z: 27, type: 'portal', h: 3.4 },
-  gate: { name: '🚪 야외 게이트 (E)', X: -9.5, Z: -6.4, type: 'portal', h: 6.2 },
+  gate: { name: '🚪 야외 게이트 (E)', X: 15.4, Z: -9, type: 'portal', h: 6.2 },
+  sig: { name: '🤖 신호봇 TOP10 (E)', X: -15.4, Z: -11.8, type: 'sig', h: 2.4 },
   pkb: { name: '🤺 결투 신청 (E)', X: -36, Z: 53.6, type: 'pkb', h: 3.2 },
   wb: { name: '재난 보스', X: RAIDP.x, Z: RAIDP.z, type: 'wboss', h: 11.5, off: true }
 };
@@ -1149,7 +1176,7 @@ const cam = { yaw: 0, pitch: .45, dist: (matchMedia('(pointer:coarse)').matches 
 
 function myData() {
   const p = toP(ME.X, ME.Z);
-  return { nick: PROF.nick, color: PROF.color, seat: ME.seat, koru: Number(PROF.koru) || 0, soxl: Number(PROF.soxl) || 0, x: Math.round(p.x * 100) / 100, y: Math.round(p.y * 100) / 100, dir: Math.sin(ME.ry) < 0 ? 'l' : 'r', mv: ME.moving, pose: ME.climb ? 'climb' : ME.fishing ? 'fish' : ME.swim ? 'swim' : ME.lie ? 'lie' : ME.seat >= 0 ? 'sit' : 'stand', h: Math.round((ME.Y || 0) * 10) / 10, hp: hpPct(), ...(() => { const S = PROF && PROF.stk && (PROF.stv | 0) !== 2 ? myStock() : null; if (!S) return {}; const o = { stk: S.k, stn: S.n.slice(0, 12) }; if ((PROF.stv | 0) === 1) o.stv = 1; else if (S.pct != null) o.stp = Math.round(S.pct * 10) / 10; return o; })(), pts: G.pts, hb: PROF.hb, title: G.title, host: HOST, wp: G.eq.w || '', ht: G.eq.h || '', gr: eqStr(G.eq), en: enhL(), cs: myCs() };
+  return { nick: PROF.nick, color: PROF.color, seat: ME.seat, koru: Number(PROF.koru) || 0, soxl: Number(PROF.soxl) || 0, x: Math.round(p.x * 100) / 100, y: Math.round(p.y * 100) / 100, dir: Math.sin(ME.ry) < 0 ? 'l' : 'r', mv: ME.moving, pose: ME.climb ? 'climb' : ME.fishing ? 'fish' : ME.swim ? 'swim' : ME.lie ? 'lie' : ME.seat >= 0 ? 'sit' : 'stand', h: Math.round((ME.Y || 0) * 10) / 10, hp: hpPct(), ...(() => { const S = PROF && PROF.stk && (PROF.stv | 0) !== 2 ? myStock() : null; if (!S) return {}; const o = { stk: S.k, stn: S.n.slice(0, 12) }; if ((PROF.stv | 0) === 1) o.stv = 1; else if (S.pct != null) o.stp = Math.round(S.pct * 10) / 10; return o; })(), pts: G.pts, hb: PROF.hb, title: G.title, host: HOST, wp: G.eq.w || '', ht: G.eq.h || '', gr: eqStr(G.eq), en: enhL(), cs: myCs(), lk: G.look >= 0 && G.look < lvOf(G.pts) ? G.look : -1 };
 }
 let lastSync = 0, syncPending = false;
 function sync(force) { if (!room || !entered) return; const now = performance.now(); if (!force && now - lastSync < 300) { syncPending = true; return; } lastSync = now; syncPending = false; room.setMe(myData()); }
@@ -1253,7 +1280,7 @@ function useNearest() { if (!entered) return; const k = findNear(); if (k) useIn
 const cool = {};
 function cd(k, ms) { const n = performance.now(); if (cool[k] && n - cool[k] < ms) return false; cool[k] = n; return true; }
 function useInter(k) {
-  if (!entered) return; if (k === 'mob') { hitMob(nearMob); return; } if (INTER[k].type === 'fish') { useFish(); return; } if (k === 'gb') { openGb(); return; } if (INTER[k].type === 'npc') { openNpc(); return; } if (INTER[k].type === 'pkb') { openDuel(); return; } if (INTER[k].type === 'portal') { $('bMap').click(); return; }
+  if (!entered) return; if (k === 'mob') { hitMob(nearMob); return; } if (INTER[k].type === 'fish') { useFish(); return; } if (k === 'gb') { openGb(); return; } if (INTER[k].type === 'npc') { openNpc(); return; } if (INTER[k].type === 'pkb') { openDuel(); return; } if (INTER[k].type === 'sig') { openSig(); return; } if (INTER[k].type === 'portal') { $('bMap').click(); return; }
   if (INTER[k].off) return; if (INTER[k].type === 'rope') { useRope(); return; } if (INTER[k].type === 'wboss') { wbHit(); return; }
   if (INTER[k].type) { useRpg(k); return; }
   ME.ry = Math.atan2(INTER[k].X - ME.X, (INTER[k].Z - .6) - ME.Z); if (k === 'vote') ME.ry = -Math.PI / 2;
@@ -1284,7 +1311,7 @@ function addPts(n) {
   if (after > before && after === 98) setTimeout(() => toast('🐣 …어라? 다시 아기개미?! 태초의 개미 — 초월 후광이 빛나요. 마지막 한 걸음!'), 1600);
   if (after > before) addCoin(30 + after * 5, '진화 축하');
   if (after > before && entered) setTimeout(() => { try { evoCard(after, before); } catch (e) { console.warn(e); } }, after === 49 || after === 99 ? 4500 : 1200);
-  if (after > before) { room.sendFx('levelup'); toast(`🎉 진화! ${TIER_ICON[after]} ${LV[after][1]} (${after + 1}/${LV.length}단계)` + (LV[after + 1] ? ' · 다음은 ???' : '')); refreshHbButtons(); if (myAnt) applyTier(myAnt, after); if (myLabel) fillLabel(myLabel, myData(), true); }
+  if (after > before) { room.sendFx('levelup'); toast(`🎉 진화! ${TIER_ICON[after]} ${LV[after][1]} (${after + 1}/${LV.length}단계)` + (LV[after + 1] ? ' · 다음은 ???' : '')); refreshHbButtons(); if (myAnt) applyTier(myAnt, lvOf(myLookPts())); if (myLabel) fillLabel(myLabel, myData(), true); }
   sync(false);
 }
 function milestoneFx(t) {
@@ -1307,6 +1334,7 @@ function updHud() {
   $('hLv').textContent = TIER_ICON[i] + ' ' + LV[i][1]; $('hPts').textContent = fmt(G.pts, (G.pts % 1) ? 1 : 0);
   $('hBar').style.width = (nxt ? (G.pts - cur) / (nxt - cur) * 100 : 100) + '%';
   $('hNx').textContent = (nxt ? `${i + 1}단계 · 다음까지 ${fmt(nxt - G.pts, 0)} 공덕` : `${i + 1}단계 · 🌌 최종 엔딩!`); $('hCoin').textContent = '🪙 ' + fmt(G.coin | 0, 0);
+  { const lk = curLook(), E2 = $('hLook'); E2.textContent = lk < i ? `🎭 ${lk + 1}단계 모습 사용 중 (도감에서 변경)` : ''; E2.style.display = lk < i ? '' : 'none'; }
   const H = $('hNext'); H.textContent = '';
   if (nxt) { H.append(document.createTextNode('다음 ▶ '), el('b', null, TIER_ICON[i + 1] + ' ' + LV[i + 1][1]), document.createTextNode(` 까지 ${fmt(nxt - G.pts, 0)} 공덕`)); }
   else H.textContent = '🌌 최종 엔딩 — 차트 밖의 창조주! 모든 진화를 마쳤어요';
@@ -1414,14 +1442,14 @@ function seatOrPos(d) {
 let fakePeers = null; // 테스트 전용 부하 확인용(화면만, 데이터 아님)
 function onPeersCb(arr) {
   if (fakePeers) arr = arr.filter(d => !String(d.uid).startsWith('f')).concat(fakePeers);
-  peersData = arr; setRoomPill(arr.length);
+  arr = arr.filter(d => d.you || d.uid === live.uid || !isKicked(d.uid, d.nick)); peersData = arr; setRoomPill(arr.length);
   const seen = new Set();
   arr.forEach(d => {
     if (d.you || d.uid === live.uid) { if (myLabel) fillLabel(myLabel, myData(), true); return; }
     seen.add(d.uid); let r = remotes.get(d.uid); const w = seatOrPos(d);
     if (!r) { r = { ant: null, L: null, cur: { x: w.x, z: w.z }, tgt: { x: w.x, z: w.z }, data: d, lastMv: 0, ry: Math.PI, sit: false, moving: false, rank: 999, col: new THREE.Color() }; remotes.set(d.uid, r); lodDirty = true; }
     r.data = d; r.tgt = w; r.sit = d.seat >= 0 && !d.mv; r.lie = d.pose === 'lie' && !d.mv; r.tgtY = Math.max(0, Math.min(30, Number(d.h) || 0)); r.swim = d.pose === 'swim'; if (r.ant) { r.ant.climb = d.pose === 'climb'; r.ant.swim = r.swim; r.ant.fishing = d.pose === 'fish'; } r.col.set(/^#[0-9a-fA-F]{6}$/.test(d.color || '') ? d.color : COLORS[0]);
-    if (r.ant) { setGear(r.ant, eqOfData(d)); setAntLook(r.ant, d.color, d.hb, d.pts, d.host); r.ant.sit = r.sit; r.ant.lie = r.lie; fillLabel(r.L, d, false); }
+    if (r.ant) { setGear(r.ant, eqOfData(d)); setAntLook(r.ant, d.color, d.hb, lookPts(d), d.host); r.ant.sit = r.sit; r.ant.lie = r.lie; fillLabel(r.L, d, false); }
   });
   remotes.forEach((r, uid) => { if (!seen.has(uid)) { detachDetail(r); remotes.delete(uid); lodDirty = true; } });
   renderRank();
@@ -1456,7 +1484,7 @@ pawnBody.setColorAt(0, new THREE.Color(1, 1, 1)); scene.add(pawnBody, pawnHead);
 const _pd = new THREE.Object3D();
 function attachDetail(r) {
   if (r.ant) return; const d = r.data;
-  const ant = makeAnt(d.color || COLORS[0], d.hb, d.pts, d.host); setGear(ant, eqOfData(d)); ant.root.position.set(r.cur.x, 0, r.cur.z); ant.ry = r.ry; ant.root.rotation.y = r.ry; ant.sit = r.sit; ant.lie = r.lie; scene.add(ant.root);
+  const ant = makeAnt(d.color || COLORS[0], d.hb, lookPts(d), d.host); setGear(ant, eqOfData(d)); ant.root.position.set(r.cur.x, 0, r.cur.z); ant.ry = r.ry; ant.root.rotation.y = r.ry; ant.sit = r.sit; ant.lie = r.lie; scene.add(ant.root);
   r.ant = ant; r.L = makeLabel(false); fillLabel(r.L, d, false);
 }
 function detachDetail(r) {
@@ -1510,6 +1538,7 @@ function addLog(m, sys) {
   logEl.appendChild(d); while (logEl.children.length > 500) logEl.firstChild.remove(); logEl.scrollTop = logEl.scrollHeight;
 }
 function onChatCb(m) {
+  if (m && m.uid !== live.uid && isMuted(m.uid, m.nick)) return;
   if (m.uid !== live.uid && typeof BLOCK !== 'undefined' && BLOCK.has(m.nick)) return;
   addLog(m); if (m.uid !== live.uid && entered && cd('recv', 600)) SND.recv(); if (m.host && String(m.text || '').indexOf('📢') === 0) toast(m.text);
   const L = m.uid === live.uid ? myLabel : (remotes.get(m.uid) || {}).L;
@@ -1519,7 +1548,8 @@ function onChatCb(m) {
 let lastChat = 0;
 $('chatForm').onsubmit = e => {
   e.preventDefault(); const v = $('chatIn').value.trim(); if (!v || !room) return; if (blockCmd(v)) { $('chatIn').value = ''; return; }
-  if (performance.now() - lastChat < 1500) { toast('천천히 — 1.5초에 한 번'); return; }
+  { const b = banOf(live.uid, PROF && PROF.nick); if (b && !HOST) { toast(`🔇 방장이 채팅을 막았어요 (${Math.ceil((b.u - Date.now()) / 60000)}분 남음)`); return; } }
+  { const sl = HOST ? 1.5 : Math.max(1.5, CFG2().slow | 0); if (performance.now() - lastChat < sl * 1000) { toast(`천천히 — ${sl}초에 한 번`); return; } }
   if (HOST && /^\/레이드\s*$/.test(v.trim())) { room.sendFx('wb:go'); $('chatIn').value = ''; toast('🌋 방장 권한: 시장 재난 레이드 소환!'); return; }
   lastChat = performance.now(); { let tx = v.slice(0, 120); if (HOST && /^\/공지\s/.test(tx)) tx = '📢 ' + tx.replace(/^\/공지\s+/, ''); room.sendChat(tx, { host: HOST }); } if (cd('pts-chat', 8000)) addPts(2); qProg('chat'); SND.send(); $('chatIn').value = ''; $('chatIn').blur();
 };
@@ -1593,7 +1623,7 @@ $('fGo').onclick = async () => {
   PROF = { nick, koru: k > 0 ? k : 0, soxl: s > 0 ? s : 0, color: pickColor, hb: pickHb, stk: sk || '', stn: (sn || '').slice(0, 12), sta: sk ? sa : 0, stv: +$('fStkV').value || 0, stq: sk && sk === OLD.stk ? OLD.stq || 0 : 0, stm: sk && sk === OLD.stk ? OLD.stm || 0 : 0 }; LS.set('lv3d_prof', PROF);
   if (PROF.stk) reqQuote(PROF.stk); try { updMyStock(true); } catch (e) {}
   $('fErr').textContent = ''; $('mEnter').classList.remove('on'); ac();
-  if (!entered) enter(); else { setAntLook(myAnt, PROF.color, PROF.hb, G.pts, HOST); fillLabel(myLabel, myData(), true); sync(true); }
+  if (!entered) enter(); else { setAntLook(myAnt, PROF.color, PROF.hb, myLookPts(), HOST); fillLabel(myLabel, myData(), true); sync(true); }
 };
 
 /* ================= 시세 ================= */
@@ -2277,11 +2307,20 @@ function previewOf(t) {
   } catch (e) { PREV[t] = ''; }
   return PREV[t];
 }
+
+/* ---- 🎭 예전 모습 고르기 (능력치는 그대로 · 다른 개미에게도 보임) ---- */
+if (typeof G.look !== 'number') G.look = -1;
+function curLook() { const i = lvOf(G.pts); return G.look >= 0 && G.look < i ? G.look : i; }
+function lookPts(d) { const lk = d && d.lk; return Number.isInteger(lk) && lk >= 0 && lk < lvOf((d && d.pts) || 0) ? LV[lk][0] : ((d && d.pts) || 0); }
+function myLookPts() { return lookPts({ pts: G.pts, lk: G.look >= 0 ? G.look : undefined }); }
+function setLook(t) { G.look = t >= 0 && t < lvOf(G.pts) ? t : -1; saveG(); if (myAnt) { myAnt.tier = -1; applyTier(myAnt, lvOf(myLookPts())); try { setGear(myAnt, G.eq); } catch (e) {} } if (myLabel) fillLabel(myLabel, myData(), true); sync(true); updHud();
+  toast(G.look >= 0 ? `🎭 ${G.look + 1}단계 「${LV[G.look][1]}」 모습으로 변신! (능력치는 그대로)` : '🎭 최신 모습으로 돌아왔어요'); try { if ($('mDex').classList.contains('on')) renderDex(); } catch (e) {} }
 function renderDex() {
-  const i = lvOf(G.pts), g = $('dexGrid'); g.textContent = ''; if (dexTab < 0) dexTab = i < 12 ? 0 : i < 20 ? 1 : 2;
+  const i = lvOf(G.pts), g = $('dexGrid'); g.textContent = ''; const DTABS = [[0, 11], [12, 19], [20, 29], [30, 39], [40, 49], [50, 59], [60, 69], [70, 79], [80, 89], [90, 99]]; if (dexTab < 0 || dexTab >= DTABS.length) dexTab = Math.max(0, DTABS.findIndex(r => i >= r[0] && i <= r[1]));
   $('dexSub').textContent = `지금 ${i + 1}/${LV.length}단계 · ${TIER_ICON[i]} ${LV[i][1]} — ` + (LV[i + 1] ? `다음 진화까지 ${fmt(LV[i + 1][0] - G.pts, 0)} 공덕!` : '🌌 최종 엔딩 달성! 차트 밖의 창조주');
   const tabs = $('dexTabs'); tabs.textContent = ''; [['🐜 1~12 개미의 길', 0, 11], ['🏛 13~20 여의도·월가', 12, 19], ['🐉 21~30 시장의 지배자', 20, 29], ['🌌 31~40 숨은 지배자', 30, 39], ['✨ 41~50 초월자', 40, 49], ['🌍 51~60 글로벌 자본', 50, 59], ['⛈ 61~70 거시경제', 60, 69], ['🫧 71~80 위기와 반등', 70, 79], ['🚀 81~90 우주 증시', 80, 89], ['🌟 91~100 차트 밖', 90, 99]].forEach(([n, a0, a1], j) => { const b = el('button', j === dexTab ? 'on' : '', n); b.type = 'button'; const got = Math.max(0, Math.min(a1, i) - a0 + 1); b.appendChild(el('small', null, ` ${got}/${a1 - a0 + 1}`)); b.onclick = () => { dexTab = j; renderDex(); }; tabs.appendChild(b); });
-  const [a0, a1] = [[0, 11], [12, 19], [20, 29]][dexTab];
+  const [a0, a1] = DTABS[dexTab];
+  { const lk = curLook(), bar = el('div', 'lookBar'); bar.append(el('b', null, '🎭 모습 고르기'), el('span', null, lk < i ? `지금 ${lk + 1}단계 「${LV[lk][1]}」 모습 사용 중 · 능력치는 ${i + 1}단계 그대로` : `해금한 단계(1~${i + 1}) 중 아무 모습이나 고를 수 있어요 · 능력치는 그대로`)); if (lk < i) { const b = el('button', 'gbtn', '↩ 최신 모습으로'); b.type = 'button'; b.onclick = () => setLook(-1); bar.appendChild(b); } g.appendChild(bar); }
   for (let k = a0; k <= a1; k++) {
     const l = LV[k], st = k < i ? 'got' : k === i ? 'got now' : k === i + 1 ? 'next' : 'lock';
     const c = el('div', 'c ' + st + (k === 29 || k === 49 || k === 99 ? ' final' : '')); const im = el('img', 'pv'); im.alt = l[1]; im.loading = 'lazy'; c.appendChild(im);
@@ -2291,6 +2330,7 @@ function renderDex() {
     c.appendChild(el('small', null, `⚔ 공격력 ${atkOf(k)} · ${TIER_PERK[k]}`));
     if (SK[k]) c.appendChild(el('small', 'sk', `${SK[k][0]} — ${SK[k][1]} (쿨 ${SK[k][2]}초)`));
     if (k === i) c.appendChild(el('small', 'me', '⬅ 지금 나'));
+    if (k <= i) { const on = curLook() === k, b = el('button', 'gbtn lookB' + (on ? ' on' : ''), on ? '✅ 지금 이 모습' : '🎭 이 모습 하기'); b.type = 'button'; b.onclick = e => { e.stopPropagation(); setLook(k === i ? -1 : k); }; c.appendChild(b); }
     if (k === 29) c.appendChild(el('small', 'fin', '🐉 30단계 · 공매도 브레스 · 개미들의 숏 스퀴즈 반격을 조심!'));
     if (k === 49) c.appendChild(el('small', 'fin', '🌟 1차 엔딩 · 천지개벽 공매도 · 모든 개미가 축하하는 연출!'));
     if (k === 99) c.appendChild(el('small', 'fin', '🌌 최종 엔딩 · 원복 창세기 · 차트 밖의 창조주!'));
@@ -2660,6 +2700,7 @@ function useItem(id) { const x = SHOP_BY[id]; if (!x || !entered) return;
   if ((G.shop.cnt[id] | 0) <= 0) { toast('먼저 구매해 주세요'); return; } if (id === 'luck' || id === 'guard') { toast('강화소에서 체크하면 자동으로 쓰여요 🔨'); return; }
   if (['quake', 'fw', 'horn'].includes(id) && hallBlock('이 효과')) return;
   if (!cd('shopUse', 6000)) { toast('사용 아이템은 6초에 한 번!'); return; }
+  if (id === 'mega' && CFG2().mega === false && !HOST) { toast('📢 방장이 확성기를 잠시 꺼 두었어요'); return; }
   if (id === 'mega') { const t = (($('megaIn') || {}).value || '').trim(); if (!t) { toast('📢 확성기로 외칠 말을 먼저 적어 주세요'); return; } G.shop.cnt[id]--; saveG(); room.sendFx('u:mega'); setTimeout(() => room.sendChat('📢[확성기] ' + t.slice(0, 40), {}), 250); $('megaIn').value = ''; renderShop(); return; }
   G.shop.cnt[id]--; saveG(); room.sendFx('u:' + id); renderShop(); renderMyItems(); }
 const megaUntil = {};
@@ -2736,7 +2777,7 @@ let cardR = null, cardLineI = 0;
 function cardAntImg() {
   try {
     if (!cardR) { cardR = new THREE.WebGLRenderer({ alpha: true, antialias: true, preserveDrawingBuffer: true }); cardR.setSize(640, 640); cardR.outputColorSpace = THREE.SRGBColorSpace; cardR.toneMapping = THREE.ACESFilmicToneMapping; const sc = new THREE.Scene(); sc.add(new THREE.HemisphereLight(0xffffff, 0x334466, 2.6)); const d = new THREE.DirectionalLight(0xffffff, 2.4); d.position.set(3, 6, 8); sc.add(d); cardR.userData = { sc, cam: new THREE.PerspectiveCamera(30, 1, .1, 200) }; }
-    const { sc, cam } = cardR.userData, ant = makeAnt(PROF.color, PROF.hb, G.pts, HOST); try { setGear(ant, G.eq); } catch (e) {}
+    const { sc, cam } = cardR.userData, ant = makeAnt(PROF.color, PROF.hb, myLookPts(), HOST); try { setGear(ant, G.eq); } catch (e) {}
     ant.root.rotation.y = .45; sc.add(ant.root); animAnt(ant, .016, 1); ant.root.updateMatrixWorld(true);
     const box = new THREE.Box3().setFromObject(ant.root), cen = box.getCenter(new THREE.Vector3()), sz = box.getSize(new THREE.Vector3()), R = Math.max(sz.x, sz.y, sz.z) * .5;
     cam.position.set(cen.x + R * .3, cen.y + R * .25, cen.z + R / Math.tan(15 * Math.PI / 180) * 1.02); cam.lookAt(cen); cardR.render(sc, cam);
@@ -2785,8 +2826,8 @@ $('cardShare').onclick = () => { const cv = $('cardCv'); cv.toBlob(async b => { 
 /* ================= 🔐 계정(아이디·비번) 저장 · 이어하기 ================= */
 let ACCT = LS.get('lv3dp_acct', null), acctT = null;
 async function sha(t) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); }
-function acctPack() { return { nick: (PROF && PROF.nick || ACCT.id).slice(0, 12), pts: Math.min(1e7, Math.floor(G.pts)), title: G.title || '', inv: G.inv.join(';').slice(0, 5500), eq: eqStr(G.eq).slice(0, 200), sp: Math.max(0, Math.min(99, G.spray | 0)), enh: `${enhL()},0,${G.enh.f | 0}`, coin: Math.min(9999999, Math.floor(G.coin || 0)), shop: JSON.stringify(G.shop).slice(0, 4000), q: JSON.stringify(G.q || {}).slice(0, 600), dex: (Array.isArray(G.dex) ? G.dex : []).join(';').slice(0, 24000), ts: Date.now() }; }
-function acctUnpack(d) { G.pts = Math.max(0, Number(d.pts) || 0); G.title = d.title || ''; G.inv = String(d.inv || '').split(';').filter(c => itemInfo(c)); G.eq = eqParse(d.eq); if (d.sp >= 0) G.spray = Math.min(99, d.sp | 0); if (typeof d.dex === 'string') G.dex = d.dex.split(';').filter(x => /^[a-z]\d{1,2}-\d{1,2}$/.test(x)); if (typeof d.enh === 'string') { const q = d.enh.split(',').map(x => Math.max(0, x | 0)); G.enh = { l: Math.min(ENH_MAX, q[0] || 0), st: 0, f: Math.min(60, q[2] || 0) }; if (q[1] > 0) G.coin = (G.coin || 0) + q[1] * 10; }
+function acctPack() { return { nick: (PROF && PROF.nick || ACCT.id).slice(0, 12), pts: Math.min(1e7, Math.floor(G.pts)), title: G.title || '', inv: G.inv.join(';').slice(0, 5500), eq: eqStr(G.eq).slice(0, 200), sp: Math.max(0, Math.min(99, G.spray | 0)), enh: `${enhL()},0,${G.enh.f | 0}`, look: G.look | 0, coin: Math.min(9999999, Math.floor(G.coin || 0)), shop: JSON.stringify(G.shop).slice(0, 4000), q: JSON.stringify(G.q || {}).slice(0, 600), dex: (Array.isArray(G.dex) ? G.dex : []).join(';').slice(0, 24000), ts: Date.now() }; }
+function acctUnpack(d) { G.pts = Math.max(0, Number(d.pts) || 0); G.title = d.title || ''; G.inv = String(d.inv || '').split(';').filter(c => itemInfo(c)); G.eq = eqParse(d.eq); if (d.sp >= 0) G.spray = Math.min(99, d.sp | 0); if (Number.isInteger(d.look)) G.look = d.look; if (typeof d.dex === 'string') G.dex = d.dex.split(';').filter(x => /^[a-z]\d{1,2}-\d{1,2}$/.test(x)); if (typeof d.enh === 'string') { const q = d.enh.split(',').map(x => Math.max(0, x | 0)); G.enh = { l: Math.min(ENH_MAX, q[0] || 0), st: 0, f: Math.min(60, q[2] || 0) }; if (q[1] > 0) G.coin = (G.coin || 0) + q[1] * 10; }
   if (d.coin >= 0) G.coin = Math.min(9999999, Number(d.coin) || 0); try { if (typeof d.shop === 'string') { const S = JSON.parse(d.shop); if (S && S.own) G.shop = { own: S.own || {}, cnt: S.cnt || {}, eq: S.eq || { b: 0, t: 0, n: 0 } }; } } catch (e) {} try { if (typeof d.q === 'string') { const Q = JSON.parse(d.q); if (Q && Q.d) G.q = Q; } } catch (e) {} SLOT_KEYS.forEach(k => { if (G.eq[k] && !G.inv.includes(G.eq[k])) G.inv.push(G.eq[k]); }); LS.set('lv3dp_game', G); }
 function acctDirty() { if (!ACCT || !live.savePut) return; clearTimeout(acctT); acctT = setTimeout(() => { live.savePut(ACCT.key, acctPack()).catch(e => console.warn('save', e)); }, 4000); }
 function acctUi() { $('acctMsg').textContent = ACCT ? `✅ ${ACCT.id} 로그인됨 — 기록이 자동 저장돼요` : '처음이면 새로 만들어지고, 있던 아이디면 기록을 불러옵니다.'; $('fLogout').style.display = ACCT ? '' : 'none'; if (ACCT) $('fId').value = ACCT.id; }
@@ -2796,7 +2837,7 @@ async function acctLogin() {
   await initLive(); const key = await sha(id.toLowerCase() + '|' + pw + '|wonbok-preview');
   try { const d = await live.saveGet(key); if (d) { acctUnpack(d); toast(`🔐 ${id} 이어하기 성공! ${TIER_ICON[lvOf(G.pts)]} ${LV[lvOf(G.pts)][1]}`); } else { ACCT = { id, key }; await live.savePut(key, acctPack()); toast(`🔐 ${id} 새 기록 저장 시작!`); } }
   catch (e) { $('fErr').textContent = '기록 서버에 연결하지 못했어요. 잠시 후 다시 해 주세요.'; return false; }
-  ACCT = { id, key }; LS.set('lv3dp_acct', ACCT); $('fPw').value = ''; acctUi(); updHud(); if (myAnt) { setGear(myAnt, G.eq); applyTier(myAnt, lvOf(G.pts)); } return true;
+  ACCT = { id, key }; LS.set('lv3dp_acct', ACCT); $('fPw').value = ''; acctUi(); updHud(); if (myAnt) { setGear(myAnt, G.eq); applyTier(myAnt, lvOf(myLookPts())); } return true;
 }
 $('fLogout').onclick = () => { ACCT = null; LS.set('lv3dp_acct', null); acctUi(); toast('로그아웃했어요 (이 기기의 기록은 그대로)'); };
 let resetArm = 0;
@@ -2869,17 +2910,17 @@ Object.keys(BOSS).forEach(k => { BOSS[k].g.rotation.y = 0; bossLabel(k); bossDra
     const lb = labelPlane('🤺 결투 신청', 2.2, .55, '#2a1408', '#ffd76a'); lb.position.set(0, 1.7, -R - 1.28); pg.add(lb);
     window.__pk = { rr }; }
   // v18: 전광판 옆 눈에 띄는 야외 게이트 (걸어 들어가면 초보 사냥터로)
-  { const gg = new THREE.Group(); gg.position.set(-9.5, 0, -6.4); scene.add(gg);
+  { const GX = 16.2, GZ = -9.8, GRY = Math.atan2(0 - GX, 6 - GZ); const gg = new THREE.Group(); gg.position.set(GX, 0, GZ); gg.rotation.y = GRY; scene.add(gg);
     const gm = mat(0x1c2f66, { roughness: .35, metalness: .6, emissive: 0x0a1a44 }), gold = mat(0xe0b020, { roughness: .3, metalness: .85, emissive: 0x3a2600 });
     [-2.1, 2.1].forEach(x => { gg.add(mesh(GEO.box, gm, [.7, 6, .7], [x, 3, 0])); gg.add(mesh(GEO.box, gold, [.9, .35, .9], [x, .18, 0])); gg.add(mesh(GEO.box, gold, [.9, .35, .9], [x, 6.05, 0])); });
     gg.add(mesh(GEO.box, gm, [5.2, .8, .8], [0, 6.2, 0])); gg.add(mesh(GEO.box, gold, [5.5, .22, .95], [0, 6.7, 0]));
-    const sw = mesh(new THREE.PlaneGeometry(3.5, 5.6), FB(0x41f0ff, .38), null, [0, 2.95, 0]); sw.material.side = THREE.DoubleSide; sw.material.depthWrite = false; gg.add(sw);
-    const sw2 = mesh(new THREE.PlaneGeometry(2.4, 4.4), FB(0xb08cff, .32), null, [0, 2.85, .02]); sw2.material.side = THREE.DoubleSide; sw2.material.depthWrite = false; gg.add(sw2);
-    const beam = mesh(GEO2.cylO, FB(0x41f0ff, .16), [1.6, 46, 1.6], [0, 23, 0]); beam.material.side = THREE.DoubleSide; beam.material.depthWrite = false; gg.add(beam);
-    const sg = signPlane('⚔ 야외 사냥터 · 투기장 · 레이드  ▶  여기로 들어가세요!', 11, 1.5, '#fff4c9', '#ffb020'); sg.position.set(0, 8.2, 0); gg.add(sg);
+    const sw = mesh(new THREE.PlaneGeometry(3.5, 5.6), kMat(0x41f0ff, { opacity: .38 }), null, [0, 2.95, 0]); sw.material.side = THREE.DoubleSide; sw.material.depthWrite = false; gg.add(sw);
+    const sw2 = mesh(new THREE.PlaneGeometry(2.4, 4.4), kMat(0xb08cff, { opacity: .32 }), null, [0, 2.85, .02]); sw2.material.side = THREE.DoubleSide; sw2.material.depthWrite = false; gg.add(sw2);
+    const beam = mesh(GEO2.cylO, kMat(0x41f0ff, { opacity: .16 }), [1.6, 46, 1.6], [0, 23, 0]); beam.material.side = THREE.DoubleSide; beam.material.depthWrite = false; gg.add(beam);
+    const sg = signPlane('⚔ 야외 사냥터 · PK존 · 레이드 ▶ 여기!', 7.6, 1.15, '#fff4c9', '#ffb020'); sg.position.set(0, 8, 0); gg.add(sg);
     const sg2 = signPlane('🚪 OUTDOOR GATE', 6, .9, '#d9f7ff', '#41f0ff'); sg2.position.set(0, 7.2, .5); gg.add(sg2);
-    const arrows = []; for (let i = 0; i < 6; i++) { const ar = new THREE.Group(); const px = -1 - i * 1.45, pz = -1.6 - i * .78; ar.position.set(px, .06, pz); ar.rotation.y = Math.atan2(-(-9.5 - px), -(-6.4 - pz)); ar.add(mesh(GEO.cone, FB(0xffd76a, .9), [.55, 1.1, .14], [0, 0, 0], [-Math.PI / 2, 0, 0])); scene.add(ar); arrows.push(ar); }
-    window.__gate = { sw, sw2, beam, arrows, X: -9.5, Z: -6.4 }; }
+    const arrows = []; for (let i = 0; i < 6; i++) { const ar = new THREE.Group(); const u = (i + 1) / 7.5, px = -2 + (GX + Math.sin(GRY) * 1.6 + 2) * u, pz = 1 + (GZ + Math.cos(GRY) * 1.6 - 1) * u; ar.position.set(px, .06, pz); ar.rotation.y = Math.atan2(-(GX - px), -(GZ - pz)); ar.add(mesh(GEO.cone, FB(0xffd76a, .9), [.55, 1.1, .14], [0, 0, 0], [-Math.PI / 2, 0, 0])); scene.add(ar); arrows.push(ar); }
+    window.__gate = { sw, sw2, beam, arrows, X: GX + Math.sin(GRY) * .6, Z: GZ + Math.cos(GRY) * .6 }; }
   // 라운지: 원형 러그 + 모닥불
   scene.add(mesh(new THREE.CircleGeometry(5.2, 40), mat(0x0f3b33, { roughness: .9 }), null, [LOUNGE.x, .016, LOUNGE.z], [-Math.PI / 2, 0, 0]));
   for (let i = 0; i < 6; i++) { const a2 = i / 6 * Math.PI * 2; scene.add(mesh(GEO.cyl, MAT.woodD, [.12, 1.3, .12], [LOUNGE.x + Math.cos(a2) * .4, .3, LOUNGE.z + Math.sin(a2) * .4], [Math.sin(a2) * 1.2, 0, Math.cos(a2) * 1.2])); }
@@ -2959,7 +3000,7 @@ function applyQuake() { const left = (QK.until - performance.now()) / 1000; if (
 const ZONES = [], donutG = {};
 function zMat(col, op) { return new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: op, depthWrite: false, toneMapped: false, side: THREE.DoubleSide }); }
 function addZone(o) {
-  if (o.kind === 'circle' && Math.hypot(o.x - LOUNGE.x, o.z - LOUNGE.z) < 6.8 + o.r) return; // 천국 라운지엔 장판 금지
+  if (o.kind === 'circle' && Math.hypot(o.x - LOUNGE.x, o.z - LOUNGE.z) < 9.2 + o.r) return; // 천국 라운지엔 장판 금지
   o.t = 0; o.col = o.col || 0xff2030; const g = new THREE.Group(); g.position.set(o.x, .03 + Math.random() * .01, o.z); o.mats = [zMat(o.col, .16), zMat(o.col, .42)];
   if (o.kind === 'circle') { g.add(mesh(GEO.circ, o.mats[0], [o.r, o.r, 1], null, [-Math.PI / 2, 0, 0])); o.fill = mesh(GEO.circ, o.mats[1], [.01, .01, 1], [0, .01, 0], [-Math.PI / 2, 0, 0]); g.add(o.fill); g.add(mesh(ringGeo, o.mats[1], [o.r / 1.1, o.r / 1.1, 1], [0, .015, 0], [-Math.PI / 2, 0, 0])); }
   else if (o.kind === 'donut') { const key = o.r0 + '_' + o.r; const geo = donutG[key] || (donutG[key] = new THREE.RingGeometry(o.r0, o.r, 48)); g.add(mesh(geo, o.mats[0], null, null, [-Math.PI / 2, 0, 0])); o.fill = mesh(geo, o.mats[1], null, [0, .01, 0], [-Math.PI / 2, 0, 0]); g.add(o.fill); }
@@ -3231,7 +3272,7 @@ const WALK = [{ x0: -17.5, x1: 17.5, z0: -8, z1: 38.5 }, { x0: -28, x1: -17, z0:
 const ZONESW = [
   { n: '⚔ PK존', sub: '안에서는 개미끼리 싸울 수 있어요! · 결투 신청은 입구 게시판', cx: -36, cz: 64, r: 9, col: 'rgba(255,40,60,.55)' },
   { n: '🌀 포털 광장', sub: '어디든 순간이동', x0: -13, x1: -4, z0: 22.5, z1: 31.5 },
-  { n: '☁ 천국 라운지', sub: '소통 전용 · 조용한 곳', cx: 10, cz: 23, r: 6.8 },
+  { n: '☁ 천국 라운지', sub: '소통 전용 · 벤치에 앉아 수다 떨기 · 조용한 곳', cx: 10, cz: 23, r: 9.2 },
   { n: '🙏 공덕 법당', sub: '차트 보며 기도 · 조용한 소통 공간', x0: -17.5, x1: 17.5, z0: -8, z1: 38.5 },
   { n: '⚔ 보스 투기장', sub: '시장 세력 4대 보스 · Lv3~28', x0: -134, x1: -106, z0: 58, z1: 86, col: 'rgba(255,60,80,.45)' },
   { n: '🌋 재난 레이드 광장', sub: '8분마다 시장 재난 보스 출현!', cx: -188, cz: 72, r: 20, col: 'rgba(255,90,40,.4)' },
@@ -3248,7 +3289,7 @@ function walkable(x, z) { for (const r of WALK) if (x >= r.x0 && x <= r.x1 && z 
 const LAKE = { x: -66, z: 4, rx: 10.5, rz: 12 }, PIER = { x0: -62.5, x1: -55, z0: 2.9, z1: 5.1 };
 const inLake = (x, z) => ((x - LAKE.x) / LAKE.rx) ** 2 + ((z - LAKE.z) / LAKE.rz) ** 2 < 1;
 const onPier = (x, z) => x >= PIER.x0 && x <= PIER.x1 && z >= PIER.z0 && z <= PIER.z1;
-const HEAVEN = { x: LOUNGE.x, z: LOUNGE.z, r: 6.8 };
+const HEAVEN = { x: LOUNGE.x, z: LOUNGE.z, r: 9.2 }; // v20: 더 넓게
 const inHeaven = (x, z) => Math.hypot(x - HEAVEN.x, z - HEAVEN.z) < HEAVEN.r;
 // ---- 야외 사냥터 바닥 · 나무 · 바위 · 문 ----
 {
@@ -3428,11 +3469,19 @@ function endFish() { if (FISHING) { clearTimeout(FISHING.tm); clearTimeout(FISHI
 {
   const cm = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xdfe6ff, emissiveIntensity: .55, roughness: 1, transparent: true, opacity: .93 });
   scene.add(mesh(new THREE.CircleGeometry(HEAVEN.r, 48), cm, null, [HEAVEN.x, .025, HEAVEN.z], [-Math.PI / 2, 0, 0]));
-  const R = sRng(4242); for (let i = 0; i < 26; i++) { const a = i / 26 * Math.PI * 2 + R() * .2, rr = HEAVEN.r + .2 + R() * .5, s = .6 + R() * .8; scene.add(mesh(GEO.sphL, cm, [s * 1.3, s * .7, s], [HEAVEN.x + Math.cos(a) * rr, s * .25, HEAVEN.z + Math.sin(a) * rr])); }
+  const R = sRng(4242); for (let i = 0; i < 34; i++) { const a = i / 34 * Math.PI * 2 + R() * .2, rr = HEAVEN.r + .1 + R() * .3, s = .3 + R() * .35; scene.add(mesh(GEO.sphL, cm, [s * 1.3, s * .7, s], [HEAVEN.x + Math.cos(a) * rr, s * .25, HEAVEN.z + Math.sin(a) * rr])); }
   const pm = new THREE.MeshBasicMaterial({ color: 0xffe9a0, transparent: true, opacity: .22, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false });
   for (let i = 0; i < 5; i++) { const a = i / 5 * Math.PI * 2 + .3; scene.add(mesh(pillarGeo, pm, [.35, 1.2, .35], [HEAVEN.x + Math.cos(a) * (HEAVEN.r - .6), 8.4, HEAVEN.z + Math.sin(a) * (HEAVEN.r - .6)])); }
   const halo = FB(0xffd76a, .85); window.__halos = []; for (let i = 0; i < 3; i++) { const h = mesh(GEO2.tor, halo, [1.2 + i * .5, 1.2 + i * .5, 1.2 + i * .5], [HEAVEN.x, 7 + i * 1.3, HEAVEN.z], [Math.PI / 2, 0, 0]); scene.add(h); window.__halos.push(h); }
   const sg = signPlane('☁ 소통 전용 · 몬스터·소음 없음', 7, .8, '#ffffff', '#ffd76a'); sg.position.set(HEAVEN.x, 7.4, HEAVEN.z - HEAVEN.r + .5); sg.rotation.y = Math.PI; scene.add(sg);
+}
+
+// v20: ☁ 천국 라운지 벤치 6개(좌석 12) · 작은 탁자 · 등불
+{ const wood = mat(0xf4ead8, { roughness: .6 }), leg = mat(0xd4b98a, { roughness: .7 }), gl = FB(0xffe9a0, .9);
+  for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2 + Math.PI / 6, R = 6.7, bx = LOUNGE.x + Math.cos(a) * R, bz = LOUNGE.z + Math.sin(a) * R; if (bx > 17.2) continue; const g = new THREE.Group(); g.position.set(bx, 0, bz); g.rotation.y = -a + Math.PI / 2; scene.add(g);
+    g.add(mesh(GEO.box, wood, [3, .18, .9], [0, .55, 0]), mesh(GEO.box, wood, [3, .8, .14], [0, 1.05, -.42])); [-1.3, 1.3].forEach(x => g.add(mesh(GEO.box, leg, [.14, .5, .8], [x, .27, 0])));
+    [-.7, .7].forEach(ox => { const wx = bx + Math.cos(-a + Math.PI / 2) * ox, wz = bz - Math.sin(-a + Math.PI / 2) * ox; const dl = Math.hypot(LOUNGE.x - wx, LOUNGE.z - wz) || 1; SEATS.push({ x: wx + (LOUNGE.x - wx) / dl * .55, z: wz + (LOUNGE.z - wz) / dl * .55, ry: Math.atan2(LOUNGE.x - bx, LOUNGE.z - bz), bench: 1 }); });
+    const tx = LOUNGE.x + Math.cos(a + Math.PI / 6) * 5.4, tz = LOUNGE.z + Math.sin(a + Math.PI / 6) * 5.4; if (tx < 17) { scene.add(mesh(GEO.cyl, wood, [.55, .08, .55], [tx, .7, tz]), mesh(GEO.cyl, leg, [.1, .7, .1], [tx, .35, tz]), mesh(GEO.sph, gl, [.16, .16, .16], [tx, .9, tz])); } }
 }
 let wasHeaven = false; window.__inHeaven = () => entered && inHeaven(ME.X, ME.Z);
 function tickHeaven(dt, t) {
@@ -3463,7 +3512,7 @@ async function gbPost() {
 }
 // ---- 🗺 미니맵 · 큰 지도 · 순간이동 ----
 const MAPB = { x0: -233, x1: 20, z0: -73, z1: 113 };
-const TPS = [['🙏 공덕 법당', 0, 9], ['🚪 야외 게이트', -9.5, -3.6], ['📖 방명록', 8.4, 0], ['☁ 천국 라운지', HEAVEN.x, HEAVEN.z + 2.5], ['🌀 포털 광장', -8.5, 23], ['🏢 원복 빌딩 계단', 15.6, -7.6], ['🌱 초보 사냥터', -32, 28], ['⚔ PK존', -36, 52.4], ['🎣 낚시터 부두', -56, 4], ['🏕 존버 캠핑장', CAMP.x, CAMP.z + 6], ['🌲 중급 숲', -100, 12], ['⚔ 보스 투기장', ARENA.x, ARENA.z - 16], ['🌋 화산지대', -165, 12], ['🌋 레이드 광장', RAIDP.x, RAIDP.z - 16], ['☠ 지옥 들판', -64, 98]];
+const TPS = [['🙏 공덕 법당', 0, 9], ['🚪 야외 게이트', 13.6, -7.4], ['📖 방명록', 8.4, 0], ['☁ 천국 라운지', HEAVEN.x, HEAVEN.z + 2.5], ['🌀 포털 광장', -8.5, 23], ['🏢 원복 빌딩 계단', 15.6, -7.6], ['🌱 초보 사냥터', -32, 28], ['⚔ PK존', -36, 52.4], ['🎣 낚시터 부두', -56, 4], ['🏕 존버 캠핑장', CAMP.x, CAMP.z + 6], ['🌲 중급 숲', -100, 12], ['⚔ 보스 투기장', ARENA.x, ARENA.z - 16], ['🌋 화산지대', -165, 12], ['🌋 레이드 광장', RAIDP.x, RAIDP.z - 16], ['☠ 지옥 들판', -64, 98]];
 function drawMap(cv, big) {
   const c = cv.getContext('2d'), W = cv.width, H = cv.height;
   const cx0 = entered ? ME.X : cam.tx, cz0 = entered ? ME.Z : cam.tz, VW = 110, VH = VW * H / W, V = big ? MAPB : { x0: cx0 - VW / 2, x1: cx0 + VW / 2, z0: cz0 - VH / 2, z1: cz0 + VH / 2 };
@@ -3479,7 +3528,7 @@ function drawMap(cv, big) {
   c.fillStyle = 'rgba(155,107,255,.6)'; c.beginPath(); c.arc(X(-8.5), Z(27), 4.2 * s, 0, 7); c.fill();
   c.fillStyle = '#ffb020'; c.fillRect(X(13.5), Z(13.6), 4.2 * s, 3.2 * s);
   c.fillStyle = '#c78bff'; c.fillRect(X(6.5), Z(-4.4), 4.8 * s, Math.max(2, 1 * s));
-  c.fillStyle = '#ffd76a'; c.fillRect(X(-6), Z(-9), 12 * s, 1.2 * s); c.fillStyle = '#41f0ff'; c.fillRect(X(-11.8), Z(-7), 4.6 * s, Math.max(2.5, 1.4 * s));
+  c.fillStyle = '#ffd76a'; c.fillRect(X(-6), Z(-9), 12 * s, 1.2 * s); c.fillStyle = '#41f0ff'; c.fillRect(X(14.4), Z(-10.8), 3.4 * s, Math.max(2.5, 1.6 * s)); c.fillStyle = '#ffd76a'; c.fillRect(X(-19), Z(-15.6), 6 * s, Math.max(2.5, .8 * s));
   if (big) { c.font = `800 ${Math.max(11, W / 52)}px ${KF}`; c.textAlign = 'center'; c.fillStyle = '#fff'; [['법당', 0, 2], ['초보 사냥터', -52, 40], ['PK존', -36, 64], ['호수', LAKE.x, LAKE.z], ['천국', HEAVEN.x, HEAVEN.z], ['포털', -8.5, 33], ['방명록', 8.8, -1], ['중급 숲', -118, -26], ['화산지대', -192, -26], ['보스 투기장', ARENA.x, ARENA.z], ['레이드 광장', RAIDP.x, RAIDP.z], ['캠핑장', CAMP.x, CAMP.z], ['바람 들판', -150, 100]].forEach(([n, x, z]) => c.fillText(n, X(x), Z(z))); }
   MOBS.forEach(m => { if (m.dead > 0) return; c.fillStyle = '#c45bd6'; c.beginPath(); c.arc(X(m.x), Z(m.z), big ? 3.5 : 2, 0, 7); c.fill(); });
   for (const k in BOSS) { const it = INTER[k]; c.fillStyle = '#ff3b4a'; c.fillRect(X(it.X) - 3, Z(it.Z) - 3, 6, 6); }
@@ -3502,7 +3551,8 @@ function renderTp() { const B = $('tpList'); B.textContent = ''; TPS.forEach(([n
 let zoneCur = null, zoneT = 0;
 function tickWorld(dt, t) { tickMobs(dt, t); tickHeaven(dt, t); tickMap(dt);
   if (window.__gate) { const g = window.__gate; g.sw.rotation.y = Math.sin(t * .8) * .06; g.sw.material.opacity = .3 + Math.sin(t * 2.4) * .1; g.sw2.scale.setScalar(.92 + Math.sin(t * 3) * .06); g.beam.material.opacity = .13 + Math.sin(t * 1.7) * .04; g.arrows.forEach((a, i) => { a.children[0].material.opacity = .35 + .6 * Math.max(0, Math.sin(t * 4 - i * .9)); });
-    if (entered && !(ME.seat >= 0) && Math.hypot(ME.X - g.X, ME.Z - (g.Z + .6)) < 1.5 && (ME.Y || 0) < .6 && cd('gateTp', 9000)) tpTo(-32, 28, '🌱 초보 사냥터'); }
+    if (entered && !(ME.seat >= 0) && Math.hypot(ME.X - g.X, ME.Z - g.Z) < 1.5 && (ME.Y || 0) < .6 && cd('gateTp', 9000)) tpTo(-32, 28, '🌱 초보 사냥터'); }
+  if (window.__nw) window.__nw.offset.x = (window.__nw.offset.x + dt * .028) % 1;
   if (window.__portal) { window.__portal[0].rotation.y += dt * 1.2; window.__portal[1].rotation.x += dt * 1.6; }
   zoneT += dt; if (entered && zoneT > .5) { zoneT = 0; const z = zoneAt(ME.X, ME.Z); if (z && z !== zoneCur) { const first = !zoneCur; zoneCur = z; if (!first) showZone(z); } }
   if (entered) { const sw = inLake(ME.X, ME.Z) && !onPier(ME.X, ME.Z) && (ME.Y || 0) < .3; if (sw !== !!ME.swim) { ME.swim = sw; sync(true); if (sw) { toast('🏊 첨벙! 수영 중'); try { SND.water(); } catch (e) {} } } if (ME.swim && ME.moving && Math.random() < dt * 10) spawn(ME.X, .1, ME.Z, 3, 0x9ee8ff, 1.5, 6, .5);
@@ -3525,7 +3575,7 @@ const GUIDE = [
     <h4>객장(법당)은 조용한 곳</h4>차트 보며 기도하고 이야기하는 곳이에요. 싸움은 왼쪽 문 밖 <b>야외</b>에서! 멀리서 싸우는 소리는 객장에 안 들려요.`],
   ['🗺 장소 안내', () => '<div class="gplaces" id="gPlaces"></div>'],
   ['🎮 조작법', () => `<ul><li>이동 <span class="kbd">WASD</span>·방향키 / 달리기는 오래 누르기 · 점프 <span class="kbd">Space</span></li><li>상호작용·공격 <span class="kbd">E</span> · 스킬 <span class="kbd">Q</span> <span class="kbd">R</span> <span class="kbd">F</span> <span class="kbd">G</span></li><li>채팅 <span class="kbd">Enter</span> · 카메라: 마우스 드래그(폰은 화면 드래그), 휠로 줌</li><li>앉기·눕기: 방석·침대에서 상호작용 · 일어서기는 움직이면 OK</li><li>채팅 명령: <b>/차단 닉네임</b> · <b>/차단해제 닉네임</b></li></ul>`],
-  ['⚔ 성장·전투', () => `<ul><li><b>공덕</b> = 경험치. 기도·목탁·사냥·낚시·방명록·출석으로 모아요 → 100단계까지 <b>진화</b></li><li>몬스터는 <b>서쪽(왼쪽)으로 갈수록 강해요</b>: 🌱 초보 사냥터 → 🌲 중급 숲 → 🌋 화산지대</li><li>⚔ <b>보스 투기장</b>(큰길에서 들판 쪽): 시장 세력 4대 보스, 채널 사람들과 체력 공유</li><li>🌋 <b>재난 레이드</b>: 8분마다 레이드 광장에 등장! 빨간 바의 <b>🚀 레이드 가기</b>로 바로 이동</li><li>🎒 <b>가방</b>: 장비 12칸 장착, 스프레이로 색 바꾸기</li><li>체력이 줄면 🏕 캠핑장 침대나 ☁ 천국 모닥불 근처에서 빨리 회복</li></ul>`],
+  ['⚔ 성장·전투', () => `<ul><li><b>공덕</b> = 경험치. 기도·목탁·사냥·낚시·방명록·출석으로 모아요 → 100단계까지 <b>진화</b> · 🎭 <b>진화 도감</b>에서 해금한 예전 모습으로 바꿀 수 있어요(능력치 그대로)</li><li>몬스터는 <b>서쪽(왼쪽)으로 갈수록 강해요</b>: 🌱 초보 사냥터 → 🌲 중급 숲 → 🌋 화산지대</li><li>⚔ <b>보스 투기장</b>(큰길에서 들판 쪽): 시장 세력 4대 보스, 채널 사람들과 체력 공유</li><li>🌋 <b>재난 레이드</b>: 8분마다 레이드 광장에 등장! 빨간 바의 <b>🚀 레이드 가기</b>로 바로 이동</li><li>🎒 <b>가방</b>: 장비 12칸 장착, 스프레이로 색 바꾸기</li><li>체력이 줄면 🏕 캠핑장 침대나 ☁ 천국 모닥불 근처에서 빨리 회복</li></ul>`],
   ['📈 주식 기능', () => `<ul><li>📈 <b>시장 리포트</b>: 공포·탐욕, VIX, 지수·금리·환율·원자재·비트코인, 옵션 벽, 국장/미장 히트맵, 뉴스</li><li>⭐ <b>내 대표 종목</b>: 입장할 때 국장·미장 아무 종목 + 평단 → 머리 위에 「현대차 -12% 물림」처럼 표시 (공개/종목만/비공개 선택)</li><li>🧮 <b>원복 계산기</b>: 원복까지 필요한 상승률, 물타기하면 평단이 얼마나 내려가는지</li><li>📢 <b>레버가치 신호</b>: 새 저점반전 신호가 뜨면 🔔 알림 + 텔레그램 바로가기</li><li>🧓 <b>레가 아저씨</b>(객장 왼쪽 앞)에게 말 걸면 오늘 시장 3줄 요약</li></ul><div class="small">⚠ 모든 숫자는 재미·참고용이며 투자 조언이 아니에요.</div>`],
   ['⚙ 편의 설정', () => '<div id="gSet"></div>']
 ];
@@ -3927,23 +3977,25 @@ function drawCharts(cv) {
   ['KORU·SOXL은 ±10% 이상이면 파티/우울 모드', '프리·애프터장은 야후 시세(약 1분 지연)', '시세는 무료 데이터라 지연·마감가일 수 있어요', '재미용 · 투자 조언이 아닙니다'].forEach((t, i) => c.fillText(t, x6 + cw * .05, y6 + chh * (.3 + i * .15)));
 }
 const heatCan = document.createElement('canvas'), chartCan = document.createElement('canvas'); heatCan.width = chartCan.width = 2048; heatCan.height = chartCan.height = 1024;
-function mkPanel(cv, side) {
+function mkPanel(cv, side, zc, sc) {
   const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
-  const g = new THREE.Group(); g.position.set(side * 22.75, 7.6, 1); g.rotation.y = side < 0 ? Math.PI / 2 - .12 : -Math.PI / 2 + .12; // 벽(±24.3) 안쪽에 완전히 들어오도록 기울기·위치 조정
+  const g = new THREE.Group(); g.position.set(side * 22.75, 7.6, zc == null ? 1 : zc); if (sc) g.scale.setScalar(sc); g.rotation.y = side < 0 ? Math.PI / 2 - .12 : -Math.PI / 2 + .12; // 벽(±24.3) 안쪽에 완전히 들어오도록 기울기·위치 조정
   g.add(mesh(GEO.box, mat(0x0a1224, { roughness: .5 }), [24.8, 12.6, .3], [0, 0, -.2]), mesh(GEO.box, new THREE.MeshBasicMaterial({ color: side < 0 ? 0x2fd0ff : 0xff4fd8 }), [25.2, 13, .08], [0, 0, -.37]), mesh(new THREE.PlaneGeometry(24, 12), new THREE.MeshBasicMaterial({ map: tex, toneMapped: false })));
   scene.add(g); return tex;
 }
-const heatTex = mkPanel(heatCan, -1), chartTex = mkPanel(chartCan, 1);
+const heatKRCan = document.createElement('canvas'); heatKRCan.width = 2048; heatKRCan.height = 1024;
+const heatTex = mkPanel(heatCan, -1, -6.4, .53), heatKRTex = mkPanel(heatKRCan, -1, 6.9, .53), chartTex = mkPanel(chartCan, 1);
+{ const a = signPlane('🇺🇸 미국장', 4, .8, '#dff5ff', '#2fd0ff'), b = signPlane('🇰🇷 국장', 4, .8, '#ffe0e6', '#ff4d57'); a.position.set(-22.4, 11.6, -6.4); b.position.set(-22.4, 11.6, 6.9); a.rotation.y = b.rotation.y = Math.PI / 2 - .12; scene.add(a, b); }
 { // 네온 간판
   const sg = document.createElement('canvas'); sg.width = 1400; sg.height = 200; const x = sg.getContext('2d'); x.textAlign = 'center'; x.textBaseline = 'middle'; x.font = `900 120px ${KF}`;
   x.shadowColor = '#2fd0ff'; x.shadowBlur = 40; x.fillStyle = '#bff3ff'; x.fillText('NASDAQ · NYSE · 원복 객장', 700, 100);
   const st = new THREE.CanvasTexture(sg); st.colorSpace = THREE.SRGBColorSpace; scene.add(mesh(new THREE.PlaneGeometry(22, 3.1), new THREE.MeshBasicMaterial({ map: st, transparent: true, toneMapped: false }), null, [0, 18.2, -15.7]));
 }
 let mkTimer = null;
-let wallKR = false; setInterval(() => { wallKR = !wallKR; try { mkRedraw(); } catch (e) {} }, 20000);
+let heatKR = false;
 function mkRedraw() {
-  drawHeat(heatCan, wallKR ? KRMKT : null); drawCharts(chartCan); heatTex.needsUpdate = chartTex.needsUpdate = true;
-  if ($('mMkt').classList.contains('on')) { drawHeat($('cvHeat')); drawCharts($('cvChart')); }
+  drawHeat(heatCan, null); drawHeat(heatKRCan, KRMKT); drawCharts(chartCan); heatTex.needsUpdate = heatKRTex.needsUpdate = chartTex.needsUpdate = true;
+  if ($('mMkt').classList.contains('on')) { drawHeat($('cvHeat'), heatKR ? KRMKT : null); drawCharts($('cvChart')); document.querySelectorAll('#heatTabs button').forEach(b => b.classList.toggle('on', (b.dataset.k === 'kr') === heatKR)); }
 }
 function mkSoon() { if (!mkTimer) mkTimer = setTimeout(() => { mkTimer = null; mkRedraw(); }, 400); }
 onMarket(m => { MK.q = m.q; MK.h = m.h; MK.fg = m.fg; MK.opt = m.opt || {}; MK.news = m.news; mkSoon(); });
@@ -3953,13 +4005,14 @@ $('bBgm').onclick = () => { ac(); renderBgm(); openModal('mBgm'); };
 $('vB').oninput = e => { AUD.vb = +e.target.value; LS.set('lv3d_aud', AUD); ac(); applyVol(); };
 $('vS').oninput = e => { AUD.vs = +e.target.value; LS.set('lv3d_aud', AUD); ac(); applyVol(); SND.pop(); };
 $('bMkt').onclick = () => { openModal('mMkt'); mkRedraw(); };
+document.querySelectorAll('#heatTabs button').forEach(b => b.onclick = () => { heatKR = b.dataset.k === 'kr'; mkRedraw(); });
 $('bFw').onclick = () => { if (!HOST || !room || !cd('fw', 4000)) return; room.sendFx('hostfw'); hostFw(); };
 
 /* ================= 입장 ================= */
 let offerCount = 0, mokCount = 0;
 function enter() {
   entered = true;
-  myAnt = makeAnt(PROF.color, PROF.hb, G.pts, HOST); setGear(myAnt, G.eq); HPS.max = maxHp(lvOf(G.pts)); HPS.hp = HPS.max; HPS.ko = 0; ME.Y = 0; ME.vy = 0; ME.climb = false; scene.add(myAnt.root); myLabel = makeLabel(true);
+  myAnt = makeAnt(PROF.color, PROF.hb, myLookPts(), HOST); setGear(myAnt, G.eq); HPS.max = maxHp(lvOf(G.pts)); HPS.hp = HPS.max; HPS.ko = 0; ME.Y = 0; ME.vy = 0; ME.climb = false; scene.add(myAnt.root); myLabel = makeLabel(true);
   const sp = { x: -12 + Math.random() * 24, z: 8 + Math.random() * 5 }; ME.X = sp.x; ME.Z = sp.z; ME.ry = Math.PI; // 많은 인원이 한곳에 겹치지 않게 넓게 퍼뜨려 등장 ME.X = sp.x; ME.Z = sp.z; ME.ry = Math.PI; myAnt.root.rotation.y = Math.PI;
   cam.yaw = 0; cam.tx = ME.X; cam.tz = ME.Z;
   room.onPeers(onPeersCb);
@@ -4079,7 +4132,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '19';
+const APP_V = '20';
 {
   let shown = false;
   const check = async () => {
@@ -4127,13 +4180,76 @@ function evoCard(after, before) {
   else { const M = $('evoMini'); M.textContent = ''; M.append(el('b', null, $('evoTitle').textContent), el('span', null, `⚔ ${L[1][1]} · ❤ ${L[2][1]}`), el('small', null, '🎯 ' + (tips[0] || ''))); M.classList.remove('on'); void M.offsetWidth; M.classList.add('on'); M.onclick = () => { M.classList.remove('on'); openModal('mEvo'); }; }
 }
 
+
+/* ================= 🤖 레버가치 저점반전 신호 TOP10 보드 · 📰 최근 이슈 띠 ================= */
+const SIG = { items: [], mk: null, upd: '', err: '' };
+const GRADE_ORD = { S: 0, 'A+': 1, A: 2, 'A-': 3, 'B+': 4, B: 5, 'B-': 6, C: 7 }, GRADE_COL = g => g === 'S' ? '#ffd76a' : /^A/.test(g) ? '#2fe07a' : g === 'B+' ? '#41c9ff' : '#9aa6bb';
+const sigName = it => String(it.n || it.t || '').replace(/\s*\([A-Z0-9.]+\)\s*$/, '');
+async function loadSig() {
+  try { const r = await fetch('/data.json?t=' + Math.floor(Date.now() / 300000), { cache: 'no-store' }); if (!r.ok) throw new Error('HTTP ' + r.status); const d = await r.json();
+    const seen = new Set(), all = []; [...(d.signals || []), ...(d.near || [])].forEach(x => { if (x && x.t && !seen.has(x.t)) { seen.add(x.t); all.push(x); } });
+    all.sort((a, b) => ((GRADE_ORD[a.g] ?? 9) - (GRADE_ORD[b.g] ?? 9)) || ((b.s || 0) - (a.s || 0)));
+    SIG.items = all.slice(0, 10); SIG.mk = d.market || null; SIG.upd = d.updated || ''; SIG.err = ''; }
+  catch (e) { SIG.err = '신호 데이터를 불러오는 중이에요'; }
+  drawSigBoard();
+}
+const sigCan = document.createElement('canvas'); sigCan.width = 1024; sigCan.height = 1320; const sigTex = new THREE.CanvasTexture(sigCan); sigTex.colorSpace = THREE.SRGBColorSpace; sigTex.anisotropy = 4;
+{ const g = new THREE.Group(); g.position.set(-16.2, 7.4, -15.3); g.rotation.y = .32; scene.add(g);
+  g.add(mesh(GEO.box, mat(0x0a1224, { roughness: .4 }), [8.6, 11.1, .3], [0, 0, -.2]), mesh(GEO.box, new THREE.MeshBasicMaterial({ color: 0xffb020 }), [8.9, 11.4, .08], [0, 0, -.37]));
+  g.add(mesh(new THREE.PlaneGeometry(8.2, 10.57), new THREE.MeshBasicMaterial({ map: sigTex, toneMapped: false }), null, [0, 0, -.03])); }
+function drawSigBoard() {
+  const c = sigCan.getContext('2d'), W = 1024, H = 1320; c.fillStyle = '#060a14'; c.fillRect(0, 0, W, H);
+  c.fillStyle = 'rgba(255,176,32,.12)'; c.fillRect(0, 0, W, 150); c.textBaseline = 'middle'; c.textAlign = 'left';
+  c.fillStyle = '#ffd76a'; c.font = `900 52px ${KF}`; c.fillText('🤖 저점반전 신호봇 TOP 10', 34, 58);
+  c.fillStyle = '#9fb3d9'; c.font = `700 28px ${KF}`; const mk = SIG.mk; c.fillText((mk ? `공포·탐욕 ${fmt(mk.fg, 0)} ${mk.label || ''} · ` : '') + (SIG.upd ? SIG.upd.slice(5).replace('-', '/') + ' 갱신' : ''), 34, 114);
+  if (!SIG.items.length) { c.fillStyle = '#c7d0e6'; c.font = `700 36px ${KF}`; c.textAlign = 'center'; c.fillText(SIG.err || '불러오는 중…', W / 2, H / 2); sigTex.needsUpdate = true; return; }
+  const rh = (H - 150 - 96) / 10;
+  SIG.items.forEach((it, i) => { const y = 150 + i * rh + 6, gc = GRADE_COL(it.g);
+    c.fillStyle = i % 2 ? '#0b1222' : '#0e1730'; c.fillRect(16, y, W - 32, rh - 8);
+    c.fillStyle = '#8592a8'; c.font = `800 34px ${MF}`; c.textAlign = 'center'; c.fillText(String(i + 1), 52, y + rh / 2 - 4);
+    c.fillStyle = gc; c.beginPath(); c.roundRect(84, y + 14, 92, rh - 36, 14); c.fill(); c.fillStyle = '#0a0f1c'; c.font = `900 40px ${KF}`; c.fillText(it.g || '-', 130, y + rh / 2 - 4);
+    c.textAlign = 'left'; c.fillStyle = '#ffffff'; fitFont(c, sigName(it), 800, 40, KF, 560); c.fillText(sigName(it), 196, y + rh * .34);
+    c.fillStyle = '#9fb3d9'; fitFont(c, `${it.t} · ${it.k || ''} · 고점 대비 ${it.dd != null ? it.dd + '%' : '-'}`, 600, 26, KF, 560); c.fillText(`${it.t} · ${it.k || ''} · 고점 대비 ${it.dd != null ? it.dd + '%' : '-'}`, 196, y + rh * .7);
+    c.textAlign = 'right'; c.fillStyle = gc; c.font = `900 44px ${MF}`; c.fillText(fmt(it.s || 0, 1), W - 120, y + rh * .38); c.fillStyle = '#8592a8'; c.font = `700 22px ${KF}`; c.fillText('점', W - 92, y + rh * .4);
+    c.font = `40px ${KF}`; c.fillText(it.l || '', W - 36, y + rh * .4); });
+  c.fillStyle = '#ffd76a'; c.font = `800 30px ${KF}`; c.textAlign = 'center'; c.fillText('가까이 와서 E · 자세한 설명과 신호 웹페이지', W / 2, H - 62);
+  c.fillStyle = '#6b7690'; c.font = `600 22px ${KF}`; c.fillText('재미용 참고 정보 · 투자 조언이 아니에요', W / 2, H - 24);
+  sigTex.needsUpdate = true;
+}
+function openSig() { const B = $('sigBody'); B.textContent = '';
+  const mk = SIG.mk; $('sigSub').textContent = (mk ? `공포·탐욕 ${fmt(mk.fg, 0)} (${mk.label || ''}) · ` : '') + (SIG.upd ? `${SIG.upd} 갱신 · ` : '') + '등급 순 → 점수 순';
+  if (mk && mk.temp) B.appendChild(el('div', 'evNow on', mk.temp));
+  if (!SIG.items.length) B.appendChild(el('div', 'small', SIG.err || '불러오는 중이에요'));
+  SIG.items.forEach((it, i) => { const r = el('details', 'sigRow'); const sm = el('summary'); const gb = el('b', 'gB', it.g || '-'); gb.style.background = GRADE_COL(it.g);
+    sm.append(el('span', 'rk', String(i + 1)), gb, el('span', 'nm', sigName(it)), el('span', 'sc', fmt(it.s || 0, 1) + '점 ' + (it.l || ''))); r.appendChild(sm);
+    r.appendChild(el('div', 'sv', `${it.v || ''}`)); if (it.x) r.appendChild(el('div', 'sx', it.x));
+    (it.it || []).forEach(z => { if (z[2] == null) { r.appendChild(el('div', 'sx', `• ${z[0]}: ${z[1]}`)); return; } const row = el('div', 'sbarR'); const bar = el('div', 'sbar'); const fill = el('i'); fill.style.width = Math.max(0, Math.min(100, z[2] / (z[3] || 100) * 100)) + '%'; bar.appendChild(fill); if (z[4] != null) { const th = el('u'); th.style.left = (z[4] / (z[3] || 100) * 100) + '%'; bar.appendChild(th); } row.append(el('span', null, `${z[0]} ${fmt(z[2], 1)}/${z[3]}`), bar, el('small', null, z[1] || '')); r.appendChild(row); });
+    B.appendChild(r); });
+  openModal('mSig'); }
+$('sigWeb').onclick = () => window.open('https://levergachi.github.io/', '_blank', 'noopener');
+$('sigLinks').onclick = () => { closeModals(); try { $('lvxLinks').click(); } catch (e) {} };
+setTimeout(loadSig, 2500); setInterval(loadSig, 10 * 60 * 1000);
+// 📰 최근 이슈 한 줄 띠 (전광판 위)
+const nwCan = document.createElement('canvas'); nwCan.width = 4096; nwCan.height = 96; const nwTex = new THREE.CanvasTexture(nwCan); nwTex.colorSpace = THREE.SRGBColorSpace; nwTex.wrapS = THREE.RepeatWrapping;
+{ const g = new THREE.Group(); g.position.set(0, 14.55, -15.2); scene.add(g); g.add(mesh(GEO.box, mat(0x0a1224), [27.6, 1.75, .25], [0, 0, -.15]), mesh(GEO.box, new THREE.MeshBasicMaterial({ color: 0xff4d57 }), [27.9, 1.95, .06], [0, 0, -.3]));
+  g.add(mesh(new THREE.PlaneGeometry(22.6, 1.45), new THREE.MeshBasicMaterial({ map: nwTex, toneMapped: false }), null, [2.4, 0, -.01]));
+  const lb = labelPlane('📰 최근 이슈', 4.4, 1.45, '#c81e2a', '#ffffff'); lb.position.set(-11.3, 0, -.01); g.add(lb); window.__nw = nwTex; }
+function drawNews() {
+  const c = nwCan.getContext('2d'), W = 4096, H = 96; c.fillStyle = '#05070d'; c.fillRect(0, 0, W, H); c.textBaseline = 'middle'; c.textAlign = 'left';
+  const N = (MK.news && [...(MK.news.kr || []).slice(0, 6), ...(MK.news.us || []).slice(0, 3)]) || [];
+  let x = 30; if (!N.length) { c.fillStyle = '#9fb3d9'; c.font = `700 48px ${KF}`; c.fillText('뉴스를 불러오는 중이에요 · 15분마다 갱신', x, H / 2); nwTex.needsUpdate = true; return; }
+  for (let rep = 0; rep < 3 && x < W; rep++) N.forEach(n => { if (x > W) return; c.fillStyle = '#ffd76a'; c.font = `900 46px ${KF}`; c.fillText('◆', x, H / 2); x += 60; c.fillStyle = '#ffffff'; c.font = `700 46px ${KF}`; const t = String(n.t).slice(0, 60); c.fillText(t, x, H / 2); x += c.measureText(t).width + 22; if (n.s) { c.fillStyle = '#8592a8'; c.font = `600 34px ${KF}`; c.fillText(n.s, x, H / 2 + 3); x += c.measureText(n.s).width + 70; } });
+  nwTex.needsUpdate = true;
+}
+onMarket(() => { try { drawNews(); } catch (e) {} }); setTimeout(() => { try { drawNews(); } catch (e) {} }, 1500);
+
 /* ================= ⚔ PK존 · 🤺 1:1 결투 ================= */
 const PKZ = { x: -36, z: 64, r: 9 }; const inPK = (x, z) => Math.hypot(x - PKZ.x, z - PKZ.z) < PKZ.r;
 let DUEL = null; const DUEL_SEC = 120; const pendDq = {};
 const id8 = u => String(u || '').slice(0, 8), isMe8 = s2 => live.uid && live.uid.slice(0, 8) === s2;
 function uidOf8(s2) { if (isMe8(s2)) return live.uid; for (const k of remotes.keys()) if (k.slice(0, 8) === s2) return k; return null; }
 function posOf(uid) { if (uid === live.uid) return { x: ME.X, z: ME.Z }; const r = remotes.get(uid); return r ? { x: r.cur.x, z: r.cur.z } : null; }
-function canFight(uid) { if (!uid || uid === live.uid) return false; if (DUEL && DUEL.uid === uid && Date.now() < DUEL.until) return true; const p = posOf(uid); return !!p && inPK(ME.X, ME.Z) && inPK(p.x, p.z); }
+function canFight(uid) { if (!uid || uid === live.uid) return false; if (DUEL && DUEL.uid === uid && Date.now() < DUEL.until) return true; const p = posOf(uid); return CFG2().pk !== false && !!p && inPK(ME.X, ME.Z) && inPK(p.x, p.z); }
 function pkTarget() { let best = null, bd = 4.2; remotes.forEach((r, uid) => { if (!canFight(uid)) return; const d = Math.hypot(r.cur.x - ME.X, r.cur.z - ME.Z); if (d < bd && !(r.data && r.data.pose === 'lie')) { bd = d; best = uid; } }); return best; }
 function pkAttack() {
   if (!entered || HPS.ko || !cd('pkAtk', 480)) return; const t = pkTarget(); if (!t) { toast(DUEL ? '🤺 결투 상대에게 가까이 가세요!' : '⚔ PK존 안의 다른 개미에게 가까이 가세요'); return; }
@@ -4145,7 +4261,7 @@ function pkFx(fx) {
   if (a && fx.uid !== live.uid) a.act = { k: 'punch', t0: clock.elapsedTime, d: .45 };
   const tp = tgt && posOf(tgt); if (tp) { spawn(tp.x, 1.5, tp.z, crit ? 40 : 16, crit ? 0xffd76a : 0xff4d57, crit ? 5 : 3, 6, .5); try { if (cd('pkSnd', 120)) SND.punch(crit); } catch (e) {} }
   if (tgt !== live.uid || HPS.ko) return; const ap = posOf(fx.uid);
-  const ok = (DUEL && DUEL.uid === fx.uid && Date.now() < DUEL.until) || (ap && inPK(ap.x, ap.z) && inPK(ME.X, ME.Z)); if (!ok) return;
+  const ok = (DUEL && DUEL.uid === fx.uid && Date.now() < DUEL.until) || (CFG2().pk !== false && ap && inPK(ap.x, ap.z) && inPK(ME.X, ME.Z)); if (!ok) return;
   const ratio = atk / Math.max(1, atkOf(lvOf(G.pts))), pct = Math.max(.035, Math.min(.2, .07 * Math.pow(ratio, .35)));
   const dmg = Math.max(1, Math.round(HPS.max * pct * (crit ? 1.5 : 1))); ME.seat = -1; ME.lie = false; HPS.inv = 0;
   hurt(dmg, ap ? ap.x : ME.X, ap ? ap.z : ME.Z, crit ? '치명타!' : '');
@@ -4170,7 +4286,7 @@ function duelFx(fx) { const k = String(fx.kind), ty = k.slice(0, 2), tg = k.slic
     const kill = setTimeout(() => B.remove(), 20000); y.onclick = () => { clearTimeout(kill); B.remove(); room.sendFx('da:' + id8(from)); startDuel(from); }; n.onclick = () => { clearTimeout(kill); B.remove(); room.sendFx('dn:' + id8(from)); }; }
   else if (ty === 'da') startDuel(from); else if (ty === 'dn') toast(`🙅 ${nk}님이 결투를 거절했어요`); }
 function startDuel(uid) { DUEL = { uid, t0: Date.now(), until: Date.now() + DUEL_SEC * 1000 + 3000 }; const nk = nickOf(uid); toast(`🤺 ${nk}님과 결투! 3…`); setTimeout(() => toast('2…'), 1000); setTimeout(() => toast('1… ⚔ 시작!'), 2000); addLog(`🤺 ${PROF.nick} vs ${nk} 결투 시작!`, true); try { SND.bell(); } catch (e) {} updPkBtn(); }
-function updPkBtn() { const on = entered && (inPK(ME.X, ME.Z) || (DUEL && Date.now() < DUEL.until)); $('pkBtn').classList.toggle('on', !!on);
+function updPkBtn() { const on = entered && ((CFG2().pk !== false && inPK(ME.X, ME.Z)) || (DUEL && Date.now() < DUEL.until)); $('pkBtn').classList.toggle('on', !!on);
   if (DUEL) { const left = Math.max(0, Math.ceil((DUEL.until - Date.now()) / 1000)); $('duelBar').classList.add('on'); $('duelBar').textContent = `🤺 결투 중: ${nickOf(DUEL.uid)} · ${Math.min(DUEL_SEC, left)}초 · [⚔ 결투 공격] 또는 X 키`; if (left <= 0) endDuel('⏱ 결투 시간 끝 — 무승부!'); else if (Date.now() - DUEL.t0 > 6000 && !remotes.has(DUEL.uid)) endDuel('상대가 나갔어요 — 결투 종료'); } }
 setInterval(updPkBtn, 500);
 $('pkBtn').onclick = pkAttack; addEventListener('keydown', e => { if (e.key && e.key.toLowerCase() === 'x' && !e.repeat && document.activeElement && !/INPUT|TEXTAREA/.test(document.activeElement.tagName) && !document.querySelector('.modal.on')) pkAttack(); });
@@ -4179,12 +4295,44 @@ $('pkBtn').onclick = pkAttack; addEventListener('keydown', e => { if (e.key && e
 const DONATE_DEF = '100원이라도 감사하게 받겠습니다 🙏'; let BOARD = {}; window.__lvxDonateMsg = DONATE_DEF;
 function showNotice(force) { const n = BOARD.notice; if (!n || !String(n.text || '').trim()) { $('noticeBar').classList.remove('on'); return; } $('noticeTx').textContent = n.text; if (force || LS.get('lv3d_noticeSeen', 0) !== (n.ts || 0)) $('noticeBar').classList.add('on'); }
 $('noticeX').onclick = () => { $('noticeBar').classList.remove('on'); if (BOARD.notice) LS.set('lv3d_noticeSeen', BOARD.notice.ts || 0); };
-initLive().then(() => { try { live.onBoard && live.onBoard(b => { const prev = BOARD.notice && BOARD.notice.ts; BOARD = b || {}; window.__lvxDonateMsg = (BOARD.donate && String(BOARD.donate.text || '').trim()) || DONATE_DEF; showNotice(); if (entered && BOARD.notice && BOARD.notice.ts !== prev && String(BOARD.notice.text || '').trim()) addLog('📌 방장 공지: ' + BOARD.notice.text, true); }); } catch (e) { console.warn('board', e); } });
+initLive().then(() => { try { live.onBoard && live.onBoard(b => { const prev = BOARD.notice && BOARD.notice.ts; BOARD = b || {}; window.__lvxDonateMsg = (BOARD.donate && String(BOARD.donate.text || '').trim()) || DONATE_DEF; showNotice(); checkMyBan(); if (entered && BOARD.notice && BOARD.notice.ts !== prev && String(BOARD.notice.text || '').trim()) addLog('📌 방장 공지: ' + BOARD.notice.text, true); }); } catch (e) { console.warn('board', e); } });
 setInterval(() => { const b = $('bHostEd'); if (b) b.style.display = HOST ? '' : 'none'; }, 1500);
-$('bHostEd').onclick = () => { $('heNotice').value = (BOARD.notice && BOARD.notice.text) || ''; $('heDonate').value = (BOARD.donate && BOARD.donate.text) || DONATE_DEF; $('heMsg').textContent = ''; openModal('mHostEd'); };
+$('bHostEd').onclick = () => { hoTab = 'n'; renderHost(); $('heNotice').value = (BOARD.notice && BOARD.notice.text) || ''; $('heDonate').value = (BOARD.donate && BOARD.donate.text) || DONATE_DEF; $('heMsg').textContent = ''; openModal('mHostEd'); };
 $('heSave').onclick = async () => { if (!HOST) { $('heMsg').textContent = '방장 코드로 입장해야 저장할 수 있어요'; return; }
   try { await live.boardSet('notice', $('heNotice').value.trim()); await live.boardSet('donate', $('heDonate').value.trim() || DONATE_DEF); $('heMsg').textContent = '✅ 저장 완료! 모두에게 반영됐어요'; toast('📌 공지·후원 문구 저장 완료'); LS.set('lv3d_noticeSeen', -1); setTimeout(() => showNotice(true), 800); }
   catch (e) { $('heMsg').textContent = '❌ 저장 실패: 방장 인증이 안 됐거나 연결이 끊겼어요 (' + (e && e.message || e) + ')'; } };
+
+
+/* ================= 👑 방장 관리: 강퇴 · 채팅 금지 · 방 설정 ================= */
+const banOf = (uid, nick) => { const B = (BOARD && BOARD.ban) || {}, now = Date.now(); const e = B[id8(uid)]; if (e && e.u > now) return e; if (nick) for (const k in B) { const v = B[k]; if (v && v.u > now && v.n && v.n === nick) return v; } return null; };
+const isKicked = (uid, nick) => { const b = banOf(uid, nick); return !!(b && b.m === 'kick'); }, isMuted = (uid, nick) => { const b = banOf(uid, nick); return !!(b && (b.m === 'mute' || b.m === 'kick')); };
+const CFG2 = () => Object.assign({ pk: true, mega: true, slow: 0 }, (BOARD && BOARD.cfg) || {});
+let KICKED = false;
+function checkMyBan() { if (!PROF) return; const b = banOf(live.uid, PROF.nick); if (b && b.m === 'kick' && !HOST) { if (!KICKED) { KICKED = true; try { room.leave(); } catch (e) {} const O = $('kickOv'); O.querySelector('span').textContent = `방장에 의해 ${Math.ceil((b.u - Date.now()) / 60000)}분 동안 입장할 수 없어요.`; O.classList.add('on'); } } else if (KICKED && !b) { KICKED = false; $('kickOv').classList.remove('on'); location.reload(); } }
+setInterval(checkMyBan, 5000);
+let hoTab = 'n';
+function renderHost() {
+  document.querySelectorAll('#hoTabs button').forEach(b => b.classList.toggle('on', b.dataset.t === hoTab)); ['n', 'u', 'c'].forEach(t => $('ho' + t.toUpperCase()).style.display = t === hoTab ? '' : 'none');
+  if (hoTab === 'u') { const L = $('hoList'); L.textContent = ''; const list = peersData.filter(d => d.uid !== live.uid && !d.you); if (!list.length) L.appendChild(el('div', 'small', '지금 이 방에 다른 개미가 없어요'));
+    list.sort((a, b) => (b.pts || 0) - (a.pts || 0)).forEach(d => { const r = el('div', 'srow'), info = el('div', 'si'), rm = remotes.get(d.uid), zn = rm ? zoneAt(rm.cur.x, rm.cur.z) : null, b0 = banOf(d.uid, d.nick);
+      info.append(el('b', null, d.nick || '?'), el('span', null, `${lvOf(d.pts || 0) + 1}단계 · 📍 ${zn ? zn.n.replace(/^\S+\s/, '') : '?'}${b0 ? ' · ⛔ ' + (b0.m === 'kick' ? '강퇴' : '채팅 금지') + ' 중' : ''}`));
+      const bt = el('div', 'sb2'); const go = el('button', 'gbtn', '📍'); go.title = '그 개미 옆으로 이동'; go.onclick = () => { if (rm) tpTo(rm.cur.x + 1.5, rm.cur.z + 1.5, d.nick + ' 옆'); };
+      const mu = el('button', 'gbtn', '🔇 10분'); mu.onclick = () => hostBan(d, 'mute', 10); const kk = el('button', 'gbtn hot', '👢 30분'); kk.onclick = () => { if (confirm(`${d.nick}님을 30분 동안 강퇴할까요?`)) hostBan(d, 'kick', 30); };
+      bt.append(go, mu, kk); r.append(info, bt); L.appendChild(r); });
+    const BL = $('hoBans'); BL.textContent = ''; const B = (BOARD && BOARD.ban) || {}, now = Date.now(); let n = 0;
+    Object.entries(B).forEach(([k, v]) => { if (!v || v.u <= now) return; n++; const r = el('div', 'srow'), info = el('div', 'si'); info.append(el('b', null, v.n || k), el('span', null, `${v.m === 'kick' ? '👢 강퇴' : '🔇 채팅 금지'} · ${Math.ceil((v.u - now) / 60000)}분 남음`)); const un = el('button', 'gbtn', '해제'); un.onclick = () => hostUnban(k); r.append(info, el('div', 'sb2')); r.lastChild.appendChild(un); BL.appendChild(r); });
+    if (!n) BL.appendChild(el('div', 'small', '제재 중인 개미 없음')); }
+  if (hoTab === 'c') { const C = CFG2(), box = $('hoCfg'); box.textContent = '';
+    const tog = (key, label, desc) => { const r = el('label', 'hoT'); const cb = el('input'); cb.type = 'checkbox'; cb.checked = !!C[key]; cb.onchange = () => hostCfg({ [key]: cb.checked }); r.append(cb, el('b', null, label), el('span', null, desc)); box.appendChild(r); };
+    tog('pk', '⚔ PK존 전투 허용', '끄면 PK존에서도 서로 공격할 수 없어요 (1:1 결투는 그대로)'); tog('mega', '📢 확성기 허용', '끄면 상점 확성기를 쓸 수 없어요');
+    const r = el('div', 'hoT'); r.append(el('b', null, '🐢 채팅 느리게'), el('span', null, '도배 방지: 한 사람이 다음 채팅까지 기다리는 시간')); const sel = el('select'); [[0, '끔 (1.5초)'], [5, '5초'], [10, '10초'], [30, '30초']].forEach(([v, n]) => { const o = el('option', null, n); o.value = v; if ((C.slow | 0) === v) o.selected = true; sel.appendChild(o); }); sel.onchange = () => hostCfg({ slow: +sel.value }); r.appendChild(sel); box.appendChild(r); }
+}
+async function hostBan(d, m, min) { if (!HOST) return; try { await live.boardPut('ban/' + id8(d.uid), { u: Date.now() + min * 60000, m, n: String(d.nick || '').slice(0, 12), ts: Date.now() }); toast(m === 'kick' ? `👢 ${d.nick}님 ${min}분 강퇴` : `🔇 ${d.nick}님 ${min}분 채팅 금지`); addLog(`👑 방장: ${d.nick}님 ${m === 'kick' ? '강퇴' : '채팅 금지'} (${min}분)`, true); setTimeout(renderHost, 600); } catch (e) { $('heMsg').textContent = '❌ 실패: ' + (e && e.message || e); } }
+async function hostUnban(k) { try { await live.boardPut('ban/' + k, null); toast('✅ 제재 해제'); setTimeout(renderHost, 600); } catch (e) { $('heMsg').textContent = '❌ 실패: ' + (e && e.message || e); } }
+async function hostCfg(o) { try { await live.boardPut('cfg', Object.assign(CFG2(), o)); toast('🛠 방 설정 저장!'); } catch (e) { $('heMsg').textContent = '❌ 실패: ' + (e && e.message || e); } }
+document.querySelectorAll('#hoTabs button').forEach(b => b.onclick = () => { hoTab = b.dataset.t; renderHost(); });
+$('hoRaid').onclick = () => { if (!HOST) return; room.sendFx('wb:go'); toast('🌋 방장 권한: 시장 재난 레이드 소환!'); };
+$('hoFw').onclick = () => { if (!HOST) return; try { $('bFw').click(); } catch (e) {} };
 
 /* ================= 📲 PWA: 홈 화면 설치 ================= */
 let instEv = null; const isStandalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
@@ -4202,7 +4350,7 @@ $('bApp').onclick = openApp;
 if (isStandalone()) $('bApp').style.display = 'none';
 setTimeout(() => { if (!entered || isStandalone() || LS.get('lv3d_apphint', 0) || !matchMedia('(pointer:coarse)').matches) return; LS.set('lv3d_apphint', 1); const B = el('div', 'sigBan eco'); B.append(el('b', null, '📲 앱처럼 설치해 보세요'), el('span', null, '홈 화면 아이콘으로 한 번에 입장!')); const y = el('button', null, '방법 보기'); y.onclick = () => { B.remove(); openApp(); }; const n = el('button', null, '나중에'); n.onclick = () => B.remove(); B.append(y, n); document.body.appendChild(B); setTimeout(() => B.remove(), 20000); }, 90000);
 
-window.__room3d = { dexN: () => dexTypes().size, hallK: () => myAnt && myAnt.hallK, sc: () => myAnt && myAnt.root.scale.x, cast: n => castSkill(n), mp: t => movePerk(t), evoC: (a, b) => evoCard(a, b), fly: () => !!ME.fly, mobk: () => MOBK.length, pk: () => ({ inPK: inPK(ME.X, ME.Z), duel: DUEL, btn: $('pkBtn').classList.contains('on'), w: G.pkW | 0, hp: HPS.hp, max: HPS.max }), pkFx: (uid, atk) => pkFx({ uid, kind: 'pk:' + id8(live.uid) + ':' + atk }), duelS: uid => startDuel(uid), board: () => BOARD, setHost2: v => { HOST = !!v; }, enh: () => Object.assign({ atk: atkOf(lvOf(G.pts)), hp: maxHp(lvOf(G.pts)) }, G.enh), addSt: n => addStone(n), addCoin: n => addCoin(n), coin: () => G.coin, shop: () => G.shop, q: () => qToday(), buy: id => buy(id), useIt: id => useItem(id), cs: () => myCs(), enhTry: () => enhTry(), ev: ms => curEvent(ms), drawCard: () => { drawCard(); return $('cardCv').toDataURL('image/png').length; }, setW: w => { weather = w; },
+window.__room3d = { dexN: () => dexTypes().size, sig: () => SIG, openSig: () => openSig(), heatKR: v => { heatKR = !!v; mkRedraw(); }, hostTab: t => { hoTab = t; renderHost(); }, ban: (uid, nick, m, min) => hostBan({ uid, nick }, m, min), isMuted: (u, n) => isMuted(u, n), setLook: t => setLook(t), look: () => curLook(), hallK: () => myAnt && myAnt.hallK, sc: () => myAnt && myAnt.root.scale.x, cast: n => castSkill(n), mp: t => movePerk(t), evoC: (a, b) => evoCard(a, b), fly: () => !!ME.fly, mobk: () => MOBK.length, pk: () => ({ inPK: inPK(ME.X, ME.Z), duel: DUEL, btn: $('pkBtn').classList.contains('on'), w: G.pkW | 0, hp: HPS.hp, max: HPS.max }), pkFx: (uid, atk) => pkFx({ uid, kind: 'pk:' + id8(live.uid) + ':' + atk }), duelS: uid => startDuel(uid), board: () => BOARD, setHost2: v => { HOST = !!v; }, enh: () => Object.assign({ atk: atkOf(lvOf(G.pts)), hp: maxHp(lvOf(G.pts)) }, G.enh), addSt: n => addStone(n), addCoin: n => addCoin(n), coin: () => G.coin, shop: () => G.shop, q: () => qToday(), buy: id => buy(id), useIt: id => useItem(id), cs: () => myCs(), enhTry: () => enhTry(), ev: ms => curEvent(ms), drawCard: () => { drawCard(); return $('cardCv').toDataURL('image/png').length; }, setW: w => { weather = w; },
   scene, camera, cam,
   ready: () => entered && !!room, uid: () => live.uid, me: () => Object.assign({}, ME, { data: entered ? myData() : null }), peers: () => peersData,
   peerPos: uid => { const r = remotes.get(uid); return r ? { X: r.cur.x, Z: r.cur.z, moving: r.moving, walking: r.ant ? r.ant.moving : r.moving, detail: !!r.ant } : null; },

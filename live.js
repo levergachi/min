@@ -344,6 +344,7 @@ async function firebaseInit() {
   // 📌 방장 공지·후원 문구 (방장만 쓰기 — DB 규칙이 확인)
   live.boardSet = async (k, text) => { await D.set(D.ref(db, "board/" + k), { text: String(text || "").slice(0, 300), ts: D.serverTimestamp() }); return true; };
   live.onBoard = f => D.onValue(D.ref(db, "board"), s => f(s.val() || {}), () => f({}));
+  live.boardPut = async (path, val) => { await D.set(D.ref(db, "board/" + path), val); return true; };
   live.savePut = async (key, data) => { await D.set(D.ref(db, "saves/" + key), data); return true; };
   live.claimHost = async (code) => {
     try { await D.set(D.ref(db, "hosts/" + live.uid), { code: String(code || "").slice(0, 40) }); return true; }
@@ -381,7 +382,9 @@ async function firebaseInit() {
         if (isFinite(Number(data.stp)) && data.stp !== null && data.stp !== '') clean.stp = Math.max(-100, Math.min(9999, Math.round(Number(data.stp) * 10) / 10));
         if ([1, 2].includes(data.stv)) clean.stv = data.stv;
         if (data.host === true) clean.host = true;
-        if (Number.isInteger(data.en) && data.en > 0 && data.en <= 15) clean.en = data.en; // 🔨 강화 단계
+        if (Number.isInteger(data.en) && data.en > 0 && data.en <= 25) clean.en = data.en; // 🔨 강화 단계
+        if (typeof data.cs === 'string' && /^b\d{1,2}t\d{1,2}n\d{1,2}$/.test(data.cs)) clean.cs = data.cs; // 💬 꾸미기
+        if (Number.isInteger(data.lk) && data.lk >= 0 && data.lk <= 99) clean.lk = data.lk; // 🎭 예전 모습
         // v19: 같은 내용이면 다시 보내지 않음(전송량 절감) — 단, 20초마다는 살아 있다는 신호로 보냄
         const sig = JSON.stringify(Object.assign({}, clean, { ts: 0 })), tn = Date.now();
         if (sig === lastSig && tn - lastSigAt < 20000) return; lastSig = sig; lastSigAt = tn;
@@ -442,7 +445,8 @@ async function firebaseInit() {
 }
 
 live.claimHost = async () => false;
-if (!live.boardSet) { live.boardSet = async (k, text) => { const b = JSON.parse(localStorage.getItem('lv_board') || '{}'); b[k] = { text: String(text || '').slice(0, 300), ts: Date.now() }; localStorage.setItem('lv_board', JSON.stringify(b)); (live._bs || []).forEach(f => f(b)); return true; }; live.onBoard = f => { (live._bs = live._bs || []).push(f); try { f(JSON.parse(localStorage.getItem('lv_board') || '{}')); } catch (e) { f({}); } }; }
+if (!live.boardPut) { live.boardPut = async (path, val) => { const b = JSON.parse(localStorage.getItem('lv_board') || '{}'); const ks = path.split('/'); let o = b; ks.slice(0, -1).forEach(k => { o = o[k] = o[k] || {}; }); if (val == null) delete o[ks[ks.length - 1]]; else o[ks[ks.length - 1]] = val; localStorage.setItem('lv_board', JSON.stringify(b)); (live._bs || []).forEach(f => f(b)); return true; }; }
+if (!live.boardSet) { live.boardSet = async (k, text) => { const b = JSON.parse(localStorage.getItem('lv_board') || '{}'); b[k] = { text: String(text || '').slice(0, 300), ts: Date.now() }; localStorage.setItem('lv_board', JSON.stringify(b)); (live._bs || []).forEach(f => f(b)); return true; }; live.onBoard = f => { if (!live._bsL) { live._bsL = 1; try { addEventListener('storage', e => { if (e.key === 'lv_board') { let b = {}; try { b = JSON.parse(e.newValue || '{}'); } catch (x) {} (live._bs || []).forEach(g => g(b)); } }); } catch (x) {} } (live._bs = live._bs || []).push(f); try { f(JSON.parse(localStorage.getItem('lv_board') || '{}')); } catch (e) { f({}); } }; }
 if (!live.saveGet) { live.saveGet = async k => { try { return JSON.parse(localStorage.getItem('lv_save_' + k) || 'null'); } catch (e) { return null; } }; live.savePut = async (k, d) => { localStorage.setItem('lv_save_' + k, JSON.stringify(d)); return true; }; }
 
 export function initLive() {
