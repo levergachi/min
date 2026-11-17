@@ -93,7 +93,7 @@ header{position:fixed;top:36px;left:10px;right:10px;display:flex;gap:8px;align-i
 .tab{display:none;flex:1;min-height:0;flex-direction:column;padding:10px}
 .tab.on{display:flex}
 #log{flex:1;overflow-y:auto;font-size:13px;line-height:1.5;padding-right:4px;-webkit-user-select:text;user-select:text}
-#log .m{margin-bottom:4px;word-break:break-all}#log .m .t{color:var(--mute);font-family:var(--mono);font-size:11px;margin-right:5px}#log .m .n{font-weight:800;margin-right:5px}
+#log .m{margin-bottom:4px;word-break:break-all}#log .m .t{color:var(--mute);font-family:var(--mono);font-size:11px;margin-right:5px}#log .m .n{font-weight:800;margin-right:5px;cursor:pointer}#log .m.fr .n::before{content:'⭐ '}#log .m .hx{float:right;margin-left:6px;width:24px;height:24px;border:0;border-radius:50%;background:rgba(255,80,80,.88);color:#fff;font-weight:900;font-size:12px;line-height:1;cursor:pointer;font-family:inherit}.frRow{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;padding:7px 9px;border-radius:10px;background:rgba(255,255,255,.05);margin-bottom:5px}.frRow .fn{font-weight:800;flex:1 1 auto}.frRow .fs{flex:1 1 100%;font-size:11.5px;color:var(--mute);order:3}.frRow.on .fs{color:#6df0a0}.frRow button{background:#141c2e;color:#e8eefc;border:1px solid #33405e;border-radius:8px;padding:4px 8px;font-size:11.5px;font-family:inherit;cursor:pointer}#frHd{margin-bottom:6px}#rank .r .rbtn{flex-wrap:wrap}
 #log .sys{color:var(--mute);font-style:italic}
 .chatin{display:flex;gap:6px;margin-top:8px}
 input,select{font-family:inherit}
@@ -296,10 +296,10 @@ input,select{font-family:inherit}
 .nm.nn4{background:linear-gradient(90deg,#ff4a4a,#ffb020,#2fe07a,#41c9ff,#b69cff,#ff4a4a)!important;background-size:300% 100%!important;color:#111!important;animation:rbw 2.5s linear infinite}
 .nm.nn5{background:linear-gradient(135deg,#dff5ff,#7ac8ff,#dff5ff)!important;color:#0a2a55!important;border:1px solid #fff!important;box-shadow:0 0 12px #9ee8ff}
 
-#noticeBar{display:none;position:fixed;left:50%;transform:translateX(-50%);bottom:232px;z-index:9;max-width:min(560px,92vw);background:linear-gradient(135deg,rgba(60,38,6,.97),rgba(42,20,64,.97));border:1.5px solid #ffb020;border-radius:14px;padding:10px 38px 10px 14px;color:#fff3d6;font-size:14px;line-height:1.5;box-shadow:0 8px 28px rgba(0,0,0,.5);white-space:pre-line;word-break:break-all}
-#noticeBar.on{display:block}#noticeBar b{color:#ffd76a;margin-right:6px}#noticeBar button{position:absolute;right:8px;top:6px;background:none;border:0;color:#ffd76a;font-size:18px;cursor:pointer}
+#noticeBar{display:none;position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 64px);z-index:30;width:min(440px,92vw);max-height:46vh;background:linear-gradient(135deg,rgba(60,38,6,.97),rgba(42,20,64,.97));border:1.5px solid #ffb020;border-radius:14px;color:#fff3d6;font-size:14px;line-height:1.5;box-shadow:0 8px 28px rgba(0,0,0,.5);overflow:hidden;flex-direction:column}
+#noticeBar.on{display:flex}#noticeBar .nh{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 8px 6px 14px;flex:none}#noticeBar b{color:#ffd76a}#noticeBar #noticeX{flex:none;background:#ffb020;border:0;color:#2a1604;font-weight:900;font-size:14px;font-family:inherit;border-radius:999px;min-width:68px;height:34px;padding:0 12px;cursor:pointer}#noticeBar #noticeTx{padding:0 14px 12px;overflow-y:auto;white-space:pre-line;word-break:break-all;-webkit-overflow-scrolling:touch}#noticeBar .nb{height:3px;background:#ffd76a;transform-origin:left;flex:none}#noticeBar.on .nb{animation:nbar linear forwards;animation-duration:var(--nd,12s)}@keyframes nbar{from{transform:scaleX(1)}to{transform:scaleX(0)}}
 #mHostEd textarea,#mHostEd input{width:100%;box-sizing:border-box;background:#0f1626;color:#fff;border:1px solid #33405e;border-radius:10px;padding:9px;font-family:inherit;font-size:14px}
-@media (max-width:820px){#noticeBar{bottom:250px;font-size:13px}}
+@media (max-width:820px){#noticeBar{font-size:13px}}
 
 #pkBtn{display:none;position:fixed;right:16px;bottom:250px;z-index:6;width:86px;height:86px;border-radius:50%;border:3px solid #ff2a3a;background:radial-gradient(circle,#5a0f14,#2a0608);color:#fff;font-size:30px;font-weight:900;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 22px rgba(255,42,58,.7);cursor:pointer;font-family:inherit}
 #pkBtn span{font-size:11px}#pkBtn.on{display:flex;animation:qpulse 1.6s infinite}#pkBtn:active{transform:scale(.92)}
@@ -347,10 +347,10 @@ input,select{font-family:inherit}
   #qbar .q2{display:none!important}#qbar.more .q2{display:flex!important}#qMore{display:flex!important}
   #qbar.more{flex-direction:row!important;flex-wrap:wrap!important;width:144px!important;justify-content:flex-end;background:rgba(5,8,16,.82);padding:6px;border-radius:14px;right:4px!important}
   #sheetBtn{display:none!important}
-  #chatMini{display:flex;flex-direction:column;gap:4px;position:fixed;left:8px;bottom:170px;width:min(62vw,300px);z-index:4;pointer-events:auto}
-  #cmLog{max-height:112px;overflow-y:auto;font-size:12px;line-height:1.35;color:#fff;background:linear-gradient(0deg,rgba(5,8,16,.62),rgba(5,8,16,.25));border-radius:12px;padding:6px 8px;text-shadow:0 1px 2px #000;-webkit-mask-image:linear-gradient(0deg,#000 75%,transparent)}
+  #chatMini{display:flex;flex-direction:column;gap:3px;position:fixed;left:8px;bottom:122px;width:min(44vw,172px);z-index:4;pointer-events:none}
+  #cmLog{max-height:88px;overflow:hidden;font-size:11.5px;line-height:1.3;color:#fff;background:linear-gradient(0deg,rgba(5,8,16,.34),rgba(5,8,16,.08));border-radius:10px;padding:4px 6px;pointer-events:none;text-shadow:0 1px 2px #000;-webkit-mask-image:linear-gradient(0deg,#000 75%,transparent)}
   #cmLog div{word-break:break-all;margin:1px 0}#cmLog .sys{color:#ffd99a;opacity:.9}#cmLog .me{color:#9ff3ff}#cmLog .whisper{color:#ffd6f5;background:rgba(255,79,216,.22);border-left:2px solid #ff4fd8;padding-left:4px;font-weight:700}
-  #cmSay{align-self:flex-start;background:rgba(245,165,36,.92);color:#1a1204;border:0;border-radius:999px;padding:8px 14px;font-weight:900;font-size:13px;font-family:inherit;box-shadow:0 3px 12px rgba(0,0,0,.4)}
+  #cmSay{pointer-events:auto;align-self:flex-start;background:rgba(245,165,36,.88);color:#1a1204;border:0;border-radius:999px;padding:6px 12px;font-weight:900;font-size:12px;font-family:inherit;box-shadow:0 3px 12px rgba(0,0,0,.4)}
   .acts{grid-template-columns:repeat(3,46px)!important;gap:5px!important}.act,.act.big{width:46px!important;height:46px!important}
   #skBar{right:8px!important;bottom:112px!important}
   body:has(.panel.open) #chatMini{display:none}
@@ -390,7 +390,7 @@ input,select{font-family:inherit}
     <div class="wx" id="wx">시황: 데이터 없음 → 평온</div>
   </div>
   <div class="panel pe" id="panel">
-    <div class="tabs"><button class="on" data-tab="tChat">대화</button><button data-tab="tAct">몸짓</button><button data-tab="tRank">랭킹</button><button id="pClose" aria-label="닫기">✕</button></div>
+    <div class="tabs"><button class="on" data-tab="tChat">대화</button><button data-tab="tAct">몸짓</button><button data-tab="tRank">랭킹</button><button data-tab="tFr">친구</button><button id="pClose" aria-label="닫기">✕</button></div>
     <div class="tab on" id="tChat"><div id="log"></div><form class="chatin" id="chatForm"><input id="chatIn" maxlength="120" placeholder="한마디 (Enter)" autocomplete="off"><button>전송</button></form></div>
     <div class="tab" id="tAct">
       <div class="sect">몸짓 · 전광판을 향해</div>
@@ -406,6 +406,7 @@ input,select{font-family:inherit}
       <div class="sect">공덕 쌓는 법</div>
       <div class="small">절하기 +3 · 물타기 +2 · 목탁 +1 · 시주 +5 · 1분 머물기 +1 · 108배 완주 +108<br>시주함·목탁·108배 방석·전광판(운세)·투표 게시판 가까이 가면 <b>E</b>(또는 상호작용 버튼)</div>
     </div>
+    <div class="tab" id="tFr"><div class="sect" id="frHd"></div><div id="frList"></div></div>
     <div class="tab" id="tRank"><div class="sect">지금 객장에 있는 개미 공덕 순위</div><div class="rank" id="rank"></div>
       <div class="small" style="margin-top:12px">재미용 게임입니다. 수익률은 각자 입력한 평단과 화면 시세 기준이며 투자 조언이 아닙니다. 수익 <span class="up">빨강▲</span> / 손실 <span class="down">파랑▼</span>.</div></div>
   </div>
@@ -456,7 +457,7 @@ input,select{font-family:inherit}
 <div id="megaBan"></div><div class="modal" id="mSig"><div class="mbox" style="width:min(560px,100%)"><h2>🤖 레버가치 저점반전 신호 TOP 10</h2><div class="sub" id="sigSub"></div><div id="sigBody" class="sigBody"></div>
   <div class="enhBtns" style="margin-top:8px"><button type="button" class="gbtn hot" id="sigWeb" style="flex:1">🌐 신호 웹페이지 열기</button><button type="button" class="gbtn" id="sigLinks" style="flex:1">📣 오픈채팅·블로그</button></div>
   <div class="small" style="margin-top:6px">등급: S > A > B+ … · 점수 = 바닥 다지기 + 회사 체력 + 반등 신호 · 재미용 참고 정보이며 투자 조언이 아니에요</div><button class="mbtn sec" data-close>닫기</button></div></div><div id="kickOv"><b>👢 강퇴되었어요</b><span></span><small>시간이 지나면 자동으로 다시 들어올 수 있어요</small></div><div id="evoMini"></div><div class="modal" id="mEvo"><div class="mbox" style="width:min(460px,100%)"><h2 id="evoTitle">🎉 진화!</h2><div class="sub">새로 생긴 능력과 버프예요 — 계속 키우면 더 강해져요!</div><div id="evoBody"></div><button class="mbtn" data-close>좋아요! 💪</button></div></div><button type="button" id="pkBtn" class="pe">⚔<span>결투 공격</span></button><div id="duelBar"></div>
-<div class="modal" id="mDuel"><div class="mbox" style="width:min(480px,100%)"><h2>🤺 1:1 결투 신청</h2><div class="sub" id="duelInfo"></div><div id="duelList" style="display:flex;flex-direction:column;gap:7px;max-height:50vh;overflow:auto"></div><button class="mbtn sec" data-close>닫기</button></div></div><div id="noticeBar"><b>📌 방장 공지</b><span id="noticeTx"></span><button type="button" id="noticeX">✕</button></div>
+<div class="modal" id="mUser"><div class="mbox" style="width:min(340px,100%)"><h2 id="uName"></h2><div class="sub" id="uSub"></div><div id="uBtns" style="display:flex;flex-direction:column;gap:7px;margin-bottom:8px"></div><button class="mbtn sec" data-close>닫기</button></div></div><div class="modal" id="mDuel"><div class="mbox" style="width:min(480px,100%)"><h2>🤺 1:1 결투 신청</h2><div class="sub" id="duelInfo"></div><div id="duelList" style="display:flex;flex-direction:column;gap:7px;max-height:50vh;overflow:auto"></div><button class="mbtn sec" data-close>닫기</button></div></div><div id="noticeBar"><div class="nh"><b>📌 방장 공지</b><button type="button" id="noticeX">✕ 닫기</button></div><div id="noticeTx"></div><div class="nb"></div></div>
 <div class="modal" id="mHostEd"><div class="mbox" style="width:min(540px,100%)"><h2>👑 방장 관리</h2><div class="sub">방장 코드로 입장했을 때만 저장·적용돼요 · 모든 방 개미들에게 바로 반영</div>
   <div class="shopTabs" id="hoTabs"><button type="button" data-t="n" class="on">📌 공지·후원</button><button type="button" data-t="u">👥 접속자 관리</button><button type="button" data-t="c">🛠 방 설정</button></div>
   <div id="hoN"><div class="sect">📌 공지사항 (300자 · 비우면 공지 내리기)</div><textarea id="heNotice" maxlength="300" rows="4" placeholder="예) 오늘 밤 11시 30분 미장 개장 러시 레이드 같이 해요!"></textarea>
@@ -464,7 +465,7 @@ input,select{font-family:inherit}
   <div class="enhBtns" style="margin-top:10px"><button type="button" class="gbtn hot big" id="heSave">💾 저장하고 바로 반영</button></div></div>
   <div id="hoU" style="display:none"><div class="small">강퇴: 그 시간 동안 방에 못 들어오고, 다른 개미들 화면에서도 사라져요 · 채팅 금지: 그 개미의 말이 아무에게도 안 보여요</div><div id="hoList" class="hoList"></div><div class="sect">⛔ 제재 중</div><div id="hoBans" class="hoList"></div></div>
   <div id="hoC" style="display:none"><div class="hoCfg" id="hoCfg"></div>
-    <div class="enhBtns" style="margin-top:10px"><button type="button" class="gbtn hot" id="hoRaid" style="flex:1">🌋 레이드 지금 소환</button><button type="button" class="gbtn hot" id="hoFw" style="flex:1">🎆 축포 쏘기</button></div></div>
+    <div class="sect" style="margin-top:10px">🗑 채팅 내역 삭제 (방장 전용)</div><div class="enhBtns" id="hoClr" style="flex-wrap:wrap"></div><div class="enhBtns" style="margin-top:10px"><button type="button" class="gbtn hot" id="hoRaid" style="flex:1">🌋 레이드 지금 소환</button><button type="button" class="gbtn hot" id="hoFw" style="flex:1">🎆 축포 쏘기</button></div></div>
   <div class="small" id="heMsg"></div>
   <button class="mbtn sec" data-close>닫기</button></div></div><div class="modal" id="mEnh"><div class="mbox" style="width:min(540px,100%)"><h2>🔨 개미 강화소</h2><div class="sub">장비 하나하나 누를 필요 없이 <b>내 캐릭터</b>를 한 번에 강화 · 최대 <b>+20</b></div>
   <div class="enhTop"><div class="enhLv" id="enhLv">+0</div><div class="enhRight"><div class="enhBarW"><i id="enhBar"></i></div><div class="enhSt" id="enhSt"></div></div></div>
@@ -533,7 +534,7 @@ input,select{font-family:inherit}
 setTimeout(function(){ if (window.__room3d) return; var d=document.createElement("div"); d.style.cssText="position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);z-index:99;background:#111a2b;color:#fff;border:2px solid #f5a524;border-radius:16px;padding:18px 20px;text-align:center;font:15px/1.5 sans-serif;max-width:90vw"; d.innerHTML="<b>🔄 사이트가 업데이트됐어요</b><br>예전 파일이 남아 있어 객장이 안 열렸어요.<br><button style=\"margin-top:10px;padding:10px 18px;border:0;border-radius:10px;background:#f5a524;font-weight:800;cursor:pointer\">새로고침해서 입장</button>"; d.querySelector("button").onclick=function(){ location.replace(location.pathname+"?room="+(new URLSearchParams(location.search).get("room")||"")+"&r="+Date.now()); }; document.body.appendChild(d); }, 9000);</script>
 <script type="module">
 import * as THREE from './vendor/three.module.min.js?v=169';
-import { initLive, onPrices, onMarket, live, usSession, META, MKT, histMin, reqQuote } from './live.js?v=21';
+import { initLive, onPrices, onMarket, live, usSession, META, MKT, histMin, reqQuote } from './live.js?v=23';
 
 /* ================= 공통 ================= */
 const $ = id => document.getElementById(id);
@@ -1512,7 +1513,7 @@ function seatOrPos(d) {
 let fakePeers = null; // 테스트 전용 부하 확인용(화면만, 데이터 아님)
 function onPeersCb(arr) {
   if (fakePeers) arr = arr.filter(d => !String(d.uid).startsWith('f')).concat(fakePeers);
-  arr = arr.filter(d => d.you || d.uid === live.uid || !isKicked(d.uid, d.nick)); peersData = arr; setRoomPill(arr.length);
+  arr = arr.filter(d => d.you || d.uid === live.uid || !isKicked(d.uid, d.nick)); peersData = arr; setRoomPill(arr.length); try { frPeers(arr); } catch (e) {}
   const seen = new Set();
   arr.forEach(d => {
     if (d.you || d.uid === live.uid) { if (myLabel) fillLabel(myLabel, myData(), true); return; }
@@ -1542,7 +1543,7 @@ function renderRank() {
     if (rm) { r.classList.add('go'); r.title = '눌러서 이 개미한테 순간이동'; r.onclick = () => { const p = rm.cur; tpTo(p.x + 1.6, p.z + 1.6, (d.nick || '개미') + ' 옆'); };
       const bx = el('span', 'rbtn'); const b1 = el('button', null, '🤺 결투'), b2 = el('button', null, '🔒 귓속말');
       b1.onclick = e => { e.stopPropagation(); if (DUEL) { toast('이미 결투 중이에요'); return; } if (!cd('dq', 8000)) { toast('결투 신청은 8초에 한 번!'); return; } room.sendFx('dq:' + id8(d.uid)); toast(`🤺 ${d.nick}님에게 결투 신청! (20초 안에 수락하면 시작)`); };
-      b2.onclick = e => { e.stopPropagation(); whisperTo(d.nick); }; bx.append(b1, b2); r.appendChild(bx); }
+      b2.onclick = e => { e.stopPropagation(); whisperTo(d.nick); }; const b3 = el('button', null, FR[d.uid] ? '💔 친구해제' : '⭐ 친구'); b3.onclick = e => { e.stopPropagation(); if (FR[d.uid]) frDel(d.uid); else frAdd(d.uid, d.nick); renderRank(); }; bx.append(b1, b2, b3); r.appendChild(bx); }
     R.appendChild(r); });
 }
 /* ---- 많은 인원(최대 채널 정원)용 LOD ----
@@ -1601,22 +1602,76 @@ function updateRemotes(dt) {
 
 /* ================= 채팅 ================= */
 const logEl = $('log');
+const chatCache = []; let appliedClr = null, lastClrKey = null;
+const clrOf = () => { const c = BOARD && BOARD.cfg && BOARD.cfg.clr; return (c && ROOM && c[ROOM]) || null; };
+function hidSet() { return (BOARD && BOARD.cfg && BOARD.cfg.hid) || {}; }
+function isCleared(m) { if (!m) return false; const h = hidSet(); if (m.id && h[m.id]) return true; const c = clrOf(); if (!c) return false; if (c.id && m.id) return String(m.id) <= String(c.id); return (m.ts || 0) <= (c.ts || 0); }
+function cacheChat(m) { chatCache.push(m); if (chatCache.length > 300) chatCache.shift(); }
+function applyClear() { const c = clrOf(), hk = Object.keys(hidSet()).sort(), ck = c ? (c.id || '') + '|' + (c.ts || 0) : '', key = ck + '#' + hk.length + ':' + (hk[hk.length - 1] || '');
+  if (appliedClr === null) { appliedClr = key; lastClrKey = ck; if (!c && !hk.length) return; } else if (key === appliedClr) return; else appliedClr = key;
+  logEl.textContent = ''; try { $('cmLog').textContent = ''; } catch (e) {} chatCache.filter(m => !isCleared(m)).forEach(m => addLog(m));
+  if (c && ck !== lastClrKey) { addLog('🗑 방장이 이 채널의 채팅 내역을 삭제했어요', true); toast('🗑 채팅 내역이 삭제됐어요'); } lastClrKey = ck; }
 function addLog(m, sys) {
   if (!sys && m && m.uid !== live.uid && typeof BLOCK !== 'undefined' && BLOCK.has(m.nick)) return;
   const d = el('div', 'm' + (sys ? ' sys' : ''));
   if (sys) d.textContent = m; else {
+    if (m.uid !== live.uid) learnNick(m.uid, m.nick, m.ts); d.dataset.uid = m.uid || ''; if (FR[m.uid]) d.classList.add('fr');
     d.append(el('span', 't', kstTime(m.ts || Date.now())));
-    if (m.host) d.classList.add('host'); const n = el('span', 'n', (m.host ? '👑 ' : '') + (m.nick || '?')); const pd = peersData.find(p => p.uid === m.uid); n.style.color = (pd && pd.color) || (m.uid === live.uid && PROF ? PROF.color : '#f5a524'); d.append(n, document.createTextNode(m.text || ''));
+    if (m.host) d.classList.add('host'); const n = el('span', 'n', (m.host ? '👑 ' : '') + dispNick(m)); n.onclick = () => userMenu(m.uid, dispNick(m), m); const pd = peersData.find(p => p.uid === m.uid); n.style.color = (pd && pd.color) || (m.uid === live.uid && PROF ? PROF.color : '#f5a524'); d.append(n, document.createTextNode(m.text || ''));
+    if (HOST && m.id) { const x = el('button', 'hx', '✕'); x.type = 'button'; x.title = '이 대화 삭제'; x.onclick = e => { e.stopPropagation(); hostHide(m.id); }; d.appendChild(x); }
   }
-  logEl.appendChild(d); while (logEl.children.length > 1200) logEl.firstChild.remove(); try { miniLog(sys ? m : `${m.nick || '?'}: ${m.text || ''}`, sys ? 'sys' : (m.uid === live.uid ? 'me' : '')); } catch (e) {} logEl.scrollTop = logEl.scrollHeight;
+  logEl.appendChild(d); while (logEl.children.length > 1200) logEl.firstChild.remove(); try { miniLog(sys ? m : `${dispNick(m)}: ${m.text || ''}`, sys ? 'sys' : (m.uid === live.uid ? 'me' : '')); } catch (e) {} logEl.scrollTop = logEl.scrollHeight;
 }
+
+/* ---- 닉네임 최신화 · 친구 · 방장 대화삭제 ---- */
+const NICKC = LS.get('lv3d_nicks', {}) || {}; let nickSaveT = 0;
+let FR = LS.get('lv3d_friends', {}) || {}, frOnline = new Set(), frT0 = 0, frRef = 0;
+const frSave = () => LS.set('lv3d_friends', FR), frOn = () => CFG2().fr !== false;
+function learnNick(uid, nick, t) { if (!uid || !nick || uid === live.uid) return false; t = t || Date.now(); const o = NICKC[uid]; if (o && o.n === nick) { if (t > o.t) o.t = t; return false; } if (o && o.t > t) return false;
+  NICKC[uid] = { n: nick, t }; const ks = Object.keys(NICKC); if (ks.length > 500) ks.sort((a, b) => NICKC[a].t - NICKC[b].t).slice(0, 100).forEach(k => delete NICKC[k]);
+  clearTimeout(nickSaveT); nickSaveT = setTimeout(() => LS.set('lv3d_nicks', NICKC), 3000); paintNick(uid, nick); if (FR[uid] && FR[uid].n !== nick) { FR[uid].n = nick; frSave(); } return true; }
+function dispNick(m) { if (!m) return '?'; if (m.uid === live.uid) return (PROF && PROF.nick) || m.nick || '?'; return (NICKC[m.uid] && NICKC[m.uid].n) || m.nick || '?'; }
+function paintNick(uid, nick) { try { document.querySelectorAll('#log .m[data-uid="' + CSS.escape(uid) + '"]').forEach(d => { const n = d.querySelector('.n'); if (n) n.textContent = (d.classList.contains('host') ? '👑 ' : '') + nick; }); } catch (e) {} }
+const pad2 = n => String(n).padStart(2, '0');
+function seenTxt(uid) { const f = FR[uid], ts = f && f.seen; if (!ts) return '접속 기록 없음 (아직 못 봤어요)'; const k = new Date(ts + 9 * 3600e3), df = Date.now() - ts, ago = df < 60e3 ? '방금' : df < 3600e3 ? Math.floor(df / 60e3) + '분 전' : df < 86400e3 ? Math.floor(df / 3600e3) + '시간 전' : Math.floor(df / 86400e3) + '일 전';
+  return `마지막 접속 ${pad2(k.getUTCMonth() + 1)}/${pad2(k.getUTCDate())} ${pad2(k.getUTCHours())}:${pad2(k.getUTCMinutes())} (${ago})`; }
+function markFr(uid, on) { try { document.querySelectorAll('#log .m[data-uid="' + CSS.escape(uid) + '"]').forEach(x => x.classList.toggle('fr', on)); } catch (e) {} }
+function frAdd(uid, nick) { if (!frOn() && !HOST) { toast('🚫 방장이 친구 기능을 껐어요'); return; } if (!uid || uid === live.uid) return; if (Object.keys(FR).length >= 50) { toast('친구는 최대 50명까지예요'); return; }
+  const on = peersData.some(p => p.uid === uid && !p.you); FR[uid] = { n: nick, seen: on ? Date.now() : ((NICKC[uid] && NICKC[uid].t) || 0), add: Date.now() }; frSave(); toast(`⭐ ${nick}님을 친구로 추가했어요!`); markFr(uid, true); renderFr(); }
+function frDel(uid) { const n = FR[uid] && FR[uid].n; delete FR[uid]; frSave(); toast(`💔 ${n || '친구'}님을 친구에서 뺐어요`); markFr(uid, false); renderFr(); }
+function frPeers(arr) { if (!frT0) frT0 = performance.now(); const ready = performance.now() - frT0 > 6000, now = Date.now(), nw = new Set(); let ch = false;
+  arr.forEach(d => { if (d.you || d.uid === live.uid) return; nw.add(d.uid); learnNick(d.uid, d.nick); const f = FR[d.uid]; if (!f) return;
+    if (ready && !frOnline.has(d.uid)) { toast(`👋 친구 ${d.nick}님이 입장했어요!`); addLog(`👋 친구 ${d.nick}님이 객장에 들어왔어요`, true); try { SND.recv(); } catch (e) {} }
+    if (now - (f.seen || 0) > 20000) { f.seen = now; ch = true; } if (f.n !== d.nick) { f.n = d.nick; ch = true; } });
+  frOnline.forEach(id => { if (!nw.has(id) && FR[id]) { FR[id].seen = now; ch = true; } }); frOnline = nw; if (ch) frSave(); if ($('tFr') && $('tFr').classList.contains('on')) renderFr(); }
+function renderFr() { const L = $('frList'), H = $('frHd'); if (!L) return; const ids = Object.keys(FR), on = id => frOnline.has(id);
+  ids.sort((a, b) => (on(b) - on(a)) || ((FR[b].seen || 0) - (FR[a].seen || 0))); H.textContent = `⭐ 내 친구 ${ids.length}명 · 🟢 접속중 ${ids.filter(on).length}명`; L.textContent = '';
+  if (!ids.length) { L.appendChild(el('div', 'small', '아직 친구가 없어요. 채팅의 닉네임이나 랭킹 줄의 ⭐ 버튼을 눌러 추가해 보세요!')); return; }
+  ids.forEach(id => { const f = FR[id], nm = (NICKC[id] && NICKC[id].n) || f.n || '?', r = el('div', 'frRow' + (on(id) ? ' on' : ''));
+    r.append(el('span', 'fn', (on(id) ? '🟢 ' : '⚫ ') + nm), el('span', 'fs', on(id) ? '지금 접속 중 (이 채널)' : seenTxt(id)));
+    if (on(id)) { const b1 = el('button', null, '🔒 귓속말'), b2 = el('button', null, '🏃 이동'); b1.onclick = () => whisperTo(nm); b2.onclick = () => { const rm = remotes.get(id); if (rm) tpTo(rm.cur.x + 1.6, rm.cur.z + 1.6, nm + ' 옆'); }; r.append(b1, b2); }
+    const b3 = el('button', null, '💔'); b3.title = '친구 삭제'; b3.onclick = () => frDel(id); r.appendChild(b3); L.appendChild(r); }); }
+async function frRefresh() { if (!live.seasonGet || Date.now() - frRef < 60000) return; frRef = Date.now(); const ids = Object.keys(FR).filter(id => !frOnline.has(id)); let ch = false;
+  await Promise.all(ids.map(async id => { for (const o of [0, -1]) { try { const v = await live.seasonGet(weekId(o), id); if (v && v.ts) { if (v.ts > (FR[id].seen || 0)) { FR[id].seen = v.ts; ch = true; } if (o === 0 && v.nick) learnNick(id, v.nick, v.ts); break; } } catch (e) {} } }));
+  if (ch) frSave(); renderFr(); }
+function duelReq(uid, nk) { if (DUEL) { toast('이미 결투 중이에요'); return; } if (!cd('dq', 8000)) { toast('결투 신청은 8초에 한 번!'); return; } room.sendFx('dq:' + id8(uid)); toast(`🤺 ${nk}님에게 결투 신청! (20초 안에 수락하면 시작)`); }
+function userMenu(uid, nick, m) { if (!uid) return; const me = uid === live.uid, B = $('uBtns'); B.textContent = ''; $('uName').textContent = (me ? '나 · ' : '') + nick;
+  const on = peersData.some(p => p.uid === uid && !p.you); $('uSub').textContent = me ? '내 정보' : on ? '🟢 지금 이 채널에 있어요' : ('⚫ ' + seenTxt(uid));
+  const add = (t, fn, cls) => { const b = el('button', 'mbtn' + (cls ? ' ' + cls : ''), t); b.type = 'button'; b.style.margin = '0'; b.onclick = () => { closeModals(); fn(); }; B.appendChild(b); };
+  if (!me) { if (FR[uid]) add('💔 친구 삭제', () => frDel(uid), 'sec'); else add('⭐ 친구 추가', () => frAdd(uid, nick)); if (on) { add('🔒 귓속말', () => whisperTo(nick), 'sec'); add('🤺 결투 신청', () => duelReq(uid, nick), 'sec'); } }
+  if (HOST && !me) { add('🔇 채팅금지 10분', () => hostBan({ uid, nick }, 'mute', 10), 'sec'); add('🔇 채팅금지 1시간', () => hostBan({ uid, nick }, 'mute', 60), 'sec'); add('👢 강퇴 10분', () => hostBan({ uid, nick }, 'kick', 10), 'sec'); add('🧹 이 사람 대화 전부 삭제', () => hostHide(null, uid), 'sec'); }
+  if (HOST && m && m.id) add('🗑 이 대화만 삭제', () => hostHide(m.id), 'sec'); openModal('mUser'); }
+async function hostHide(id, byUid) { if (!HOST) return; const hid = Object.assign({}, hidSet()), now = Date.now(); let n = 0;
+  if (byUid) chatCache.forEach(m => { if (m.uid === byUid && m.id && !hid[m.id]) { hid[m.id] = now; n++; } }); else if (id) { hid[id] = now; n = 1; }
+  if (!n) { toast('지울 대화가 없어요'); return; } const ks = Object.keys(hid).sort(); while (ks.length > 300) delete hid[ks.shift()];
+  try { await live.boardPut('cfg', Object.assign(CFG2(), { hid })); toast(`🗑 대화 ${n}개 삭제했어요`); } catch (e) { toast('❌ 삭제 실패: ' + (e && e.message || e)); } }
 function onChatCb(m) {
   if (m && m.uid !== live.uid && isMuted(m.uid, m.nick)) return;
   { const W = parseWhisper(m); if (W) { const mine = m.uid === live.uid, toMe = isMe8(W.to); if (!mine && !toMe) return; const tn = mine ? (nickOf(uidOf8(W.to)) || '상대') : '나';
       const d = el('div', 'm whisper'); d.append(el('span', 'wtag', '🔒 귓속말'), document.createTextNode(`${mine ? '나' : m.nick} → ${tn}: ${W.text}`)); logEl.appendChild(d); logEl.scrollTop = logEl.scrollHeight; miniLog(`🔒[귓속말] ${mine ? '나' : m.nick} → ${tn}: ${W.text}`, 'whisper');
       if (toMe) { toast(`🔒 [귓속말] ${m.nick}님 → 나: ${W.text}`); try { SND.recv(); } catch (e) {} } return; } }
   if (m.uid !== live.uid && typeof BLOCK !== 'undefined' && BLOCK.has(m.nick)) return;
-  addLog(m); if (m.uid !== live.uid && entered && cd('recv', 600)) SND.recv(); if (m.host && String(m.text || '').indexOf('📢') === 0) toast(m.text);
+  if (isCleared(m)) return; cacheChat(m); addLog(m); if (m.uid !== live.uid && entered && cd('recv', 600)) SND.recv(); if (m.host && String(m.text || '').indexOf('📢') === 0) toast(m.text);
   const L = m.uid === live.uid ? myLabel : (remotes.get(m.uid) || {}).L;
   if (/^📢\[확성기\] /.test(m.text || '') && megaUntil[m.uid] > Date.now()) { const B = $('megaBan'); B.textContent = `📢 ${m.nick}: ${String(m.text).replace(/^📢\[확성기\] /, '')}`; B.classList.remove('on'); void B.offsetWidth; B.classList.add('on'); try { SFX2.horn(); } catch (e) {} }
   if (L) { styleSay(L, m.uid === live.uid ? myCs() : (((remotes.get(m.uid) || {}).data || {}).cs)); L.say.textContent = m.text || ''; L.say.style.display = ''; clearTimeout(L.sayT); L.sayT = setTimeout(() => { L.say.style.display = 'none'; }, 5000); }
@@ -1624,6 +1679,7 @@ function onChatCb(m) {
 let lastChat = 0;
 $('chatForm').onsubmit = e => {
   e.preventDefault(); const v = $('chatIn').value.trim(); if (!v || !room) return; if (blockCmd(v)) { $('chatIn').value = ''; return; }
+  if (CFG2().lock && !HOST) { toast('🔒 지금은 방장만 채팅할 수 있어요'); return; }
   { const b = banOf(live.uid, PROF && PROF.nick); if (b && !HOST) { toast(`🔇 방장이 채팅을 막았어요 (${Math.ceil((b.u - Date.now()) / 60000)}분 남음)`); return; } }
   { const sl = HOST ? 1.5 : Math.max(1.5, CFG2().slow | 0); if (performance.now() - lastChat < sl * 1000) { toast(`천천히 — ${sl}초에 한 번`); return; } }
   { const w = /^\/귓\s+(\S+)\s+([\s\S]+)$/.exec(v); if (w) { const tgt = peersData.find(d => d.nick === w[1] && d.uid !== live.uid); if (!tgt) { toast(`🔒 '${w[1]}'님이 지금 이 방에 없어요`); return; } lastChat = performance.now(); room.sendChat('🔒' + id8(tgt.uid) + '|' + w[2].slice(0, 100), {}); $('chatIn').value = `/귓 ${w[1]} `; return; } }
@@ -1632,7 +1688,7 @@ $('chatForm').onsubmit = e => {
 };
 
 /* ================= UI 패널·모달 ================= */
-function openPanel(id) { document.querySelectorAll('.tabs button[data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === id)); document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.id === id)); $('panel').classList.add('open'); }
+function openPanel(id) { document.querySelectorAll('.tabs button[data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === id)); document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.id === id)); $('panel').classList.add('open'); if (id === 'tFr') { try { renderFr(); frRefresh(); } catch (e) {} } }
 document.querySelectorAll('.tabs button[data-tab]').forEach(b => b.onclick = () => openPanel(b.dataset.tab));
 $('pClose').onclick = () => $('panel').classList.remove('open');
 $('sheetBtn').onclick = () => $('panel').classList.toggle('open');
@@ -4257,7 +4313,7 @@ function enter() {
   const sp = { x: -12 + Math.random() * 24, z: 8 + Math.random() * 5 }; ME.X = sp.x; ME.Z = sp.z; ME.ry = Math.PI; // 많은 인원이 한곳에 겹치지 않게 넓게 퍼뜨려 등장 ME.X = sp.x; ME.Z = sp.z; ME.ry = Math.PI; myAnt.root.rotation.y = Math.PI;
   cam.yaw = 0; cam.tx = ME.X; cam.tz = ME.Z;
   room.onPeers(onPeersCb);
-  room.onChat(onChatCb, hist => { hist.forEach(m => addLog(m)); addLog('객장에 들어왔습니다. 전광판을 향해 🙏', true); try { const L = LVX.linkList(); if (L.length) addLog('📣 레버가치전문가 — ' + L.map(l => l.icon + l.name).join(' · ') + ' (상단 「📣 레버가치」 버튼)', true); } catch (e) {} });
+  room.onChat(onChatCb, hist => { if (HOST) hist.forEach(m => { if (!isCleared(m)) { cacheChat(m); addLog(m); } }); else if (hist.length) addLog('💬 입장 전 대화는 방장만 볼 수 있어요. 지금부터의 대화가 보여요!', true); addLog('객장에 들어왔습니다. 전광판을 향해 🙏', true); try { const L = LVX.linkList(); if (L.length) addLog('📣 레버가치전문가 — ' + L.map(l => l.icon + l.name).join(' · ') + ' (상단 「📣 레버가치」 버튼)', true); } catch (e) {} });
   room.onFx(onFxCb);
   Object.keys(INTER).forEach(k => { if (INTER[k].type === 'boss') room.onCounter(k, n => bossCounter(k, n)); });
   setInterval(() => { if (entered && ME.lie && document.visibilityState === 'visible') { addPts(2); floatAt(myAnt, '💤 +2', 'txt'); } }, 30000);
@@ -4373,7 +4429,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '22';
+const APP_V = '23';
 {
   let shown = false;
   const check = async () => {
@@ -4569,9 +4625,11 @@ function autoTick(dt) { if (!AUTO || !entered) return; autoT += dt; if (autoT < 
 
 /* ================= 📌 방장 공지 · 후원 문구 ================= */
 const DONATE_DEF = '100원이라도 감사하게 받겠습니다 🙏'; let BOARD = {}; window.__lvxDonateMsg = DONATE_DEF;
-function showNotice(force) { const n = BOARD.notice; if (!n || !String(n.text || '').trim()) { $('noticeBar').classList.remove('on'); return; } $('noticeTx').textContent = n.text; if (force || LS.get('lv3d_noticeSeen', 0) !== (n.ts || 0)) $('noticeBar').classList.add('on'); }
-$('noticeX').onclick = () => { $('noticeBar').classList.remove('on'); if (BOARD.notice) LS.set('lv3d_noticeSeen', BOARD.notice.ts || 0); };
-initLive().then(() => { try { live.onBoard && live.onBoard(b => { const prev = BOARD.notice && BOARD.notice.ts; BOARD = b || {}; window.__lvxDonateMsg = (BOARD.donate && String(BOARD.donate.text || '').trim()) || DONATE_DEF; showNotice(); checkMyBan(); if (entered && BOARD.notice && BOARD.notice.ts !== prev && String(BOARD.notice.text || '').trim()) addLog('📌 방장 공지: ' + BOARD.notice.text, true); }); } catch (e) { console.warn('board', e); } });
+let noticeT = 0;
+function hideNotice() { clearTimeout(noticeT); $('noticeBar').classList.remove('on'); if (BOARD.notice) LS.set('lv3d_noticeSeen', BOARD.notice.ts || 0); }
+function showNotice(force) { const n = BOARD.notice, B = $('noticeBar'); if (!n || !String(n.text || '').trim()) { clearTimeout(noticeT); B.classList.remove('on'); return; } $('noticeTx').textContent = n.text; if (force || LS.get('lv3d_noticeSeen', 0) !== (n.ts || 0)) { const sec = Math.min(20, Math.max(8, 6 + String(n.text).length * .06)); B.style.setProperty('--nd', sec + 's'); B.classList.remove('on'); void B.offsetWidth; B.classList.add('on'); clearTimeout(noticeT); noticeT = setTimeout(hideNotice, sec * 1000); } }
+$('noticeX').onclick = e => { e.stopPropagation(); hideNotice(); }; $('noticeBar').addEventListener('click', e => { if (e.target.id === 'noticeTx' || e.target.classList.contains('nh') || e.target === $('noticeBar')) return; });
+initLive().then(() => { try { live.onBoard && live.onBoard(b => { const prev = BOARD.notice && BOARD.notice.ts; BOARD = b || {}; window.__lvxDonateMsg = (BOARD.donate && String(BOARD.donate.text || '').trim()) || DONATE_DEF; showNotice(); checkMyBan(); try { applyClear(); } catch (e) {} if (entered && BOARD.notice && BOARD.notice.ts !== prev && String(BOARD.notice.text || '').trim()) addLog('📌 방장 공지: ' + BOARD.notice.text, true); }); } catch (e) { console.warn('board', e); } });
 setInterval(() => { const b = $('bHostEd'); if (b) b.style.display = HOST ? '' : 'none'; }, 1500);
 $('bHostEd').onclick = () => { hoTab = 'n'; renderHost(); $('heNotice').value = (BOARD.notice && BOARD.notice.text) || ''; $('heDonate').value = (BOARD.donate && BOARD.donate.text) || DONATE_DEF; $('heMsg').textContent = ''; openModal('mHostEd'); };
 $('heSave').onclick = async () => { if (!HOST) { $('heMsg').textContent = '방장 코드로 입장해야 저장할 수 있어요'; return; }
@@ -4582,7 +4640,7 @@ $('heSave').onclick = async () => { if (!HOST) { $('heMsg').textContent = '방�
 /* ================= 👑 방장 관리: 강퇴 · 채팅 금지 · 방 설정 ================= */
 const banOf = (uid, nick) => { const B = (BOARD && BOARD.ban) || {}, now = Date.now(); const e = B[id8(uid)]; if (e && e.u > now) return e; if (nick) for (const k in B) { const v = B[k]; if (v && v.u > now && v.n && v.n === nick) return v; } return null; };
 const isKicked = (uid, nick) => { const b = banOf(uid, nick); return !!(b && b.m === 'kick'); }, isMuted = (uid, nick) => { const b = banOf(uid, nick); return !!(b && (b.m === 'mute' || b.m === 'kick')); };
-const CFG2 = () => Object.assign({ pk: true, mega: true, slow: 0 }, (BOARD && BOARD.cfg) || {});
+const CFG2 = () => Object.assign({ pk: true, mega: true, slow: 0, fr: true, lock: false }, (BOARD && BOARD.cfg) || {});
 let KICKED = false;
 function checkMyBan() { if (!PROF) return; const b = banOf(live.uid, PROF.nick); if (b && b.m === 'kick' && !HOST) { if (!KICKED) { KICKED = true; try { room.leave(); } catch (e) {} const O = $('kickOv'); O.querySelector('span').textContent = `방장에 의해 ${Math.ceil((b.u - Date.now()) / 60000)}분 동안 입장할 수 없어요.`; O.classList.add('on'); } } else if (KICKED && !b) { KICKED = false; $('kickOv').classList.remove('on'); location.reload(); } }
 setInterval(checkMyBan, 5000);
@@ -4598,13 +4656,21 @@ function renderHost() {
     const BL = $('hoBans'); BL.textContent = ''; const B = (BOARD && BOARD.ban) || {}, now = Date.now(); let n = 0;
     Object.entries(B).forEach(([k, v]) => { if (!v || v.u <= now) return; n++; const r = el('div', 'srow'), info = el('div', 'si'); info.append(el('b', null, v.n || k), el('span', null, `${v.m === 'kick' ? '👢 강퇴' : '🔇 채팅 금지'} · ${Math.ceil((v.u - now) / 60000)}분 남음`)); const un = el('button', 'gbtn', '해제'); un.onclick = () => hostUnban(k); r.append(info, el('div', 'sb2')); r.lastChild.appendChild(un); BL.appendChild(r); });
     if (!n) BL.appendChild(el('div', 'small', '제재 중인 개미 없음')); }
-  if (hoTab === 'c') { const C = CFG2(), box = $('hoCfg'); box.textContent = '';
+  if (hoTab === 'c') { const C = CFG2(), box = $('hoCfg'); box.textContent = ''; renderClrBtns();
     const tog = (key, label, desc) => { const r = el('label', 'hoT'); const cb = el('input'); cb.type = 'checkbox'; cb.checked = !!C[key]; cb.onchange = () => hostCfg({ [key]: cb.checked }); r.append(cb, el('b', null, label), el('span', null, desc)); box.appendChild(r); };
-    tog('pk', '⚔ PK존 전투 허용', '끄면 PK존에서도 서로 공격할 수 없어요 (1:1 결투는 그대로)'); tog('mega', '📢 확성기 허용', '끄면 상점 확성기를 쓸 수 없어요');
+    tog('pk', '⚔ PK존 전투 허용', '끄면 PK존에서도 서로 공격할 수 없어요 (1:1 결투는 그대로)'); tog('mega', '📢 확성기 허용', '끄면 상점 확성기를 쓸 수 없어요'); tog('lock', '🔒 방장만 채팅', '켜면 방장 외에는 채팅할 수 없어요 (공지·점검 때 사용)'); tog('fr', '⭐ 친구 기능 허용', '끄면 다른 사람이 새 친구를 추가할 수 없어요');
     const r = el('div', 'hoT'); r.append(el('b', null, '🐢 채팅 느리게'), el('span', null, '도배 방지: 한 사람이 다음 채팅까지 기다리는 시간')); const sel = el('select'); [[0, '끔 (1.5초)'], [5, '5초'], [10, '10초'], [30, '30초']].forEach(([v, n]) => { const o = el('option', null, n); o.value = v; if ((C.slow | 0) === v) o.selected = true; sel.appendChild(o); }); sel.onchange = () => hostCfg({ slow: +sel.value }); r.appendChild(sel); box.appendChild(r); }
 }
 async function hostBan(d, m, min) { if (!HOST) return; try { await live.boardPut('ban/' + id8(d.uid), { u: Date.now() + min * 60000, m, n: String(d.nick || '').slice(0, 12), ts: Date.now() }); toast(m === 'kick' ? `👢 ${d.nick}님 ${min}분 강퇴` : `🔇 ${d.nick}님 ${min}분 채팅 금지`); addLog(`👑 방장: ${d.nick}님 ${m === 'kick' ? '강퇴' : '채팅 금지'} (${min}분)`, true); setTimeout(renderHost, 600); } catch (e) { $('heMsg').textContent = '❌ 실패: ' + (e && e.message || e); } }
 async function hostUnban(k) { try { await live.boardPut('ban/' + k, null); toast('✅ 제재 해제'); setTimeout(renderHost, 600); } catch (e) { $('heMsg').textContent = '❌ 실패: ' + (e && e.message || e); } }
+async function hostClear(list) {
+  if (!HOST) return; const clr = Object.assign({}, CFG2().clr || {}), now = Date.now();
+  try { for (const ch of list) { const id = await live.chatLastId(ch); clr[ch] = { id: id || '', ts: now }; } await live.boardPut('cfg', Object.assign(CFG2(), { clr })); toast('🗑 ' + (list.length > 1 ? '모든 채널' : LVX.chNo(list[0]) + '채널') + ' 채팅 내역 삭제 완료'); $('heMsg').textContent = '✅ 삭제 완료 — 접속 중인 사람 화면에서도 바로 지워져요'; }
+  catch (e) { $('heMsg').textContent = '❌ 실패: ' + (e && e.message || e); }
+}
+function renderClrBtns() { const box = $('hoClr'); if (!box) return; box.textContent = ''; const chs = LVX.CHANNELS || ['ch1', 'ch2', 'ch3'];
+  const mk = (label, list) => { const b = el('button', 'gbtn', label); b.type = 'button'; b.style.flex = '1 1 22%'; let t = 0; b.onclick = () => { if (!t) { b.textContent = '정말? 한번 더'; b.classList.add('hot'); t = setTimeout(() => { t = 0; b.textContent = label; b.classList.remove('hot'); }, 4000); return; } clearTimeout(t); t = 0; b.textContent = label; b.classList.remove('hot'); hostClear(list); }; box.appendChild(b); };
+  chs.forEach(c => mk(LVX.chNo(c) + '채널', [c])); mk('🗑 전체', chs.slice()); }
 async function hostCfg(o) { try { await live.boardPut('cfg', Object.assign(CFG2(), o)); toast('🛠 방 설정 저장!'); } catch (e) { $('heMsg').textContent = '❌ 실패: ' + (e && e.message || e); } }
 document.querySelectorAll('#hoTabs button').forEach(b => b.onclick = () => { hoTab = b.dataset.t; renderHost(); });
 $('hoRaid').onclick = () => { if (!HOST) return; room.sendFx('wb:go'); toast('🌋 방장 권한: 시장 재난 레이드 소환!'); };
@@ -4632,7 +4698,7 @@ window.__room3d = { dexN: () => dexTypes().size, sig: () => SIG, openSig: () => 
   peerPos: uid => { const r = remotes.get(uid); return r ? { X: r.cur.x, Z: r.cur.z, moving: r.moving, walking: r.ant ? r.ant.moving : r.moving, detail: !!r.ant } : null; },
   weather: () => weather, teleport: (x, y) => { const w = toW(x, y); ME.X = w.x; ME.Z = w.z; ME.seat = -1; sync(true); }, tp: (X, Z) => { ME.X = X; ME.Z = Z; ME.seat = -1; sync(true); },
   inter: INTER, near: () => findNear(), use: k => useInter(k), fortune: () => fortuneFor(live.uid), offer: () => offerCount, votes: () => JSON.parse(JSON.stringify(votes)),
-  give: () => { for (let i = 0; i < 6; i++) dropItem(i % 3); return G.inv.length; }, addItem: c => { G.inv.push(c); saveG(); return itemInfo(c); }, rinfo: () => ({ calls: renderer.info.render.calls, tris: renderer.info.render.triangles, geos: renderer.info.memory.geometries }), equip: c => equip(c), gs: () => GS(), near: () => findNear(), pkT: () => pkTarget(), roll: (n, b) => { const h = Array(9).fill(0); for (let i = 0; i < n; i++) h[rollGrade(b || 0)]++; return h; }, iinfo: c => itemInfo(c), ui: () => useNearest(), sk: s2 => castSkill(s2), thumbs: () => THUMB.size, say: (uid, nick, text, hold) => { onChatCb({ uid, nick, text, ts: Date.now() }); const L = uid === live.uid ? myLabel : (remotes.get(uid) || {}).L; if (hold && L) { clearTimeout(L.sayT); L.sayT = setTimeout(() => { L.say.style.display = 'none'; }, hold); } }, fx: (uid, kind) => onFxCb({ uid, kind, ts: Date.now() }),
+  give: () => { for (let i = 0; i < 6; i++) dropItem(i % 3); return G.inv.length; }, addItem: c => { G.inv.push(c); saveG(); return itemInfo(c); }, rinfo: () => ({ calls: renderer.info.render.calls, tris: renderer.info.render.triangles, geos: renderer.info.memory.geometries }), equip: c => equip(c), gs: () => GS(), near: () => findNear(), pkT: () => pkTarget(), roll: (n, b) => { const h = Array(9).fill(0); for (let i = 0; i < n; i++) h[rollGrade(b || 0)]++; return h; }, iinfo: c => itemInfo(c), ui: () => useNearest(), sk: s2 => castSkill(s2), thumbs: () => THUMB.size, fr: () => FR, frAdd: (u, n) => frAdd(u, n), nickc: () => NICKC, seen: u => seenTxt(u), peers: arr => onPeersCb(arr), um: (u, n, m) => userMenu(u, n, m), notice: t => { BOARD.notice = { text: t, ts: Date.now() }; showNotice(true); }, hist: () => logEl.innerText, say: (uid, nick, text, hold, id) => { onChatCb({ uid, nick, text, ts: Date.now(), id }); const L = uid === live.uid ? myLabel : (remotes.get(uid) || {}).L; if (hold && L) { clearTimeout(L.sayT); L.sayT = setTimeout(() => { L.say.style.display = 'none'; }, hold); } }, fx: (uid, kind) => onFxCb({ uid, kind, ts: Date.now() }),
   inject: list => { fakePeers = list.filter(d => String(d.uid).startsWith('f')); onPeersCb(peersData.filter(d => !String(d.uid).startsWith('f'))); }, // 테스트 전용: 화면 부하 확인(데이터를 만들지 않음)
   room: () => ROOM, lod: () => ({ detail: [...remotes.values()].filter(r => r.ant).length, pawns: pawnBody.count, labels: [...remotes.values()].filter(r => r.L && r.L.d.style.visibility !== 'hidden').length }),
   gear: uid => { const a = uid ? antOf(uid) : myAnt; return a && a.gear ? SLOT_KEYS.filter(k => a.gear[k]) : []; }, G: () => JSON.parse(JSON.stringify(G)), stats: () => ({ atk: atkOf(lvOf(G.pts)), hp: maxHp(lvOf(G.pts)), set: setInfo(G.eq) }),

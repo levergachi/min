@@ -345,6 +345,8 @@ async function firebaseInit() {
   live.boardSet = async (k, text) => { await D.set(D.ref(db, "board/" + k), { text: String(text || "").slice(0, 300), ts: D.serverTimestamp() }); return true; };
   live.onBoard = f => D.onValue(D.ref(db, "board"), s => f(s.val() || {}), () => f({}));
   live.boardPut = async (path, val) => { await D.set(D.ref(db, "board/" + path), val); return true; };
+  live.seasonGet = async (wk, uid) => { try { const sn = await D.get(D.ref(db, "season/" + String(wk).replace(/[^a-z0-9]/g, "") + "/" + String(uid).replace(/[^A-Za-z0-9_-]/g, ""))); return sn.val(); } catch (e) { return null; } };
+  live.chatLastId = async (room) => { try { const q = D.query(D.ref(db, "rooms/" + String(room).replace(/[^a-z0-9-]/g, "") + "/chat"), D.limitToLast(1)); const sn = await D.get(q); let k = null; sn.forEach(c => { k = c.key; }); return k; } catch (e) { return null; } };
   live.savePut = async (key, data) => { await D.set(D.ref(db, "saves/" + key), data); return true; };
   live.claimHost = async (code) => {
     try { await D.set(D.ref(db, "hosts/" + live.uid), { code: String(code || "").slice(0, 40) }); return true; }
@@ -466,3 +468,5 @@ export const SYMBOLS = SYMS;
 export const INDEXES = IDX;
 export const ALL_KEYS = ALL;
 export const CONFIG = CFG;
+if (!live.chatLastId) live.chatLastId = async () => null;
+if (!live.seasonGet) live.seasonGet = async () => null;
