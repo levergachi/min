@@ -207,7 +207,7 @@ function localRoom(room) {
     onPeers(f) { subs.peers.add(f); firePeers(); },
     sendChat(text) {
       const msg = { id: rid(), uid: live.uid, nick: me ? me.nick : "?", text: clampStr(text, 120), ts: Date.now() };
-      chat.push(msg); chat = chat.slice(-200); try { localStorage.setItem(chatKey, JSON.stringify(chat)); } catch (e) {}
+      chat.push(msg); chat = chat.slice(-1000); try { localStorage.setItem(chatKey, JSON.stringify(chat)); } catch (e) {}
       ch.postMessage({ t: "chat", uid: live.uid, msg }); subs.chat.forEach(f => f(msg));
     },
     onChat(f, history) { subs.chat.add(f); if (history) history(chat.slice()); },
@@ -410,7 +410,7 @@ async function firebaseInit() {
       },
       onChat(f, history) {
         let first = true; const seen = new Set();
-        const q = D.query(D.ref(db, `${R}/chat`), D.limitToLast(200));
+        const q = D.query(D.ref(db, `${R}/chat`), D.limitToLast(1000));
         D.onValue(q, s => {
           const arr = []; s.forEach(c => { arr.push(Object.assign({ id: c.key }, c.val())); });
           if (first) { first = false; arr.forEach(m => seen.add(m.id)); if (history) history(arr); return; }

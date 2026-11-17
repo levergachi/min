@@ -323,6 +323,27 @@ input,select{font-family:inherit}
 @media (max-width:820px){.sbarR{grid-template-columns:96px 1fr}}
 
 .dexTabs{flex-wrap:nowrap!important;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}.dexTabs button{flex:0 0 auto!important;min-width:0!important;white-space:nowrap;font-size:12.5px!important;padding:8px 10px!important}
+
+#chatMini{display:none}
+.m.whisper{color:#d9c8ff!important;background:rgba(182,156,255,.1);border-radius:6px;padding:2px 5px}
+#rank .r .rbtn{display:flex;gap:4px;margin-left:22px}#rank .r .rbtn button{background:#141c2e;color:#e8eefc;border:1px solid #33405e;border-radius:8px;padding:3px 7px;font-size:11px;font-family:inherit;cursor:pointer}
+.act.on,#qbar button.on{border-color:#2fe07a!important;color:#7ff0a0!important;box-shadow:0 0 14px rgba(47,224,122,.6)!important}
+#qbar #qMore{display:none}
+@media (max-width:820px){
+  #qbar{top:150px!important;right:6px!important;gap:5px!important}
+  #qbar button{width:42px!important;min-width:42px!important;height:42px!important;border-radius:12px!important;animation:none!important}
+  #qbar button i{font-size:18px!important}#qbar button span{font-size:8.5px!important}
+  #qbar .q2{display:none!important}#qbar.more .q2{display:flex!important}#qMore{display:flex!important}
+  #qbar.more{flex-direction:row!important;flex-wrap:wrap!important;width:144px!important;justify-content:flex-end;background:rgba(5,8,16,.82);padding:6px;border-radius:14px;right:4px!important}
+  #sheetBtn{display:none!important}
+  #chatMini{display:flex;flex-direction:column;gap:4px;position:fixed;left:8px;bottom:170px;width:min(62vw,300px);z-index:4;pointer-events:auto}
+  #cmLog{max-height:112px;overflow-y:auto;font-size:12px;line-height:1.35;color:#fff;background:linear-gradient(0deg,rgba(5,8,16,.62),rgba(5,8,16,.25));border-radius:12px;padding:6px 8px;text-shadow:0 1px 2px #000;-webkit-mask-image:linear-gradient(0deg,#000 75%,transparent)}
+  #cmLog div{word-break:break-all;margin:1px 0}#cmLog .sys{color:#ffd99a;opacity:.9}#cmLog .me{color:#9ff3ff}#cmLog .whisper{color:#d9c8ff}
+  #cmSay{align-self:flex-start;background:rgba(245,165,36,.92);color:#1a1204;border:0;border-radius:999px;padding:8px 14px;font-weight:900;font-size:13px;font-family:inherit;box-shadow:0 3px 12px rgba(0,0,0,.4)}
+  .acts{grid-template-columns:repeat(3,46px)!important;gap:5px!important}.act,.act.big{width:46px!important;height:46px!important}
+  #skBar{right:8px!important;bottom:112px!important}
+  body:has(.panel.open) #chatMini{display:none}
+}
 </style>
 </head>
 <body>
@@ -378,16 +399,19 @@ input,select{font-family:inherit}
       <div class="small" style="margin-top:12px">재미용 게임입니다. 수익률은 각자 입력한 평단과 화면 시세 기준이며 투자 조언이 아닙니다. 수익 <span class="up">빨강▲</span> / 손실 <span class="down">파랑▼</span>.</div></div>
   </div>
   <button class="act pe" id="sheetBtn">💬</button>
+  <div id="chatMini" class="pe"><div id="cmLog"></div><button type="button" id="cmSay">💬 말하기…</button></div>
   <div id="qbar" class="pe">
+    <button type="button" id="qMore" class="qm"><i>☰</i><span>더보기</span></button>
+    <button type="button" id="qAuto" class="q2"><i>🤖</i><span>자동사냥</span></button>
     <button type="button" id="qMap" class="hot"><i>🗺</i><span>이동</span></button>
     <button type="button" id="qOut" class="hot"><i>⚔</i><span>야외</span></button>
-    <button type="button" id="qView"><i>🔭</i><span>시야</span></button>
-    <button type="button" id="qEnh"><i>🔨</i><span>강화</span></button>
-    <button type="button" id="qShop"><i>🛍</i><span>상점</span><b class="dot" id="shopDot"></b></button>
-    <button type="button" id="qCard"><i>🃏</i><span>카드</span></button>
-    <button type="button" id="qEv"><i>📅</i><span>이벤트</span><b class="dot" id="evDot"></b></button>
-    <button type="button" id="qBag"><i>🎒</i><span>가방</span></button>
-    <button type="button" id="qSea"><i>🏆</i><span>랭킹</span></button>
+    <button type="button" id="qView" class="q2"><i>🔭</i><span>시야</span></button>
+    <button type="button" id="qEnh" class="q2"><i>🔨</i><span>강화</span></button>
+    <button type="button" id="qShop" class="qk"><i>🛍</i><span>상점</span><b class="dot" id="shopDot"></b></button>
+    <button type="button" id="qCard" class="q2"><i>🃏</i><span>카드</span></button>
+    <button type="button" id="qEv" class="q2"><i>📅</i><span>이벤트</span><b class="dot" id="evDot"></b></button>
+    <button type="button" id="qBag" class="q2"><i>🎒</i><span>가방</span></button>
+    <button type="button" id="qSea" class="q2"><i>🏆</i><span>랭킹</span></button>
   </div>
   <div id="skBar" class="pe"><button type="button" class="skb" id="sk0"></button><button type="button" class="skb" id="sk1"></button><button type="button" class="skb" id="sk2"></button><button type="button" class="skb" id="sk3"></button></div>
   <div id="joy" class="pe"><div class="k" id="joyK"></div></div>
@@ -399,6 +423,7 @@ input,select{font-family:inherit}
     <button class="act" id="aSk" style="display:none">✨<br>스킬</button>
     <button class="act" id="aMk">🪘<br>목탁</button>
     <button class="act big" id="aUse" disabled>상호<br>작용</button>
+    <button class="act" id="aAuto">🤖<br>자동</button>
   </div>
   <div class="foot">재미용 · 투자 조언 아님 · 시세는 출처·시각과 함께 표시 · 수익 빨강▲ 손실 파랑▼</div>
 </div>
@@ -497,7 +522,7 @@ input,select{font-family:inherit}
 setTimeout(function(){ if (window.__room3d) return; var d=document.createElement("div"); d.style.cssText="position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);z-index:99;background:#111a2b;color:#fff;border:2px solid #f5a524;border-radius:16px;padding:18px 20px;text-align:center;font:15px/1.5 sans-serif;max-width:90vw"; d.innerHTML="<b>🔄 사이트가 업데이트됐어요</b><br>예전 파일이 남아 있어 객장이 안 열렸어요.<br><button style=\"margin-top:10px;padding:10px 18px;border:0;border-radius:10px;background:#f5a524;font-weight:800;cursor:pointer\">새로고침해서 입장</button>"; d.querySelector("button").onclick=function(){ location.replace(location.pathname+"?room="+(new URLSearchParams(location.search).get("room")||"")+"&r="+Date.now()); }; document.body.appendChild(d); }, 9000);</script>
 <script type="module">
 import * as THREE from './vendor/three.module.min.js?v=169';
-import { initLive, onPrices, onMarket, live, usSession, META, MKT, histMin, reqQuote } from './live.js?v=20';
+import { initLive, onPrices, onMarket, live, usSession, META, MKT, histMin, reqQuote } from './live.js?v=21';
 
 /* ================= 공통 ================= */
 const $ = id => document.getElementById(id);
@@ -1249,7 +1274,7 @@ function updatePlayer(dt) {
   let mx = 0, mz = 0;
   const L = Math.hypot(ix, iz);
   if (L > .12) {
-    ME.target = null; const n = Math.min(1, L); ix /= L; iz /= L;
+    ME.target = null; if (AUTO) autoOff('직접 움직였어요'); const n = Math.min(1, L); ix /= L; iz /= L;
     const fx = -Math.sin(cam.yaw), fz = -Math.cos(cam.yaw), rx = Math.cos(cam.yaw), rz = -Math.sin(cam.yaw);
     mx = (rx * ix - fx * iz) * n; mz = (rz * ix - fz * iz) * n;
   } else if (ME.target) {
@@ -1466,7 +1491,10 @@ function renderRank() {
   list.forEach((d, i) => { const r = el('div', 'r'); const rm = !d.you && remotes.get(d.uid), pos = d.you ? { x: ME.X, z: ME.Z } : rm ? rm.cur : null, zn = pos ? zoneAt(pos.x, pos.z) : null;
     r.append(el('span', 'i', String(i + 1)), el('span', 'n', (d.you ? '나 · ' : '') + (d.nick || '?')), el('span', 'l', LV[lvOf(d.pts || 0)][1]), el('span', 'p', fmt(d.pts || 0, 0)));
     const loc = el('span', 'loc', '📍 ' + (zn ? zn.n.replace(/^\S+\s/, '') : '어딘가')); r.appendChild(loc);
-    if (rm) { r.classList.add('go'); r.title = '눌러서 이 개미한테 순간이동'; r.onclick = () => { const p = rm.cur; tpTo(p.x + 1.6, p.z + 1.6, (d.nick || '개미') + ' 옆'); }; }
+    if (rm) { r.classList.add('go'); r.title = '눌러서 이 개미한테 순간이동'; r.onclick = () => { const p = rm.cur; tpTo(p.x + 1.6, p.z + 1.6, (d.nick || '개미') + ' 옆'); };
+      const bx = el('span', 'rbtn'); const b1 = el('button', null, '🤺 결투'), b2 = el('button', null, '🔒 귓속말');
+      b1.onclick = e => { e.stopPropagation(); if (DUEL) { toast('이미 결투 중이에요'); return; } if (!cd('dq', 8000)) { toast('결투 신청은 8초에 한 번!'); return; } room.sendFx('dq:' + id8(d.uid)); toast(`🤺 ${d.nick}님에게 결투 신청! (20초 안에 수락하면 시작)`); };
+      b2.onclick = e => { e.stopPropagation(); whisperTo(d.nick); }; bx.append(b1, b2); r.appendChild(bx); }
     R.appendChild(r); });
 }
 /* ---- 많은 인원(최대 채널 정원)용 LOD ----
@@ -1532,10 +1560,13 @@ function addLog(m, sys) {
     d.append(el('span', 't', kstTime(m.ts || Date.now())));
     if (m.host) d.classList.add('host'); const n = el('span', 'n', (m.host ? '👑 ' : '') + (m.nick || '?')); const pd = peersData.find(p => p.uid === m.uid); n.style.color = (pd && pd.color) || (m.uid === live.uid && PROF ? PROF.color : '#f5a524'); d.append(n, document.createTextNode(m.text || ''));
   }
-  logEl.appendChild(d); while (logEl.children.length > 500) logEl.firstChild.remove(); logEl.scrollTop = logEl.scrollHeight;
+  logEl.appendChild(d); while (logEl.children.length > 1200) logEl.firstChild.remove(); try { miniLog(sys ? m : `${m.nick || '?'}: ${m.text || ''}`, sys ? 'sys' : (m.uid === live.uid ? 'me' : '')); } catch (e) {} logEl.scrollTop = logEl.scrollHeight;
 }
 function onChatCb(m) {
   if (m && m.uid !== live.uid && isMuted(m.uid, m.nick)) return;
+  { const W = parseWhisper(m); if (W) { const mine = m.uid === live.uid, toMe = isMe8(W.to); if (!mine && !toMe) return; const tn = mine ? (nickOf(uidOf8(W.to)) || '상대') : '나';
+      const d = el('div', 'm whisper'); d.textContent = `🔒 ${mine ? '나' : m.nick} → ${tn}: ${W.text}`; logEl.appendChild(d); logEl.scrollTop = logEl.scrollHeight; miniLog(`🔒 ${mine ? '나' : m.nick} → ${tn}: ${W.text}`, 'whisper');
+      if (toMe) { toast(`🔒 ${m.nick}님의 귓속말: ${W.text}`); try { SND.recv(); } catch (e) {} } return; } }
   if (m.uid !== live.uid && typeof BLOCK !== 'undefined' && BLOCK.has(m.nick)) return;
   addLog(m); if (m.uid !== live.uid && entered && cd('recv', 600)) SND.recv(); if (m.host && String(m.text || '').indexOf('📢') === 0) toast(m.text);
   const L = m.uid === live.uid ? myLabel : (remotes.get(m.uid) || {}).L;
@@ -1547,6 +1578,7 @@ $('chatForm').onsubmit = e => {
   e.preventDefault(); const v = $('chatIn').value.trim(); if (!v || !room) return; if (blockCmd(v)) { $('chatIn').value = ''; return; }
   { const b = banOf(live.uid, PROF && PROF.nick); if (b && !HOST) { toast(`🔇 방장이 채팅을 막았어요 (${Math.ceil((b.u - Date.now()) / 60000)}분 남음)`); return; } }
   { const sl = HOST ? 1.5 : Math.max(1.5, CFG2().slow | 0); if (performance.now() - lastChat < sl * 1000) { toast(`천천히 — ${sl}초에 한 번`); return; } }
+  { const w = /^\/귓\s+(\S+)\s+([\s\S]+)$/.exec(v); if (w) { const tgt = peersData.find(d => d.nick === w[1] && d.uid !== live.uid); if (!tgt) { toast(`🔒 '${w[1]}'님이 지금 이 방에 없어요`); return; } lastChat = performance.now(); room.sendChat('🔒' + id8(tgt.uid) + '|' + w[2].slice(0, 100), {}); $('chatIn').value = `/귓 ${w[1]} `; return; } }
   if (HOST && /^\/레이드\s*$/.test(v.trim())) { room.sendFx('wb:go'); $('chatIn').value = ''; toast('🌋 방장 권한: 시장 재난 레이드 소환!'); return; }
   lastChat = performance.now(); { let tx = v.slice(0, 120); if (HOST && /^\/공지\s/.test(tx)) tx = '📢 ' + tx.replace(/^\/공지\s+/, ''); room.sendChat(tx, { host: HOST }); } if (cd('pts-chat', 8000)) addPts(2); qProg('chat'); SND.send(); $('chatIn').value = ''; $('chatIn').blur();
 };
@@ -2952,8 +2984,8 @@ function laser(a, B) { const s = a.root.position, e = B.g.position; const g = ne
 function bossCounter(k, n) {
   const B = BOSS[k], it = INTER[k]; if (!B) return; const prev = B.hits, first = !B.init; B.init = 1; B.hits = n; bossDraw(k);
   if (!first && Math.floor(n / it.hp) > Math.floor(prev / it.hp)) { // 격파!
-    const nearB = Math.hypot(it.X - ME.X, it.Z - ME.Z) < 45 || (raidHits[k] && Date.now() - raidHits[k] < 15000); B.ko = 2.6; if (nearB) SND.ko(); const P = B.g.position; for (let i = 0; i < 5; i++) setTimeout(() => spawn(P.x, 2 + i * .6, P.z, 70, [0xff4d57, 0xffd76a, 0x2fd0ff][i % 3], 6, 3, 1.6, 3), i * 140);
-    if (nearB) { toast(`💥 ${it.name} 격파! (${Math.floor(n / it.hp)}번째)`); addLog(`💥 ${it.name} 격파! 함께 때린 개미들 모두 수고했어요 👏`, true); }
+    const mineB = raidHits[k] && Date.now() - raidHits[k] < 15000, nearB = mineB || Math.hypot(it.X - ME.X, it.Z - ME.Z) < 30; B.ko = 2.6; if (mineB) withVol(.6, () => SND.ko()); const P = B.g.position; const sayB = mineB && cd('bossMsg' + k, 600000); for (let i = 0; i < 5; i++) setTimeout(() => spawn(P.x, 2 + i * .6, P.z, 70, [0xff4d57, 0xffd76a, 0x2fd0ff][i % 3], 6, 3, 1.6, 3), i * 140);
+    if (sayB) { toast(`💥 ${it.name} 격파!`); addLog(`💥 ${it.name} 격파! 함께 때린 개미들 모두 수고했어요 👏`, true); }
     if (raidHits[k] && Date.now() - raidHits[k] < 15000) { const ex = it.exp || 30; addPts(ex); dropItem(it.lv >= 20 ? 2 : 1); setTimeout(() => floatAt(myAnt, `🏆 격파 보상 +${Math.round(ex * ptsMul(lvOf(G.pts)))}`, 'big'), 400); }
   }
 }
@@ -4080,7 +4112,7 @@ function loop() {
   frames++; fpsT += dt; if (fpsT > 1) { fps = frames / fpsT; frames = 0; fpsT = 0; } if (!ECO) adaptPR(fps, dt); ecoWatch(fps, dt);
   if (entered) { updatePlayer(dt); animAnt(myAnt, dt, t); const stp = Math.floor(myAnt.phase / Math.PI); if (stp !== lastStep) { lastStep = stp; if (myAnt.moving && myAnt.jumpT < 0) SND.step(myAnt.run); } }
   tickEvo(dt); tickRpg(dt, clock.elapsedTime); tickBig(dt); tickFlyersG(dt); tickKnock(dt); gearTick(clock.elapsedTime); tickRaid(dt); tickWorld(dt, clock.elapsedTime); if (myAnt) { const want = 12 + Math.max(0, (myAnt.labelH || 2.35) - 2.6) * 2.2; cam.dist += (Math.max(cam.dist, want) - cam.dist) * Math.min(1, dt * 2); }
-  updateRemotes(dt); remotes.forEach(r => { if (r.ant) { if (r.dist > LEG_FAR) r.ant.moving = false; animAnt(r.ant, dt, t); hallScaleTick(r.ant, r.cur.x, r.cur.z, dt); } }); if (myAnt) hallScaleTick(myAnt, ME.X, ME.Z, dt);
+  autoTick(dt); updateRemotes(dt); remotes.forEach(r => { if (r.ant) { if (r.dist > LEG_FAR) r.ant.moving = false; animAnt(r.ant, dt, t); hallScaleTick(r.ant, r.cur.x, r.cur.z, dt); } }); if (myAnt) hallScaleTick(myAnt, ME.X, ME.Z, dt);
   // 카메라
   const tgtX = entered ? ME.X : 0, tgtZ = entered ? ME.Z : 6, kk = 1 - Math.exp(-dt * 8);
   cam.tx += (tgtX - cam.tx) * kk; cam.tz += (tgtZ - cam.tz) * kk; cam.ty += ((2 + (entered ? (ME.Y || 0) : 0)) - cam.ty) * kk;
@@ -4125,7 +4157,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '20';
+const APP_V = '21';
 {
   let shown = false;
   const check = async () => {
@@ -4283,6 +4315,29 @@ function updPkBtn() { const on = entered && ((CFG2().pk !== false && inPK(ME.X, 
   if (DUEL) { const left = Math.max(0, Math.ceil((DUEL.until - Date.now()) / 1000)); $('duelBar').classList.add('on'); $('duelBar').textContent = `🤺 결투 중: ${nickOf(DUEL.uid)} · ${Math.min(DUEL_SEC, left)}초 · [⚔ 결투 공격] 또는 X 키`; if (left <= 0) endDuel('⏱ 결투 시간 끝 — 무승부!'); else if (Date.now() - DUEL.t0 > 6000 && !remotes.has(DUEL.uid)) endDuel('상대가 나갔어요 — 결투 종료'); } }
 setInterval(updPkBtn, 500);
 $('pkBtn').onclick = pkAttack; addEventListener('keydown', e => { if (e.key && e.key.toLowerCase() === 'x' && !e.repeat && document.activeElement && !/INPUT|TEXTAREA/.test(document.activeElement.tagName) && !document.querySelector('.modal.on')) pkAttack(); });
+
+
+/* ================= 📱 모바일 정리 · 💬 채팅 미니창 · 🤖 자동사냥 · 🔒 귓속말 ================= */
+$('qMore').onclick = () => { const q = $('qbar'); q.classList.toggle('more'); $('qMore').querySelector('i').textContent = q.classList.contains('more') ? '✕' : '☰'; };
+document.querySelectorAll('#qbar .q2').forEach(b => b.addEventListener('click', () => { if (matchMedia('(max-width:820px)').matches) { $('qbar').classList.remove('more'); $('qMore').querySelector('i').textContent = '☰'; } }));
+function miniLog(txt, cls) { const L = $('cmLog'); if (!L) return; const d = el('div', cls || ''); d.textContent = txt; L.appendChild(d); while (L.children.length > 30) L.firstChild.remove(); L.scrollTop = L.scrollHeight; }
+function openChat(focus) { $('panel').classList.add('open'); openPanel('tChat'); if (focus) setTimeout(() => { try { $('chatIn').focus(); } catch (e) {} }, 60); }
+$('cmLog').onclick = () => openChat(false); $('cmSay').onclick = () => openChat(true);
+// 🔒 귓속말: "/귓 닉네임 할말" → 받는 사람·보낸 사람 화면에만 보여요
+function whisperTo(nick) { openChat(true); $('chatIn').value = `/귓 ${nick} `; }
+function parseWhisper(m) { const r = /^🔒([A-Za-z0-9_-]{4,8})\|([\s\S]*)$/.exec(String(m.text || '')); return r ? { to: r[1], text: r[2] } : null; }
+// 🤖 자동사냥
+let AUTO = false, autoT = 0;
+function autoOff(why) { if (!AUTO) return; AUTO = false; ME.target = null; $('aAuto').classList.remove('on'); $('qAuto').classList.remove('on'); if (why) toast('🤖 자동사냥 멈춤 — ' + why); }
+function autoToggle() { if (AUTO) { autoOff('직접 껐어요'); return; } if (!entered) return; if (inHall(ME.X, ME.Z) || inHeaven(ME.X, ME.Z)) { toast('🤖 자동사냥은 야외에서만 돼요 — ⚔ 야외 버튼으로 나가 보세요'); return; }
+  AUTO = true; $('aAuto').classList.add('on'); $('qAuto').classList.add('on'); toast('🤖 자동사냥 시작! 가까운 몬스터를 찾아 싸워요 (조이스틱을 움직이면 멈춰요)'); }
+$('aAuto').onclick = autoToggle; $('qAuto').onclick = autoToggle;
+function autoTick(dt) { if (!AUTO || !entered) return; autoT += dt; if (autoT < .25) return; autoT = 0;
+  if (HPS.ko) { autoOff('기절했어요'); return; } if (HPS.hp < HPS.max * .25) { autoOff('체력이 25% 아래예요 — 캠핑장에서 쉬어요'); return; } if (inHall(ME.X, ME.Z) || inHeaven(ME.X, ME.Z)) { autoOff('법당·라운지에 들어왔어요'); return; }
+  let best = null, bd = 32; MOBS.forEach(m => { if (m.dead > 0) return; const d = Math.hypot(m.x - ME.X, m.z - ME.Z); if (d < bd) { bd = d; best = m; } });
+  if (!best) { ME.target = null; return; }
+  if (bd > 2.6) { const ux = (ME.X - best.x) / bd, uz = (ME.Z - best.z) / bd; ME.target = { x: best.x + ux * 2, z: best.z + uz * 2 }; return; }
+  ME.target = null; hitMob(best); const t = lvOf(G.pts); if (skCdLeft(0) <= 0 && SK[t]) castSkill(0); }
 
 /* ================= 📌 방장 공지 · 후원 문구 ================= */
 const DONATE_DEF = '100원이라도 감사하게 받겠습니다 🙏'; let BOARD = {}; window.__lvxDonateMsg = DONATE_DEF;
