@@ -124,7 +124,7 @@
     b.onclick = function () {
       var m = el("div", "lvx-modal"), box = el("div", "lvx-box"); m.appendChild(box);
       box.appendChild(el("h3", null, "☕ 레버가치전문가 후원하기"));
-      box.appendChild(el("div", "s", "객장 운영을 응원해 주셔서 감사합니다 🙏 커피 한 잔이면 충분해요"));
+      box.appendChild(el("div", "s", String(window.__lvxDonateMsg || "100원이라도 감사하게 받겠습니다 🙏").slice(0, 150)));
       donateBox(box, d);
       if (txt) box.appendChild(el("div", "lvx-dtext", txt.slice(0, 400)));
       if (link) { var a = el("a", "lvx-btn", "후원 페이지 열기"); a.href = link; a.target = "_blank"; a.rel = "noopener"; box.appendChild(a); }

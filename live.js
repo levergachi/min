@@ -341,6 +341,9 @@ async function firebaseInit() {
   // 방장 인증: 비밀 코드는 DB 규칙(콘솔)에만 있고, 맞아야 hosts/<uid> 가 써진다
   // 🔐 아이디·비밀번호 저장(키 = SHA-256(아이디|비번) → 목록 조회 불가, 아는 사람만 읽고 씀)
   live.saveGet = async (key) => { const s = await D.get(D.ref(db, "saves/" + key)); return s.val(); };
+  // 📌 방장 공지·후원 문구 (방장만 쓰기 — DB 규칙이 확인)
+  live.boardSet = async (k, text) => { await D.set(D.ref(db, "board/" + k), { text: String(text || "").slice(0, 300), ts: D.serverTimestamp() }); return true; };
+  live.onBoard = f => D.onValue(D.ref(db, "board"), s => f(s.val() || {}), () => f({}));
   live.savePut = async (key, data) => { await D.set(D.ref(db, "saves/" + key), data); return true; };
   live.claimHost = async (code) => {
     try { await D.set(D.ref(db, "hosts/" + live.uid), { code: String(code || "").slice(0, 40) }); return true; }
@@ -350,7 +353,7 @@ async function firebaseInit() {
     const R = "rooms/" + room;
     const meRef = D.ref(db, `${R}/users/${live.uid}`);
     D.onDisconnect(meRef).remove();
-    let me = null;
+    let me = null, lastSig = '', lastSigAt = 0;
     const api = {
       mode: "firebase", uid: live.uid, room,
       setMe(data) {
@@ -378,6 +381,10 @@ async function firebaseInit() {
         if (isFinite(Number(data.stp)) && data.stp !== null && data.stp !== '') clean.stp = Math.max(-100, Math.min(9999, Math.round(Number(data.stp) * 10) / 10));
         if ([1, 2].includes(data.stv)) clean.stv = data.stv;
         if (data.host === true) clean.host = true;
+        if (Number.isInteger(data.en) && data.en > 0 && data.en <= 15) clean.en = data.en; // 🔨 강화 단계
+        // v19: 같은 내용이면 다시 보내지 않음(전송량 절감) — 단, 20초마다는 살아 있다는 신호로 보냄
+        const sig = JSON.stringify(Object.assign({}, clean, { ts: 0 })), tn = Date.now();
+        if (sig === lastSig && tn - lastSigAt < 20000) return; lastSig = sig; lastSigAt = tn;
         D.set(meRef, clean).catch(e => console.error(e));
       },
       onPeers(f) {
@@ -435,6 +442,7 @@ async function firebaseInit() {
 }
 
 live.claimHost = async () => false;
+if (!live.boardSet) { live.boardSet = async (k, text) => { const b = JSON.parse(localStorage.getItem('lv_board') || '{}'); b[k] = { text: String(text || '').slice(0, 300), ts: Date.now() }; localStorage.setItem('lv_board', JSON.stringify(b)); (live._bs || []).forEach(f => f(b)); return true; }; live.onBoard = f => { (live._bs = live._bs || []).push(f); try { f(JSON.parse(localStorage.getItem('lv_board') || '{}')); } catch (e) { f({}); } }; }
 if (!live.saveGet) { live.saveGet = async k => { try { return JSON.parse(localStorage.getItem('lv_save_' + k) || 'null'); } catch (e) { return null; } }; live.savePut = async (k, d) => { localStorage.setItem('lv_save_' + k, JSON.stringify(d)); return true; }; }
 
 export function initLive() {
