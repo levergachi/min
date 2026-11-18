@@ -382,7 +382,7 @@ async function firebaseInit() {
         clean.dir = data.dir === "l" ? "l" : "r";
         clean.mv = !!data.mv;
         // 게임 요소: 공덕 포인트(정수), 머리띠 문구(짧은 문자열), 획득 칭호
-        if (data.pts > 0) clean.pts = Math.min(1e7, Math.floor(Number(data.pts)) || 0);
+        if (data.pts > 0) clean.pts = Math.min(1e8, Math.floor(Number(data.pts)) || 0);
         if (data.hb) clean.hb = clampStr(data.hb, 6);
         if (data.title) clean.title = clampStr(data.title, 12);
         if (/^[wh]\d{1,2}-\d{1,2}-\d$/.test(data.wp || '')) clean.wp = data.wp; if (/^[wh]\d{1,2}-\d{1,2}-\d$/.test(data.ht || '')) clean.ht = data.ht;
@@ -394,7 +394,7 @@ async function firebaseInit() {
         if (isFinite(Number(data.stp)) && data.stp !== null && data.stp !== '') clean.stp = Math.max(-100, Math.min(9999, Math.round(Number(data.stp) * 10) / 10));
         if ([1, 2].includes(data.stv)) clean.stv = data.stv;
         if (data.host === true) clean.host = true;
-        if (Number.isInteger(data.en) && data.en > 0 && data.en <= 25) clean.en = data.en; // 🔨 강화 단계
+        if (Number.isInteger(data.en) && data.en > 0 && data.en <= 30) clean.en = data.en; if (Number.isInteger(data.aw) && data.aw > 0 && data.aw <= 5) clean.aw = data.aw; if (/^[a-z0-9]{1,8}$/.test(data.pet || '')) clean.pet = data.pet; if (/^[a-z0-9]{1,8}$/.test(data.car || '')) clean.car = data.car; // 🔨 강화 단계
         if (typeof data.cs === 'string' && /^b\d{1,2}t\d{1,2}n\d{1,2}$/.test(data.cs)) clean.cs = data.cs; // 💬 꾸미기
         if (Number.isInteger(data.lk) && data.lk >= 0 && data.lk <= 99) clean.lk = data.lk; // 🎭 예전 모습
         // v19: 같은 내용이면 다시 보내지 않음(전송량 절감) — 단, 20초마다는 살아 있다는 신호로 보냄
@@ -431,7 +431,7 @@ async function firebaseInit() {
       },
       // 📖 방명록 (채널과 상관없이 하나)
       gbAdd(nick, text) { return D.push(D.ref(db, 'guestbook'), { uid: live.uid, nick: clampStr(nick, 12), text: clampStr(text, 100), ts: D.serverTimestamp() }); },
-      seasonSet(wk, nick, p) { if (!/^w[0-9]{6}$/.test(wk)) return Promise.resolve(); return D.set(D.ref(db, `season/${wk}/${live.uid}`), { nick: clampStr(nick, 12), p: Math.max(0, Math.min(1e7, Math.floor(p) || 0)), ts: D.serverTimestamp() }).catch(e => console.warn('season', e && e.code)); },
+      seasonSet(wk, nick, p) { if (!/^w[0-9]{6}$/.test(wk)) return Promise.resolve(); return D.set(D.ref(db, `season/${wk}/${live.uid}`), { nick: clampStr(nick, 12), p: Math.max(0, Math.min(1e8, Math.floor(p) || 0)), ts: D.serverTimestamp() }).catch(e => console.warn('season', e && e.code)); },
       onSeason(wk, f) { if (!/^w[0-9]{6}$/.test(wk)) { f([]); return () => {}; } return D.onValue(D.query(D.ref(db, `season/${wk}`), D.orderByChild('p'), D.limitToLast(10)), s => { const arr = []; s.forEach(c => { arr.push(Object.assign({ uid: c.key }, c.val())); }); f(arr.sort((a, b) => b.p - a.p)); }, () => f([])); },
       onGuestbook(f) { D.onValue(D.query(D.ref(db, 'guestbook'), D.limitToLast(100)), s => { const arr = []; s.forEach(c => { arr.push(Object.assign({ id: c.key }, c.val())); }); f(arr); }); },
       sendFx(kind) { D.push(D.ref(db, `${R}/fx`), { uid: live.uid, kind: clampStr(kind, 20), ts: D.serverTimestamp() }); },
