@@ -105,7 +105,7 @@
     },
     "hosts": {
       "$uid": {
-        ".write": "auth != null && auth.uid === $uid && newData.child('code').val() === 'CHANGE_ME_HOST_CODE'",
+        ".write": "auth != null && auth.uid === $uid && (newData.child('code').val() === 'CHANGE_ME_HOST_CODE' || !newData.exists())",
         ".validate": "newData.child('code').isString()"
       }
     },
@@ -231,6 +231,34 @@
       "$id": {
         ".write": "auth != null && root.child('hosts').child(auth.uid).child('code').val() === 'CHANGE_ME_HOST_CODE'",
         ".validate": "newData.hasChildren(['t','ts']) && newData.child('t').isString() && newData.child('t').val().length >= 1 && newData.child('t').val().length <= 300 && newData.child('ts').isNumber() && (!newData.child('n').exists() || (newData.child('n').isString() && newData.child('n').val().length <= 12))"
+      }
+    },
+    "pred": {
+      ".read": true,
+      "$d": {
+        ".validate": "$d.matches(/^20[0-9]{6}$/)",
+        "v": {
+          "$s": {
+            ".validate": "$s.matches(/^(SOXL|KORU)$/)",
+            "$uid": {
+              ".write": "auth != null && auth.uid === $uid && !data.exists() && !root.child('pred').child($d).child('res').child($s).exists() && (!root.child('pred').child($d).child('dl').exists() || now < root.child('pred').child($d).child('dl').val())",
+              ".validate": "newData.isString() && newData.val().matches(/^(u|d)$/)"
+            }
+          }
+        },
+        "res": {
+          "$s": {
+            ".write": "auth != null && root.child('hosts').child(auth.uid).child('code').val() === 'CHANGE_ME_HOST_CODE'",
+            ".validate": "$s.matches(/^(SOXL|KORU)$/) && newData.hasChildren(['r','c','ts']) && newData.child('r').isString() && newData.child('r').val().matches(/^(u|d)$/) && newData.child('c').isNumber() && newData.child('ts').isNumber()"
+          }
+        },
+        "dl": {
+          ".write": "auth != null && root.child('hosts').child(auth.uid).child('code').val() === 'CHANGE_ME_HOST_CODE'",
+          ".validate": "newData.isNumber()"
+        },
+        "$o": {
+          ".validate": "$o.matches(/^(v|res|dl)$/)"
+        }
       }
     },
     "tchat": {
