@@ -233,6 +233,16 @@
         ".validate": "newData.hasChildren(['t','ts']) && newData.child('t').isString() && newData.child('t').val().length >= 1 && newData.child('t').val().length <= 300 && newData.child('ts').isNumber() && (!newData.child('n').exists() || (newData.child('n').isString() && newData.child('n').val().length <= 12))"
       }
     },
+    "visits": {
+      ".read": "auth != null && root.child('hosts').child(auth.uid).child('code').val() === 'CHANGE_ME_HOST_CODE'",
+      "$id": {
+        ".write": "auth != null && ((!data.exists() && newData.child('u').val() === auth.uid) || (data.exists() && data.child('u').val() === auth.uid && newData.child('u').val() === auth.uid))",
+        ".validate": "newData.hasChildren(['u','n','on']) && newData.child('u').isString() && newData.child('n').isString() && newData.child('n').val().length >= 1 && newData.child('n').val().length <= 12 && newData.child('on').isNumber() && newData.child('on').val() <= now + 60000 && (!newData.child('off').exists() || (newData.child('off').isNumber() && newData.child('off').val() <= now + 60000)) && (!newData.child('rm').exists() || (newData.child('rm').isString() && newData.child('rm').val().length <= 24))",
+        "$o": {
+          ".validate": "$o.matches(/^(u|n|on|off|rm)$/)"
+        }
+      }
+    },
     "reports": {
       ".read": "auth != null && root.child('hosts').child(auth.uid).child('code').val() === 'CHANGE_ME_HOST_CODE'",
       "$id": {
