@@ -348,6 +348,16 @@ async function firebaseInit() {
   live.seasonGet = async (wk, uid) => { try { const sn = await D.get(D.ref(db, "season/" + String(wk).replace(/[^a-z0-9]/g, "") + "/" + String(uid).replace(/[^A-Za-z0-9_-]/g, ""))); return sn.val(); } catch (e) { return null; } };
   live.chatLastId = async (room) => { try { const q = D.query(D.ref(db, "rooms/" + String(room).replace(/[^a-z0-9-]/g, "") + "/chat"), D.limitToLast(1)); const sn = await D.get(q); let k = null; sn.forEach(c => { k = c.key; }); return k; } catch (e) { return null; } };
   live.savePut = async (key, data) => { await D.set(D.ref(db, "saves/" + key), data); return true; };
+  // 🗂 범용 DB 도우미 (쪽지·친구·접속기록) — 권한은 DB 규칙이 판단
+  const PP = p => String(p).replace(/[.#$\[\]]/g, "");
+  live.TS = () => D.serverTimestamp();
+  live.dKey = p => D.push(D.ref(db, PP(p))).key;
+  live.dGet = async p => (await D.get(D.ref(db, PP(p)))).val();
+  live.dSet = (p, v) => D.set(D.ref(db, PP(p)), v);
+  live.dUpdate = (p, v) => D.update(D.ref(db, PP(p)), v);
+  live.dRemove = p => D.remove(D.ref(db, PP(p)));
+  live.dOn = (p, f, last) => { const r = last ? D.query(D.ref(db, PP(p)), D.limitToLast(last)) : D.ref(db, PP(p)); return D.onValue(r, s => f(s.val()), e => { console.warn("dOn", p, e && e.code); f(null, e); }); };
+  live.presence = (p, onVal, offVal) => { const r = D.ref(db, PP(p)); return D.onValue(D.ref(db, ".info/connected"), s => { if (s.val() !== true) return; D.update(r, onVal()).then(() => D.onDisconnect(r).update(offVal())).catch(e => console.warn("presence", e && e.code)); }); };
   live.claimHost = async (code) => {
     try { await D.set(D.ref(db, "hosts/" + live.uid), { code: String(code || "").slice(0, 40) }); return true; }
     catch (e) { return false; }
@@ -470,3 +480,22 @@ export const ALL_KEYS = ALL;
 export const CONFIG = CFG;
 if (!live.chatLastId) live.chatLastId = async () => null;
 if (!live.seasonGet) live.seasonGet = async () => null;
+// 🗂 미리보기(로컬) 모드용 범용 DB — localStorage 한 덩어리 + 탭 간 storage 이벤트
+if (!live.dGet) {
+  const K = "lv_db", rd = () => { try { return JSON.parse(localStorage.getItem(K) || "{}"); } catch (e) { return {}; } };
+  const at = (o, p) => String(p).split("/").filter(Boolean).reduce((a, k) => (a == null ? a : a[k]), o);
+  const subs = new Set(); let kc = 0;
+  const lim = (v, n) => { if (!n || !v || typeof v !== "object") return v; const o = {}; Object.keys(v).sort().slice(-n).forEach(k => { o[k] = v[k]; }); return o; };
+  const fire = () => { const t = rd(); subs.forEach(s => { const v = lim(at(t, s.p) ?? null, s.n), j = JSON.stringify(v); if (j !== s.j) { s.j = j; try { s.f(v == null ? null : JSON.parse(j)); } catch (e) { console.warn(e); } } }); };
+  const put = (p, v, merge) => { const t = rd(), ks = String(p).split("/").filter(Boolean); let o = t; ks.slice(0, -1).forEach(k => { if (!o[k] || typeof o[k] !== "object") o[k] = {}; o = o[k]; }); const l = ks[ks.length - 1];
+    if (v == null) delete o[l]; else if (merge && o[l] && typeof o[l] === "object") Object.assign(o[l], v); else o[l] = v; localStorage.setItem(K, JSON.stringify(t)); fire(); };
+  addEventListener("storage", e => { if (e.key === K) fire(); });
+  live.TS = () => Date.now();
+  live.dKey = () => "k" + Date.now().toString(36).padStart(9, "0") + (kc++).toString(36).padStart(3, "0") + Math.random().toString(36).slice(2, 6);
+  live.dGet = async p => { const v = at(rd(), p); return v == null ? null : JSON.parse(JSON.stringify(v)); };
+  live.dSet = async (p, v) => put(p, v, false);
+  live.dUpdate = async (p, v) => put(p, v, true);
+  live.dRemove = async p => put(p, null);
+  live.dOn = (p, f, n) => { const s = { p, f, n, j: undefined }; subs.add(s); setTimeout(fire, 0); return () => subs.delete(s); };
+  live.presence = (p, onVal, offVal) => { live.dUpdate(p, onVal()); addEventListener("pagehide", () => live.dUpdate(p, offVal())); };
+}

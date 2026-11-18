@@ -160,6 +160,78 @@
           ".validate": "newData.hasChildren(['u','m']) && newData.child('u').isNumber() && newData.child('m').val().matches(/^(kick|mute)$/)"
         }
       }
+    },
+    "seen": {
+      ".read": true,
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid",
+        ".validate": "newData.hasChildren(['n']) && newData.child('n').isString() && newData.child('n').val().length >= 1 && newData.child('n').val().length <= 12 && (!newData.child('on').exists() || (newData.child('on').isNumber() && newData.child('on').val() <= now + 60000)) && (!newData.child('off').exists() || (newData.child('off').isNumber() && newData.child('off').val() <= now + 60000)) && (!newData.child('rm').exists() || (newData.child('rm').isString() && newData.child('rm').val().length <= 24))",
+        "$o": {
+          ".validate": "$o.matches(/^(n|on|off|rm)$/)"
+        }
+      }
+    },
+    "fr": {
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.uid === $uid",
+        "$o": {
+          ".validate": "newData.hasChildren(['n','ts']) && newData.child('n').isString() && newData.child('n').val().length <= 12 && newData.child('ts').isNumber() && newData.child('ts').val() <= now + 60000"
+        }
+      }
+    },
+    "freq": {
+      "$to": {
+        ".read": "auth != null && auth.uid === $to",
+        "$from": {
+          ".write": "auth != null && (auth.uid === $from || (auth.uid === $to && !newData.exists()))",
+          ".validate": "newData.hasChildren(['n','ts']) && newData.child('n').isString() && newData.child('n').val().length <= 12 && newData.child('ts').isNumber() && newData.child('ts').val() <= now + 60000"
+        }
+      }
+    },
+    "mail": {
+      ".read": "auth != null && root.child('hosts').child(auth.uid).child('code').val() === 'CHANGE_ME_HOST_CODE'",
+      "$to": {
+        ".read": "auth != null && auth.uid === $to",
+        "$id": {
+          ".write": "auth != null && ((!data.exists() && newData.child('f').val() === auth.uid && (root.child('hosts').child(auth.uid).child('code').val() === 'CHANGE_ME_HOST_CODE' || (root.child('fr').child($to).child(auth.uid).exists() && root.child('fr').child(auth.uid).child($to).exists()))) || (data.exists() && !newData.exists() && (auth.uid === $to || root.child('hosts').child(auth.uid).child('code').val() === 'CHANGE_ME_HOST_CODE' || (data.child('f').val() === auth.uid && !data.child('r').exists()))))",
+          ".validate": "newData.hasChildren(['f','fn','t','ts']) && newData.child('t').isString() && newData.child('t').val().length >= 1 && newData.child('t').val().length <= 300 && newData.child('fn').isString() && newData.child('fn').val().length <= 12 && newData.child('ts').isNumber() && newData.child('ts').val() <= now + 60000 && (!newData.child('h').exists() || (newData.child('h').val() === true && (data.child('h').val() === true || root.child('hosts').child(auth.uid).child('code').val() === 'CHANGE_ME_HOST_CODE')))",
+          "r": {
+            ".write": "auth != null && auth.uid === $to && data.parent().exists()",
+            ".validate": "newData.isNumber() && newData.val() <= now + 60000"
+          },
+          "tn": {
+            ".validate": "newData.isString() && newData.val().length <= 12"
+          },
+          "$o": {
+            ".validate": "$o.matches(/^(f|fn|tn|t|ts|h|r)$/)"
+          }
+        }
+      }
+    },
+    "sent": {
+      ".read": "auth != null && root.child('hosts').child(auth.uid).child('code').val() === 'CHANGE_ME_HOST_CODE'",
+      "$from": {
+        ".read": "auth != null && auth.uid === $from",
+        "$id": {
+          ".write": "auth != null && (auth.uid === $from || root.child('hosts').child(auth.uid).child('code').val() === 'CHANGE_ME_HOST_CODE')",
+          ".validate": "newData.hasChildren(['to','t','ts']) && newData.child('to').isString() && newData.child('t').isString() && newData.child('t').val().length <= 300 && newData.child('ts').isNumber() && newData.child('ts').val() <= now + 60000 && (!newData.child('tn').exists() || (newData.child('tn').isString() && newData.child('tn').val().length <= 12))",
+          "r": {
+            ".write": "auth != null && data.parent().child('to').val() === auth.uid",
+            ".validate": "newData.isNumber() && newData.val() <= now + 60000"
+          },
+          "$o": {
+            ".validate": "$o.matches(/^(to|tn|t|ts|r)$/)"
+          }
+        }
+      }
+    },
+    "bcast": {
+      ".read": true,
+      "$id": {
+        ".write": "auth != null && root.child('hosts').child(auth.uid).child('code').val() === 'CHANGE_ME_HOST_CODE'",
+        ".validate": "newData.hasChildren(['t','ts']) && newData.child('t').isString() && newData.child('t').val().length >= 1 && newData.child('t').val().length <= 300 && newData.child('ts').isNumber() && (!newData.child('n').exists() || (newData.child('n').isString() && newData.child('n').val().length <= 12))"
+      }
     }
   }
 }
