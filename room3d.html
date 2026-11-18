@@ -555,7 +555,7 @@ input,select{font-family:inherit}
 setTimeout(function(){ if (window.__room3d) return; var d=document.createElement("div"); d.style.cssText="position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);z-index:99;background:#111a2b;color:#fff;border:2px solid #f5a524;border-radius:16px;padding:18px 20px;text-align:center;font:15px/1.5 sans-serif;max-width:90vw"; d.innerHTML="<b>🔄 사이트가 업데이트됐어요</b><br>예전 파일이 남아 있어 객장이 안 열렸어요.<br><button style=\"margin-top:10px;padding:10px 18px;border:0;border-radius:10px;background:#f5a524;font-weight:800;cursor:pointer\">새로고침해서 입장</button>"; d.querySelector("button").onclick=function(){ location.replace(location.pathname+"?room="+(new URLSearchParams(location.search).get("room")||"")+"&r="+Date.now()); }; document.body.appendChild(d); }, 9000);</script>
 <script type="module">
 import * as THREE from './vendor/three.module.min.js?v=169';
-import { initLive, onPrices, onMarket, live, usSession, META, MKT, histMin, reqQuote } from './live.js?v=27';
+import { initLive, onPrices, onMarket, live, usSession, META, MKT, histMin, reqQuote } from './live.js?v=28';
 
 /* ================= 공통 ================= */
 const $ = id => document.getElementById(id);
@@ -4343,9 +4343,21 @@ function fillSignals(box, n, full) {
   const a2 = el('a', 'gbtn', '🌐 신호 전체 보기'); a2.href = 'https://levergachi.github.io/'; a2.target = '_blank'; a2.rel = 'noopener'; row.append(a1, a2); box.appendChild(row);
   if (BOT.updated) box.appendChild(el('div', 'small', `봇 갱신: ${BOT.updated} · ${BOT.disclaimer || ''}`));
 }
+// ---- v28: 🇺🇸 미국 증시 뉴스 자동 한글 번역 (브라우저에서 무료 번역 · 결과는 이 기기에 저장 · 원문 보기 가능) ----
+const NKO = LS.get('lv3d_nko', {}) || {}; let nkoBusy = false, nkoNext = 0, nkoOrig = !!LS.get('lv3d_nko_orig', false);
+const isEnT = t => /[A-Za-z]{3}/.test(t) && !/[가-힣]/.test(t);
+function newsKo(t) { t = String(t || ''); if (nkoOrig || !isEnT(t)) return t; return (NKO[t] && NKO[t].k) || t; }
+async function nkoFetch(arr) { const r = await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ko&dt=t&q=' + encodeURIComponent(arr.join('\n'))); if (!r.ok) throw new Error('HTTP ' + r.status); const j = await r.json(); return (j[0] || []).map(x => x[0] || '').join('').split('\n').map(x => x.trim()); }
+async function nkoRun() { if (nkoBusy || Date.now() < nkoNext) return; const need = ((MK.news && MK.news.us) || []).map(n => String(n.t || '')).filter(t => t && isEnT(t) && !NKO[t]).slice(0, 12); if (!need.length) return;
+  nkoBusy = true; try { let out = await nkoFetch(need); if (out.length !== need.length) { out = []; for (const t of need) out.push((await nkoFetch([t])).join(' ')); }
+    need.forEach((t, i) => { if (out[i] && /[가-힣]/.test(out[i])) NKO[t] = { k: out[i].slice(0, 200), ts: Date.now() }; });
+    const ks = Object.keys(NKO); if (ks.length > 300) ks.sort((a, b) => NKO[a].ts - NKO[b].ts).slice(0, ks.length - 300).forEach(k => delete NKO[k]); LS.set('lv3d_nko', NKO);
+    nkoNext = Date.now() + 20000; try { drawNews(); } catch (e) {} try { renderRep(); } catch (e) {} }
+  catch (e) { console.warn('번역', e); nkoNext = Date.now() + 10 * 60000; } finally { nkoBusy = false; } }
 function fillNews(box, which, n) {
   const N = MK.news && MK.news[which]; if (!N || !N.length) { box.appendChild(el('div', 'small', '뉴스 준비 중이에요 (15분마다 갱신)')); return; }
-  N.slice(0, n).forEach(it => { const a = el('a', 'news'); a.href = it.u; a.target = '_blank'; a.rel = 'noopener noreferrer'; const ago = Math.max(0, Math.round((Date.now() - (it.ts || Date.now())) / 60000)); a.append(el('span', null, it.t), el('small', null, `${it.s || ''} · ${ago < 60 ? ago + '분 전' : Math.round(ago / 60) + '시간 전'}`)); box.appendChild(a); });
+  N.slice(0, n).forEach(it => { const a = el('a', 'news'); a.href = it.u; a.target = '_blank'; a.rel = 'noopener noreferrer'; const ago = Math.max(0, Math.round((Date.now() - (it.ts || Date.now())) / 60000)); const ko = which === 'us' ? newsKo(it.t) : it.t, tr = ko !== it.t; a.append(el('span', null, ko), el('small', null, `${it.s || ''} · ${ago < 60 ? ago + '분 전' : Math.round(ago / 60) + '시간 전'}${tr ? ' · 🌐 자동번역' : ''}`)); if (tr) a.title = it.t; box.appendChild(a); });
+  if (which === 'us') { const b = el('button', 'gbtn', nkoOrig ? '🇰🇷 한글 번역으로 보기' : '🇺🇸 영어 원문으로 보기'); b.type = 'button'; b.style.cssText = 'margin-top:6px;font-size:12px;padding:6px 10px'; b.onclick = () => { nkoOrig = !nkoOrig; LS.set('lv3d_nko_orig', nkoOrig); renderRep(); try { drawNews(); } catch (e) {} }; box.appendChild(b); if (!nkoOrig) box.appendChild(el('div', 'small', '자동 번역이라 어색할 수 있어요 · 제목을 누르면 원문 기사로 가요')); nkoRun(); }
 }
 // ---- 내 종목 · 원복 계산기 ----
 function renderMyStock(box) {
@@ -4698,7 +4710,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '27';
+const APP_V = '28';
 {
   let shown = false;
   const check = async () => {
@@ -4804,10 +4816,10 @@ function drawNews() {
   const c = nwCan.getContext('2d'), W = 4096, H = 96; c.fillStyle = '#05070d'; c.fillRect(0, 0, W, H); c.textBaseline = 'middle'; c.textAlign = 'left';
   const N = (MK.news && [...(MK.news.kr || []).slice(0, 6), ...(MK.news.us || []).slice(0, 3)]) || [];
   let x = 30; if (!N.length) { c.fillStyle = '#9fb3d9'; c.font = `700 48px ${KF}`; c.fillText('뉴스를 불러오는 중이에요 · 15분마다 갱신', x, H / 2); nwTex.needsUpdate = true; return; }
-  for (let rep = 0; rep < 3 && x < W; rep++) N.forEach(n => { if (x > W) return; c.fillStyle = '#ffd76a'; c.font = `900 46px ${KF}`; c.fillText('◆', x, H / 2); x += 60; c.fillStyle = '#ffffff'; c.font = `700 46px ${KF}`; const t = String(n.t).slice(0, 60); c.fillText(t, x, H / 2); x += c.measureText(t).width + 22; if (n.s) { c.fillStyle = '#8592a8'; c.font = `600 34px ${KF}`; c.fillText(n.s, x, H / 2 + 3); x += c.measureText(n.s).width + 70; } });
+  for (let rep = 0; rep < 3 && x < W; rep++) N.forEach(n => { if (x > W) return; c.fillStyle = '#ffd76a'; c.font = `900 46px ${KF}`; c.fillText('◆', x, H / 2); x += 60; c.fillStyle = '#ffffff'; c.font = `700 46px ${KF}`; const t = newsKo(n.t).slice(0, 60); c.fillText(t, x, H / 2); x += c.measureText(t).width + 22; if (n.s) { c.fillStyle = '#8592a8'; c.font = `600 34px ${KF}`; c.fillText(n.s, x, H / 2 + 3); x += c.measureText(n.s).width + 70; } });
   nwTex.needsUpdate = true;
 }
-onMarket(() => { try { drawNews(); } catch (e) {} }); setTimeout(() => { try { drawNews(); } catch (e) {} }, 1500);
+onMarket(() => { try { drawNews(); } catch (e) {} try { nkoRun(); } catch (e) {} }); setTimeout(() => { try { drawNews(); } catch (e) {} }, 1500);
 
 /* ================= ⚔ PK존 · 🤺 1:1 결투 ================= */
 const PKZ = { x: -46, z: 58, r: 15 }; const inPK = (x, z) => Math.hypot(x - PKZ.x, z - PKZ.z) < PKZ.r;
@@ -4986,7 +4998,7 @@ $('bApp').onclick = openApp;
 if (isStandalone()) $('bApp').style.display = 'none';
 setTimeout(() => { if (!entered || isStandalone() || LS.get('lv3d_apphint', 0) || !matchMedia('(pointer:coarse)').matches) return; LS.set('lv3d_apphint', 1); const B = el('div', 'sigBan eco'); B.append(el('b', null, '📲 앱처럼 설치해 보세요'), el('span', null, '홈 화면 아이콘으로 한 번에 입장!')); const y = el('button', null, '방법 보기'); y.onclick = () => { B.remove(); openApp(); }; const n = el('button', null, '나중에'); n.onclick = () => B.remove(); B.append(y, n); document.body.appendChild(B); setTimeout(() => B.remove(), 20000); }, 90000);
 
-window.__room3d = { dexN: () => dexTypes().size, sig: () => SIG, openSig: () => openSig(), heatKR: v => { heatKR = !!v; mkRedraw(); }, hostTab: t => { hoTab = t; renderHost(); }, ban: (uid, nick, m, min) => hostBan({ uid, nick }, m, min), isMuted: (u, n) => isMuted(u, n), setLook: t => setLook(t), look: () => curLook(), hallK: () => myAnt && myAnt.hallK, sc: () => myAnt && myAnt.root.scale.x, cast: n => castSkill(n), mp: t => movePerk(t), evoC: (a, b) => evoCard(a, b), fly: () => !!ME.fly, mobk: () => MOBK.length, pk: () => ({ inPK: inPK(ME.X, ME.Z), duel: DUEL, btn: $('pkBtn').classList.contains('on'), w: G.pkW | 0, hp: HPS.hp, max: HPS.max }), pkFx: (uid, atk) => pkFx({ uid, kind: 'pk:' + id8(live.uid) + ':' + atk }), duelS: uid => startDuel(uid), board: () => BOARD, setHost2: v => { HOST = !!v; }, enh: () => Object.assign({ atk: atkOf(lvOf(G.pts)), hp: maxHp(lvOf(G.pts)) }, G.enh), addSt: n => addStone(n), addCoin: n => addCoin(n), coin: () => G.coin, shop: () => G.shop, q: () => qToday(), buy: id => buy(id), useIt: id => useItem(id), cs: () => myCs(), enhTry: () => enhTry(), ev: ms => curEvent(ms), drawCard: () => { drawCard(); return $('cardCv').toDataURL('image/png').length; }, setW: w => { weather = w; }, vis: () => VIS, tbl: () => ({ cur: TBL_CUR, auto: tblAuto, u: Object.assign({}, TBLU), m: Object.fromEntries(Object.entries(TBLM).map(([k, v]) => [k, v.length])) }), tblSel: id => tblSelect(id), tblT: () => TBLS, top: (cx, cz, w, y) => { const c = new THREE.OrthographicCamera(-w / 2, w / 2, w / 2, -w / 2, .1, 300); c.position.set(cx, y || 7, cz); c.up.set(0, 0, -1); c.lookAt(cx, 0, cz); renderer.setSize(800, 800, false); renderer.render(scene, c); return $('gl').toDataURL('image/png'); },
+window.__room3d = { dexN: () => dexTypes().size, sig: () => SIG, openSig: () => openSig(), heatKR: v => { heatKR = !!v; mkRedraw(); }, hostTab: t => { hoTab = t; renderHost(); }, ban: (uid, nick, m, min) => hostBan({ uid, nick }, m, min), isMuted: (u, n) => isMuted(u, n), setLook: t => setLook(t), look: () => curLook(), hallK: () => myAnt && myAnt.hallK, sc: () => myAnt && myAnt.root.scale.x, cast: n => castSkill(n), mp: t => movePerk(t), evoC: (a, b) => evoCard(a, b), fly: () => !!ME.fly, mobk: () => MOBK.length, pk: () => ({ inPK: inPK(ME.X, ME.Z), duel: DUEL, btn: $('pkBtn').classList.contains('on'), w: G.pkW | 0, hp: HPS.hp, max: HPS.max }), pkFx: (uid, atk) => pkFx({ uid, kind: 'pk:' + id8(live.uid) + ':' + atk }), duelS: uid => startDuel(uid), board: () => BOARD, setHost2: v => { HOST = !!v; }, enh: () => Object.assign({ atk: atkOf(lvOf(G.pts)), hp: maxHp(lvOf(G.pts)) }, G.enh), addSt: n => addStone(n), addCoin: n => addCoin(n), coin: () => G.coin, shop: () => G.shop, q: () => qToday(), buy: id => buy(id), useIt: id => useItem(id), cs: () => myCs(), enhTry: () => enhTry(), ev: ms => curEvent(ms), drawCard: () => { drawCard(); return $('cardCv').toDataURL('image/png').length; }, setW: w => { weather = w; }, vis: () => VIS, tbl: () => ({ cur: TBL_CUR, auto: tblAuto, u: Object.assign({}, TBLU), m: Object.fromEntries(Object.entries(TBLM).map(([k, v]) => [k, v.length])) }), tblSel: id => tblSelect(id), nko: () => ({ n: Object.keys(NKO).length, orig: nkoOrig, sample: Object.entries(NKO).slice(0, 2) }), newsKo: t => newsKo(t), tblT: () => TBLS, top: (cx, cz, w, y) => { const c = new THREE.OrthographicCamera(-w / 2, w / 2, w / 2, -w / 2, .1, 300); c.position.set(cx, y || 7, cz); c.up.set(0, 0, -1); c.lookAt(cx, 0, cz); renderer.setSize(800, 800, false); renderer.render(scene, c); return $('gl').toDataURL('image/png'); },
   scene, camera, cam,
   ready: () => entered && !!room, uid: () => live.uid, me: () => Object.assign({}, ME, { data: entered ? myData() : null }), peers: () => peersData,
   peerPos: uid => { const r = remotes.get(uid); return r ? { X: r.cur.x, Z: r.cur.z, moving: r.moving, walking: r.ant ? r.ant.moving : r.moving, detail: !!r.ant } : null; },
