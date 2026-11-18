@@ -233,6 +233,20 @@
         ".validate": "newData.hasChildren(['t','ts']) && newData.child('t').isString() && newData.child('t').val().length >= 1 && newData.child('t').val().length <= 300 && newData.child('ts').isNumber() && (!newData.child('n').exists() || (newData.child('n').isString() && newData.child('n').val().length <= 12))"
       }
     },
+    "tchat": {
+      "$t": {
+        ".read": "auth != null",
+        ".write": "auth != null && !newData.exists() && root.child('hosts').child(auth.uid).child('code').val() === 'CHANGE_ME_HOST_CODE'",
+        ".validate": "$t.matches(/^(soxl|koru|macro)$/)",
+        "$id": {
+          ".write": "auth != null && ((!data.exists() && newData.child('uid').val() === auth.uid) || (data.exists() && !newData.exists() && root.child('hosts').child(auth.uid).child('code').val() === 'CHANGE_ME_HOST_CODE'))",
+          ".validate": "newData.hasChildren(['uid','nick','text','ts']) && newData.child('uid').isString() && newData.child('nick').isString() && newData.child('nick').val().length >= 1 && newData.child('nick').val().length <= 12 && newData.child('text').isString() && newData.child('text').val().length >= 1 && newData.child('text').val().length <= 120 && newData.child('ts').isNumber() && newData.child('ts').val() <= now && (!newData.child('host').exists() || (newData.child('host').val() === true && root.child('hosts').child(auth.uid).child('code').val() === 'CHANGE_ME_HOST_CODE'))",
+          "$o": {
+            ".validate": "$o.matches(/^(uid|nick|text|ts|host)$/)"
+          }
+        }
+      }
+    },
     "visits": {
       ".read": "auth != null && root.child('hosts').child(auth.uid).child('code').val() === 'CHANGE_ME_HOST_CODE'",
       "$id": {
