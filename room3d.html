@@ -93,7 +93,7 @@ header{position:fixed;top:36px;left:10px;right:10px;display:flex;gap:8px;align-i
 .tab{display:none;flex:1;min-height:0;flex-direction:column;padding:10px}
 .tab.on{display:flex}
 #log{flex:1;overflow-y:auto;font-size:13px;line-height:1.5;padding-right:4px;-webkit-user-select:text;user-select:text}
-#log .m{margin-bottom:4px;word-break:break-all}#log .m .t{color:var(--mute);font-family:var(--mono);font-size:11px;margin-right:5px}#log .m .n{font-weight:800;margin-right:5px;cursor:pointer}#log .m.mention{background:rgba(79,210,255,.16);border-left:3px solid #4fd2ff;padding-left:6px;border-radius:4px}#log .m .at{color:#7fdcff;font-weight:800}#cmLog .mention{color:#9fe8ff;font-weight:800}
+#log .m{margin-bottom:4px;word-break:break-all}#log .m .t{color:var(--mute);font-family:var(--mono);font-size:11px;margin-right:5px}#log .m .n{font-weight:800;margin-right:5px;cursor:pointer}.disc{font-size:11px;line-height:1.45;color:#9fb0cf;opacity:.85;margin-top:8px}#mktClock{display:none;position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 50px);z-index:6;pointer-events:none;background:linear-gradient(135deg,#1d3b7a,#4b1d7a);color:#fff;border:1.5px solid #ffd76a;border-radius:999px;padding:5px 14px;font-weight:900;font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,.45)}#mktClock.on{display:block}#mktClock.go{animation:mkPulse 1s ease-in-out infinite}@keyframes mkPulse{50%{transform:translateX(-50%) scale(1.08)}}.rpR{display:flex;flex-direction:column;gap:6px;margin:8px 0}.rpR label{display:flex;gap:8px;align-items:center;background:rgba(255,255,255,.05);border-radius:9px;padding:8px 10px;cursor:pointer}#mReport textarea{width:100%;box-sizing:border-box;background:#0f1626;color:#fff;border:1px solid #33405e;border-radius:10px;padding:9px;font-family:inherit;font-size:14px}#log .m.mention{background:rgba(79,210,255,.16);border-left:3px solid #4fd2ff;padding-left:6px;border-radius:4px}#log .m .at{color:#7fdcff;font-weight:800}#cmLog .mention{color:#9fe8ff;font-weight:800}
 .tabs button{position:relative}#pMail{flex:0 0 40px!important;font-size:16px}.bdg{position:absolute;top:2px;right:1px;min-width:16px;height:16px;border-radius:8px;background:#ff3b5c;color:#fff;font-size:10px;font-style:normal;font-weight:900;line-height:16px;padding:0 4px;display:none;pointer-events:none;box-shadow:0 0 0 2px #0e1420}.bdg.on{display:block}#cmSay{position:relative}#cmSay .bdg{top:-6px;right:-8px}
 #tChat{position:relative}#newPill{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:56px;z-index:2;background:#2b7cff;color:#fff;border:0;border-radius:999px;padding:5px 12px;font-weight:800;font-size:12px;font-family:inherit;box-shadow:0 4px 14px rgba(0,0,0,.4);cursor:pointer}#newPill.on{display:block}
 #atSug{display:none;position:absolute;left:0;right:0;bottom:calc(100% + 4px);flex-wrap:wrap;gap:4px;z-index:3}#atSug button{background:#1d2a44;color:#9fe3ff;border:1px solid #3a5a8a;border-radius:999px;padding:5px 10px;font-size:12.5px;font-family:inherit;cursor:pointer}
@@ -397,7 +397,7 @@ input,select{font-family:inherit}
     <a class="hb pri pe" href="index.html">계산기 →</a>
   </header>
   <div class="banners pe" id="banners"></div>
-  <div id="wxWhy"></div>
+  <div id="wxWhy"></div><div id="mktClock"></div>
   <div class="hud pe" id="hud">
     <div class="hst" id="hStock" style="display:none"></div><div class="hst" id="hStage">🧬 진화 1/100단계</div><div class="hpw"><div class="hpbar"><i id="hHpB"></i></div><span id="hHpT">❤ 100/100</span></div><div class="hlv"><span class="lv" id="hLv">개미</span> · <b id="hPts">0</b> 공덕 <span class="hcoin" id="hCoin">🪙 0</span></div>
     <div class="bar"><i id="hBar"></i></div><div class="hnx" id="hNx"></div><div class="hlook" id="hLook"></div>
@@ -470,16 +470,17 @@ input,select{font-family:inherit}
 <div class="modal" id="mAtt"><div class="mbox" style="width:min(480px,100%)"><h2>📅 출석 체크</h2><div class="sub">하루 한 번 입장하면 자동 출석! 7일 연속이면 🎁 전설 상자</div><div class="att7" id="attGrid"></div><div id="attTxt" class="small"></div><button class="mbtn sec" data-close>닫기</button></div></div>
 <div class="modal" id="mSea"><div class="mbox" style="width:min(480px,100%)"><h2>🏆 주간 시즌 랭킹</h2><div class="sub">이번 주(월요일 0시 시작)에 모은 공덕 순위 · 모든 채널 통합 · 매주 월요일 초기화<br>지난주 1~3위는 🥇🥈🥉 칭호를 받아요</div><div id="seaBody"></div><button class="mbtn sec" data-close>닫기</button></div></div>
 <div class="modal" id="mGb"><div class="mbox" style="width:min(560px,100%)"><h2>📖 원복 방명록</h2><div class="sub">한 줄 인사·응원·원복 다짐을 남겨 주세요 (100자 · 하루 첫 글 공덕 보너스)</div><div class="gbin"><input id="gbIn" maxlength="100" placeholder="예) 다들 원복 가즈아! 🚀"><button type="button" id="gbGo">남기기</button></div><div class="gbl" id="gbList"></div><button class="mbtn sec" data-close>닫기</button></div></div>
-<div id="megaBan"></div><div class="modal" id="mSig"><div class="mbox" style="width:min(560px,100%)"><h2>🤖 레버가치 저점반전 신호 TOP 10</h2><div class="sub" id="sigSub"></div><div id="sigBody" class="sigBody"></div>
+<div id="megaBan"></div><div class="modal" id="mSig"><div class="mbox" style="width:min(560px,100%)"><h2>🤖 레버가치 저점반전 신호 TOP 10</h2><div class="sub" id="sigSub"></div><div class="disc">ⓘ 게임·교육·소통 공간입니다. 시세는 지연·오류가 있을 수 있고 매매 권유나 수익 보장이 아닙니다. 투자 판단과 책임은 본인에게 있습니다.</div><div id="sigBody" class="sigBody"></div>
   <div class="enhBtns" style="margin-top:8px"><button type="button" class="gbtn hot" id="sigWeb" style="flex:1">🌐 신호 웹페이지 열기</button><button type="button" class="gbtn" id="sigLinks" style="flex:1">📣 오픈채팅·블로그</button></div>
   <div class="small" style="margin-top:6px">등급: S > A > B+ … · 점수 = 바닥 다지기 + 회사 체력 + 반등 신호 · 재미용 참고 정보이며 투자 조언이 아니에요</div><button class="mbtn sec" data-close>닫기</button></div></div><div id="kickOv"><b>👢 강퇴되었어요</b><span></span><small>시간이 지나면 자동으로 다시 들어올 수 있어요</small></div><div id="evoMini"></div><div class="modal" id="mEvo"><div class="mbox" style="width:min(460px,100%)"><h2 id="evoTitle">🎉 진화!</h2><div class="sub">새로 생긴 능력과 버프예요 — 계속 키우면 더 강해져요!</div><div id="evoBody"></div><button class="mbtn" data-close>좋아요! 💪</button></div></div><button type="button" id="pkBtn" class="pe">⚔<span>결투 공격</span></button><div id="duelBar"></div>
-<div id="popQ"></div><div class="modal" id="mMail"><div class="mbox" style="width:min(460px,100%)"><h2>✉️ 쪽지함</h2><div class="shopTabs" id="mlTabs"><button type="button" data-t="in">📥 받은 쪽지</button><button type="button" data-t="out">📤 보낸 쪽지</button><button type="button" data-t="w">✏️ 쓰기</button></div><div id="mlBody"></div><div class="small" style="margin:8px 0 2px;opacity:.75">🔐 쪽지는 서로 친구끼리 주고받아요 · 운영 안전을 위해 방장이 열람할 수 있어요</div><button class="mbtn sec" data-close>닫기</button></div></div><div class="modal" id="mUser"><div class="mbox" style="width:min(340px,100%)"><h2 id="uName"></h2><div class="sub" id="uSub"></div><div id="uBtns" style="display:flex;flex-direction:column;gap:7px;margin-bottom:8px"></div><button class="mbtn sec" data-close>닫기</button></div></div><div class="modal" id="mDuel"><div class="mbox" style="width:min(480px,100%)"><h2>🤺 1:1 결투 신청</h2><div class="sub" id="duelInfo"></div><div id="duelList" style="display:flex;flex-direction:column;gap:7px;max-height:50vh;overflow:auto"></div><button class="mbtn sec" data-close>닫기</button></div></div><div id="noticeBar"><div class="nh"><b>📌 방장 공지</b><button type="button" id="noticeX">✕ 닫기</button></div><div id="noticeTx"></div><div class="nb"></div></div>
+<div id="popQ"></div><div class="modal" id="mMail"><div class="mbox" style="width:min(460px,100%)"><h2>✉️ 쪽지함</h2><div class="shopTabs" id="mlTabs"><button type="button" data-t="in">📥 받은 쪽지</button><button type="button" data-t="out">📤 보낸 쪽지</button><button type="button" data-t="w">✏️ 쓰기</button></div><div id="mlBody"></div><div class="small" style="margin:8px 0 2px;opacity:.75">🔐 쪽지는 서로 친구끼리 주고받아요</div><button class="mbtn sec" data-close>닫기</button></div></div><div class="modal" id="mReport"><div class="mbox" style="width:min(380px,100%)"><h2>🚨 신고하기</h2><div class="sub" id="rpWho"></div><div class="rpR" id="rpR"></div><textarea id="rpT" maxlength="200" rows="3" placeholder="자세한 내용 (선택, 200자)"></textarea><button class="mbtn" id="rpGo" style="margin-top:8px">신고 보내기</button><div class="small" style="margin-top:6px">방장에게만 전달돼요. 거짓 신고는 제재될 수 있어요.</div><button class="mbtn sec" data-close>취소</button></div></div><div class="modal" id="mUser"><div class="mbox" style="width:min(340px,100%)"><h2 id="uName"></h2><div class="sub" id="uSub"></div><div id="uBtns" style="display:flex;flex-direction:column;gap:7px;margin-bottom:8px"></div><button class="mbtn sec" data-close>닫기</button></div></div><div class="modal" id="mDuel"><div class="mbox" style="width:min(480px,100%)"><h2>🤺 1:1 결투 신청</h2><div class="sub" id="duelInfo"></div><div id="duelList" style="display:flex;flex-direction:column;gap:7px;max-height:50vh;overflow:auto"></div><button class="mbtn sec" data-close>닫기</button></div></div><div id="noticeBar"><div class="nh"><b>📌 방장 공지</b><button type="button" id="noticeX">✕ 닫기</button></div><div id="noticeTx"></div><div class="nb"></div></div>
 <div class="modal" id="mHostEd"><div class="mbox" style="width:min(540px,100%)"><h2>👑 방장 관리</h2><div class="sub">방장 코드로 입장했을 때만 저장·적용돼요 · 모든 방 개미들에게 바로 반영</div>
-  <div class="shopTabs" id="hoTabs"><button type="button" data-t="n" class="on">📌 공지·후원</button><button type="button" data-t="u">👥 접속자 관리</button><button type="button" data-t="c">🛠 방 설정</button><button type="button" data-t="m">✉️ 쪽지 관리</button></div>
+  <div class="shopTabs" id="hoTabs"><button type="button" data-t="n" class="on">📌 공지·후원</button><button type="button" data-t="u">👥 접속자 관리</button><button type="button" data-t="c">🛠 방 설정</button><button type="button" data-t="m">✉️ 쪽지 관리</button><button type="button" data-t="r">🚨 신고함<i class="bdg" id="rpBdg"></i></button></div>
   <div id="hoN"><div class="sect">📌 공지사항 (300자 · 비우면 공지 내리기)</div><textarea id="heNotice" maxlength="300" rows="4" placeholder="예) 오늘 밤 11시 30분 미장 개장 러시 레이드 같이 해요!"></textarea>
   <div class="sect">☕ 후원 안내 문구 (150자)</div><input id="heDonate" maxlength="150" placeholder="100원이라도 감사하게 받겠습니다 🙏">
   <div class="enhBtns" style="margin-top:10px"><button type="button" class="gbtn hot big" id="heSave">💾 저장하고 바로 반영</button></div></div>
   <div id="hoU" style="display:none"><div class="small">강퇴: 그 시간 동안 방에 못 들어오고, 다른 개미들 화면에서도 사라져요 · 채팅 금지: 그 개미의 말이 아무에게도 안 보여요</div><div id="hoList" class="hoList"></div><div class="sect">⛔ 제재 중</div><div id="hoBans" class="hoList"></div></div>
+  <div id="hoR" style="display:none"><div class="sect">🚨 받은 신고 — 처리하면 목록에서 지워져요</div><div id="hoRL" class="hoList"></div></div>
   <div id="hoM" style="display:none"><div class="sect">📢 전체 쪽지 — 모든 개미 화면에 팝업 (7일 동안 새로 들어오는 사람에게도)</div><textarea id="hoBcT" maxlength="300" rows="3" placeholder="예) 오늘 밤 레이드 이벤트! 보상 2배 🎁"></textarea><div class="enhBtns" style="margin-top:6px"><button type="button" class="gbtn hot" id="hoBcGo" style="flex:1">📢 전체 쪽지 보내기</button></div><div id="hoBcL" class="hoList"></div>
   <div class="sect">🔎 모든 쪽지 열람 (누가 누구에게 · 내용 · 읽음)</div><div class="enhBtns" style="gap:6px"><input id="hoMq" placeholder="닉네임·내용 검색" style="flex:1"><button type="button" class="gbtn" id="hoMr" style="flex:0 0 auto">🔄 불러오기</button></div><div id="hoML" class="hoList" style="margin-top:6px"></div></div>
   <div id="hoC" style="display:none"><div class="hoCfg" id="hoCfg"></div>
@@ -516,7 +517,7 @@ input,select{font-family:inherit}
   <div class="f"><label>배경음악 크기</label><input type="range" id="vB" min="0" max="1" step="0.05"></div>
   <div class="f"><label>효과음 크기</label><input type="range" id="vS" min="0" max="1" step="0.05"></div>
   <button class="mbtn sec" data-close>닫기</button></div></div>
-<div class="modal" id="mMkt"><div class="mbox mkt"><div class="mh"><span>📊 시장 한눈에 — 히트맵 · 차트</span><button data-close>닫기 ✕</button></div><div class="shopTabs" id="heatTabs"><button type="button" data-k="us" class="on">🇺🇸 미국장</button><button type="button" data-k="kr">🇰🇷 국장</button></div><canvas id="cvHeat" width="1600" height="900"></canvas><canvas id="cvChart" width="1400" height="700"></canvas><div class="small" style="margin-top:8px;color:#8592a8">재미·참고용입니다. 시세는 야후 파이낸스(자동 수집기)·Finnhub 등 무료 데이터(지연·마감가 포함), 차트는 접속자가 있는 동안 1분마다 기록한 값입니다. 투자 조언이 아닙니다.</div></div></div>
+<div class="modal" id="mMkt"><div class="mbox mkt"><div class="mh"><span>📊 시장 한눈에 — 히트맵 · 차트</span><button data-close>닫기 ✕</button></div><div class="disc" style="margin:0 0 6px">ⓘ 게임·교육·소통 공간입니다. 시세는 지연·오류가 있을 수 있고 매매 권유나 수익 보장이 아닙니다. 투자 판단과 책임은 본인에게 있습니다.</div><div class="shopTabs" id="heatTabs"><button type="button" data-k="us" class="on">🇺🇸 미국장</button><button type="button" data-k="kr">🇰🇷 국장</button></div><canvas id="cvHeat" width="1600" height="900"></canvas><canvas id="cvChart" width="1400" height="700"></canvas><div class="small" style="margin-top:8px;color:#8592a8">재미·참고용입니다. 시세는 야후 파이낸스(자동 수집기)·Finnhub 등 무료 데이터(지연·마감가 포함), 차트는 접속자가 있는 동안 1분마다 기록한 값입니다. 투자 조언이 아닙니다.</div></div></div>
 
 <div class="modal" id="mEnter"><div class="mbox">
   <h2>🐜 원복 객장 입장</h2><div class="sub">전광판 앞에서 다 같이 원복을 기원합니다. 평단은 선택이며 내 기기에만 저장됩니다.</div>
@@ -533,7 +534,7 @@ input,select{font-family:inherit}
     <div class="small" id="acctMsg">처음이면 새로 만들어지고, 있던 아이디면 기록을 불러옵니다.</div>
     <div class="row" style="margin-top:6px"><button type="button" class="mbtn sec" id="fLogout" style="margin:0;display:none">로그아웃</button><button type="button" class="mbtn sec" id="fReset" style="margin:0">🔄 레벨 초기화</button></div></div>
   <button class="mbtn" id="fGo">입장하기</button>
-  <div class="small" style="margin-top:8px">평단·수익률은 다른 참가자에게도 말풍선으로 보입니다. 원치 않으면 비워 두세요.</div>
+  <div class="small" style="margin-top:8px">평단·수익률은 다른 참가자에게도 말풍선으로 보입니다. 원치 않으면 비워 두세요.</div><div class="disc">ⓘ 게임·교육·소통 공간입니다. 시세는 지연·오류가 있을 수 있고 매매 권유나 수익 보장이 아닙니다. 투자 판단과 책임은 본인에게 있습니다. 허위정보·투자 사기·리딩방 유도는 금지입니다.</div>
 </div></div>
 
 <div class="modal" id="mFort"><div class="mbox"><div class="fort"><div class="small">오늘의 전광판 점괘 · <span id="fDate"></span></div><div class="g" id="fG"></div><div class="t" id="fT"></div><div class="d" id="fD"></div></div>
@@ -552,7 +553,7 @@ input,select{font-family:inherit}
 setTimeout(function(){ if (window.__room3d) return; var d=document.createElement("div"); d.style.cssText="position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);z-index:99;background:#111a2b;color:#fff;border:2px solid #f5a524;border-radius:16px;padding:18px 20px;text-align:center;font:15px/1.5 sans-serif;max-width:90vw"; d.innerHTML="<b>🔄 사이트가 업데이트됐어요</b><br>예전 파일이 남아 있어 객장이 안 열렸어요.<br><button style=\"margin-top:10px;padding:10px 18px;border:0;border-radius:10px;background:#f5a524;font-weight:800;cursor:pointer\">새로고침해서 입장</button>"; d.querySelector("button").onclick=function(){ location.replace(location.pathname+"?room="+(new URLSearchParams(location.search).get("room")||"")+"&r="+Date.now()); }; document.body.appendChild(d); }, 9000);</script>
 <script type="module">
 import * as THREE from './vendor/three.module.min.js?v=169';
-import { initLive, onPrices, onMarket, live, usSession, META, MKT, histMin, reqQuote } from './live.js?v=24';
+import { initLive, onPrices, onMarket, live, usSession, META, MKT, histMin, reqQuote } from './live.js?v=25';
 
 /* ================= 공통 ================= */
 const $ = id => document.getElementById(id);
@@ -715,6 +716,7 @@ const SND = {
   } }); },
   drop() { sfx((t, d) => { NZ(d, t, 1.4, .25, 'bandpass', 200, 2, 7000); for (let b = 0; b < 16; b++) { const T = t + 1.4 + b * .3125; N(d, T, 150, .3, 'sine', .65, .002, 40); if (b % 2) NZ(d, T, .08, .1, 'highpass', 7000); if (b % 4 === 2) NZ(d, T, .15, .3, 'bandpass', 1800); if (b % 2 === 0) { N(d, T, 820, .1, 'triangle', .3, .002, 620); } [55, 82.4, 65.4, 49][Math.floor(b / 4)] && N(d, T + .156, [55, 82.4, 65.4, 49][Math.floor(b / 4)] * 2, .14, 'sawtooth', .08, .004); } }); },
   party() { sfx((t, d) => [[523, 0], [659, .12], [784, .24], [1046, .36], [784, .5], [1046, .62]].forEach(([f, o]) => N(d, t + o, f, .22, 'square', .07))); },
+  bell(open) { sfx((t, d) => { const b = open ? [880, 1108, 1318] : [660, 554, 440]; b.forEach((f, i) => { N(d, t + i * .28, f, 1.6, 'sine', .14, .004); N(d, t + i * .28, f * 2.01, .9, 'sine', .04, .004); }); }); },
   gloom() { sfx((t, d) => [[392, 0], [370, .45], [349, .9], [330, 1.35]].forEach(([f, o], i) => N(d, t + o, f, i === 3 ? 1.3 : .45, 'sawtooth', .07, .03, i === 3 ? 300 : null))); }
 };
 
@@ -1091,28 +1093,31 @@ function spawn(x, y, z, n, color, speed, grav = 9, life = 1.4, up = 0) {
     pCol[k * 3] = c.r; pCol[k * 3 + 1] = c.g; pCol[k * 3 + 2] = c.b; pLife[k] = life * (.7 + Math.random() * .5); pGrav[k] = grav;
   }
 }
-let weather = 'calm', weatherChg = null, nextFw = 0, nextBolt = 0;
+let weather = 'calm', weatherChg = null, nextFw = 0, nextBolt = 0, wxLv = 0;
+const WX_T = [-.09, -.03, .03, .09], WX_NAME = { '-2': '⛈ 폭풍', '-1': '🌧 흐림', '0': '⛅ 평온', '1': '☀️ 맑음', '2': '🎉 축제' };
+const wxTier = (a, m) => WX_T.reduce((n, x) => n + (a >= x + m ? 1 : 0), 0) - 2;
 function computeWeather() {
   const ch = ['KORU', 'SOXL'].map(k => qChg(prices[k])).filter(isFinite);
   const avg = ch.length ? ch.reduce((a, b) => a + b, 0) / ch.length : null;
-  const mode = avg == null ? 'calm' : avg >= .10 ? 'party' : avg <= -.10 ? 'gloom' : 'calm';
+  { let lv = avg == null ? 0 : wxTier(avg, 0); if (avg != null && lv > wxLv && wxTier(avg, .01) <= wxLv) lv = wxLv; if (avg != null && lv < wxLv && wxTier(avg, -.01) >= wxLv) lv = wxLv; if (lv !== wxLv) { const up = lv > wxLv; wxLv = lv; if (weather === (lv >= 2 ? 'party' : lv <= -1 ? 'gloom' : 'calm')) applyWeather(); if (entered && cd('wxpop', 60000)) showPop({ ic: up ? '🌤' : '🌧', t: `객장 날씨: ${WX_NAME[lv]}`, b: avg == null ? '' : `KORU·SOXL 평균 ${pct(avg)}`, dur: 5000, cls: up ? 'ment' : '' }); } }
+  const mode = wxLv >= 2 ? 'party' : wxLv <= -1 ? 'gloom' : 'calm';
   weatherChg = avg; if (mode !== weather) { const prev = weather; weather = mode; applyWeather(); if (entered) { if (mode === 'party') SND.party(); else if (mode === 'gloom') SND.gloom(); } bgmUpdate(); }
   const parts2 = ['KORU', 'SOXL'].filter(k => isFinite(qChg(prices[k]))).map(k => k + ' ' + pct(qChg(prices[k])));
   const w = $('wx'); w.textContent = '';
-  const b = el('b', null, avg == null ? '시황: 등락 데이터 없음 → 평온' : weather === 'party' ? '시황: 🎉 파티 모드' : weather === 'gloom' ? '시황: 🌧 우울 모드' : '시황: 평온');
+  const b = el('b', null, avg == null ? '시황: 등락 데이터 없음 → 평온' : '객장 날씨: ' + WX_NAME[wxLv]);
   { const Y = $('wxWhy'); Y.className = weather; const worst = ['KORU', 'SOXL'].map(k => [k, qChg(prices[k])]).filter(x => isFinite(x[1])).sort((a, b) => weather === 'party' ? b[1] - a[1] : a[1] - b[1]); const MOB = innerWidth <= 820; Y.textContent = weather === 'gloom' ? (MOB ? `🌧 폭락 비: ${worst.map(x => x[0] + ' ' + pct(x[1])).join(' · ')}` : `🌧 지금 비가 오는 이유: ${worst.map(x => x[0] + ' ' + pct(x[1])).join(' · ')} 폭락 중 (3배 레버리지 −10% 이하 = 우울 모드)`) : weather === 'party' ? (MOB ? `🎉 급등 파티: ${worst.map(x => x[0] + ' ' + pct(x[1])).join(' · ')}` : `🎉 파티 중인 이유: ${worst.map(x => x[0] + ' ' + pct(x[1])).join(' · ')} 급등! (+10% 이상 = 파티 모드)`) : ''; }
-  w.append(b, el('br'), document.createTextNode((parts2.length ? parts2.join(' · ') + ' (전일 대비) · ' : '') + '3배 레버리지 기준 ±10% 이상일 때 바뀝니다'));
+  w.append(b, el('br'), document.createTextNode((parts2.length ? parts2.join(' · ') + ' (전일 대비) · ' : '') + 'KORU·SOXL 평균 ±3% 흐림·맑음, ±9% 폭풍·축제'), el('br'), document.createTextNode(mktLine()));
 }
 function applyWeather() {
   document.body.classList.toggle('gloom', weather === 'gloom'); document.body.classList.toggle('party', weather === 'party');
   rain.visible = clouds.visible = weather === 'gloom'; confetti.visible = weather === 'party';
   hemi.intensity = HEMI_BASE();
-  sun.intensity = weather === 'gloom' ? 1.6 : weather === 'party' ? 2.2 : 2.1;
+  sun.intensity = wxLv <= -2 ? 1.1 : weather === 'gloom' ? 1.6 : weather === 'party' ? 2.2 : wxLv === 1 ? 2.5 : 2.1;
   boardLight.intensity = weather === 'party' ? 70 : weather === 'gloom' ? 34 : 30;
   boardLight.color.set(weather === 'party' ? 0xff7ad9 : weather === 'gloom' ? 0x5d6f95 : 0x6fd6ff);
-  skyApply(weather === 'gloom' ? 'gloom' : weather === 'party' ? 'party' : 'calm');
+  skyApply(wxLv <= -2 ? 'storm' : weather === 'gloom' ? 'gloom' : weather === 'party' ? 'party' : wxLv === 1 ? 'sunny' : 'calm');
 }
-function HEMI_BASE() { return weather === 'gloom' ? 1.25 : weather === 'party' ? 1.45 : 1.35; }
+function HEMI_BASE() { return wxLv <= -2 ? 1.05 : weather === 'gloom' ? 1.25 : weather === 'party' ? 1.45 : wxLv === 1 ? 1.45 : 1.35; }
 
 /* ================= 개미 캐릭터 ================= */
 function hbTexture(text) {
@@ -1661,7 +1666,8 @@ function userMenu(uid, nick, m) { if (!uid) return; const me = uid === live.uid,
     if (isFr(uid)) add('💔 친구 끊기', () => frDel(uid), 'sec'); else if (FREQ[uid] && !MYFR[uid]) add('🤝 친구 신청 수락', () => frAdd(uid, nick)); else if (MYFR[uid]) add('⏳ 친구 신청 중 (누르면 취소)', () => frCancel(uid), 'sec'); else add('⭐ 친구 신청', () => frAdd(uid, nick));
     if (on) { add('📣 @멘션 하기', () => mention(nick), 'sec'); add('🔒 귓속말', () => whisperTo(nick), 'sec'); add('🤺 결투 신청', () => duelReq(uid, nick), 'sec'); } }
   if (HOST && !me) { add('🔇 채팅금지 10분', () => hostBan({ uid, nick }, 'mute', 10), 'sec'); add('🔇 채팅금지 1시간', () => hostBan({ uid, nick }, 'mute', 60), 'sec'); add('👢 강퇴 10분', () => hostBan({ uid, nick }, 'kick', 10), 'sec'); add('🧹 이 사람 대화 전부 삭제', () => hostHide(null, uid), 'sec'); }
-  if (HOST && m && m.id) add('🗑 이 대화만 삭제', () => hostHide(m.id), 'sec'); openModal('mUser'); }
+  if (HOST && m && m.id) add('🗑 이 대화만 삭제', () => hostHide(m.id), 'sec');
+  if (!me) add('🚨 신고하기', () => rpOpen(uid, nick, m), 'sec'); openModal('mUser'); }
 async function hostHide(id, byUid) { if (!HOST) return; const hid = Object.assign({}, hidSet()), now = Date.now(); let n = 0;
   if (byUid) chatCache.forEach(m => { if (m.uid === byUid && m.id && !hid[m.id]) { hid[m.id] = now; n++; } }); else if (id) { hid[id] = now; n = 1; }
   if (!n) { toast('지울 대화가 없어요'); return; } const ks = Object.keys(hid).sort(); while (ks.length > 300) delete hid[ks.shift()];
@@ -1747,6 +1753,7 @@ function openMail(tab, to, focus) { if (tab) mailTab = tab; if (to) mailTo = to;
 async function mailRead(id) { const m = INBOX[id]; if (!m || m.r) return; const U = live.uid; try { await live.dUpdate(`mail/${U}/${id}`, { r: live.TS() }); live.dUpdate(`sent/${m.f}/${id}`, { r: live.TS() }).catch(() => {}); } catch (e) { console.warn('read', e); } }
 async function mailSend(to, tn, text) { text = String(text || '').trim().slice(0, 300); tn = String(tn || frName(to)).slice(0, 12); if (!text) { toast('쪽지 내용을 써 주세요'); return false; }
   if (!to || to === live.uid) { toast('받는 사람을 골라 주세요'); return false; }
+  if (linkBad(text)) { toast(LINK_MSG); return false; }
   if (!HOST && !isFr(to)) { toast('🤝 서로 친구인 사람에게만 쪽지를 보낼 수 있어요'); return false; }
   { const b = banOf(live.uid, PROF && PROF.nick); if (b && !HOST) { toast('🔇 채팅 금지 중에는 쪽지도 못 보내요'); return false; } }
   if (!HOST && !cd('mail', 10000)) { toast('쪽지는 10초에 한 통씩 보낼 수 있어요'); return false; }
@@ -1821,6 +1828,57 @@ function commInit() { if (commOn || !live.dOn) return; commOn = true; const U = 
   mailInit();
   setTimeout(() => { frReady = true; const n = Object.keys(FREQ).filter(id => !MYFR[id]).length; if (n) showPop({ ic: '🤝', t: `받은 친구 신청 ${n}개`, b: '친구 탭에서 수락할 수 있어요', dur: 10000, on: () => openPanel('tFr') }); paintBadges(); }, 4000); }
 
+
+/* ---- 링크·연락처 차단 (리딩방·사기 방지, 방장 제외) ---- */
+const LINK_RE = /(https?:\/\/|www\.|open\.kakao|t\.me\/|[a-z0-9-]{2,}\.(com|net|org|kr|co|me|io|xyz|ly|gg|app|shop|site|link|to|cc)(\/|\b)|0\s*1\s*[016789][\s.-]*\d{3,4}[\s.-]*\d{4})/i;
+function linkBad(t) { return !HOST && LINK_RE.test(String(t || '')); }
+const LINK_MSG = '🔗 링크·연락처는 보낼 수 없어요 (사기·리딩방 방지)';
+/* ---- 신고 ---- */
+const RP_WHY = ['리딩방·광고·외부 유도', '사기·송금·계좌 요구', '허위정보·종목 선동', '욕설·괴롭힘', '도배', '기타'];
+let RPT = { uid: null, nick: '', m: null }, REPORTS = {}, rpWatch = false;
+function rpOpen(uid, nick, m) { RPT = { uid, nick, m }; $('rpWho').textContent = `대상: ${nick}` + (m && m.text ? ` · "${String(m.text).slice(0, 40)}"` : ''); const R = $('rpR'); R.textContent = '';
+  RP_WHY.forEach((w, i) => { const l = el('label'), r = el('input'); r.type = 'radio'; r.name = 'rpw'; r.value = w; if (!i) r.checked = true; l.append(r, document.createTextNode(w)); R.appendChild(l); }); $('rpT').value = ''; openModal('mReport'); }
+async function rpSend() { if (!RPT.uid) return; if (!cd('report', 30000)) { toast('신고는 30초에 한 번 보낼 수 있어요'); return; }
+  const why = (document.querySelector('#rpR input:checked') || {}).value || '기타', m = RPT.m || {};
+  const o = { by: live.uid, bn: myNick(), u: RPT.uid, un: String(RPT.nick || '').slice(0, 12), why, t: $('rpT').value.trim().slice(0, 200), rm: ROOM || '', ts: live.TS() }; if (m.text) o.mt = String(m.text).slice(0, 120); if (m.id) o.mid = String(m.id).slice(0, 40);
+  try { await live.dSet('reports/' + live.dKey('reports'), o); closeModals(); toast('🚨 신고를 방장에게 보냈어요. 고마워요!'); } catch (e) { console.warn('report', e); toast('❌ 신고 전송 실패 — 잠시 뒤 다시 해 주세요'); } }
+function rpWatchStart() { if (rpWatch || !HOST || !live.dOn) return; rpWatch = true; let first = true;
+  live.dOn('reports', v => { const old = REPORTS; REPORTS = v || {}; const n = Object.keys(REPORTS).length; const b = $('rpBdg'); if (b) { b.textContent = n || ''; b.classList.toggle('on', n > 0); }
+    if (!first) Object.keys(REPORTS).forEach(id => { if (!old[id]) { const r = REPORTS[id]; showPop({ ic: '🚨', t: `새 신고 · ${r.un}`, b: `${r.why}${r.mt ? ' · ' + r.mt : ''}`, cls: 'host', dur: 12000, go: '신고함', on: () => { $('bHostEd').click(); hoTab = 'r'; renderHost(); } }); } });
+    first = false; if ($('hoR') && $('hoR').style.display !== 'none') rpRender(); }); }
+function rpRender() { const L = $('hoRL'); if (!L) return; L.textContent = ''; const ids = Object.keys(REPORTS).sort().reverse();
+  if (!ids.length) { L.appendChild(el('div', 'small', '받은 신고가 없어요 👍')); return; }
+  const cnt = {}; ids.forEach(id => { const u = REPORTS[id].u; cnt[u] = (cnt[u] || 0) + 1; });
+  ids.forEach(id => { const r = REPORTS[id], d = el('div', 'ml open'); const h = el('div', 'mh'); h.append(el('b', null, `${r.un}${cnt[r.u] > 1 ? ` (신고 ${cnt[r.u]}건)` : ''}`), el('span', null, kst(r.ts)), el('span', 'rd', `${r.bn} 신고 · ${chTxt(r.rm)}`));
+    d.append(h, el('div', 'mt', `[${r.why}] ${r.mt ? '"' + r.mt + '" ' : ''}${r.t || ''}`)); const a = el('div', 'ma'); const done = () => live.dRemove('reports/' + id).catch(() => toast('❌ 실패'));
+    a.append(sbtn('🔇 채팅금지 1시간', () => { hostBan({ uid: r.u, nick: r.un }, 'mute', 60); done(); }), sbtn('👢 강퇴 10분', () => { hostBan({ uid: r.u, nick: r.un }, 'kick', 10); done(); }), sbtn('🧹 대화 전부 삭제', () => { hostHide(null, r.u); done(); }), sbtn('👤 사람 메뉴', () => userMenu(r.u, r.un)), tap2(sbtn('✅ 처리 완료'), '✅ 처리 완료', done));
+    d.appendChild(a); L.appendChild(d); }); }
+
+/* ---- 미국장 개장·마감 시계 (뉴욕 시간, 서머타임·휴장일 반영) ---- */
+const US_HOL = new Set(['2026-11-26', '2026-12-25', '2027-01-01', '2027-01-18', '2027-02-15', '2027-03-26', '2027-05-31', '2027-06-18', '2027-07-05', '2027-09-06', '2027-11-25', '2027-12-24']);
+const US_EARLY = new Set(['2026-11-27', '2026-12-24', '2027-11-26']);
+const ETF = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23', weekday: 'short' });
+function etNow(d) { const p = {}; ETF.formatToParts(d || new Date()).forEach(x => { p[x.type] = x.value; }); return { ymd: `${p.year}-${p.month}-${p.day}`, wd: p.weekday, sec: (+p.hour) * 3600 + (+p.minute) * 60 + (+p.second) }; }
+const etTradeDay = (ymd, wd) => wd !== 'Sat' && wd !== 'Sun' && !US_HOL.has(ymd);
+function usMkt(d) { d = d || new Date(); const e = etNow(d), O = 9.5 * 3600, C = (US_EARLY.has(e.ymd) ? 13 : 16) * 3600;
+  if (etTradeDay(e.ymd, e.wd) && e.sec < O) return { st: 'pre', left: O - e.sec };
+  if (etTradeDay(e.ymd, e.wd) && e.sec < C) return { st: 'open', left: C - e.sec, early: US_EARLY.has(e.ymd) };
+  let k = 1; for (; k < 10; k++) { const n = etNow(new Date(d.getTime() + k * 864e5)); if (etTradeDay(n.ymd, n.wd)) break; }
+  return { st: 'closed', left: 86400 - e.sec + (k - 1) * 86400 + O }; }
+const hms = s => { s = Math.max(0, Math.round(s)); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return h ? `${h}시간 ${m}분` : `${m}:${String(x).padStart(2, '0')}`; };
+let mkStLast = null;
+function mktTick() { const M = usMkt(), C = $('mktClock'); if (!C) return;
+  const near = (M.st === 'pre' || M.st === 'closed') && M.left <= 600 ? '🔔 미장 개장까지 ' + hms(M.left) : M.st === 'open' && M.left <= 600 ? `🔕 미장 ${M.early ? '조기 ' : ''}마감까지 ` + hms(M.left) : '';
+  C.textContent = near; C.classList.toggle('on', !!near && entered); C.classList.toggle('go', !!near && M.left <= 60);
+  if (mkStLast && entered) { if (mkStLast !== 'open' && M.st === 'open') mktEvent(true); else if (mkStLast === 'open' && M.st !== 'open') mktEvent(false); }
+  mkStLast = M.st; }
+function mktEvent(open) { try { SND.bell(open); } catch (e) {}
+  const q = ['KORU', 'SOXL'].filter(k => isFinite(qChg(prices[k]))).map(k => `${k} ${pct(qChg(prices[k]))}`).join(' · ');
+  showPop(open ? { ic: '🔔', t: '미국장 정규장 개장!', b: '오늘도 계좌는 열려 있다 — 다 같이 버텨요', cls: 'host', dur: 9000 } : { ic: '🔕', t: '미국장 마감', b: q ? `오늘 ${q}` : '오늘도 수고했어요', cls: 'ment', dur: 9000 });
+  addLog(open ? '🔔 미국장 정규장 개장!' : `🔕 미국장 마감${q ? ' — ' + q : ''}`, true);
+  if (open && !REDUCE) for (let i = 0; i < 8; i++) setTimeout(() => spawn((Math.random() - .5) * 20, 8 + Math.random() * 4, -4 + Math.random() * 8, 90, [0xffd76a, 0x6ab7ff, 0x7dffb0][i % 3], 5, 2.5), i * 180); }
+function mktLine() { const M = usMkt(); return M.st === 'open' ? `🟢 미장 정규장 진행 중 · ${M.early ? '조기 ' : ''}마감까지 ${hms(M.left)}` : `⚪ 미장 휴식 · 다음 개장까지 ${hms(M.left)}`; }
+
 function onChatCb(m) {
   if (m && m.uid !== live.uid && isMuted(m.uid, m.nick)) return;
   { const W = parseWhisper(m); if (W) { const mine = m.uid === live.uid, toMe = isMe8(W.to); if (!mine && !toMe) return; const tn = mine ? (nickOf(uidOf8(W.to)) || '상대') : '나';
@@ -1836,6 +1894,7 @@ let lastChat = 0;
 $('chatForm').onsubmit = e => {
   e.preventDefault(); const v = $('chatIn').value.trim(); if (!v || !room) return; if (blockCmd(v)) { $('chatIn').value = ''; return; }
   if (CFG2().lock && !HOST) { toast('🔒 지금은 방장만 채팅할 수 있어요'); return; }
+  if (linkBad(v)) { toast(LINK_MSG); return; }
   { const b = banOf(live.uid, PROF && PROF.nick); if (b && !HOST) { toast(`🔇 방장이 채팅을 막았어요 (${Math.ceil((b.u - Date.now()) / 60000)}분 남음)`); return; } }
   { const sl = HOST ? 1.5 : Math.max(1.5, CFG2().slow | 0); if (performance.now() - lastChat < sl * 1000) { toast(`천천히 — ${sl}초에 한 번`); return; } }
   { const w = /^\/귓\s+(\S+)\s+([\s\S]+)$/.exec(v); if (w) { const tgt = peersData.find(d => d.nick === w[1] && d.uid !== live.uid); if (!tgt) { toast(`🔒 '${w[1]}'님이 지금 이 방에 없어요`); return; } lastChat = performance.now(); room.sendChat('🔒' + id8(tgt.uid) + '|' + w[2].slice(0, 100), {}); $('chatIn').value = `/귓 ${w[1]} `; return; } }
@@ -3648,7 +3707,7 @@ const SKY = (() => {
   return { dome, u };
 })();
 scene.background = null;
-const SKYSET = { calm: [0x3d8fe8, 0x9fd2ff, 0xe9f6ff, 0xcfe6ff], gloom: [0x7f97b8, 0xb9c8da, 0xe4ebf3, 0xc9d4e2], party: [0x7a5cf0, 0xff9ad8, 0xffe6c4, 0xf7d6ec] };
+const SKYSET = { sunny: [0x1f7bff, 0x8fd3ff, 0xf6fcff, 0xd8efff], storm: [0x4f5d75, 0x8592a8, 0xbcc6d4, 0xa9b4c4], calm: [0x3d8fe8, 0x9fd2ff, 0xe9f6ff, 0xcfe6ff], gloom: [0x7f97b8, 0xb9c8da, 0xe4ebf3, 0xc9d4e2], party: [0x7a5cf0, 0xff9ad8, 0xffe6c4, 0xf7d6ec] };
 function skyApply(w) { const S = SKYSET[w] || SKYSET.calm; SKY.u.top.value.set(S[0]); SKY.u.mid.value.set(S[1]); SKY.u.bot.value.set(S[2]); scene.fog.color.set(S[3]); }
 // 먼 배경(카메라를 따라다님 → 아주 멀리 있는 것처럼 보임): 산맥 · 판타지 도시 · 떠 있는 섬 · 무지개 · 낮달
 const FAR = new THREE.Group(); scene.add(FAR);
@@ -4560,7 +4619,7 @@ function loop() {
   if (weather === 'gloom') {
     for (let i = 0; i < RAIN_N; i++) { const o = i * 6; let y = rainP[o + 1] - dt * 24; if (y < 0) { y = 16 + Math.random() * 2; const x = cam.tx + (Math.random() - .5) * 46, z = cam.tz + (Math.random() - .5) * 36; rainP[o] = rainP[o + 3] = x; rainP[o + 2] = rainP[o + 5] = z; } rainP[o + 1] = y; rainP[o + 4] = y + .7; }
     rainGeo.attributes.position.needsUpdate = true; clouds.children.forEach((c, i) => { c.position.x += dt * .3 * (i % 2 ? 1 : -1); if (c.position.x > 26) c.position.x = -26; if (c.position.x < -26) c.position.x = 26; });
-    if (!REDUCE && t > nextBolt) { nextBolt = t + 5 + Math.random() * 8; const F = $('flash'); F.style.opacity = '.35'; hemi.intensity = 3; setTimeout(() => { F.style.opacity = '0'; hemi.intensity = HEMI_BASE(); }, 110); setTimeout(() => noise(.9, .12, 60), 300); }
+    if (!REDUCE && wxLv <= -2 && t > nextBolt) { nextBolt = t + 3 + Math.random() * 5; const F = $('flash'); F.style.opacity = '.35'; hemi.intensity = 3; setTimeout(() => { F.style.opacity = '0'; hemi.intensity = HEMI_BASE(); }, 110); setTimeout(() => noise(.9, .12, 60), 300); }
   }
   if (weather === 'party') {
     for (let i = 0; i < CONF_N; i++) { const c = confS[i]; c.y -= dt * 1.9 * c.s; c.r += dt * 4 * c.s; if (c.y < 0) { c.y = 14 + Math.random() * 3; c.x = cam.tx + (Math.random() - .5) * 36; c.z = cam.tz + (Math.random() - .5) * 28; } confD.position.set(c.x + Math.sin(t + i) * .3, c.y, c.z); confD.rotation.set(c.r, c.r * .7, 0); confD.updateMatrix(); confetti.setMatrixAt(i, confD.matrix); }
@@ -4585,7 +4644,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '24';
+const APP_V = '25';
 {
   let shown = false;
   const check = async () => {
@@ -4764,6 +4823,7 @@ $('cmLog').onclick = () => openChat(false); $('cmSay').onclick = () => openChat(
 $('pMail').onclick = () => openMail(unreadN() ? 'in' : mailTab === 'w' ? 'in' : mailTab); document.querySelectorAll('#mlTabs button').forEach(b => b.onclick = () => { mailTab = b.dataset.t; mlOpen = ''; renderMail(); });
 $('chatIn').addEventListener('input', atSug); $('chatIn').addEventListener('blur', () => setTimeout(() => { const S = $('atSug'); if (S) S.style.display = 'none'; }, 200));
 $('newPill').onclick = () => { logEl.scrollTop = logEl.scrollHeight; $('newPill').classList.remove('on'); }; logEl.addEventListener('scroll', () => { if (logEl.scrollHeight - logEl.scrollTop - logEl.clientHeight < 40) $('newPill').classList.remove('on'); });
+$('rpGo').onclick = rpSend; $('rpT').addEventListener('keydown', e => e.stopPropagation()); setInterval(() => { try { mktTick(); rpWatchStart(); } catch (e) {} }, 1000);
 $('hoBcGo').onclick = hostBcSend; $('hoMr').onclick = hostMailLoad; $('hoMq').oninput = hostMailRender; ['hoBcT', 'hoMq'].forEach(i => $(i).addEventListener('keydown', e => e.stopPropagation()));
 // 🔒 귓속말: "/귓 닉네임 할말" → 받는 사람·보낸 사람 화면에만 보여요
 function whisperTo(nick) { openChat(true); $('chatIn').value = `/귓 ${nick} `; wMode(); }
@@ -4806,7 +4866,7 @@ function checkMyBan() { if (!PROF) return; const b = banOf(live.uid, PROF.nick);
 setInterval(checkMyBan, 5000);
 let hoTab = 'n';
 function renderHost() {
-  document.querySelectorAll('#hoTabs button').forEach(b => b.classList.toggle('on', b.dataset.t === hoTab)); ['n', 'u', 'c', 'm'].forEach(t => $('ho' + t.toUpperCase()).style.display = t === hoTab ? '' : 'none'); if (hoTab === 'm') { hostBcRender(); if (!HM.length) hostMailLoad(); else hostMailRender(); }
+  document.querySelectorAll('#hoTabs button').forEach(b => b.classList.toggle('on', b.dataset.t === hoTab)); ['n', 'u', 'c', 'm', 'r'].forEach(t => $('ho' + t.toUpperCase()).style.display = t === hoTab ? '' : 'none'); if (hoTab === 'r') rpRender(); if (hoTab === 'm') { hostBcRender(); if (!HM.length) hostMailLoad(); else hostMailRender(); }
   if (hoTab === 'u') { const L = $('hoList'); L.textContent = ''; const list = peersData.filter(d => d.uid !== live.uid && !d.you); if (!list.length) L.appendChild(el('div', 'small', '지금 이 방에 다른 개미가 없어요'));
     list.sort((a, b) => (b.pts || 0) - (a.pts || 0)).forEach(d => { const r = el('div', 'srow'), info = el('div', 'si'), rm = remotes.get(d.uid), zn = rm ? zoneAt(rm.cur.x, rm.cur.z) : null, b0 = banOf(d.uid, d.nick);
       info.append(el('b', null, d.nick || '?'), el('span', null, `${lvOf(d.pts || 0) + 1}단계 · 📍 ${zn ? zn.n.replace(/^\S+\s/, '') : '?'}${b0 ? ' · ⛔ ' + (b0.m === 'kick' ? '강퇴' : '채팅 금지') + ' 중' : ''}`));
@@ -4858,7 +4918,7 @@ window.__room3d = { dexN: () => dexTypes().size, sig: () => SIG, openSig: () => 
   peerPos: uid => { const r = remotes.get(uid); return r ? { X: r.cur.x, Z: r.cur.z, moving: r.moving, walking: r.ant ? r.ant.moving : r.moving, detail: !!r.ant } : null; },
   weather: () => weather, teleport: (x, y) => { const w = toW(x, y); ME.X = w.x; ME.Z = w.z; ME.seat = -1; sync(true); }, tp: (X, Z) => { ME.X = X; ME.Z = Z; ME.seat = -1; sync(true); },
   inter: INTER, near: () => findNear(), use: k => useInter(k), fortune: () => fortuneFor(live.uid), offer: () => offerCount, votes: () => JSON.parse(JSON.stringify(votes)),
-  give: () => { for (let i = 0; i < 6; i++) dropItem(i % 3); return G.inv.length; }, addItem: c => { G.inv.push(c); saveG(); return itemInfo(c); }, rinfo: () => ({ calls: renderer.info.render.calls, tris: renderer.info.render.triangles, geos: renderer.info.memory.geometries }), equip: c => equip(c), gs: () => GS(), near: () => findNear(), pkT: () => pkTarget(), roll: (n, b) => { const h = Array(9).fill(0); for (let i = 0; i < n; i++) h[rollGrade(b || 0)]++; return h; }, iinfo: c => itemInfo(c), ui: () => useNearest(), sk: s2 => castSkill(s2), thumbs: () => THUMB.size, fr: () => ({ my: MYFR, req: FREQ, back: BACK, seen: SEEN }), frAdd: (u, n) => frAdd(u, n), mail: () => ({ inbox: INBOX, sent: SENT, bc: BC, un: unreadN() }), mailSend: (u, n, t) => mailSend(u, n, t), openMail: t => openMail(t), uid: () => live.uid, hm: () => HM, lv: () => live, commOn: () => commOn, pop: o => showPop(o), nickc: () => NICKC, seen: u => seenTxt(u), peers: arr => onPeersCb(arr), um: (u, n, m) => userMenu(u, n, m), notice: t => { BOARD.notice = { text: t, ts: Date.now() }; showNotice(true); }, hist: () => logEl.innerText, say: (uid, nick, text, hold, id) => { onChatCb({ uid, nick, text, ts: Date.now(), id }); const L = uid === live.uid ? myLabel : (remotes.get(uid) || {}).L; if (hold && L) { clearTimeout(L.sayT); L.sayT = setTimeout(() => { L.say.style.display = 'none'; }, hold); } }, fx: (uid, kind) => onFxCb({ uid, kind, ts: Date.now() }),
+  give: () => { for (let i = 0; i < 6; i++) dropItem(i % 3); return G.inv.length; }, addItem: c => { G.inv.push(c); saveG(); return itemInfo(c); }, rinfo: () => ({ calls: renderer.info.render.calls, tris: renderer.info.render.triangles, geos: renderer.info.memory.geometries }), equip: c => equip(c), gs: () => GS(), near: () => findNear(), pkT: () => pkTarget(), roll: (n, b) => { const h = Array(9).fill(0); for (let i = 0; i < n; i++) h[rollGrade(b || 0)]++; return h; }, iinfo: c => itemInfo(c), ui: () => useNearest(), sk: s2 => castSkill(s2), thumbs: () => THUMB.size, fr: () => ({ my: MYFR, req: FREQ, back: BACK, seen: SEEN }), frAdd: (u, n) => frAdd(u, n), mail: () => ({ inbox: INBOX, sent: SENT, bc: BC, un: unreadN() }), mailSend: (u, n, t) => mailSend(u, n, t), openMail: t => openMail(t), uid: () => live.uid, hm: () => HM, lv: () => live, commOn: () => commOn, pop: o => showPop(o), wx: a => { prices = Object.assign({}, prices, { KORU: { p: 100 * (1 + a), pc: 100 }, SOXL: { p: 100 * (1 + a), pc: 100 } }); computeWeather(); return wxLv; }, wxLv: () => wxLv, usMkt: d => usMkt(d ? new Date(d) : undefined), mktEvent: o => mktEvent(o), rpOpen: (u, n) => rpOpen(u, n), reports: () => REPORTS, linkBad: t => linkBad(t), nickc: () => NICKC, seen: u => seenTxt(u), peers: arr => onPeersCb(arr), um: (u, n, m) => userMenu(u, n, m), notice: t => { BOARD.notice = { text: t, ts: Date.now() }; showNotice(true); }, hist: () => logEl.innerText, say: (uid, nick, text, hold, id) => { onChatCb({ uid, nick, text, ts: Date.now(), id }); const L = uid === live.uid ? myLabel : (remotes.get(uid) || {}).L; if (hold && L) { clearTimeout(L.sayT); L.sayT = setTimeout(() => { L.say.style.display = 'none'; }, hold); } }, fx: (uid, kind) => onFxCb({ uid, kind, ts: Date.now() }),
   inject: list => { fakePeers = list.filter(d => String(d.uid).startsWith('f')); onPeersCb(peersData.filter(d => !String(d.uid).startsWith('f'))); }, // 테스트 전용: 화면 부하 확인(데이터를 만들지 않음)
   room: () => ROOM, lod: () => ({ detail: [...remotes.values()].filter(r => r.ant).length, pawns: pawnBody.count, labels: [...remotes.values()].filter(r => r.L && r.L.d.style.visibility !== 'hidden').length }),
   gear: uid => { const a = uid ? antOf(uid) : myAnt; return a && a.gear ? SLOT_KEYS.filter(k => a.gear[k]) : []; }, G: () => JSON.parse(JSON.stringify(G)), stats: () => ({ atk: atkOf(lvOf(G.pts)), hp: maxHp(lvOf(G.pts)), set: setInfo(G.eq) }),

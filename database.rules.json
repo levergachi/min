@@ -232,6 +232,16 @@
         ".write": "auth != null && root.child('hosts').child(auth.uid).child('code').val() === 'CHANGE_ME_HOST_CODE'",
         ".validate": "newData.hasChildren(['t','ts']) && newData.child('t').isString() && newData.child('t').val().length >= 1 && newData.child('t').val().length <= 300 && newData.child('ts').isNumber() && (!newData.child('n').exists() || (newData.child('n').isString() && newData.child('n').val().length <= 12))"
       }
+    },
+    "reports": {
+      ".read": "auth != null && root.child('hosts').child(auth.uid).child('code').val() === 'CHANGE_ME_HOST_CODE'",
+      "$id": {
+        ".write": "auth != null && ((!data.exists() && newData.child('by').val() === auth.uid) || (data.exists() && !newData.exists() && root.child('hosts').child(auth.uid).child('code').val() === 'CHANGE_ME_HOST_CODE'))",
+        ".validate": "newData.hasChildren(['by','bn','u','un','why','ts']) && newData.child('u').isString() && newData.child('u').val().length <= 64 && newData.child('bn').isString() && newData.child('bn').val().length <= 12 && newData.child('un').isString() && newData.child('un').val().length <= 12 && newData.child('why').isString() && newData.child('why').val().length <= 30 && newData.child('ts').isNumber() && newData.child('ts').val() <= now + 60000 && (!newData.child('t').exists() || (newData.child('t').isString() && newData.child('t').val().length <= 200)) && (!newData.child('mt').exists() || (newData.child('mt').isString() && newData.child('mt').val().length <= 120)) && (!newData.child('mid').exists() || (newData.child('mid').isString() && newData.child('mid').val().length <= 40)) && (!newData.child('rm').exists() || (newData.child('rm').isString() && newData.child('rm').val().length <= 24))",
+        "$o": {
+          ".validate": "$o.matches(/^(by|bn|u|un|why|t|mt|mid|rm|ts)$/)"
+        }
+      }
     }
   }
 }
