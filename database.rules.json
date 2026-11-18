@@ -265,14 +265,24 @@
       "$t": {
         ".read": "auth != null",
         ".write": "auth != null && !newData.exists() && root.child('hosts').child(auth.uid).child('code').val() === 'CHANGE_ME_HOST_CODE'",
-        ".validate": "$t.matches(/^(soxl|koru|macro)$/)",
+        ".validate": "$t.matches(/^(soxl|koru|macro|arena)$/)",
         "$id": {
           ".write": "auth != null && ((!data.exists() && newData.child('uid').val() === auth.uid) || (data.exists() && !newData.exists() && root.child('hosts').child(auth.uid).child('code').val() === 'CHANGE_ME_HOST_CODE'))",
-          ".validate": "newData.hasChildren(['uid','nick','text','ts']) && newData.child('uid').isString() && newData.child('nick').isString() && newData.child('nick').val().length >= 1 && newData.child('nick').val().length <= 12 && newData.child('text').isString() && newData.child('text').val().length >= 1 && newData.child('text').val().length <= 120 && newData.child('ts').isNumber() && newData.child('ts').val() <= now && (!newData.child('host').exists() || (newData.child('host').val() === true && root.child('hosts').child(auth.uid).child('code').val() === 'CHANGE_ME_HOST_CODE'))",
+          ".validate": "newData.hasChildren(['uid','nick','text','ts']) && newData.child('uid').isString() && newData.child('nick').isString() && newData.child('nick').val().length >= 1 && newData.child('nick').val().length <= 12 && newData.child('text').isString() && newData.child('text').val().length >= 1 && newData.child('text').val().length <= 120 && newData.child('ts').isNumber() && newData.child('ts').val() <= now && (!newData.child('host').exists() || (newData.child('host').val() === true && root.child('hosts').child(auth.uid).child('code').val() === 'CHANGE_ME_HOST_CODE')) && (!newData.child('side').exists() || newData.child('side').val() === 'b' || newData.child('side').val() === 'r')",
           "$o": {
-            ".validate": "$o.matches(/^(uid|nick|text|ts|host)$/)"
+            ".validate": "$o.matches(/^(uid|nick|text|ts|host|side)$/)"
           }
         }
+      }
+    },
+    "arena": {
+      ".read": "auth != null",
+      "topic": {
+        ".write": "auth != null && root.child('hosts').child(auth.uid).child('code').val() === 'CHANGE_ME_HOST_CODE'",
+        ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 30"
+      },
+      "$o": {
+        ".validate": "false"
       }
     },
     "visits": {
