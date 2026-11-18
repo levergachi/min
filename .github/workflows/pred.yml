@@ -1,0 +1,21 @@
+name: 오늘의 예측 정산
+on:
+  schedule:
+    - cron: '35 21 * * 1-5'   # 미국장 마감 뒤 (서머타임 기준 17:35 ET)
+    - cron: '35 22 * * 1-5'   # 표준시 기준 17:35 ET
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  settle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install yfinance requests
+      - run: python tools/pred_settle.py
+        env:
+          HOST_CODE: ${{ secrets.HOST_CODE }}
