@@ -13,9 +13,9 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--
 body.gloom #gl{filter:saturate(.6) brightness(1.08) contrast(1.02)}
 body.party #gl{filter:saturate(1.2) brightness(1.06)}
 .hpw{display:flex;align-items:center;gap:6px;margin:4px 0 2px;font-size:11.5px;font-weight:800;color:#c9ffd9}.hpbar{flex:1;height:7px;background:#2a1418;border-radius:4px;overflow:hidden;min-width:60px}.hpbar i{display:block;height:100%;width:100%;background:#3fdc7a;transition:width .25s}
-#wbBar{position:fixed;left:50%;top:84px;transform:translateX(-50%);width:min(520px,70vw);background:rgba(20,4,8,.86);border:1px solid #ff3b4a;border-radius:12px;padding:7px 12px;z-index:6;display:none;text-align:center;color:#ffe2e6;font-weight:800;font-size:13px;box-shadow:0 0 24px rgba(255,40,60,.45);pointer-events:none}#wbBar.on{display:block}.hb.hot2{border-color:#ffb020;color:#ffd76a;box-shadow:0 0 10px rgba(255,176,32,.35)}#zoneT{position:fixed;left:50%;top:26%;transform:translate(-50%,-50%) scale(.9);z-index:6;pointer-events:none;text-align:center;opacity:0;transition:opacity .5s,transform .5s;text-shadow:0 2px 12px #000,0 0 24px rgba(0,0,0,.8)}#zoneT.on{opacity:1;transform:translate(-50%,-50%) scale(1)}#zoneT b{display:block;font-size:30px;font-weight:900;color:#fff3c4}#zoneT span{display:block;font-size:14px;font-weight:800;color:#cfe3ff;margin-top:4px}.gtabs{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}.gtabs button{flex:1 1 auto;padding:7px 8px;border-radius:9px;border:1px solid var(--line);background:#0f1624;color:var(--mute);font-weight:800;font-size:12.5px;cursor:pointer;font-family:inherit}.gtabs button.on{color:#ffd76a;border-color:#ffb020;background:#2a1d06}.gbody{font-size:13.5px;line-height:1.65}.gbody h4{margin:10px 0 4px;color:#ffd76a;font-size:14px}.gbody ul{margin:4px 0 8px;padding-left:18px}.gbody .kbd{display:inline-block;border:1px solid #3a4a66;border-bottom-width:2px;border-radius:5px;padding:0 6px;font-size:12px;font-weight:900;background:#141d2e;margin:0 2px}.gplaces{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}.gplaces button{text-align:left;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:#0f1624;color:var(--ink);cursor:pointer;font-family:inherit}.gplaces b{display:block;font-size:13.5px}.gplaces span{font-size:11.5px;color:var(--mute)}.gset{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}.gset button{min-width:76px}.npcq{background:#101a2c;border-radius:12px;padding:10px 12px;margin:6px 0;font-size:14px;line-height:1.55}.npcq b{color:#ffd76a}.att7{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin:10px 0}.att7 div{border:1px solid var(--line);border-radius:10px;padding:8px 2px;text-align:center;font-size:11px;font-weight:800;color:var(--mute);background:#0f1624}.att7 div.ok{border-color:#2fe07a;color:#2fe07a;background:#0c2416}.att7 div.today{box-shadow:0 0 12px rgba(47,224,122,.5)}.att7 div i{display:block;font-style:normal;font-size:20px;margin-bottom:2px}.sea{width:100%;border-collapse:collapse;font-size:13.5px}.sea td{padding:6px 4px;border-bottom:1px solid var(--line)}.sea tr.me td{color:#ffd76a;font-weight:900}.sea td:last-child{text-align:right;font-family:var(--mono,monospace)}body.photo #ui,body.photo #miniMap,body.photo #wbBar,body.photo #labels,body.photo .lvx-pill,body.photo .sigBan,body.photo #toast,body.photo .toast{display:none!important}#photoBar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:20;display:none;gap:8px}body.photo #photoBar{display:flex}#photoBar button{padding:9px 14px;border-radius:999px;border:1px solid #ffb020;background:rgba(20,14,4,.88);color:#ffd76a;font-weight:900;font-family:inherit;cursor:pointer}body.calm #flash{display:none!important}body:has(header.mopen) #wbBar,body:has(header.mopen) #zoneT{display:none!important}#wbGo{pointer-events:auto;position:absolute;right:8px;top:6px;border:1px solid #ffb020;background:#3a1606;color:#ffd76a;border-radius:8px;font-weight:900;font-size:11.5px;padding:3px 8px;cursor:pointer;font-family:inherit}.wbhp{height:10px;background:#3a0d14;border-radius:6px;overflow:hidden;margin:5px 0}.wbhp i{display:block;height:100%;background:linear-gradient(90deg,#ff2a3a,#ffb020);width:100%;transition:width .3s}#wbTxt,#wbTop{font-size:11px;color:#ffc9cf;font-weight:700}
+#tapeNote{position:absolute;left:0;right:0;top:0;height:30px;line-height:30px;background:linear-gradient(90deg,#1a0508,#3a0a12 50%,#1a0508);color:#ffe2e6;font-weight:800;font-size:13px;text-align:center;opacity:0;transform:translateY(-100%);transition:opacity .25s,transform .25s;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 10px;border-bottom:1px solid #ff3b4a}#tapeNote.on{opacity:1;transform:none}#tapeNote.go{pointer-events:auto;cursor:pointer}#rFade{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:60;transition:opacity .35s}#rFade.on{opacity:1;pointer-events:auto}#tapeNote.gauge{opacity:1;transform:none;color:#fff;text-shadow:0 1px 3px #000;background:linear-gradient(90deg,var(--gc,#e8590c) var(--hp,0%),#1a0f08 var(--hp,0%));border-bottom-color:#ffb020}#tapeNote.tip{background:linear-gradient(90deg,#062014,#0f4a2c 50%,#062014);color:#d6ffe6;border-bottom-color:#2fe07a}#tapeNote.wx{background:linear-gradient(90deg,#08142c,#12306a 50%,#08142c);color:#dbe8ff;border-bottom-color:#5d8bff}#tapeNote.wx.party{background:linear-gradient(90deg,#2a0a1e,#701a50 50%,#2a0a1e);color:#ffe0f2;border-bottom-color:#ff6fd0}#wbName,#wbGo,#wbTop{display:none!important}#wbBar{position:fixed;left:50%;top:36px;transform:translateX(-50%);width:min(300px,86vw);background:rgba(20,4,8,.86);border:1px solid #ff3b4a;border-radius:10px;padding:3px 10px;z-index:6;display:none;text-align:center;color:#ffe2e6;font-weight:800;font-size:11.5px;box-shadow:0 0 14px rgba(255,40,60,.4);pointer-events:none}#wbBar{display:none!important}#tapeNote.raid{opacity:1;transform:none;background:linear-gradient(90deg,#b3162a var(--hp,100%),#2a0a12 var(--hp,100%));text-shadow:0 1px 3px #000}.hb.hot2{border-color:#ffb020;color:#ffd76a;box-shadow:0 0 10px rgba(255,176,32,.35)}#zoneT{position:fixed;left:50%;top:26%;transform:translate(-50%,-50%) scale(.9);z-index:6;pointer-events:none;text-align:center;opacity:0;transition:opacity .5s,transform .5s;text-shadow:0 2px 12px #000,0 0 24px rgba(0,0,0,.8)}#zoneT.on{opacity:1;transform:translate(-50%,-50%) scale(1)}#zoneT b{display:block;font-size:30px;font-weight:900;color:#fff3c4}#zoneT span{display:block;font-size:14px;font-weight:800;color:#cfe3ff;margin-top:4px}.gtabs{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}.gtabs button{flex:1 1 auto;padding:7px 8px;border-radius:9px;border:1px solid var(--line);background:#0f1624;color:var(--mute);font-weight:800;font-size:12.5px;cursor:pointer;font-family:inherit}.gtabs button.on{color:#ffd76a;border-color:#ffb020;background:#2a1d06}.gbody{font-size:13.5px;line-height:1.65}.gbody h4{margin:10px 0 4px;color:#ffd76a;font-size:14px}.gbody ul{margin:4px 0 8px;padding-left:18px}.gbody .kbd{display:inline-block;border:1px solid #3a4a66;border-bottom-width:2px;border-radius:5px;padding:0 6px;font-size:12px;font-weight:900;background:#141d2e;margin:0 2px}.gplaces{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}.gplaces button{text-align:left;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:#0f1624;color:var(--ink);cursor:pointer;font-family:inherit}.gplaces b{display:block;font-size:13.5px}.gplaces span{font-size:11.5px;color:var(--mute)}.gset{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}.gset button{min-width:76px}.npcq{background:#101a2c;border-radius:12px;padding:10px 12px;margin:6px 0;font-size:14px;line-height:1.55}.npcq b{color:#ffd76a}.att7{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin:10px 0}.att7 div{border:1px solid var(--line);border-radius:10px;padding:8px 2px;text-align:center;font-size:11px;font-weight:800;color:var(--mute);background:#0f1624}.att7 div.ok{border-color:#2fe07a;color:#2fe07a;background:#0c2416}.att7 div.today{box-shadow:0 0 12px rgba(47,224,122,.5)}.att7 div i{display:block;font-style:normal;font-size:20px;margin-bottom:2px}.sea{width:100%;border-collapse:collapse;font-size:13.5px}.sea td{padding:6px 4px;border-bottom:1px solid var(--line)}.sea tr.me td{color:#ffd76a;font-weight:900}.sea td:last-child{text-align:right;font-family:var(--mono,monospace)}body.photo #ui,body.photo #miniMap,body.photo #wbBar,body.photo #labels,body.photo .lvx-pill,body.photo .sigBan,body.photo #toast,body.photo .toast{display:none!important}#photoBar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:20;display:none;gap:8px}body.photo #photoBar{display:flex}#photoBar button{padding:9px 14px;border-radius:999px;border:1px solid #ffb020;background:rgba(20,14,4,.88);color:#ffd76a;font-weight:900;font-family:inherit;cursor:pointer}body.calm #flash{display:none!important}body:has(header.mopen) #wbBar,body:has(header.mopen) #zoneT{display:none!important}#wbGo{pointer-events:auto;position:absolute;right:8px;top:6px;border:1px solid #ffb020;background:#3a1606;color:#ffd76a;border-radius:8px;font-weight:900;font-size:11.5px;padding:3px 8px;cursor:pointer;font-family:inherit}.wbhp{height:10px;background:#3a0d14;border-radius:6px;overflow:hidden;margin:5px 0}.wbhp i{display:block;height:100%;background:linear-gradient(90deg,#ff2a3a,#ffb020);width:100%;transition:width .3s}#wbTxt,#wbTop{font-size:11px;color:#ffc9cf;font-weight:700}
 .floaty.hurt{font-size:17px;font-weight:900;color:#fff;background:#d1202f;padding:2px 8px;border-radius:6px;white-space:nowrap}.lab .hpl{width:46px;height:4px;background:#3a0d14;border-radius:3px;overflow:hidden;margin:2px auto 0;display:none}.lab .hpl i{display:block;height:100%;background:#3fdc7a}
-@media (max-width:760px){.hud .hpw{margin:0;flex:0 0 auto;font-size:10px}.hud .hpbar{width:34px;min-width:34px;flex:0 0 34px;height:5px}#wbBar{top:126px;width:92vw;font-size:11.5px;padding:5px 8px}}
+@media (max-width:760px){.hud .hpw{margin:0;flex:0 0 auto;font-size:10px}.hud .hpbar{width:34px;min-width:34px;flex:0 0 34px;height:5px}#wbBar{top:34px;width:70vw;font-size:10.5px;padding:2px 8px}}
 #skBar{position:fixed;right:334px;bottom:96px;display:flex;gap:8px;z-index:4}#skBar .skb{width:54px;height:54px;border-radius:14px;border:1px solid #ffb020;background:radial-gradient(circle at 50% 30%,#3a2a08,#120c02);color:#ffe9b0;font-size:20px;line-height:1;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 0 14px rgba(255,176,32,.35);touch-action:manipulation;font-family:inherit}#skBar .skb small{font-size:9.5px;font-weight:800;color:#ffd76a}#skBar .skb.lock{filter:grayscale(1) brightness(.6);box-shadow:none;border-color:#3a4256}#skBar .skb:active{transform:scale(.92)}
 @media (max-width:760px){#skBar{right:58px;bottom:116px;gap:5px}#skBar .skb{width:42px;height:42px;font-size:16px;border-radius:12px}#skBar .skb small{font-size:8px}}
 .updBan{position:fixed;left:50%;bottom:180px;transform:translateX(-50%);z-index:20;background:linear-gradient(90deg,#1a2a4a,#2a1a4a);border:1px solid #7fb0ff;border-radius:14px;padding:9px 12px;color:#e8f0ff;font-size:13px;box-shadow:0 10px 30px rgba(0,0,0,.5);display:flex;gap:8px;align-items:center;flex-wrap:wrap;max-width:94vw}.updBan button{border:0;border-radius:9px;padding:6px 11px;background:#ffb020;color:#1a1204;font-weight:900;cursor:pointer;font-family:inherit}.updBan button.sec{background:#2a3550;color:#e8f0ff}
@@ -216,7 +216,7 @@ input,select{font-family:inherit}
 #mkPad .mks{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}#mkPad .mks button{padding:5px 9px;border-radius:999px;border:1px solid #6b4a12;background:#2a1d08;color:#ffe2a8;font-family:inherit;font-size:12px;cursor:pointer}#mkPad .mks button.on{background:#f5a524;color:#1a1204;border-color:#f5a524}
 #mkPad .mkr{display:grid;grid-template-columns:2fr 1fr;gap:8px}#mkTap{height:84px;border-radius:50%/40%;border:0;background:radial-gradient(circle at 40% 35%,#c7843a,#6b3a12);color:#ffe2a8;font-size:28px;font-weight:900;cursor:pointer;box-shadow:inset 0 -6px 0 rgba(0,0,0,.35);touch-action:manipulation;user-select:none}#mkTap:active,#mkTap.hit{transform:scale(.94);filter:brightness(1.25)}
 #mkDrop{border-radius:14px;border:0;background:linear-gradient(135deg,#ff4fd8,#2fd0ff);color:#fff;font-weight:900;font-size:14px;cursor:pointer}
-#wxWhy{position:fixed;left:50%;top:84px;transform:translateX(-50%);z-index:4;pointer-events:none;padding:7px 14px;border-radius:999px;font-weight:800;font-size:13.5px;white-space:nowrap;display:none;box-shadow:0 4px 18px rgba(0,0,0,.4)}#wxWhy.gloom{display:block;background:rgba(30,60,120,.88);color:#dbe8ff;border:1px solid #5d8bff}#wxWhy.party{display:block;background:rgba(150,20,90,.88);color:#ffe0f2;border:1px solid #ff6fd0}
+#wxWhy{display:none!important}#wxWhy{position:fixed;left:50%;top:84px;transform:translateX(-50%);z-index:4;pointer-events:none;padding:7px 14px;border-radius:999px;font-weight:800;font-size:13.5px;white-space:nowrap;display:none;box-shadow:0 4px 18px rgba(0,0,0,.4)}#wxWhy.gloom{display:block;background:rgba(30,60,120,.88);color:#dbe8ff;border:1px solid #5d8bff}#wxWhy.party{display:block;background:rgba(150,20,90,.88);color:#ffe0f2;border:1px solid #ff6fd0}
 
 #aSk{background:linear-gradient(135deg,#ff2030,#7a0a14)!important;color:#ffe0e4!important;border-color:#ff4a5e!important;box-shadow:0 0 14px rgba(255,40,60,.6)!important}
 #sqBtn{position:fixed;left:50%;bottom:150px;transform:translateX(-50%);z-index:8;padding:14px 26px;border-radius:18px;border:0;background:linear-gradient(135deg,#2fe07a,#0b8f4a);color:#fff;font-weight:900;font-size:18px;cursor:pointer;box-shadow:0 0 30px rgba(47,224,122,.8);animation:sqP .5s ease-in-out infinite alternate}#sqBtn small{font-size:12px;font-weight:700}
@@ -243,7 +243,7 @@ input,select{font-family:inherit}
 #qbar button:active{transform:scale(.94)}
 @keyframes qpulse{50%{box-shadow:0 0 0 1px rgba(255,176,32,.6),0 0 26px rgba(255,176,32,.8)}}
 .hud .hnx{display:none}
-#wbBar{width:min(520px,calc(100vw - 520px));min-width:280px}
+#wbBar{width:min(300px,calc(100vw - 520px));min-width:220px}
 @media (max-width:820px){
   #qbar{left:auto;right:6px;top:152px;bottom:auto;flex-direction:column;gap:5px}
   #qbar button{min-width:46px;width:46px;height:46px;border-radius:12px;padding:0}#qbar button i{font-size:19px}#qbar button span{font-size:9.5px}
@@ -253,8 +253,7 @@ input,select{font-family:inherit}
   .hud .hnx{display:block!important;order:4;flex:1 1 100%;font-size:10.5px;font-weight:800;color:#ffd76a}
   #wxWhy{top:136px!important}
   .banners{top:158px!important}
-  body:has(#wbBar.on) .banners{top:226px!important}
-  #wbBar{left:6px!important;transform:none!important;top:162px!important;width:calc(100vw - 64px)!important;min-width:0!important}
+  #wbBar{left:50%!important;transform:translateX(-50%)!important;top:34px!important;width:70vw!important;min-width:0!important}
   .toast{top:176px!important}
   header.mopen .logo{order:-3}header.mopen #bMenu{order:-2}
   header.mopen #bMap,header.mopen #bRep,header.mopen #bBag,header.mopen #bSea,header.mopen #bGb,header.mopen #bAtt{order:-1;border-color:#ffb020!important;background:linear-gradient(180deg,#5a3a08,#2e1d04)!important;color:#ffe08a!important;font-weight:900!important;box-shadow:0 0 12px rgba(255,176,32,.45)}
@@ -376,12 +375,12 @@ input,select{font-family:inherit}
 </head>
 <body>
 <canvas id="gl"></canvas>
-<div id="flash"></div><canvas id="miniMap" class="pe" width="420" height="256" title="눌러서 큰 지도 · 순간이동"></canvas><div id="wbBar"><div id="wbName"></div><button type="button" id="wbGo">🚀 레이드 가기</button><div class="wbhp"><i id="wbHp"></i></div><div id="wbTxt"></div><div id="wbTop"></div></div>
+<div id="flash"></div><div id="rFade"></div><canvas id="miniMap" class="pe" width="420" height="256" title="눌러서 큰 지도 · 순간이동"></canvas><div id="wbBar"><div id="wbName"></div><button type="button" id="wbGo">🚀 레이드 가기</button><div class="wbhp"><i id="wbHp"></i></div><div id="wbTxt"></div><div id="wbTop"></div></div>
 <div id="labels"></div>
 <div id="nogl"><div><h2>이 기기에서는 3D(WebGL)를 쓸 수 없습니다</h2><p class="small">그래픽 가속이 꺼져 있거나 지원되지 않는 브라우저입니다.</p><p class="small">최신 크롬(Chrome)이나 사파리로 열거나, 브라우저를 업데이트한 뒤 다시 시도해 주세요. 설정에서 「하드웨어 가속」이 켜져 있어야 합니다.</p><p><a class="hb pri" href="index.html">원복 계산기로 가기 →</a></p></div></div>
 
 <div id="ui">
-  <div class="tape pe" aria-label="시세 테이프"><div class="run" id="tapeRun"></div></div>
+  <div class="tape pe" aria-label="시세 테이프"><div class="run" id="tapeRun"></div><div id="tapeNote" role="status" aria-live="polite"></div></div>
   <header>
     <div class="logo"><span class="mk">▲</span>원복 객장 <span style="color:var(--acc)">3D</span></div>
     <button class="pe" id="bMenu" type="button">☰ 메뉴</button>
@@ -555,7 +554,7 @@ input,select{font-family:inherit}
 setTimeout(function(){ if (window.__room3d) return; var d=document.createElement("div"); d.style.cssText="position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);z-index:99;background:#111a2b;color:#fff;border:2px solid #f5a524;border-radius:16px;padding:18px 20px;text-align:center;font:15px/1.5 sans-serif;max-width:90vw"; d.innerHTML="<b>🔄 사이트가 업데이트됐어요</b><br>예전 파일이 남아 있어 객장이 안 열렸어요.<br><button style=\"margin-top:10px;padding:10px 18px;border:0;border-radius:10px;background:#f5a524;font-weight:800;cursor:pointer\">새로고침해서 입장</button>"; d.querySelector("button").onclick=function(){ location.replace(location.pathname+"?room="+(new URLSearchParams(location.search).get("room")||"")+"&r="+Date.now()); }; document.body.appendChild(d); }, 9000);</script>
 <script type="module">
 import * as THREE from './vendor/three.module.min.js?v=169';
-import { initLive, onPrices, onMarket, live, usSession, META, MKT, histMin, reqQuote } from './live.js?v=36';
+import { initLive, onPrices, onMarket, live, usSession, META, MKT, histMin, reqQuote } from './live.js?v=37';
 
 /* ================= 공통 ================= */
 const $ = id => document.getElementById(id);
@@ -834,6 +833,7 @@ const toWold = (x, y) => ({ x: XMIN + (x / 100) * (XMAX - XMIN), z: -9 + (y / 10
 const WX0 = -235, WX1 = 22, WZ0 = -75, WZ1 = 115; // v17: 5배 넓어진 원복 월드
 const toW = (x, y) => ({ x: WX0 + (x / 100) * (WX1 - WX0), z: WZ0 + (y / 100) * (WZ1 - WZ0) });
 const toP = (X, Z) => ({ x: (X - WX0) / (WX1 - WX0) * 100, y: (Z - WZ0) / (WZ1 - WZ0) * 100 });
+let REALM = null; const HUBP = { x: -54, z: -42 }; // v37: 세계 허브
 const BOUND = { x0: -230, x1: 17.5, z0: -70, z1: 110 }; // 실제 걸을 수 있는 곳은 walkable()
 const SEATS = []; for (let r = 0; r < 4; r++) for (let c = 0; c < 6; c++) { const p = { x: 17 + c * 13.2, y: 40 + r * 15 }; SEATS.push(Object.assign(p, toWold(p.x, p.y), { ry: Math.PI })); }
 // 수다 라운지 방석(모닥불 둘레)
@@ -1113,12 +1113,12 @@ function computeWeather() {
   const parts2 = ['KORU', 'SOXL'].filter(k => isFinite(qChg(prices[k]))).map(k => k + ' ' + pct(qChg(prices[k])));
   const w = $('wx'); w.textContent = '';
   const b = el('b', null, avg == null ? '시황: 등락 데이터 없음 → 평온' : '객장 날씨: ' + WX_NAME[wxLv]);
-  { const Y = $('wxWhy'); Y.className = weather; const worst = ['KORU', 'SOXL'].map(k => [k, qChg(prices[k])]).filter(x => isFinite(x[1])).sort((a, b) => weather === 'party' ? b[1] - a[1] : a[1] - b[1]); const MOB = innerWidth <= 820; Y.textContent = weather === 'gloom' ? (MOB ? `🌧 폭락 비: ${worst.map(x => x[0] + ' ' + pct(x[1])).join(' · ')}` : `🌧 지금 비가 오는 이유: ${worst.map(x => x[0] + ' ' + pct(x[1])).join(' · ')} 폭락 중 (3배 레버리지 −10% 이하 = 우울 모드)`) : weather === 'party' ? (MOB ? `🎉 급등 파티: ${worst.map(x => x[0] + ' ' + pct(x[1])).join(' · ')}` : `🎉 파티 중인 이유: ${worst.map(x => x[0] + ' ' + pct(x[1])).join(' · ')} 급등! (+10% 이상 = 파티 모드)`) : ''; }
+  { const Y = $('wxWhy'); Y.className = weather; const _wk = weather; const worst = ['KORU', 'SOXL'].map(k => [k, qChg(prices[k])]).filter(x => isFinite(x[1])).sort((a, b) => weather === 'party' ? b[1] - a[1] : a[1] - b[1]); const MOB = innerWidth <= 820; Y.textContent = weather === 'gloom' ? (MOB ? `🌧 폭락 비: ${worst.map(x => x[0] + ' ' + pct(x[1])).join(' · ')}` : `🌧 지금 비가 오는 이유: ${worst.map(x => x[0] + ' ' + pct(x[1])).join(' · ')} 폭락 중 (3배 레버리지 −10% 이하 = 우울 모드)`) : weather === 'party' ? (MOB ? `🎉 급등 파티: ${worst.map(x => x[0] + ' ' + pct(x[1])).join(' · ')}` : `🎉 파티 중인 이유: ${worst.map(x => x[0] + ' ' + pct(x[1])).join(' · ')} 급등! (+10% 이상 = 파티 모드)`) : ''; if (typeof entered !== 'undefined' && entered && _wk !== wxNoteKey) { wxNoteKey = _wk; if (_wk === 'gloom' || _wk === 'party') tapeNote(Y.textContent.replace(/\s*\(.*?\)\s*/g, '').trim(), { ms: 3200, cls: 'wx ' + _wk }); } }
   w.append(b, el('br'), document.createTextNode((parts2.length ? parts2.join(' · ') + ' (전일 대비) · ' : '') + 'KORU·SOXL 평균 ±3% 흐림·맑음, ±9% 폭풍·축제'), el('br'), document.createTextNode(mktLine()));
 }
 function applyWeather() {
   document.body.classList.toggle('gloom', weather === 'gloom'); document.body.classList.toggle('party', weather === 'party');
-  rain.visible = clouds.visible = weather === 'gloom'; confetti.visible = weather === 'party';
+  rain.visible = clouds.visible = !REALM && weather === 'gloom'; confetti.visible = !REALM && weather === 'party';
   hemi.intensity = HEMI_BASE();
   sun.intensity = wxLv <= -2 ? 1.1 : weather === 'gloom' ? 1.6 : weather === 'party' ? 2.2 : wxLv === 1 ? 2.5 : 2.1;
   boardLight.intensity = weather === 'party' ? 70 : weather === 'gloom' ? 34 : 30;
@@ -1257,6 +1257,9 @@ function fillLabel(L, data, me) {
   });
   L.bd.style.display = any ? '' : 'none';
 }
+INTER.rz_sauna = { name: '♨ 찜질방 입장', type: 'rz', X: HUBP.x - 6, Z: HUBP.z - 4.6, h: 5.6, btn: '♨<br>입장', fn: () => realmEnter('sauna') };
+INTER.rz_star = { name: '🔭 별 관측소 (준비 중)', type: 'rz', X: HUBP.x, Z: HUBP.z - 4.2, h: 5.6, fn: () => toast('🔭 별 관측소는 곧 열려요! 먼저 ♨ 찜질방부터 들러보세요') };
+INTER.rz_dun = { name: '🏰 던전 (준비 중)', type: 'rz', X: HUBP.x + 6, Z: HUBP.z - 4.6, h: 5.6, fn: () => toast('🏰 던전은 곧 열려요! 공덕을 쌓아두세요') };
 const olabs = {}; Object.keys(INTER).forEach(k => { const d = el('div', 'olab', INTER[k].name); labels.appendChild(d); olabs[k] = d; });
 const prompt = el('div', 'prompt'); prompt.append(el('kbd', null, 'E'), document.createTextNode('상호작용')); labels.appendChild(prompt);
 const _v = new THREE.Vector3();
@@ -1278,8 +1281,8 @@ const fxLog = [];
 const cam = { yaw: 0, pitch: .45, dist: (matchMedia('(pointer:coarse)').matches ? 26 : 18), tx: 0, ty: 2, tz: 11 };
 
 function myData() {
-  const p = toP(ME.X, ME.Z);
-  return { nick: PROF.nick, color: PROF.color, seat: ME.seat, koru: Number(PROF.koru) || 0, soxl: Number(PROF.soxl) || 0, x: Math.round(p.x * 100) / 100, y: Math.round(p.y * 100) / 100, dir: Math.sin(ME.ry) < 0 ? 'l' : 'r', mv: ME.moving, pose: ME.climb ? 'climb' : ME.fishing ? 'fish' : ME.swim ? 'swim' : ME.lie ? 'lie' : ME.seat >= 0 ? 'sit' : 'stand', h: Math.round((ME.Y || 0) * 10) / 10, hp: hpPct(), ...(() => { const S = PROF && PROF.stk && (PROF.stv | 0) !== 2 ? myStock() : null; if (!S) return {}; const o = { stk: S.k, stn: S.n.slice(0, 12) }; if ((PROF.stv | 0) === 1) o.stv = 1; else if (S.pct != null) o.stp = Math.round(S.pct * 10) / 10; return o; })(), pts: G.pts, hb: PROF.hb, title: G.title, host: HOST, wp: G.eq.w || '', ht: G.eq.h || '', gr: eqStr(G.eq), en: enhL(), cs: myCs(), lk: G.look >= 0 && G.look < lvOf(G.pts) ? G.look : -1, aw: awkActive(), pet: PETS[G.pet] ? G.pet : '', car: riding() ? G.car : '' };
+  const p = REALM ? toP(ME.X - R_ORG.x + R_FRAME.x, ME.Z - R_ORG.z + R_FRAME.z) : toP(ME.X, ME.Z);
+  return { ...(REALM ? { rg: REALM.id } : {}), nick: PROF.nick, color: PROF.color, seat: ME.seat, koru: Number(PROF.koru) || 0, soxl: Number(PROF.soxl) || 0, x: Math.round(p.x * 100) / 100, y: Math.round(p.y * 100) / 100, dir: Math.sin(ME.ry) < 0 ? 'l' : 'r', mv: ME.moving, pose: ME.climb ? 'climb' : ME.fishing ? 'fish' : ME.swim ? 'swim' : ME.lie ? 'lie' : ME.seat >= 0 ? 'sit' : 'stand', h: Math.round((ME.Y || 0) * 10) / 10, hp: hpPct(), ...(() => { const S = PROF && PROF.stk && (PROF.stv | 0) !== 2 ? myStock() : null; if (!S) return {}; const o = { stk: S.k, stn: S.n.slice(0, 12) }; if ((PROF.stv | 0) === 1) o.stv = 1; else if (S.pct != null) o.stp = Math.round(S.pct * 10) / 10; return o; })(), pts: G.pts, hb: PROF.hb, title: G.title, host: HOST, wp: G.eq.w || '', ht: G.eq.h || '', gr: eqStr(G.eq), en: enhL(), cs: myCs(), lk: G.look >= 0 && G.look < lvOf(G.pts) ? G.look : -1, aw: awkActive(), pet: PETS[G.pet] ? G.pet : '', car: riding() ? G.car : '' };
 }
 let lastSync = 0, syncPending = false;
 function sync(force) { if (!room || !entered) return; const now = performance.now(); if (!force && now - lastSync < 300) { syncPending = true; return; } lastSync = now; syncPending = false; room.setMe(myData()); }
@@ -1334,7 +1337,7 @@ function tapAt(cx, cy) {
   }
   if (ray.ray.intersectPlane(floorPlane, hitP)) { ME.target = { x: clampX(hitP.x), z: clampZ(hitP.z) }; spawn(ME.target.x, .1, ME.target.z, 14, 0xf5a524, 2, 4, .5); }
 }
-const clampX = x => Math.max(BOUND.x0, Math.min(BOUND.x1, x)), clampZ = z => Math.max(BOUND.z0, Math.min(BOUND.z1, z));
+const clampX = x => REALM ? Math.max(R_ORG.x + REALM.inst.bounds.x0, Math.min(R_ORG.x + REALM.inst.bounds.x1, x)) : Math.max(BOUND.x0, Math.min(BOUND.x1, x)), clampZ = z => REALM ? Math.max(R_ORG.z + REALM.inst.bounds.z0, Math.min(R_ORG.z + REALM.inst.bounds.z1, z)) : Math.max(BOUND.z0, Math.min(BOUND.z1, z));
 let runToggle = false;
 $('aRun').onclick = () => { runToggle = !runToggle; $('aRun').classList.toggle('on', runToggle); };
 $('aJump').onclick = () => doFx('jump');
@@ -1383,7 +1386,7 @@ function useNearest() { if (!entered) return; if (pkTarget()) { pkAttack(); retu
 const cool = {};
 function cd(k, ms) { const n = performance.now(); if (cool[k] && n - cool[k] < ms) return false; cool[k] = n; return true; }
 function useInter(k) {
-  if (!entered) return; if (k === 'mob') { hitMob(nearMob); return; } if (INTER[k].type === 'fish') { useFish(); return; } if (k === 'gb') { openGb(); return; } if (INTER[k].type === 'npc') { openNpc(); return; } if (INTER[k].type === 'pkb') { openDuel(); return; } if (INTER[k].type === 'pred') { openPred(); return; } if (INTER[k].type === 'sig') { openSig(); return; } if (INTER[k].type === 'portal') { $('bMap').click(); return; }
+  if (!entered) return; if (INTER[k] && INTER[k].type === 'rz') { try { INTER[k].fn(); } catch (e) { console.warn(e); } return; } if (k === 'mob') { hitMob(nearMob); return; } if (INTER[k].type === 'fish') { useFish(); return; } if (k === 'gb') { openGb(); return; } if (INTER[k].type === 'npc') { openNpc(); return; } if (INTER[k].type === 'pkb') { openDuel(); return; } if (INTER[k].type === 'pred') { openPred(); return; } if (INTER[k].type === 'sig') { openSig(); return; } if (INTER[k].type === 'portal') { $('bMap').click(); return; }
   if (INTER[k].off) return; if (INTER[k].type === 'rope') { useRope(); return; } if (INTER[k].type === 'wboss') { wbHit(); return; }
   if (INTER[k].type) { useRpg(k); return; }
   ME.ry = Math.atan2(INTER[k].X - ME.X, (INTER[k].Z - .6) - ME.Z); if (k === 'vote') ME.ry = -Math.PI / 2;
@@ -1407,7 +1410,7 @@ function upd108() {
 // 공덕 배율: 모두 2.5배(방장 3배) · 초반(5단계 전)은 4배로 진화 맛보기 · 레이드 버프 중엔 +1배
 function ptsMul(t) { return (HOST ? 3 : 2.5) * (t < 5 ? 1.6 : 1) + (typeof BUFF !== 'undefined' && BUFF.until > Date.now() ? 1 : 0); }
 function addPts(n) {
-  const before = lvOf(G.pts), awB = awkLv(), gain = Math.round(n * ptsMul(before) * petB('pts')); const p0 = G.pts; G.pts = Math.min(PTS_MAX, G.pts + gain); G.coinF = (G.coinF || 0) + gain / 40; if (G.coinF >= 1) { const c = Math.floor(G.coinF); G.coinF -= c; G.coin = Math.min(9999999, (G.coin || 0) + c); } qProg('pts'); saveG(); const after = lvOf(G.pts); updHud();
+  const before = lvOf(G.pts), awB = awkLv(); let nearK = 1; { const nx0 = LV[before + 1] && LV[before + 1][0]; if (nx0 && n > 0 && nx0 - G.pts > 0 && nx0 - G.pts <= spanOf() * .12) { nearK = 1.3; if (nearNote !== before) { nearNote = before; setTimeout(() => { try { tapeNote(`🔥 진화 임박! 다음 단계까지 ${fmt(nx0 - G.pts, 0)} — 공덕 +30% 부스트`, { ms: 2600, cls: 'tip' }); } catch (e) {} }, 300); } } } const gain = Math.round(n * ptsMul(before) * petB('pts') * nearK); const p0 = G.pts; G.pts = Math.min(PTS_MAX, G.pts + gain); G.coinF = (G.coinF || 0) + gain / 40; if (G.coinF >= 1) { const c = Math.floor(G.coinF); G.coinF -= c; G.coin = Math.min(9999999, (G.coin || 0) + c); } qProg('pts'); saveG(); const after = lvOf(G.pts); updHud();
   { const awA = awkLv(); if (awA > awB) setTimeout(() => awkUnlock(awA), 1200); if (p0 < PTS_MAX && G.pts >= PTS_MAX) setTimeout(() => { try { coinRain(10); } catch (e) {} addLog('♾️ 공덕 1억 달성!! 「원복신」 — 더 이상 오를 곳이 없는 전설이 되었어요', true); room.sendFx('final1e8'); }, 1500); }
   if (after > before && after === 49) setTimeout(() => endingFx(49), 900);
   if (after > before && after === 99) setTimeout(() => endingFx(99), 900);
@@ -1443,6 +1446,19 @@ function updHud() {
   if (nxt) { H.append(document.createTextNode('다음 ▶ '), el('b', null, TIER_ICON[i + 1] + ' ' + LV[i + 1][1]), document.createTextNode(` 까지 ${fmt(nxt - G.pts, 0)} 공덕`)); }
   else H.textContent = awX ? `다음 ▶ ⚡ ${awX.n} 「${awX.d}」까지 ${fmt(awX.p - G.pts, 0)} 공덕 (V키·⚡버튼으로 변신)` : G.pts >= PTS_MAX ? '♾️ 원복신 — 모든 성장을 마쳤어요!' : `⚡ 각성 5단계 완성! 공덕 1억(원복신)까지 ${fmt(PTS_MAX - G.pts, 0)}`;
   updRankHud();
+}
+const tierGrow = t => Math.pow(1.065, Math.min(99, t)); // 단계가 오를수록 보상 기하급수 (99단계 ≈ 500배)
+let nearNote = -1;
+function spanOf() { const t = lvOf(G.pts), nx = LV[t + 1] ? LV[t + 1][0] : PTS_MAX; return Math.max(10, nx - LV[t][0]); }
+function growPts(base, cap) { const t = lvOf(G.pts), m = ptsMul(t) * petB('pts'), g = base * m; return Math.round(Math.max(g, Math.min(g * tierGrow(t), spanOf() * (cap || .06)))); } // 최소 기존값, 최대 한 단계의 cap 비율
+function givePts(base, cap) { const gain = growPts(base, cap); addPts(gain / (ptsMul(lvOf(G.pts)) * petB('pts'))); return gain; }
+const growCoin = base => Math.round(Math.min(9999999, base * Math.pow(1.08, Math.min(99, lvOf(G.pts)))));
+function growthOnEnter() {
+  const now = Date.now(), seen = +LS.get('lv3d_seen', 0) || 0, t = lvOf(G.pts), nx = LV[t + 1] && LV[t + 1][0]; LS.set('lv3d_seen', now);
+  if (seen && now - seen >= 3 * 3600e3) { const f = Math.min(1, (now - seen) / 864e5), gp = Math.max(30, Math.round(spanOf() * (.02 + .10 * f))); jackPts(gp); tapeNote(`🛌 푹 쉬고 왔네요! 휴식 보너스 공덕 +${fmt(gp, 0)}`, { ms: 3000, cls: 'tip' }); }
+  let st = LS.get('lv3d_tier', null); if (!st || st.t !== t) { st = { t, d: now }; LS.set('lv3d_tier', st); }
+  if (now - st.d >= 48 * 3600e3 && LS.get('lv3d_boostday', '') !== kstDate()) { LS.set('lv3d_boostday', kstDate()); BUFF.until = Math.max(BUFF.until, now + 30 * 60e3); setTimeout(() => tapeNote('🚀 같은 단계에 오래 머물렀어요! 돌파 응원: 30분간 공덕 +40% · 공격 +50%', { ms: 3600, cls: 'tip' }), 3400); try { hpUi(); } catch (e) {} }
+  if (nx) { const gp = growPts(240, .30), pc = Math.min(100, Math.round(gp / Math.max(1, nx - G.pts) * 100)); setTimeout(() => tapeNote(`🎯 ${TIER_ICON[t + 1]} ${LV[t + 1][1]}까지 ${fmt(nx - G.pts, 0)} 공덕 · 레이드 1승 ≈ ${pc}%`, { ms: 3200, cls: 'tip' }), st.d && now - st.d >= 48 * 3600e3 ? 7200 : 3600); }
 }
 const FX_PTS = { bow: [4, 700], water: [3, 700], jump: [1, 4000], cheer: [2, 1500], fire: [2, 1500], ring: [2, 2000], rocket: [2, 1500] };
 function doFx(kind) {
@@ -1649,7 +1665,7 @@ function onFxCb0(fx) {
 
 /* ================= 피어 ================= */
 function seatOrPos(d) {
-  if (isFinite(Number(d.x)) && isFinite(Number(d.y)) && d.x != null && d.y != null) return toW(Number(d.x), Number(d.y));
+  if (isFinite(Number(d.x)) && isFinite(Number(d.y)) && d.x != null && d.y != null) { const w = toW(Number(d.x), Number(d.y)); return d.rg && REALM ? { x: w.x - R_FRAME.x + R_ORG.x, z: w.z - R_FRAME.z + R_ORG.z } : w; }
   if (d.seat >= 0 && SEATS[d.seat % SEATS.length]) { const s = SEATS[d.seat % SEATS.length]; return { x: s.x, z: s.z }; }
   return toW(50, 92);
 }
@@ -1660,6 +1676,7 @@ function onPeersCb(arr) {
   const seen = new Set();
   arr.forEach(d => {
     if (d.you || d.uid === live.uid) { if (myLabel) fillLabel(myLabel, myData(), true); return; }
+    if ((d.rg || '') !== (REALM ? REALM.id : '')) return; // 다른 세계에 있는 개미는 안 보임
     seen.add(d.uid); let r = remotes.get(d.uid); const w = seatOrPos(d);
     if (!r) { r = { ant: null, L: null, cur: { x: w.x, z: w.z }, tgt: { x: w.x, z: w.z }, data: d, lastMv: 0, ry: Math.PI, sit: false, moving: false, rank: 999, col: new THREE.Color() }; remotes.set(d.uid, r); lodDirty = true; }
     r.data = d; r.tgt = w; r.sit = d.seat >= 0 && !d.mv; r.lie = d.pose === 'lie' && !d.mv; r.tgtY = Math.max(0, Math.min(30, Number(d.h) || 0)); r.swim = d.pose === 'swim'; if (r.ant) { r.ant.climb = d.pose === 'climb'; r.ant.swim = r.swim; r.ant.fishing = d.pose === 'fish'; } r.col.set(/^#[0-9a-fA-F]{6}$/.test(d.color || '') ? d.color : COLORS[0]);
@@ -2098,6 +2115,13 @@ $('fGo').onclick = async () => {
 
 /* ================= 시세 ================= */
 const MK = { q: {}, h: {} };
+let tnQ = [], tnBusy = 0, wxNoteKey = null;
+let wbNear = false;
+function tapeRaid() { const N = $('tapeNote'); if (!N) return; if (!WB || WB.dead || !wbNear) { if (N.classList.contains('raid') && !tnBusy) N.className = ''; return; } if (tnBusy) return; const hp = Math.max(0, WB.max - WB.hits), left = Math.max(0, Math.ceil((WB.start + WB_ACT - Date.now()) / 1000)); N.className = 'raid'; N.style.setProperty('--hp', (hp / WB.max * 100) + '%'); N.textContent = `👹 ${WB.K.name.replace(/!/g, '')} · HP ${Math.round(hp / WB.max * 100)}% · ⏱ ${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')} · 내 기여 ${WB.mine}`; }
+function tapeNote(text, o) { o = o || {}; tnQ.push({ text, ms: o.ms || 2500, cls: o.cls || '', go: o.go || null }); if (tnQ.length > 3) tnQ.splice(0, tnQ.length - 3); if (!tnBusy) tnNext(); }
+function tnNext() { const N = $('tapeNote'); if (!N) return; const x = tnQ.shift(); if (!x) { tnBusy = 0; return; } tnBusy = 1;
+  N.textContent = x.text; N.className = 'on ' + x.cls + (x.go ? ' go' : ''); N.onclick = x.go ? () => { N.className = ''; x.go(); } : null;
+  setTimeout(() => { N.className = ''; setTimeout(tnNext, 300); }, x.ms); }
 function renderTape() {
   const R = $('tapeRun'); R.textContent = '';
   const mk = () => { const f = document.createDocumentFragment(); KEYS.forEach(k => { const q = prices[k], ch = qChg(q); const s = el('span', 'it'); s.append(el('b', null, qLabel(k, q)), document.createTextNode(qVal(k, q) + (q ? ' · ' + (SRC[q.src] || q.src) : ''))); if (isFinite(ch)) s.append(document.createTextNode(' '), el('span', ch >= 0 ? 'up' : 'down', (ch >= 0 ? '▲' : '▼') + pct(ch, 2))); f.appendChild(s); }); return f; };
@@ -3185,8 +3209,8 @@ function openEnh() { renderEnh(); $('enhRes').textContent = '두드려 보세요
 const QPOOL = { mob: ['👾 몬스터 10마리 처치', 10], mok: ['🪘 목탁 40번', 40], raid: ['🌋 레이드 보스 5번 때리기', 5], pts: ['🙏 공덕 활동 30번 (기도·절·사냥 등)', 30], chat: ['💬 채팅 3번', 3], emo: ['😀 이모티콘·몸짓 8번', 8], enh: ['🔨 강화 1번 시도', 1], fish: ['🎣 물고기 1마리', 1] };
 const Q_REW = 200, Q_ALL = 500;
 function qToday() { const d = kstDate(); if (!G.q || G.q.d !== d) { const keys = Object.keys(QPOOL); let h = 0; for (const c of d) h = (Math.imul(h, 31) + c.charCodeAt(0)) >>> 0; const pick = []; for (let g = 0; pick.length < 3 && g < 200; g++) { h = (Math.imul(h, 1103515245) + 12345) >>> 0; const k = keys[(h >>> 16) % keys.length]; if (!pick.includes(k)) pick.push(k); } keys.forEach(k => { if (pick.length < 3 && !pick.includes(k)) pick.push(k); }); G.q = { d, ids: pick, p: {}, done: {}, all: false }; } return G.q; }
-function qProg(k, n) { try { const Q = qToday(); if (!Q.ids.includes(k) || Q.done[k]) return; Q.p[k] = (Q.p[k] | 0) + (n || 1); if (Q.p[k] >= QPOOL[k][1]) { Q.done[k] = true; addCoin(Q_REW); toast(`📜 임무 완료! ${QPOOL[k][0]} → 🪙 +${Q_REW}`); setTimeout(() => jackpot('quest', 2), 1200); try { SND.level(); } catch (e) {}
-  if (!Q.all && Q.ids.every(x => Q.done[x])) { Q.all = true; setTimeout(() => { addCoin(Q_ALL); dropItem(2); toast(`🎉 오늘의 임무 3개 모두 완료! 🪙 +${Q_ALL} + 희귀 장비`); setTimeout(() => jackpot('questall', 5), 2400); }, 1500); } }
+function qProg(k, n) { try { const Q = qToday(); if (!Q.ids.includes(k) || Q.done[k]) return; Q.p[k] = (Q.p[k] | 0) + (n || 1); if (Q.p[k] >= QPOOL[k][1]) { Q.done[k] = true; const qr = growCoin(Q_REW); addCoin(qr); toast(`📜 임무 완료! ${QPOOL[k][0]} → 🪙 +${fmt(qr, 0)}`); setTimeout(() => jackpot('quest', 2), 1200); try { SND.level(); } catch (e) {}
+  if (!Q.all && Q.ids.every(x => Q.done[x])) { Q.all = true; setTimeout(() => { const qa = growCoin(Q_ALL); addCoin(qa); dropItem(2); toast(`🎉 오늘의 임무 3개 모두 완료! 🪙 +${fmt(qa, 0)} + 희귀 장비`); setTimeout(() => jackpot('questall', 5), 2400); }, 1500); } }
   saveG(); qDot(); } catch (e) {} }
 function qDot() { const Q = qToday(), d = $('shopDot'); if (d) d.style.display = Q.ids.some(x => !Q.done[x]) ? 'block' : 'none'; }
 const SHOP = [
@@ -3679,15 +3703,15 @@ function wbStart(info) {
   WB = Object.assign(info, { K, b, L, hits: 0, max: Math.round((400 + sumAtk * 55) * (K.hp || 1)), mult: info.mult || 1, mine: 0, contrib: {}, dead: 0, lastTick: -1, grow: 0, shake: 0 });
   INTER.wb.off = false; INTER.wb.name = K.name.replace(/[!]/g, ''); olabs.wb.textContent = '👹 ' + INTER.wb.name; olabs.wb.style.display = '';
   if (wbUnsub) { try { wbUnsub(); } catch (e) {} } let first = true; wbUnsub = room.onCounter(info.key, n2 => { if (!WB || WB.key !== info.key) return; WB.hits = n2; wbUi(); if (!WB.dead && n2 >= WB.max) { if (first) { wbDone.add(info.key); wbEnd(); } else wbWin(); } first = false; });
-  $('wbBar').classList.add('on'); toast(`🌋 시장 재난! ${K.name} — 위 빨간 바의 [🚀 레이드 가기]로 바로 이동!`); addLog(`🌋 시장 재난 레이드: ${K.name} 야외 🌋 레이드 광장에 나타났다! 지도·포털로 이동해서 다 같이 막자!`, true);
+  $('wbBar').classList.add('on'); tapeNote(`🌋 시장 재난! ${K.name.replace(/!/g, '')} — 눌러서 레이드 광장으로`, { ms: 2800, go: () => tpTo(RAIDP.x, RAIDP.z - 14, '🌋 레이드 광장') }); addLog(`🌋 시장 재난 레이드: ${K.name} 야외 🌋 레이드 광장에 나타났다! 지도·포털로 이동해서 다 같이 막자!`, true);
   const nearWb = Math.hypot(ME.X - WB_POS.x, ME.Z - WB_POS.z) < 60; if (nearWb) { try { SND.ko(); } catch (e) {} quake(.8, 1.4); const F = $('flash'); F.style.background = '#ff1a2a'; F.style.opacity = '.4'; setTimeout(() => { F.style.opacity = '0'; F.style.background = ''; }, 260); } else { try { SND.bell(); } catch (e) {} }
   wbUi();
 }
 function wbEnd(msg) {
-  if (!WB) return; const W = WB; WB = null; wbDone.add(W.key); for (let i = ZONES.length - 1; i >= 0; i--) if (ZONES[i].wb) killZone(i); INTER.wb.off = true; olabs.wb.style.display = 'none'; $('wbBar').classList.remove('on');
+  if (!WB) return; const W = WB; WB = null; wbDone.add(W.key); for (let i = ZONES.length - 1; i >= 0; i--) if (ZONES[i].wb) killZone(i); INTER.wb.off = true; olabs.wb.style.display = 'none'; $('wbBar').classList.remove('on'); wbNear = false; tapeRaid();
   if (wbUnsub) { try { wbUnsub(); } catch (e) {} wbUnsub = null; }
   const t0 = performance.now(); const sink = () => { const u = (performance.now() - t0) / 1200; if (u >= 1) { scene.remove(W.b.g); dropLight(W.L); W.b.fl.forEach(m => m.dispose()); return; } W.b.g.position.y = -u * 6; W.b.g.rotation.y += .2; requestAnimationFrame(sink); }; sink();
-  if (msg) { toast(msg); addLog(msg, true); }
+  if (msg) { tapeNote(msg.replace(/\(.*?\)/g, '').trim(), { ms: 2500 }); addLog(msg, true); }
 }
 function wbWin() {
   WB.dead = 1; const W = WB, P = W.b.g.position; wbDone.add(W.key); ZONES.forEach(z => z.hit = 1); try { SND.ko(); SND.firework(); } catch (e) {}
@@ -3696,7 +3720,7 @@ function wbWin() {
   const top = Object.entries(W.contrib).sort((a, b) => b[1] - a[1]); const mvp = top[0] && top[0][0];
   addLog(`🏆 ${W.K.name.replace('!', '')} 격파!! MVP: ${mvp ? nickOf(mvp) : '?'} 👏 참여한 개미 모두 보상!`, true);
   if (W.mine > 0) {
-    const bonus = Math.round((80 + Math.min(400, Math.round(W.mine / Math.max(1, W.max) * 900))) * (W.mult || 1)); addPts(bonus); dropItem(1); addCoin(Math.round(50 * (W.mult || 1)), '레이드 보상'); setTimeout(() => floatAt(myAnt, `🏆 레이드 보상 +${bonus}`, 'big'), 600);
+    const bonus = Math.round((80 + Math.min(400, Math.round(W.mine / Math.max(1, W.max) * 900))) * (W.mult || 1)); const gp = givePts(bonus, .30), tq = lvOf(G.pts); dropItem(1 + (tq >= 30 ? 1 : 0) + (tq >= 60 ? 1 : 0)); addCoin(growCoin(50 * (W.mult || 1)), '레이드 보상'); setTimeout(() => floatAt(myAnt, `🏆 레이드 보상 +${fmt(gp, 0)}`, 'big'), 600);
     if (mvp === live.uid) { dropItem(2); G.title = '레이드 MVP'; saveG(); setTimeout(() => toast('👑 레이드 MVP! 영웅급 이상 장비 + 칭호 [레이드 MVP]'), 1800); }
     else toast(`🏆 레이드 성공! 내 기여 ${W.mine} → 공덕 +${Math.round(bonus * ptsMul(lvOf(G.pts)))} + 장비`);
   } else toast('🏆 레이드 성공! (때리지 않아서 보상은 없어요 — 다음엔 같이 때려요!)');
@@ -3707,14 +3731,14 @@ function wbUi() {
   if (!WB) return; const hp = Math.max(0, WB.max - WB.hits), left = Math.max(0, Math.ceil((WB.start + WB_ACT - Date.now()) / 1000));
   const ph = wbPhase(); $('wbName').textContent = WB.K.name + (ph > 1 ? ` · ${ph}페이즈${ph === 3 ? ' 🔥분노' : ''}` : '') + (WB.mult > 1 ? ` · ${WB.ev || '이벤트'} 보상×${WB.mult}` : '');
   $('wbHp').style.width = (hp / WB.max * 100) + '%'; $('wbTxt').textContent = `HP ${fK(hp)}/${fK(WB.max)} · ⏱ ${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')} · 내 기여 ${WB.mine}`;
-  const top = Object.entries(WB.contrib).sort((a, b) => b[1] - a[1]).slice(0, 3); $('wbTop').textContent = top.length ? '🏅 ' + top.map(([u, n], i) => `${i + 1}. ${nickOf(u)} ${n}`).join('  ') : '먼저 때리는 개미가 MVP 후보!';
+  tapeRaid(); const top = Object.entries(WB.contrib).sort((a, b) => b[1] - a[1]).slice(0, 3); $('wbTop').textContent = top.length ? '🏅 ' + top.map(([u, n], i) => `${i + 1}. ${nickOf(u)} ${n}`).join('  ') : '먼저 때리는 개미가 MVP 후보!';
 }
 const wbPhase = () => !WB ? 1 : WB.hits >= WB.max * .66 ? 3 : WB.hits >= WB.max * .33 ? 2 : 1;
 function tickWb(dt) {
   const info = wbNow();
   if (info && !wbDone.has(info.key) && (!WB || WB.key !== info.key)) { if (WB) wbEnd(); if (entered) wbStart(info); }
   else if (!info && WB) { if (!WB.dead) wbEnd('⏱ 시간 초과… 재난 보스가 떠났어요. 다음엔 꼭 막아요! (8분마다 등장)'); }
-  if (!WB) return; const B = WB.b; WB.grow = Math.min(1, WB.grow + dt * .8); B.g.scale.setScalar(2.4 * (1 - Math.pow(1 - WB.grow, 3)) + .01);
+  if (!WB) return; wbNear = Math.hypot(ME.X - WB_POS.x, ME.Z - WB_POS.z) < 45; const B = WB.b; WB.grow = Math.min(1, WB.grow + dt * .8); B.g.scale.setScalar(2.4 * (1 - Math.pow(1 - WB.grow, 3)) + .01);
   B.g.rotation.y = Math.atan2(ME.X - WB_POS.x, ME.Z - WB_POS.z) * .6; WB.L.intensity = 20 + Math.sin(performance.now() / 120) * 10;
   if (WB.shake > 0) { WB.shake -= dt; B.body.position.x = Math.sin(performance.now() / 11) * .3 * (WB.shake / .35); } else B.body.position.x = 0;
   if (WB.dead) return;
@@ -3806,7 +3830,7 @@ function blockedAt(x, z, y) { return platAt(x, z, .25).some(p => p.h > y + .45 &
   const s1 = signPlane('📈 양봉 계단 점프 ↑ 옥상까지!', 7, .9, '#ffe2e6', '#ff3b4a'); s1.position.set(15.6, 2.7, -7); s1.rotation.y = 0; scene.add(s1);
 }
 let roofDay = '';
-function onRoof() { if (roofDay === kstDate() || LS.get('lv3d_roof', '') === kstDate()) return; roofDay = kstDate(); LS.set('lv3d_roof', roofDay); addPts(30); toast('🏢 원복 빌딩 옥상 도착! 오늘의 등반 보너스 공덕 +30'); room.sendFx('roof'); dropItem(0); }
+function onRoof() { if (roofDay === kstDate() || LS.get('lv3d_roof', '') === kstDate()) return; roofDay = kstDate(); LS.set('lv3d_roof', roofDay); const gp = givePts(30, .04); toast(`🏢 원복 빌딩 옥상 도착! 오늘의 등반 보너스 공덕 +${fmt(gp, 0)}`); room.sendFx('roof'); dropItem(0); }
 // 위아래·점프·밧줄 물리 (updatePlayer 에서 호출)
 function physStep(dt, mx, mz, spd, iz) {
   ME.Y = ME.Y || 0; ME.vy = ME.vy || 0;
@@ -3938,6 +3962,7 @@ function tickSky(dt, t) {
 const WALK = [{ x0: -17.5, x1: 17.5, z0: -8, z1: 65 }, { x0: -28, x1: -17, z0: 24.6, z1: 31.4 }, { x0: -230, x1: -27.5, z0: -70, z1: 110 }];
 // 야외 구역 (지도·구역 이름 표시)
 const ZONESW = [
+  { n: '🌐 세계 포털', sub: '다른 세계로 가는 문 · ♨ 찜질방 오픈', cx: HUBP.x, cz: HUBP.z, r: 13, col: 'rgba(80,200,255,.35)' },
   { n: '⚔ PK 대경기장', sub: '안에서는 개미끼리 싸울 수 있어요! · 1:1 결투도 여기서 · 기둥 뒤로 숨어 보세요', cx: -46, cz: 58, r: 15, col: 'rgba(255,40,60,.55)' },
   { n: '🌀 포털 광장', sub: '어디든 순간이동', x0: -13, x1: -4, z0: 22.5, z1: 31.5 },
   { n: '☁ 천국 라운지', sub: '소통 전용 · 벤치에 앉아 수다 떨기 · 조용한 곳', cx: 10, cz: 23, r: 9.2 },
@@ -3953,7 +3978,7 @@ const ZONESW = [
   { n: '🛤 큰길', sub: '서쪽으로 갈수록 강한 몬스터', x0: -230, x1: -27.5, z0: -70, z1: 110 }
 ];
 function zoneAt(x, z) { for (const Z of ZONESW) { if (Z.r ? Math.hypot(x - Z.cx, z - Z.cz) < Z.r : (x >= Z.x0 && x <= Z.x1 && z >= Z.z0 && z <= Z.z1)) return Z; } return null; }
-function walkable(x, z) { for (const r of WALK) if (x >= r.x0 && x <= r.x1 && z >= r.z0 && z <= r.z1) return true; return false; }
+function walkable(x, z) { if (REALM) return REALM.inst.walk(x - R_ORG.x, z - R_ORG.z); for (const r of WALK) if (x >= r.x0 && x <= r.x1 && z >= r.z0 && z <= r.z1) return true; return false; }
 const LAKE = { x: -66, z: 4, rx: 10.5, rz: 12 }, PIER = { x0: -62.5, x1: -55, z0: 2.9, z1: 5.1 };
 const inLake = (x, z) => ((x - LAKE.x) / LAKE.rx) ** 2 + ((z - LAKE.z) / LAKE.rz) ** 2 < 1;
 const onPier = (x, z) => x >= PIER.x0 && x <= PIER.x1 && z >= PIER.z0 && z <= PIER.z1;
@@ -3978,7 +4003,7 @@ const inHeaven = (x, z) => Math.hypot(x - HEAVEN.x, z - HEAVEN.z) < HEAVEN.r;
   [[-128.75, -70.5, 203, 0], [-128.75, 110.5, 203, 0], [-230.5, 20, 181, 1], [-27.2, -41, 58, 1], [-27.2, 77.5, 65, 1]].forEach(([x, z, L, rot]) => scene.add(mesh(GEO.box, fenceM, rot ? [.3, 1.2, L] : [L, 1.2, .3], [x, .6, z])));
   // 나무·바위 (인스턴스로 가볍게)
   const R = sRng(777), spots = [];
-  const treeBad = (x, z) => Math.abs(z - 28) < 4.5 || (Math.abs(x + 55) < 3 && z > 28 && z < 82) || (Math.abs(x + 120) < 3 && z > 28) || (Math.abs(x + 188) < 3 && z > 28) || (Math.abs(x + 118) < 3 && z < 28) || (Math.abs(x + 190) < 3 && z < 28) || (Math.abs(x - ARENA.x) < 19 && Math.abs(z - ARENA.z) < 19) || Math.hypot(x - RAIDP.x, z - RAIDP.z) < 25 || (Math.abs(x - CAMP.x) < 14 && Math.abs(z - CAMP.z) < 10) || (x > -36 && z > 20 && z < 36) || Math.hypot(x + 46, z - 58) < 19;
+  const treeBad = (x, z) => Math.hypot(x - HUBP.x, z - HUBP.z) < 16 || Math.abs(z - 28) < 4.5 || (Math.abs(x + 55) < 3 && z > 28 && z < 82) || (Math.abs(x + 120) < 3 && z > 28) || (Math.abs(x + 188) < 3 && z > 28) || (Math.abs(x + 118) < 3 && z < 28) || (Math.abs(x + 190) < 3 && z < 28) || (Math.abs(x - ARENA.x) < 19 && Math.abs(z - ARENA.z) < 19) || Math.hypot(x - RAIDP.x, z - RAIDP.z) < 25 || (Math.abs(x - CAMP.x) < 14 && Math.abs(z - CAMP.z) < 10) || (x > -36 && z > 20 && z < 36) || Math.hypot(x + 46, z - 58) < 19;
   for (let i = 0; i < 3000 && spots.length < 190; i++) { const x = -227 + R() * 197, z = -67 + R() * 174; if (treeBad(x, z)) continue; if (inLake(x, z) || Math.hypot(((x - LAKE.x) / (LAKE.rx + 3)), ((z - LAKE.z) / (LAKE.rz + 3))) < 1 || Math.abs(z - 28) < 3 || (Math.abs(x + 52) < 3 && z < 28)) continue; if (spots.some(s => Math.hypot(s[0] - x, s[1] - z) < 4)) continue; if (x > -31 && z > 22 && z < 34) continue; spots.push([x, z, .8 + R() * .7]); }
   const trunk = new THREE.InstancedMesh(GEO.cyl, mat(0x4a2e1a), spots.length), leaf = new THREE.InstancedMesh(GEO.cone, mat(0x3f9a4a, { roughness: .8 }), spots.length * 2), m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3(), po = new THREE.Vector3();
   spots.forEach(([x, z, s], i) => { trunk.setMatrixAt(i, m4.compose(po.set(x, s * .9, z), q, sc.set(.28 * s, 1.8 * s, .28 * s))); leaf.setMatrixAt(i * 2, m4.compose(po.set(x, s * 2.6, z), q, sc.set(1.5 * s, 2.4 * s, 1.5 * s))); leaf.setMatrixAt(i * 2 + 1, m4.compose(po.set(x, s * 3.7, z), q, sc.set(1.05 * s, 1.8 * s, 1.05 * s))); });
@@ -4298,7 +4323,7 @@ function jackGive(t) {
   if (t === 'A') { BUFF.until = Math.min(Date.now() + 3 * 3600e3, Math.max(Date.now(), BUFF.until) + 20 * 60e3); addCoin(200, '잭팟'); return '공덕 +1배 부스터 20분 연장 + 🪙 200'; }
   if (t === 'B') { try { dropItem(5); } catch (e) {} return '전설 장비 상자가 열렸어요!'; }
   const c = jrnd(300, 800); addCoin(c, '잭팟'); return `🪙 코인 +${c}`; }
-function jackNext() { const q = JQ.shift(); if (!q) { jOpen = false; return; } jOpen = true; const T = JT[q.t], big = ['SSS', 'SS', 'S'].includes(q.t);
+function jackNext() { if (JQ.length && document.querySelector('.modal.on')) { jOpen = true; setTimeout(jackNext, 1500); return; } const q = JQ.shift(); if (!q) { jOpen = false; return; } jOpen = true; const T = JT[q.t], big = ['SSS', 'SS', 'S'].includes(q.t);
   const o = document.createElement('div'); o.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(5,8,18,.78);display:flex;align-items:center;justify-content:center;padding:20px'; const b = document.createElement('div'); b.style.cssText = `width:min(340px,100%);text-align:center;border-radius:22px;padding:26px 18px;background:#121a2e;border:3px solid ${T.c};box-shadow:0 0 40px ${T.c}88;color:#fff;font-family:inherit`;
   const ic = document.createElement('div'); ic.textContent = '🎁'; ic.style.cssText = 'font-size:84px;line-height:1.1;animation:jkS .35s infinite alternate'; const st = document.createElement('style'); st.textContent = '@keyframes jkS{from{transform:rotate(-9deg) scale(1)}to{transform:rotate(9deg) scale(1.12)}}'; b.append(st, ic); const sub = document.createElement('div'); sub.textContent = `🎰 잭팟 상자 · ${JSRC[q.src] || ''}`; sub.style.cssText = 'font-size:13px;opacity:.8;margin-top:6px'; b.appendChild(sub); o.appendChild(b); document.body.appendChild(o);
   try { SND.bell(); } catch (e) {}
@@ -4337,9 +4362,55 @@ async function gbPost() {
 }
 // ---- 🗺 미니맵 · 큰 지도 · 순간이동 ----
 const MAPB = { x0: -233, x1: 20, z0: -73, z1: 113 };
-const TPS = [['🙏 공덕 법당', 0, 9], ['🚪 야외 게이트', 13.6, -7.4], ['📖 방명록', 8.4, 0], ['☁ 천국 라운지', HEAVEN.x, HEAVEN.z + 2.5], ['🌀 포털 광장', -8.5, 23], ['📊 종목 토론 테이블', -3, 32.4], ['🏟 원형 토론장', -6, 46.2], ['🏢 원복 빌딩 계단', 15.6, -7.6], ['🌱 초보 사냥터', -32, 28], ['⚔ PK존', -46, 44.2], ['🎣 낚시터 부두', -56, 4], ['🏕 존버 캠핑장', CAMP.x, CAMP.z + 6], ['🌲 중급 숲', -100, 12], ['⚔ 보스 투기장', ARENA.x, ARENA.z - 16], ['🌋 화산지대', -165, 12], ['🌋 레이드 광장', RAIDP.x, RAIDP.z - 16], ['☠ 지옥 들판', -64, 98]];
+
+
+/* ================= 🌐 v37 세계 엔진: 허브 포털 · 입장/퇴장 · 세계 번호(rg) 동기화 ================= */
+const R_ORG = { x: -2200, z: 2200 }, R_FRAME = { x: -150, z: 20 }; // 세계의 실제 위치 · 동기화용 가짜 좌표(구버전엔 이 자리의 유령으로 보임)
+const RDEF = { sauna: { n: '♨ 찜질방' } };
+{ const g = new THREE.Group(); g.position.set(HUBP.x, 0, HUBP.z); scene.add(g);
+  g.add(mesh(GEO.cyl, FM(0x10303c, { roughness: .7 }), [12, .25, 12], [0, .12, 0]), mesh(GEO.cyl, FB(0x41c9ff), [12.4, .2, 12.4], [0, .06, 0]), mesh(GEO.cyl, FM(0x0b1d26, { roughness: .8 }), [10.2, .3, 10.2], [0, .13, 0]));
+  const sg = signPlane('🌐 세계 포털 광장', 9, 1.5, '#d6f3ff', '#2da8e8'); sg.position.set(0, 8, -8.5); g.add(sg);
+  [[-6, '♨ 찜질방', 0xffa22e, 1], [0, '🔭 별 관측소', 0x7a8aa8, 0], [6, '🏰 던전', 0x7a8aa8, 0]].forEach(([x, nm, col, on]) => {
+    const z = -6 + Math.abs(x) * .1, pm = FM(on ? 0x6b3f1d : 0x2a3140, { roughness: .6 });
+    [-1.4, 1.4].forEach(s => g.add(mesh(GEO.box, pm, [.6, 4.4, .6], [x + s, 2.2, z]))); g.add(mesh(GEO.box, pm, [3.6, .6, .7], [x, 4.6, z]));
+    const pl = mesh(new THREE.PlaneGeometry(2.2, 4), new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: on ? .75 : .28, side: THREE.DoubleSide, depthWrite: false }), null, [x, 2.2, z]); g.add(pl);
+    const t = signPlane(on ? nm : '🔒 ' + nm.replace(/^\S+\s/, ''), 4, .9, on ? '#fff3c4' : '#9aa6bd', on ? '#ffb020' : '#334'); t.position.set(x, 5.7, z + .1); g.add(t); }); }
+let RBUSY = false; const RLOAD = {}, sleep = ms => new Promise(r => setTimeout(r, ms));
+function loadRealm(id) { return RLOAD[id] || (RLOAD[id] = new Promise((res, rej) => { if (window.WB_REALMS && WB_REALMS[id]) return res(WB_REALMS[id]); const sc = document.createElement('script'); sc.src = `realm_${id}.js?v=${APP_V}`; sc.onload = () => window.WB_REALMS && WB_REALMS[id] ? res(WB_REALMS[id]) : rej(new Error('realm')); sc.onerror = () => { delete RLOAD[id]; rej(new Error('load')); }; document.head.appendChild(sc); })); }
+function realmGauge(txt, pct, col) { const N = $('tapeNote'); if (!N) return; if (txt == null) { if (N.classList.contains('gauge')) N.className = ''; return; } if (tnBusy) return; if (!N.classList.contains('gauge')) N.className = 'gauge'; N.style.setProperty('--hp', pct + '%'); N.style.setProperty('--gc', col || '#e8590c'); if (N.textContent !== txt) N.textContent = txt; }
+function disposeGroup(grp) { const shared = new Set(Object.values(GEO)); grp.traverse(o => { if (o.isMesh) { if (!shared.has(o.geometry)) o.geometry.dispose(); [].concat(o.material).forEach(m => { if (m.map) m.map.dispose(); m.dispose(); }); } }); }
+function realmView() { cam.tx = ME.X; cam.tz = ME.Z; cam.ty = 2; sync(true); try { if (peersData) onPeersCb(peersData); } catch (e) { console.warn(e); } }
+async function realmEnter(id) {
+  if (REALM || RBUSY || !entered) return; if (HPS.ko) { toast('😵 기절 중에는 못 들어가요'); return; } if (WB && !WB.dead && Math.hypot(ME.X - WB_POS.x, ME.Z - WB_POS.z) < 60) { toast('🌋 레이드 중에는 못 들어가요'); return; }
+  RBUSY = true; $('rFade').classList.add('on');
+  try {
+    const [build] = await Promise.all([loadRealm(id), sleep(380)]);
+    const group = new THREE.Group(); group.position.set(R_ORG.x, 0, R_ORG.z); scene.add(group); const keys = [];
+    const sp = (n, c) => spawn(ME.X, 1.6, ME.Z, n, c, 2, 2, .8);
+    const api = { THREE, group, GEO, mesh, M: (c, o) => new THREE.MeshStandardMaterial(Object.assign({ color: c }, o || {})), sign: signPlane,
+      addInter: (k, d) => { INTER[k] = Object.assign({ type: 'rz' }, d, { X: R_ORG.x + d.X, Z: R_ORG.z + d.Z }); const l = el('div', 'olab', d.name); labels.appendChild(l); olabs[k] = l; keys.push(k); },
+      toast, tapeNote, gauge: realmGauge, LS, kstDate, givePts, growCoin, addCoin, G, saveG, dropItem, floatMe: (t, c) => { try { floatAt(myAnt, t, c); } catch (e) {} }, hud: () => updHud(), leave: () => realmLeave(),
+      fx: { sweat: () => sp(14, 0x9ee8ff), firework: () => { try { SND.firework(); } catch (e) {} spawn(ME.X, 3, ME.Z, 60, 0xffd76a, 6, 3, 1.5, 3); } },
+      warp: (x, z) => { ME.X = R_ORG.x + x; ME.Z = R_ORG.z + z; ME.target = null; cam.tx = ME.X; cam.tz = ME.Z; sync(true); } };
+    const inst = build(api); REALM = { id, group, inst, keys, back: { x: ME.X, z: ME.Z }, cam: { d: cam.dist, p: cam.pitch } };
+    endFish(); ME.fly = false; ME.climb = false; ME.Y = 0; ME.vy = 0; ME.seat = -1; ME.lie = false; ME.target = null;
+    ME.X = R_ORG.x + inst.spawn.x; ME.Z = R_ORG.z + inst.spawn.z; ME.ry = inst.spawn.ry || 0; cam.yaw = 0; cam.pitch = 1.05; cam.dist = inst.camDist ? inst.camDist() : (TOUCH ? 30 : 24); rain.visible = clouds.visible = confetti.visible = false; realmView();
+    $('rFade').classList.remove('on'); tapeNote(`${RDEF[id].n} 입장! 나가려면 🚪 문 앞에서 [나가기]`, { ms: 2800, cls: 'tip' });
+  } catch (e) { console.warn('realm', e); toast('😥 세계를 불러오지 못했어요. 잠시 뒤 다시 시도해 주세요'); REALM = null; $('rFade').classList.remove('on'); }
+  RBUSY = false;
+}
+async function realmLeave(cb) {
+  if (!REALM || RBUSY) return; RBUSY = true; $('rFade').classList.add('on'); await sleep(380);
+  const R = REALM; REALM = null; realmGauge(null); R.keys.forEach(k => { delete INTER[k]; if (olabs[k]) { olabs[k].remove(); delete olabs[k]; } }); scene.remove(R.group); disposeGroup(R.group); try { R.inst.dispose && R.inst.dispose(); } catch (e) {}
+  ME.X = R.back.x; ME.Z = R.back.z; ME.target = null; ME.Y = 0; ME.vy = 0; cam.dist = R.cam.d; cam.pitch = R.cam.p; rain.visible = clouds.visible = weather === 'gloom'; confetti.visible = weather === 'party'; realmView();
+  $('rFade').classList.remove('on'); RBUSY = false; if (cb) setTimeout(cb, 50);
+}
+function tickRealm(dt, t) { const R = REALM; if (!R || RBUSY) return; try { R.inst.tick && R.inst.tick(dt, t, { x: ME.X - R_ORG.x, z: ME.Z - R_ORG.z }); } catch (e) { console.warn(e); } }
+
+const TPS = [['🌐 세계 포털 광장', HUBP.x, HUBP.z + 5], ['🙏 공덕 법당', 0, 9], ['🚪 야외 게이트', 13.6, -7.4], ['📖 방명록', 8.4, 0], ['☁ 천국 라운지', HEAVEN.x, HEAVEN.z + 2.5], ['🌀 포털 광장', -8.5, 23], ['📊 종목 토론 테이블', -3, 32.4], ['🏟 원형 토론장', -6, 46.2], ['🏢 원복 빌딩 계단', 15.6, -7.6], ['🌱 초보 사냥터', -32, 28], ['⚔ PK존', -46, 44.2], ['🎣 낚시터 부두', -56, 4], ['🏕 존버 캠핑장', CAMP.x, CAMP.z + 6], ['🌲 중급 숲', -100, 12], ['⚔ 보스 투기장', ARENA.x, ARENA.z - 16], ['🌋 화산지대', -165, 12], ['🌋 레이드 광장', RAIDP.x, RAIDP.z - 16], ['☠ 지옥 들판', -64, 98]];
 function drawMap(cv, big) {
   const c = cv.getContext('2d'), W = cv.width, H = cv.height;
+  if (REALM) { c.clearRect(0, 0, W, H); c.fillStyle = 'rgba(40,20,8,.88)'; c.fillRect(0, 0, W, H); c.fillStyle = '#ffd9a0'; c.font = `bold ${Math.round(H / 7)}px sans-serif`; c.textAlign = 'center'; c.fillText(RDEF[REALM.id].n + ' 안', W / 2, H / 2); return; }
   const cx0 = entered ? ME.X : cam.tx, cz0 = entered ? ME.Z : cam.tz, VW = 110, VH = VW * H / W, V = big ? MAPB : { x0: cx0 - VW / 2, x1: cx0 + VW / 2, z0: cz0 - VH / 2, z1: cz0 + VH / 2 };
   const sx = W / (V.x1 - V.x0), sz = H / (V.z1 - V.z0), s = Math.min(sx, sz), ox = (W - (V.x1 - V.x0) * s) / 2, oz = (H - (V.z1 - V.z0) * s) / 2;
   const X = x => ox + (x - V.x0) * s, Z = z => oz + (z - V.z0) * s;
@@ -4366,7 +4437,7 @@ function drawMap(cv, big) {
 }
 let mapT = 0;
 function tickMap(dt) { mapT += dt; if (mapT < .2) return; mapT = 0; drawMap($('miniMap'), false); if ($('mMap').classList.contains('on')) drawMap($('bigMap'), true); }
-function tpTo(x, z, name) { if (!entered) return; if (!cd('tp', movePerk().tpcd)) { toast(`순간이동은 ${movePerk().tpcd / 1000}초에 한 번!`); return; } endFish(); ME.fly = false; ME.climb = false; ME.Y = 0; ME.vy = 0; ME.seat = -1; ME.lie = false; ME.X = x; ME.Z = z; ME.target = null; { const yw = /투기장|레이드|들판/.test(name || '') ? Math.PI : 0; cam.yaw = yw; ME.ry = yw ? 0 : Math.PI; cam.tx = x; cam.tz = z; } sync(true); closeModals(); toast(`✨ ${name} (으)로 순간이동!`); spawn(x, 1, z, 50, 0x9ee8ff, 3, -2, 1); }
+function tpTo(x, z, name) { if (!entered) return; if (REALM) { realmLeave(() => tpTo(x, z, name)); return; } if (!cd('tp', movePerk().tpcd)) { toast(`순간이동은 ${movePerk().tpcd / 1000}초에 한 번!`); return; } endFish(); ME.fly = false; ME.climb = false; ME.Y = 0; ME.vy = 0; ME.seat = -1; ME.lie = false; ME.X = x; ME.Z = z; ME.target = null; { const yw = /투기장|레이드|들판/.test(name || '') ? Math.PI : 0; cam.yaw = yw; ME.ry = yw ? 0 : Math.PI; cam.tx = x; cam.tz = z; } sync(true); closeModals(); toast(`✨ ${name} (으)로 순간이동!`); spawn(x, 1, z, 50, 0x9ee8ff, 3, -2, 1); }
 { const VIEWS = [['기본', () => matchMedia('(pointer:coarse)').matches ? 26 : 18, .5], ['넓게', () => 40, .8], ['전체 보기', () => 62, 1.2], ['가까이', () => 11, .45]]; let vi = 0;
   $('qView').onclick = () => { vi = (vi + 1) % VIEWS.length; const V = VIEWS[vi]; cam.dist = V[1](); cam.pitch = V[2]; toast(`🔭 시야: ${V[0]} (두 손가락 / 휠로 자유 조절)`); };
   $('qMap').onclick = () => $('bMap').click(); $('qOut').onclick = () => tpTo(-32, 28, '🌱 초보 사냥터 (야외)');
@@ -4450,7 +4521,7 @@ function openNpc() {
 function attCheck() {
   const d = kstDate(); G.att = G.att || { d: '', n: 0 }; if (G.att.d === d) return false;
   const yest = kstDateOf(Date.now() - 864e5); let n = G.att.d === yest ? G.att.n + 1 : 1; if (n > 7) n = 1; G.att = { d, n }; saveG(); addCoin(n >= 7 ? 1500 : 100 + n * 40, '출석');
-  setTimeout(() => { addPts(10 + n * 5); if (n === 7) { dropItem(5); toast('🎁 7일 연속 출석! 전설 상자 오픈!!'); try { SND.firework(); } catch (e) {} } else toast(`📅 출석 ${n}일째! +공덕 (7일 연속이면 전설 상자)`); renderAtt(); if (!document.querySelector('.modal.on')) openModal('mAtt'); setTimeout(() => jackpot(n === 7 ? 'att7' : 'att', n === 7 ? 12 : 3), 1800); }, 3200);
+  setTimeout(() => { givePts(10 + n * 5, .05); if (n === 7) { dropItem(5); toast('🎁 7일 연속 출석! 전설 상자 오픈!!'); try { SND.firework(); } catch (e) {} } else toast(`📅 출석 ${n}일째! +공덕 (7일 연속이면 전설 상자)`); renderAtt(); if (!document.querySelector('.modal.on')) openModal('mAtt'); setTimeout(() => jackpot(n === 7 ? 'att7' : 'att', n === 7 ? 12 : 3), 1800); }, 3200);
   return true;
 }
 function renderAtt() { const A = G.att || { d: '', n: 0 }, today = A.d === kstDate(), g = $('attGrid'); g.textContent = ''; for (let i = 1; i <= 7; i++) { const ok = i <= A.n && (today || A.d === kstDateOf(Date.now() - 864e5)); const c = el('div', (ok ? 'ok' : '') + (today && i === A.n ? ' today' : '')); c.append(el('i', null, i === 7 ? '🎁' : ok ? '✅' : '⬜'), document.createTextNode(i + '일')); g.appendChild(c); }
@@ -4477,7 +4548,7 @@ $('phSave').onclick = () => { try { renderer.render(scene, camera); const u = re
 // ---- 🎉 상한가 축제 (KORU·SOXL +8% 이상이면 하루 한 번 코인 비) ----
 function coinRain(sec) { const t0 = performance.now(); const go = () => { if (!myAnt || performance.now() - t0 > sec * 1000) return; const P = myAnt.root.position; for (let i = 0; i < 3; i++) spawn(P.x + (Math.random() - .5) * 16, 9 + Math.random() * 3, P.z + (Math.random() - .5) * 16, 2, 0xffd76a, 1.2, 9, 1.4, 2); setTimeout(go, 90); }; go(); }
 setInterval(() => { if (!entered || LS.get('lv3d_fest', '') === kstDate()) return; const hot = ['KORU', 'SOXL'].map(k => [k, qChg(prices[k])]).filter(([, c]) => isFinite(c) && c >= .08); if (!hot.length) return;
-  LS.set('lv3d_fest', kstDate()); toast(`🎉 상한가 축제!! ${hot.map(([k, c]) => k + ' +' + (c * 100).toFixed(1) + '%').join(' · ')} — 공덕 +30`); addLog(`🎉 상한가 축제! ${hot.map(([k, c]) => k + ' +' + (c * 100).toFixed(1) + '%').join(' · ')} 코인 비가 내린다~`, true); coinRain(8); addPts(30); try { SND.firework(); } catch (e) {} }, 60000);
+  LS.set('lv3d_fest', kstDate()); toast(`🎉 상한가 축제!! ${hot.map(([k, c]) => k + ' +' + (c * 100).toFixed(1) + '%').join(' · ')} — 공덕 보너스`); addLog(`🎉 상한가 축제! ${hot.map(([k, c]) => k + ' +' + (c * 100).toFixed(1) + '%').join(' · ')} 코인 비가 내린다~`, true); coinRain(8); givePts(30, .04); try { SND.firework(); } catch (e) {} }, 60000);
 // ---- 버튼 연결 ----
 $('bGb').onclick = () => openGb(); $('bAtt').onclick = () => { renderAtt(); openModal('mAtt'); }; $('bSea').onclick = () => { renderSea(); openModal('mSea'); seaPush(true); };
 $('wbGo').onclick = () => tpTo(RAIDP.x, RAIDP.z - 14, '🌋 레이드 광장');
@@ -4848,7 +4919,7 @@ $('bFw').onclick = () => { if (!HOST || !room || !cd('fw', 4000)) return; room.s
 /* ================= 입장 ================= */
 let offerCount = 0, mokCount = 0;
 function enter() {
-  entered = true; setTimeout(() => { try { grantListen(); } catch (e) {} }, 2500);
+  entered = true; wxNoteKey = null; setTimeout(() => { try { computeWeather(); } catch (e) {} }, 1200); setTimeout(() => { try { grantListen(); } catch (e) {} }, 2500);
   myAnt = makeAnt(PROF.color, PROF.hb, myLookPts(), HOST); setGear(myAnt, G.eq); HPS.max = maxHp(lvOf(G.pts)); HPS.hp = HPS.max; HPS.ko = 0; ME.Y = 0; ME.vy = 0; ME.climb = false; scene.add(myAnt.root); myLabel = makeLabel(true);
   const sp = { x: -12 + Math.random() * 24, z: 8 + Math.random() * 5 }; ME.X = sp.x; ME.Z = sp.z; ME.ry = Math.PI; // 많은 인원이 한곳에 겹치지 않게 넓게 퍼뜨려 등장 ME.X = sp.x; ME.Z = sp.z; ME.ry = Math.PI; myAnt.root.rotation.y = Math.PI;
   cam.yaw = 0; cam.tx = ME.X; cam.tz = ME.Z;
@@ -4870,8 +4941,8 @@ function enter() {
   ac(); applyVol(); setTimeout(bgmUpdate, 600);
   setInterval(() => sync(true), 25000); // 살아 있다는 신호(유령 방지)
   addEventListener('pagehide', () => { try { room.leave(); } catch (e) {} });
-  setInterval(() => { if (entered && document.visibilityState === 'visible') addPts(3); }, 60000);
-  { const dk = 'lv3d_daily'; if (LS.get(dk, '') !== kstDate()) { LS.set(dk, kstDate()); setTimeout(() => { toast('🎁 오늘 첫 입장 보너스 +20'); addPts(20); }, 1500); } }
+  setInterval(() => { if (entered && document.visibilityState === 'visible') { addPts(3); LS.set('lv3d_seen', Date.now()); } }, 60000); setTimeout(() => { try { growthOnEnter(); } catch (e) { console.warn(e); } }, 5200); addEventListener('pagehide', () => { try { LS.set('lv3d_seen', Date.now()); } catch (e) {} });
+  { const dk = 'lv3d_daily'; if (LS.get(dk, '') !== kstDate()) { LS.set(dk, kstDate()); setTimeout(() => { const gp = givePts(20, .04); toast(`🎁 오늘 첫 입장 보너스 +${fmt(gp, 0)}`); }, 1500); } }
 }
 
 async function chooseRoom(l) {
@@ -4923,7 +4994,7 @@ function loop() {
   const dt = Math.min(.05, clock.getDelta()), t = clock.elapsedTime;
   frames++; fpsT += dt; if (fpsT > 1) { fps = frames / fpsT; frames = 0; fpsT = 0; } if (!ECO) adaptPR(fps, dt); ecoWatch(fps, dt);
   if (entered) { updatePlayer(dt); animAnt(myAnt, dt, t); const stp = Math.floor(myAnt.phase / Math.PI); if (stp !== lastStep) { lastStep = stp; if (myAnt.moving && myAnt.jumpT < 0) SND.step(myAnt.run); } }
-  tickEvo(dt); tickRpg(dt, clock.elapsedTime); tickBig(dt); tickFlyersG(dt); tickKnock(dt); gearTick(clock.elapsedTime); tickRaid(dt); tickWorld(dt, clock.elapsedTime); tickTables(dt); tickPred(dt); tickAwk(dt, t); tickPets(dt, t); tickCars(dt, t); { const rd = riding(); if (rd !== wasRide) { wasRide = rd; sync(true); } } if (myAnt) { const want = 12 + Math.max(0, (myAnt.labelH || 2.35) - 2.6) * 2.2; cam.dist += (Math.max(cam.dist, want) - cam.dist) * Math.min(1, dt * 2); }
+  tickEvo(dt); tickRpg(dt, clock.elapsedTime); tickBig(dt); tickFlyersG(dt); tickKnock(dt); gearTick(clock.elapsedTime); tickRaid(dt); tickRealm(dt, t); tickWorld(dt, clock.elapsedTime); tickTables(dt); tickPred(dt); tickAwk(dt, t); tickPets(dt, t); tickCars(dt, t); { const rd = riding(); if (rd !== wasRide) { wasRide = rd; sync(true); } } if (myAnt) { const want = 12 + Math.max(0, (myAnt.labelH || 2.35) - 2.6) * 2.2; cam.dist += (Math.max(cam.dist, want) - cam.dist) * Math.min(1, dt * 2); }
   autoTick(dt); updateRemotes(dt); remotes.forEach(r => { if (r.ant) { if (r.dist > LEG_FAR) r.ant.moving = false; animAnt(r.ant, dt, t); hallScaleTick(r.ant, r.cur.x, r.cur.z, dt); } }); if (myAnt) hallScaleTick(myAnt, ME.X, ME.Z, dt);
   // 카메라
   const tgtX = entered ? ME.X : 0, tgtZ = entered ? ME.Z : 6, kk = 1 - Math.exp(-dt * 8);
@@ -4960,16 +5031,17 @@ function loop() {
   const crowd = remotes.size > 30;
   remotes.forEach(r => { if (!r.L) return; if (r.rank >= LABEL_N && r.L.say.style.display === 'none') { r.L.d.style.visibility = 'hidden'; return; } const lite = (crowd && r.rank >= 8) || (TOUCH && r.rank >= 4); if (r.L.lite !== lite) { r.L.lite = lite; r.L.d.classList.toggle('lite', lite); } place(r.L.d, r.cur.x, r.ant.body.position.y * r.ant.root.scale.y + (r.ant.labelH > 2.4 ? r.ant.labelH * (r.ant.hallK || 1) : (lite ? 2.2 : 2.35)), r.cur.z); });
   for (const k in INTER) { const it = INTER[k]; if (it.type) { if (it.type === 'crate' && CRATE[k] && CRATE[k].broken) { olabs[k].style.visibility = 'hidden'; continue; } place(olabs[k], it.X, it.h, it.Z); continue; } place(olabs[k], it.X, k === 'vote' ? 4 : k === 'fortune' ? 3.1 : it.h || 2.2, k === 'fortune' ? -10.6 : it.Z - (k === 'vote' ? 0 : .6)); }
+  if (entered) { const LR = TOUCH ? 8 : 13; for (const k in INTER) { const it = INTER[k]; if (it.type === 'boss' || it.type === 'wboss' || !olabs[k]) continue; if (Math.hypot(it.X - ME.X, it.Z - ME.Z) > LR) olabs[k].style.visibility = 'hidden'; } }
   placeMobLabs(); nearKey = entered ? findNear() : null;
   if (nearKey) { const NI = IT(nearKey); prompt.style.display = 'block'; prompt.lastChild.textContent = (/boss|crate|mob/.test(NI.type || '') ? '👊 공격 · ' : NI.type === 'bed' ? '😴 눕기 · ' : NI.type === 'fish' ? (FISHING && FISHING.bite ? '❗ 낚아채기 · ' : '🎣 ') : '상호작용 · ') + NI.name; place(prompt, ME.X, myAnt.body.position.y + (myAnt.labelH || 2.35) + 1, ME.Z, -34); } else prompt.style.display = 'none';
-  $('aUse').disabled = !nearKey; { const ty = nearKey && IT(nearKey).type, lb = ty === 'boss' || ty === 'crate' || ty === 'mob' || ty === 'wboss' ? '👊<br>공격' : ty === 'fish' ? '🎣<br>낚시' : ty === 'bed' ? '😴<br>눕기' : ty === 'npc' ? '💬<br>대화' : ty === 'portal' ? '🌀<br>이동' : '상호<br>작용'; if ($('aUse').dataset.l !== lb) { $('aUse').dataset.l = lb; $('aUse').innerHTML = lb; } }
+  $('aUse').disabled = !nearKey; { const ty = nearKey && IT(nearKey).type, lb = ty === 'boss' || ty === 'crate' || ty === 'mob' || ty === 'wboss' ? '👊<br>공격' : ty === 'fish' ? '🎣<br>낚시' : ty === 'bed' ? '😴<br>눕기' : ty === 'npc' ? '💬<br>대화' : ty === 'portal' ? '🌀<br>이동' : ty === 'rz' ? (IT(nearKey).btn || '상호<br>작용') : '상호<br>작용'; if ($('aUse').dataset.l !== lb) { $('aUse').dataset.l = lb; $('aUse').innerHTML = lb; } }
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '36';
+const APP_V = '37';
 {
   let shown = false;
   const check = async () => {
@@ -5161,7 +5233,7 @@ function autoOff(why) { if (!AUTO) return; AUTO = false; ME.target = null; $('aA
 function autoToggle() { if (AUTO) { autoOff('직접 껐어요'); return; } if (!entered) return; if (inHall(ME.X, ME.Z) || inHeaven(ME.X, ME.Z)) { toast('🤖 자동사냥은 야외에서만 돼요 — ⚔ 야외 버튼으로 나가 보세요'); return; }
   AUTO = true; $('aAuto').classList.add('on'); $('qAuto').classList.add('on'); toast('🤖 자동사냥 시작! 가까운 몬스터를 찾아 싸워요 (조이스틱을 움직이면 멈춰요)'); }
 $('aAuto').onclick = autoToggle; $('qAuto').onclick = autoToggle;
-function autoTick(dt) { if (!AUTO || !entered) return; autoT += dt; if (autoT < .25) return; autoT = 0;
+function autoTick(dt) { if (!AUTO || !entered || REALM) return; autoT += dt; if (autoT < .25) return; autoT = 0;
   if (HPS.ko) { autoOff('기절했어요'); return; } if (HPS.hp < HPS.max * .25) { autoOff('체력이 25% 아래예요 — 캠핑장에서 쉬어요'); return; } if (inHall(ME.X, ME.Z) || inHeaven(ME.X, ME.Z)) { autoOff('법당·라운지에 들어왔어요'); return; }
   let best = null, bd = 32; MOBS.forEach(m => { if (m.dead > 0) return; const d = Math.hypot(m.x - ME.X, m.z - ME.Z); if (d < bd) { bd = d; best = m; } });
   if (!best) { ME.target = null; return; }
@@ -5255,7 +5327,7 @@ function openApp() { const B = $('appBody'); B.textContent = '';
   openModal('mApp'); }
 $('bApp').onclick = openApp;
 if (isStandalone()) $('bApp').style.display = 'none';
-setTimeout(() => { if (!entered || isStandalone() || LS.get('lv3d_apphint', 0) || !matchMedia('(pointer:coarse)').matches) return; LS.set('lv3d_apphint', 1); const B = el('div', 'sigBan eco'); B.append(el('b', null, '📲 앱처럼 설치해 보세요'), el('span', null, '홈 화면 아이콘으로 한 번에 입장!')); const y = el('button', null, '방법 보기'); y.onclick = () => { B.remove(); openApp(); }; const n = el('button', null, '나중에'); n.onclick = () => B.remove(); B.append(y, n); document.body.appendChild(B); setTimeout(() => B.remove(), 20000); }, 90000);
+setTimeout(() => { if (!entered || isStandalone() || LS.get('lv3d_apphint', 0) || !matchMedia('(pointer:coarse)').matches || REALM || document.querySelector('.modal.on')) return; LS.set('lv3d_apphint', 1); const B = el('div', 'sigBan eco'); B.append(el('b', null, '📲 앱처럼 설치해 보세요'), el('span', null, '홈 화면 아이콘으로 한 번에 입장!')); const y = el('button', null, '방법 보기'); y.onclick = () => { B.remove(); openApp(); }; const n = el('button', null, '나중에'); n.onclick = () => B.remove(); B.append(y, n); document.body.appendChild(B); setTimeout(() => B.remove(), 20000); }, 90000);
 
 window.__room3d = { dexN: () => dexTypes().size, sig: () => SIG, openSig: () => openSig(), heatKR: v => { heatKR = !!v; mkRedraw(); }, hostTab: t => { hoTab = t; renderHost(); }, ban: (uid, nick, m, min) => hostBan({ uid, nick }, m, min), isMuted: (u, n) => isMuted(u, n), setLook: t => setLook(t), look: () => curLook(), hallK: () => myAnt && myAnt.hallK, sc: () => myAnt && myAnt.root.scale.x, cast: n => castSkill(n), mp: t => movePerk(t), evoC: (a, b) => evoCard(a, b), fly: () => !!ME.fly, mobk: () => MOBK.length, pk: () => ({ inPK: inPK(ME.X, ME.Z), duel: DUEL, btn: $('pkBtn').classList.contains('on'), w: G.pkW | 0, hp: HPS.hp, max: HPS.max }), pkFx: (uid, atk) => pkFx({ uid, kind: 'pk:' + id8(live.uid) + ':' + atk }), duelS: uid => startDuel(uid), board: () => BOARD, setHost2: v => { HOST = !!v; }, enh: () => Object.assign({ atk: atkOf(lvOf(G.pts)), hp: maxHp(lvOf(G.pts)) }, G.enh), addSt: n => addStone(n), addCoin: n => addCoin(n), coin: () => G.coin, shop: () => G.shop, q: () => qToday(), buy: id => buy(id), useIt: id => useItem(id), cs: () => myCs(), enhTry: () => enhTry(), ev: ms => curEvent(ms), drawCard: () => { drawCard(); return $('cardCv').toDataURL('image/png').length; }, setW: w => { weather = w; }, vis: () => VIS, tbl: () => ({ cur: TBL_CUR, auto: tblAuto, u: Object.assign({}, TBLU), m: Object.fromEntries(Object.entries(TBLM).map(([k, v]) => [k, v.length])) }), tblSel: id => tblSelect(id), nko: () => ({ n: Object.keys(NKO).length, orig: nkoOrig, sample: Object.entries(NKO).slice(0, 2) }), newsKo: t => newsKo(t), tblT: () => TBLS, grantGive: (u, n, o) => grantGive(u, n, o), gset: (pts, en) => { G.pts = pts; G.enh = G.enh || { l: 0, st: 0, f: 0 }; G.enh.l = en; G.inv.push('w99-0-8', 'h99-0-8'); saveG(); }, acctLogin: async (id, pw) => { $('fId').value = id; $('fPw').value = pw; return acctLogin(); }, acctSaveNow: () => acctSaveNow(), acctMerge: d => acctMerge(d), gst: () => ({ pts: G.pts, en: enhL(), inv: G.inv.length, coin: G.coin, ak: G.ak }), setAcct: (id, key) => { ACCT = { id, key }; },  jack: (s, m, f) => jackpot(s, m, f), jq: () => [JQ.length, jOpen],  walk: (x, z) => walkable(x, z), mePos: () => [ME.X, ME.Z], deb: () => ({ topic: DEB_TOPIC, side: mySide(), seats: SEATS.filter(q => q.tbl === 'arena').length, cnt: debCnt() }), sitI: i => sitOn(i), awk: () => ({ lv: awkLv(), on: awkActive(), atk: atkOf(lvOf(G.pts)), cd: AW.cd - Date.now() }), awkGo: () => awkGo(), gkGo: () => gkGo(), gk: () => ({ on: !!GK, balls: GKB.length, cd: gkCd - Date.now(), pos: GKB.map(o => [o.m.position.x, o.m.position.y, o.m.position.z, o.m.scale.x, o.m.visible, !!o.m.parent]) }), setPts: p => { G.pts = p; updHud(); }, enhSet: l => { G.enh.l = l; }, mobN: () => MOBS.length, pred: () => ({ t: predTarget(), P: PRED, S: G.predS }), openPred: () => openPred(), predVote: (s2, v) => predVote(s2, v), predHost: (d, s2, r) => predHostSet(d, s2, r), mobSk: (i, f) => { const m = MOBS[i]; return mobSkill(m, Math.hypot(m.x - ME.X, m.z - ME.Z), f); }, stun: () => Math.max(0, (HPS.stun || 0) - Date.now()), stunAt: () => HPS.stun || 0, pet: () => ({ pet: G.pet, car: G.car, ride: G.ride, riding: riding(), petO: [...PETO.keys()].length, spd: movePerk().spd, atk: atkOf(lvOf(G.pts)) }), giveCoin: n => { G.coin = n; saveG(); }, top: (cx, cz, w, y) => { const c = new THREE.OrthographicCamera(-w / 2, w / 2, w / 2, -w / 2, .1, 300); c.position.set(cx, y || 7, cz); c.up.set(0, 0, -1); c.lookAt(cx, 0, cz); renderer.setSize(800, 800, false); renderer.render(scene, c); return $('gl').toDataURL('image/png'); },
   scene, camera, cam,
@@ -5271,7 +5343,7 @@ window.__room3d = { dexN: () => dexTypes().size, sig: () => SIG, openSig: () => 
   mobs: () => MOBS.map(m => ({ i: m.i, x: +m.x.toFixed(1), z: +m.z.toFixed(1), hp: mobHp(m), dead: m.dead > 0 })), hitMob: i => hitMob(MOBS[i]), fishing: () => FISHING ? { bite: !!FISHING.bite, done: !!FISHING.done } : null, heaven: () => inHeaven(ME.X, ME.Z), gb: () => GB.length, bgmWant: () => bgmWant(),
   walk: (x, z) => walkable(x, z), zone: () => { const z = zoneAt(ME.X, ME.Z); return z && z.n; }, wk: off => weekId(off), att: () => G.att, sea: () => ({ p: seaPts(), list: seaList }), npc: () => npcLines(), calm: () => CALM, block: () => [...BLOCK], mobN: () => MOBS.length, openNpc: () => openNpc(), visMobs: () => MOBS.filter(m => m.o.g.visible).length,
   setY: y => { ME.Y = y; }, hp: () => ({ hp: HPS.hp, max: HPS.max, ko: HPS.ko }), wb: () => WB ? { key: WB.key, hits: WB.hits, max: WB.max, mine: WB.mine } : null,
-  pv: t => previewOf(t), camYaw: () => cam.yaw, evo: () => { evolveFx(myAnt, true); return true; }, bgm: () => ({ cur: bgmCur, ac: AC && AC.state }), host: () => HOST, setHost: v => { HOST = !!v; $('bFw').style.display = HOST ? '' : 'none'; setAntLook(myAnt, PROF.color, PROF.hb, G.pts, HOST); fillLabel(myLabel, myData(), true); sync(true); }, setMarket: (q, h, x) => { MK.q = q || {}; MK.h = h || {}; if (x) Object.assign(MK, x); mkRedraw(); try { renderRep(); updMyStock(true); } catch (e) {} }, rep: t => openRep(t), sigTest: () => { LS.set('lv3d_sigseen', ['OLD|x']); return loadBot(true).then(() => !!document.querySelector('.sigBan')); }, my: () => myStock(), eco: () => ECO, fxLog, tier: t => { applyTier(myAnt, t); return myAnt.tier; }, pts: () => G.pts, fps: () => fps, seats: SEATS, sitOn: i => sitOn(i), screenOf: uid => { const r = uid === live.uid ? { cur: { x: ME.X, z: ME.Z } } : remotes.get(uid); return r ? project(r.cur.x, 1, r.cur.z) : null; }
+  pv: t => previewOf(t), camYaw: () => cam.yaw, evo: () => { evolveFx(myAnt, true); return true; }, bgm: () => ({ cur: bgmCur, ac: AC && AC.state }), host: () => HOST, setHost: v => { HOST = !!v; $('bFw').style.display = HOST ? '' : 'none'; setAntLook(myAnt, PROF.color, PROF.hb, G.pts, HOST); fillLabel(myLabel, myData(), true); sync(true); }, setMarket: (q, h, x) => { MK.q = q || {}; MK.h = h || {}; if (x) Object.assign(MK, x); mkRedraw(); try { renderRep(); updMyStock(true); } catch (e) {} }, rep: t => openRep(t), sigTest: () => { LS.set('lv3d_sigseen', ['OLD|x']); return loadBot(true).then(() => !!document.querySelector('.sigBan')); }, my: () => myStock(), eco: () => ECO, fxLog, tier: t => { applyTier(myAnt, t); return myAnt.tier; }, realm: () => REALM && REALM.id, rem: () => [...remotes.values()].map(r => ({ n: r.data.nick, rg: r.data.rg || '', x: +r.cur.x.toFixed(1), z: +r.cur.z.toFixed(1), tx: +r.tgt.x.toFixed(1), tz: +r.tgt.z.toFixed(1), vis: !!r.ant })), realmDbg: () => REALM && REALM.inst.dbg, scn: () => { const m = {}; scene.children.forEach(o => { const k = o.type + ':' + (o.geometry ? o.geometry.type : '') + ':' + (o.children ? o.children.length : 0); m[k] = (m[k] || 0) + 1; }); return m; }, rinfo2: () => ({ geo: renderer.info.memory.geometries, tex: renderer.info.memory.textures, prog: renderer.info.programs ? renderer.info.programs.length : 0, objs: scene.children.length, inter: Object.keys(INTER).length, lab: Object.keys(olabs).length }), pos: () => ({ x: ME.X, z: ME.Z }), enterRealm: id => realmEnter(id), leaveRealm: () => realmLeave(), hub: HUBP, pts: () => G.pts, rewT: p => { G.pts = p; const t = lvOf(p); return { t, span: spanOf(), raid: growPts(480, .30), daily: growPts(20, .04), coin: growCoin(50) }; }, growth: () => growthOnEnter(), setPts: p => { G.pts = p; updHud(); },  fps: () => fps, seats: SEATS, sitOn: i => sitOn(i), screenOf: uid => { const r = uid === live.uid ? { cur: { x: ME.X, z: ME.Z } } : remotes.get(uid); return r ? project(r.cur.x, 1, r.cur.z) : null; }
 };
 </script>
 </body>

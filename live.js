@@ -393,6 +393,7 @@ async function firebaseInit() {
         if (typeof data.stn === 'string' && data.stn) clean.stn = clampStr(data.stn, 12);
         if (isFinite(Number(data.stp)) && data.stp !== null && data.stp !== '') clean.stp = Math.max(-100, Math.min(9999, Math.round(Number(data.stp) * 10) / 10));
         if ([1, 2].includes(data.stv)) clean.stv = data.stv;
+        if (/^[a-z0-9]{1,8}$/.test(data.rg || '')) clean.rg = data.rg; // v37: 세계 번호
         if (data.host === true) clean.host = true;
         if (Number.isInteger(data.en) && data.en > 0 && data.en <= 30) clean.en = data.en; if (Number.isInteger(data.aw) && data.aw > 0 && data.aw <= 5) clean.aw = data.aw; if (/^[a-z0-9]{1,8}$/.test(data.pet || '')) clean.pet = data.pet; if (/^[a-z0-9]{1,8}$/.test(data.car || '')) clean.car = data.car; // 🔨 강화 단계
         if (typeof data.cs === 'string' && /^b\d{1,2}t\d{1,2}n\d{1,2}$/.test(data.cs)) clean.cs = data.cs; // 💬 꾸미기
