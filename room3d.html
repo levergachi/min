@@ -487,6 +487,21 @@ button:focus-visible,a:focus-visible,[role=button]:focus-visible{outline:2px sol
 @media (max-width:760px){.wcard{flex-wrap:wrap;gap:8px 12px}.wcard .wm{flex:1 1 calc(100% - 56px)}.wcard .wb{width:100%;justify-content:stretch}.wcard .wb>*{flex:1}}
 @media (prefers-reduced-motion:reduce){.modal.on .mbox{animation:none}*{transition-duration:.01ms!important}}
 </style>
+<style id="ds44">
+#rzHud{position:fixed;right:342px;bottom:236px;display:flex;flex-direction:row;gap:12px;z-index:6;align-items:flex-end}
+.rzb{width:66px;height:66px;border-radius:50%;border:2px solid rgba(255,255,255,.35);background:radial-gradient(circle at 50% 30%,#3a2a4a,#120a1c);color:#fff;font-weight:900;font-size:13px;line-height:1.15;cursor:pointer;touch-action:manipulation;box-shadow:0 4px 14px rgba(0,0,0,.5);position:relative;overflow:hidden;font-family:inherit;padding:0}
+.rzb small{display:block;font-size:10px;opacity:.85;font-weight:700}
+.rzb .fill{position:absolute;left:0;right:0;bottom:0;height:0;background:rgba(255,150,50,.42);pointer-events:none}
+.rzb.rdy{border-color:#ffd76a;box-shadow:0 0 20px #ff9a2a,0 4px 14px rgba(0,0,0,.5);animation:rzp .65s ease-in-out infinite alternate}
+.rzb.cdn{filter:grayscale(.7) brightness(.75)}
+@keyframes rzp{to{transform:scale(1.09)}}
+@media (max-width:760px){#rzHud{right:8px;bottom:172px;gap:8px;flex-direction:row}.rzb{width:56px;height:56px;font-size:11px}.rzb small{font-size:9px}}
+.floaty.dn{font-size:16px;font-weight:900;color:#fff;text-shadow:0 0 6px #000,0 2px 2px #000;white-space:nowrap;font-variant-numeric:tabular-nums}
+.floaty.dc{font-size:23px;font-weight:900;color:#ffe04a;text-shadow:0 0 12px #f5a524,0 2px 2px #000;white-space:nowrap}
+.floaty.df{font-size:32px;font-weight:900;color:#ff8a3a;text-shadow:0 0 16px #ff4a1a,0 3px 3px #000;white-space:nowrap}
+.floaty.dj{font-size:24px;font-weight:900;color:#9ef0ff;text-shadow:0 0 14px #2ad0ff,0 2px 2px #000;white-space:nowrap}
+.floaty.dk{font-size:34px;font-weight:900;color:#fff0a0;text-shadow:0 0 18px #ffb020,0 3px 3px #000;white-space:nowrap}
+</style>
 </head>
 <body>
 <canvas id="gl"></canvas>
@@ -1443,10 +1458,11 @@ addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && (e.key || '')
   if (typing()) { if (e.key === 'Escape') document.activeElement.blur(); return; }
   if (document.querySelector('.modal.on')) { if (e.key === 'Escape') closeModals(); return; }
   const k = (e.key || "").toLowerCase(); if (!k) return;
+  if (REALM && REALM.inst.onKey && !e.repeat) { try { if (REALM.inst.onKey(k)) { e.preventDefault(); return; } } catch (er) { console.warn(er); } }
   if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift'].includes(k)) { keys.add(k); e.preventDefault(); }
   if (k === ' ') { e.preventDefault(); FLY.sp = true; if (!e.repeat) doFx('jump'); }
   if (k === 'c') FLY.ck = true;
-  if (k === 'e' && (!e.repeat || pkTarget() || (nearKey && /boss|wboss|mob/.test(IT(nearKey).type || '')))) useNearest();
+  if (k === 'e' && (!e.repeat || pkTarget() || nearKey === 'rz_hit' || (nearKey && /boss|wboss|mob/.test(IT(nearKey).type || '')))) useNearest();
   if (k === 'enter') { e.preventDefault(); openPanel('tChat'); $('chatIn').focus(); }
 });
 addEventListener("keyup", e => { const k = (e.key || "").toLowerCase(); keys.delete(k); if (k === ' ') FLY.sp = false; if (k === 'c') FLY.ck = false; });
@@ -1509,20 +1525,23 @@ function updatePlayer(dt) {
   let mx = 0, mz = 0;
   const L = Math.hypot(ix, iz);
   if (L > .12) {
-    ME.target = null; ME.route = null; if (AUTO) autoOff('직접 움직였어요'); const n = Math.min(1, L); ix /= L; iz /= L;
+    ME.target = null; ME.route = null; if (AUTO) { if (REALM) ME.autoPause = 1.1; else autoOff('직접 움직였어요'); } const n = Math.min(1, L); ix /= L; iz /= L;
     const fx = -Math.sin(cam.yaw), fz = -Math.cos(cam.yaw), rx = Math.cos(cam.yaw), rz = -Math.sin(cam.yaw);
-    mx = (rx * ix - fx * iz) * n; mz = (rz * ix - fz * iz) * n;
+    mx = (rx * ix - fx * iz) * n; mz = (rz * ix - fz * iz) * n; ME.lmx = mx; ME.lmz = mz;
   } else if (ME.target) {
     const dx = ME.target.x - ME.X, dz = ME.target.z - ME.Z, d = Math.hypot(dx, dz);
     if (d < (ME.target.rt ? 1.3 : .15)) { const tg = ME.target; ME.target = null; if (tg.rt && ME.route && ME.route.length) ME.target = ME.route.shift(); else { ME.route = null; if (tg.seat != null) sitOn(tg.seat); if (tg.use) useInter(tg.use); if (tg.done) tg.done(); } }
     else { mx = dx / d; mz = dz / d; if (d < .5 && !ME.target.rt) { mx *= d / .5; mz *= d / .5; } }
   }
-  if (HPS.ko || Date.now() < (HPS.stun || 0)) { mx = 0; mz = 0; ME.target = null; }
+  if (HPS.ko || Date.now() < (HPS.stun || 0) || ME.dodge) { mx = 0; mz = 0; ME.target = null; }
   const MP = movePerk(), spd = (run ? 9 : 5) * dt * (ME.swim ? .55 : 1) * MP.spd * (ME.fly ? 1.4 : 1) * (ME.glide ? 1.3 : 1) * (ME.boostT > 0 ? 1.65 : 1); let mv = Math.hypot(mx, mz) > .01;
   if (HPS.kb) { HPS.kb.t -= dt; const nx = clampX(ME.X + HPS.kb.x * dt), nz = clampZ(ME.Z + HPS.kb.z * dt); if (!blockedAt(nx, nz, ME.Y || 0) && walkable(nx, nz)) { ME.X = nx; ME.Z = nz; } if (HPS.kb.t <= 0) HPS.kb = null; }
+  if (ME.autoPause > 0) ME.autoPause -= dt;
+  if (ME.dodge) { const D = ME.dodge; D.t -= dt; const nx = clampX(ME.X + D.x * dt), nz = clampZ(ME.Z + D.z * dt); if (!blockedAt(nx, nz, ME.Y || 0) && walkable(nx, nz)) { ME.X = nx; ME.Z = nz; } else D.t = 0; if (Math.random() < .7) spawn(ME.X, .4, ME.Z, 2, 0xbfe0ff, 1, 2, .35); if (D.t <= 0) ME.dodge = null; sync(false); }
   if (mv && ME.seat >= 0) { ME.seat = -1; updSitBtn(); }
   const climbing = physStep(dt, mv ? mx : 0, mv ? mz : 0, spd, rawZ);
   if (climbing) mv = ME.moving; else if (mv) ME.ry = Math.atan2(mx, mz);
+  if (ME.dodge) mv = true;
   const was = ME.moving; ME.moving = mv; if (mv && ME.lie) { ME.lie = false; sync(true); } ME.run = run && mv;
   if (mv) sync(false); else if (was) sync(true); else if (syncPending) sync(false);
   myAnt.root.position.set(ME.X, (ME.Y || 0) - (ME.swim ? .65 : 0), ME.Z); myAnt.swim = !!ME.swim; myAnt.fishing = !!ME.fishing; myAnt.climb = !!ME.climb; myAnt.moving = mv && !ME.climb; myAnt.run = ME.run; myAnt.sit = ME.seat >= 0; myAnt.lie = !!ME.lie; myAnt.ry = ME.ry; playerFx39(dt);
@@ -2991,8 +3010,8 @@ function castSkill(s) {
   const left = skCdLeft(s); if (left > 0) { toast(`${skName(t, s)} 쿨타임 ${Math.ceil(left / 1000)}초`); return; }
   skCd['s' + s] = Date.now() + SLOT_CD[s] * 1000 / (1 + GS().spd / 200); room.sendFx('sk:' + t + ':' + s);
   pkSkill(t, s);
-  const buff = (BUFF.until > Date.now() ? 1.5 : 1) * ampK(), dmg = Math.min(99999, Math.round(atkOf(t) * SLOT_MUL[s] * buff * (FINALS.has(t) && s === 3 ? (t === 99 ? 2.4 : t === 49 ? 2 : 1.6) : 1)));
-  if (REALM) { try { REALM.inst.onSkill && REALM.inst.onSkill(s, dmg); } catch (e) { console.warn(e); } return; }
+  const buff = (BUFF.until > Date.now() ? 1.5 : 1) * ampK(), raw = Math.round(atkOf(t) * SLOT_MUL[s] * buff * (FINALS.has(t) && s === 3 ? (t === 99 ? 2.4 : t === 49 ? 2 : 1.6) : 1)), dmg = Math.min(99999, raw);
+  if (REALM) { try { REALM.inst.onSkill && REALM.inst.onSkill(s, raw); } catch (e) { console.warn(e); } return; }
   const hits = []; // [counterKey, 피해, 보스키|null]
   const wbNear = WB && !WB.dead && Math.hypot(WB_POS.x - ME.X, WB_POS.z - ME.Z) < 15;
   if (s === 2) { if (wbNear) hits.push([WB.key, dmg, null]); for (const k in BOSS) { const it = INTER[k]; if (Math.hypot(it.X - ME.X, it.Z - ME.Z) < 11) hits.push([k, dmg, k]); } }
@@ -4768,13 +4787,24 @@ async function realmEnter(id) {
     const api = { THREE, group, GEO, mesh, M: (c, o) => new THREE.MeshStandardMaterial(Object.assign({ color: c }, o || {})), sign: signPlane,
       addInter: (k, d) => { INTER[k] = Object.assign({ type: 'rz' }, d, { X: R_ORG.x + d.X, Z: R_ORG.z + d.Z }); const l = el('div', 'olab', d.name); labels.appendChild(l); olabs[k] = l; keys.push(k); },
       toast, tapeNote, gauge: realmGauge, LS, kstDate, givePts, growCoin, addCoin, G, saveG, dropItem, floatMe: (t, c) => { try { floatAt(myAnt, t, c); } catch (e) {} }, hud: () => updHud(), leave: () => realmLeave(),
-      camera, touch: TOUCH, snd: n => { try { SND[n](); } catch (e) {} }, cine: n => cine(n), fx: { sweat: () => sp(14, 0x9ee8ff), firework: () => { try { SND.firework(); } catch (e) {} spawn(ME.X, 3, ME.Z, 60, 0xffd76a, 6, 3, 1.5, 3); } },
+      camera, touch: TOUCH, snd: (n, a) => { try { SND[n](a); } catch (e) {} }, cine: n => cine(n), fx: { sweat: () => sp(14, 0x9ee8ff), firework: () => { try { SND.firework(); } catch (e) {} spawn(ME.X, 3, ME.Z, 60, 0xffd76a, 6, 3, 1.5, 3); } },
       setInter: (k, x, z, off) => { const it = INTER[k]; if (it) { it.X = R_ORG.x + x; it.Z = R_ORG.z + z; it.off = !!off; } },
       unit: () => Math.round(atkOf(lvOf(G.pts)) * (BUFF.until > Date.now() ? 1.5 : 1)),
-      attack: () => { if (Date.now() < (HPS.stun || 0) || !cd('atk', atkCd(260))) return null; const tier = lvOf(G.pts); let dmg = Math.round(atkOf(tier) * (BUFF.until > Date.now() ? 1.5 : 1)); const crit = Math.random() < critP(tier); if (crit) dmg *= 2; return { dmg: Math.min(dmg, 99999), crit }; },
+      attack: o => { o = o || {}; if (Date.now() < (HPS.stun || 0) || !cd('atk', Math.round(atkCd(260) / (o.spd || 1)))) return null; const tier = lvOf(G.pts); let dmg = Math.round(atkOf(tier) * (BUFF.until > Date.now() ? 1.5 : 1) * (o.mul || 1)); const crit = !!o.crit || Math.random() < critP(tier); if (crit) dmg *= 2; return { dmg: Math.min(Math.round(dmg), 1e12), crit }; },
+      face: (x, z) => { ME.ry = Math.atan2(R_ORG.x + x - ME.X, R_ORG.z + z - ME.Z); },
+      dodge: (dx, dz) => { if (HPS.ko || Date.now() < (HPS.stun || 0) || ME.dodge || !cd('dodge', 800)) return false; let L = Math.hypot(dx || 0, dz || 0); if (L < .01) { dx = ME.lmx || Math.sin(ME.ry); dz = ME.lmz || Math.cos(ME.ry); L = Math.hypot(dx, dz) || 1; } dx /= L; dz /= L; ME.dodge = { x: dx * 24, z: dz * 24, t: .22 }; ME.ry = Math.atan2(dx, dz); ME.dodgeEnd = Date.now() + 420; HPS.inv = Math.max(HPS.inv || 0, Date.now() + 420); ME.target = null; try { SND.jump(); } catch (e) {} spawn(ME.X, .5, ME.Z, 14, 0xcfe8ff, 2, 3, .5); return true; },
+      dodging: () => Date.now() < (ME.dodgeEnd || 0),
+      jump: () => { FLY.sp = true; try { doFx('jump'); } catch (e) {} setTimeout(() => { FLY.sp = false; }, 140); },
+      walkTo: (x, z) => { ME.target = { x: R_ORG.x + x, z: R_ORG.z + z }; },
+      manual: () => (ME.autoPause || 0) > 0,
+      setAuto: on => { AUTO = !!on; ME.target = null; ME.autoPause = 0; ['aAuto', 'qAuto'].forEach(i => { try { $(i).classList.toggle('on', AUTO); } catch (e) {} }); },
+      auto: () => AUTO,
+      cast: s => castSkill(s), skillReady: s => { const t = lvOf(G.pts); return !HPS.ko && !!SK[t] && t >= SLOT_T[s] && skCdLeft(s) <= 0; },
+      flash: (c, op, ms) => { const F = $('flash'); F.style.background = c; F.style.opacity = String(op); setTimeout(() => { F.style.opacity = '0'; F.style.background = ''; }, ms || 150); },
+      hudBtn: (id, html, fn) => { let H = document.getElementById('rzHud'); if (!H) { H = el('div'); H.id = 'rzHud'; H.className = 'pe'; document.body.appendChild(H); } const b = el('button', 'rzb'); b.type = 'button'; b.id = 'rz_' + id; b.innerHTML = html; b.addEventListener('pointerdown', e => { e.preventDefault(); fn(); }); H.appendChild(b); return b; },
       hurt: (d, x, z, why) => hurt(d, R_ORG.x + x, R_ORG.z + z, why), heal: n => { heal(n); hpUi(); }, hp: () => ({ hp: HPS.hp, max: HPS.max, ko: !!HPS.ko }), quake: (m, d) => quake(m, d),
       floatW: (x, y, z, txt, cls) => { const p = project(R_ORG.x + x, y, R_ORG.z + z); if (!p) return; const d = el('div', 'floaty' + (cls ? ' ' + cls : ''), txt); d.style.left = p.x + 'px'; d.style.top = p.y + 'px'; d.style.transform = 'translate(-50%,-100%)'; labels.appendChild(d); setTimeout(() => d.remove(), 1400); },
-      spark: (x, y, z, n, c) => spawn(R_ORG.x + x, y, R_ORG.z + z, n, c, 3, 6, .8),
+      spark: (x, y, z, n, c, sp, g, life, up) => spawn(R_ORG.x + x, y, R_ORG.z + z, n, c, sp == null ? 3 : sp, g == null ? 6 : g, life || .8, up || 0),
       warp: (x, z) => { ME.X = R_ORG.x + x; ME.Z = R_ORG.z + z; ME.target = null; cam.tx = ME.X; cam.tz = ME.Z; sync(true); } };
     const inst = build(api); REALM = { id, group, inst, keys, back: { x: ME.X, z: ME.Z }, cam: { d: cam.dist, p: cam.pitch } };
     endFish(); ME.fly = false; ME.climb = false; ME.Y = 0; ME.vy = 0; ME.seat = -1; ME.lie = false; ME.target = null;
@@ -4785,11 +4815,11 @@ async function realmEnter(id) {
 }
 async function realmLeave(cb) {
   if (!REALM || RBUSY) return; RBUSY = true; $('rFade').classList.add('on'); await sleep(380);
-  const R = REALM; REALM = null; realmGauge(null); R.keys.forEach(k => { delete INTER[k]; if (olabs[k]) { olabs[k].remove(); delete olabs[k]; } }); scene.remove(R.group); disposeGroup(R.group); try { R.inst.dispose && R.inst.dispose(); } catch (e) {}
+  const R = REALM; REALM = null; realmGauge(null); { const hh = document.getElementById('rzHud'); if (hh) hh.remove(); } ME.dodge = null; autoOff(); R.keys.forEach(k => { delete INTER[k]; if (olabs[k]) { olabs[k].remove(); delete olabs[k]; } }); scene.remove(R.group); disposeGroup(R.group); try { R.inst.dispose && R.inst.dispose(); } catch (e) {}
   ME.X = R.back.x; ME.Z = R.back.z; ME.target = null; ME.Y = 0; ME.vy = 0; cam.dist = R.cam.d; cam.pitch = R.cam.p; rain.visible = clouds.visible = weather === 'gloom'; confetti.visible = weather === 'party'; applyWeather(); realmView();
   $('rFade').classList.remove('on'); RBUSY = false; if (cb) setTimeout(cb, 50);
 }
-function tickRealm(dt, t) { const R = REALM; if (!R || RBUSY) return; try { R.inst.tick && R.inst.tick(dt, t, { x: ME.X - R_ORG.x, z: ME.Z - R_ORG.z, y: ME.Y || 0 }); } catch (e) { console.warn(e); } }
+function tickRealm(dt, t) { const R = REALM; if (!R || RBUSY) return; try { R.inst.tick && R.inst.tick(dt, t, { x: ME.X - R_ORG.x, z: ME.Z - R_ORG.z, y: ME.Y || 0, ry: ME.ry }); } catch (e) { console.warn(e); } }
 
 const TPS = [['🌐 세계 관문 (법당 안)', GATE.x + 3, GATE.z - 1.5], ['🌐 세계 포털 광장', HUBP.x, HUBP.z + 5], ['🙏 공덕 법당', 0, 9], ['🚪 야외 게이트', 13.6, -7.4], ['📖 방명록', 8.4, 0], ['☁ 천국 라운지', HEAVEN.x, HEAVEN.z + 2.5], ['🌀 포털 광장', -8.5, 23], ['📊 종목 토론 테이블', -3, 32.4], ['🏟 원형 토론장', -6, 46.2], ['🏢 원복 빌딩 계단', 15.6, -7.6], ['🌱 초보 사냥터', -32, 28], ['⚔ PK존', -46, 44.2], ['🎣 낚시터 부두', -56, 4], ['🏕 존버 캠핑장', CAMP.x, CAMP.z + 6], ['🌲 중급 숲', -100, 12], ['⚔ 보스 투기장', ARENA.x, ARENA.z - 16], ['🌋 화산지대', -165, 12], ['🌋 레이드 광장', RAIDP.x, RAIDP.z - 16], ['☠ 지옥 들판', -64, 98]];
 function drawMap(cv, big) {
@@ -5429,7 +5459,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '43';
+const APP_V = '44';
 {
   let shown = false;
   const check = async () => {
@@ -5618,7 +5648,7 @@ function parseWhisper(m) { const r = /^🔒([A-Za-z0-9_-]{4,8})\|([\s\S]*)$/.exe
 // 🤖 자동사냥
 let AUTO = false, autoT = 0;
 function autoOff(why) { if (!AUTO) return; AUTO = false; ME.target = null; $('aAuto').classList.remove('on'); $('qAuto').classList.remove('on'); if (why) toast('🤖 자동사냥 멈춤 — ' + why); }
-function autoToggle() { if (AUTO) { autoOff('직접 껐어요'); return; } if (!entered) return; if (inHall(ME.X, ME.Z) || inHeaven(ME.X, ME.Z)) { toast('🤖 자동사냥은 야외에서만 돼요 — ⚔ 야외 버튼으로 나가 보세요'); return; }
+function autoToggle() { if (REALM) { if (REALM.inst.onAuto) REALM.inst.onAuto(); else toast('🤖 이 세계에서는 자동사냥이 안 돼요'); return; } if (AUTO) { autoOff('직접 껐어요'); return; } if (!entered) return; if (inHall(ME.X, ME.Z) || inHeaven(ME.X, ME.Z)) { toast('🤖 자동사냥은 야외에서만 돼요 — ⚔ 야외 버튼으로 나가 보세요'); return; }
   AUTO = true; $('aAuto').classList.add('on'); $('qAuto').classList.add('on'); toast('🤖 자동사냥 시작! 가까운 몬스터를 찾아 싸워요 (조이스틱을 움직이면 멈춰요)'); }
 $('aAuto').onclick = autoToggle; $('qAuto').onclick = autoToggle;
 function autoTick(dt) { if (!AUTO || !entered || REALM) return; autoT += dt; if (autoT < .25) return; autoT = 0;
