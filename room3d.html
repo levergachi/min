@@ -57,6 +57,10 @@ body.cine #cineV{opacity:1}
 #cineBan.blue{text-shadow:0 4px 0 #0a4a8a,0 0 30px rgba(120,200,255,.95)}
 @keyframes banIn{0%{opacity:0;transform:scale(2.6) rotate(-4deg)}14%{opacity:1;transform:scale(.92) rotate(1deg)}22%{transform:scale(1.06)}30%{transform:scale(1)}78%{opacity:1}100%{opacity:0;transform:scale(1.15) translateY(-14px)}}
 body.embed #bApp,body.embed #bLink,body.embed #bPhoto,body.embed header a.hb.pri{display:none!important}
+#routeChip{position:fixed;left:50%;top:96px;transform:translateX(-50%);display:none;padding:7px 14px;border-radius:22px;background:rgba(10,24,44,.9);border:1px solid rgba(100,210,255,.55);color:#dff6ff;font-size:13px;font-weight:700;z-index:30;box-shadow:0 6px 18px rgba(0,0,0,.4);white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis;cursor:pointer}#routeChip u{color:#ffb4b4;margin-left:4px;font-weight:600}@media(max-width:700px){#routeChip{top:152px;font-size:12px;padding:6px 12px}}
+.cmdbox{width:min(600px,100%)}#cmdQ{width:100%;box-sizing:border-box;padding:13px 16px;border-radius:14px;border:1px solid rgba(120,200,255,.45);background:rgba(10,18,34,.85);color:#fff;font-size:16px;outline:none;margin-bottom:10px}#cmdQ:focus{border-color:#6fe3ff;box-shadow:0 0 0 3px rgba(111,227,255,.18)}
+#cmdList{max-height:min(56vh,460px);overflow:auto;-webkit-overflow-scrolling:touch}.cmdh{font-size:11px;letter-spacing:.08em;color:var(--mute,#9aa6bd);margin:10px 4px 4px;font-weight:700}
+.cmdrow{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:12px;border:1px solid transparent;cursor:pointer}.cmdrow:hover,.cmdrow.sel{background:rgba(70,130,200,.22);border-color:rgba(120,200,255,.35)}.cmdrow>i{font-style:normal;font-size:20px;width:26px;text-align:center}.cmdrow .cn{flex:1;min-width:0;font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cmdrow .cn small{display:block;font-weight:500;color:var(--mute,#9aa6bd);font-size:11px}.cmdrow .cb{display:flex;gap:5px}
 .wcard{display:flex;align-items:center;gap:12px;padding:12px 14px;margin:10px 0;border-radius:16px;border:1px solid rgba(120,200,255,.3);background:linear-gradient(135deg,rgba(38,76,120,.55),rgba(16,24,44,.78));box-shadow:0 6px 18px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.08)}
 .wcard>i{font-size:32px;font-style:normal;filter:drop-shadow(0 2px 6px rgba(80,200,255,.45))}.wcard .wm{flex:1;min-width:0}.wcard b{display:block;font-size:15px;margin-bottom:2px}.wcard small{color:var(--mute,#9aa6bd);font-size:12px;line-height:1.4;display:block}
 .wcard .wb{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.wcard.lock{opacity:.5;filter:saturate(.5)}.wcard.lock::after{content:'🔒 준비 중';font-size:11px;color:var(--mute,#9aa6bd)}
@@ -412,7 +416,7 @@ input,select{font-family:inherit}
     <button class="hb pe hot" id="bRep">📈 시장 리포트</button><button class="hb pe hot2" id="bPred">🔮 오늘의 예측</button><button class="hb pe hot2" id="bGb">📖 방명록</button><button class="hb pe" id="bSea">🏆 주간 랭킹</button><button class="hb pe" id="bAtt">📅 출석</button><button class="hb pe" id="bMkt">📊 히트맵</button><button class="hb pe" id="bEco">🔋 절전</button>
     <button class="hb pe" id="bFw" style="display:none">🎆 축포</button>
     <button class="hb pe" id="bPrice">시세 입력</button>
-    <button class="hb pe" id="bBag">🎒 가방</button><button class="hb pe hot2" id="bWorld">🌐 세계</button><button class="hb pe hot2" id="bMap">🗺 지도·이동</button><button class="hb pe" id="bPhoto">📸 사진</button><button class="hb pe hot2" id="bApp">📲 앱 설치</button><button class="hb pe hot" id="bHostEd" style="display:none">👑 방장 관리</button>
+    <button class="hb pe" id="bBag">🎒 가방</button><button class="hb pe hot2" id="bSearch">🔎 메뉴 검색</button><button class="hb pe hot2" id="bWorld">🌐 세계</button><button class="hb pe hot2" id="bMap">🗺 지도·이동</button><button class="hb pe" id="bPhoto">📸 사진</button><button class="hb pe hot2" id="bApp">📲 앱 설치</button><button class="hb pe hot" id="bHostEd" style="display:none">👑 방장 관리</button>
     <button class="hb pe" id="bBgm">🎵 음악</button>
     <button class="hb pe" id="bMute">🔔 소리 켬</button>
     <button class="hb pe" id="bMe">내 정보</button>
@@ -453,6 +457,7 @@ input,select{font-family:inherit}
   <div id="chatMini" class="pe"><div id="cmLog"></div><button type="button" id="cmSay">💬 말하기…<i class="bdg" id="cmBdg"></i></button></div>
   <div id="qbar" class="pe">
     <button type="button" id="qMore" class="qm"><i>☰</i><span>더보기</span></button>
+    <button type="button" id="qSearch" class="hot"><i>🔎</i><span>검색</span></button>
     <button type="button" id="qAuto" class="q2"><i>🤖</i><span>자동사냥</span></button>
     <button type="button" id="qMap" class="hot"><i>🗺</i><span>이동</span></button>
     <button type="button" id="qWorld" class="hot"><i>🌐</i><span>세계</span></button>
@@ -465,6 +470,7 @@ input,select{font-family:inherit}
     <button type="button" id="qBag" class="q2"><i>🎒</i><span>가방</span></button>
     <button type="button" id="qSea" class="q2"><i>🏆</i><span>랭킹</span></button>
   </div>
+  <div id="routeChip" class="pe" role="button" title="누르면 자동 이동 취소">🚶 <b id="rcL"></b> · <span id="rcD"></span> <u>✕ 취소</u></div>
   <div id="awBar" class="pe" style="display:none"><button type="button" class="skb" id="awBtn" title="각성 (V)"></button><button type="button" class="skb" id="gkBtn" title="원기옥 (B)"></button><button type="button" class="skb" id="rideBtn" title="탈것 타기/내리기 (X)"></button></div><div id="skBar" class="pe"><button type="button" class="skb" id="sk0"></button><button type="button" class="skb" id="sk1"></button><button type="button" class="skb" id="sk2"></button><button type="button" class="skb" id="sk3"></button></div>
   <div id="joy" class="pe"><div class="k" id="joyK"></div></div>
   <div class="keys">WASD·방향키 이동 · Shift 달리기 · Space 점프 · E 상호작용 · 드래그 시점 · 휠 줌 · 바닥 클릭 이동</div>
@@ -489,6 +495,7 @@ input,select{font-family:inherit}
 <div class="modal" id="mRep"><div class="mbox rep"><div class="mh"><span>📈 원복 객장 시장 리포트 센터</span><button data-close>닫기 ✕</button></div><div class="rtabs" id="repTabs"><button type="button" data-t="all">🌍 한눈에</button><button type="button" data-t="us">🇺🇸 미국 히트맵</button><button type="button" data-t="kr">🇰🇷 국장 히트맵</button><button type="button" data-t="sig">🚦 저점매수 신호</button><button type="button" data-t="news">📰 뉴스</button><button type="button" data-t="me">📌 내 종목·원복 계산</button></div><div id="repBody"></div><label class="small repoff"><input type="checkbox" id="repOff"> 입장할 때 리포트 자동으로 열지 않기</label></div></div>
 <div class="modal" id="mMap"><div class="mbox" style="width:min(780px,100%)"><h2>🗺 원복 월드 지도 · 순간이동</h2><canvas id="bigMap" width="1400" height="846" style="width:100%;height:auto;border-radius:12px;display:block"></canvas><div class="small" style="margin:6px 0">🟡 화살표=나 · 🔴 점=다른 개미 · 🟣 점=몬스터 · 🟥 네모=보스 · 깜빡이는 원=재난 레이드</div><div class="tps" id="tpList"></div><button class="mbtn sec" data-close>닫기</button></div></div>
 <div id="zoneT"></div><div id="photoBar"><button type="button" id="phSave">💾 사진 저장</button><button type="button" id="phUi">👀 이름표 켜기/끄기</button><button type="button" id="phEnd">✕ 사진 모드 끝</button></div>
+<div class="modal" id="mCmd"><div class="mbox cmdbox"><input id="cmdQ" type="search" placeholder="🔎 무엇을 할까요? 예) 지도 · 낚시 · 찜질방 · 가방 · 108배" autocomplete="off" enterkeyhint="go"><div id="cmdList"></div><div class="small" style="margin-top:8px">Enter=첫 결과 · ↑↓ 선택 · Esc 닫기 · <b>Ctrl+K</b>로 언제든 열기</div><button class="mbtn sec" data-close>닫기</button></div></div>
 <div class="modal" id="mWorld"><div class="mbox" style="width:min(560px,100%)"><h2>🌐 세계 관문</h2><div class="sub">어디로 갈까요? 법당 서쪽 복도 → 파란 <b>빛의 길</b>을 따라 걸어도 돼요 (자동 안내도 있어요)</div><div id="wBody"></div><button class="mbtn sec" data-close>닫기</button></div></div>
 <div class="modal" id="mGuide"><div class="mbox" style="width:min(640px,100%)"><h2>❓ 원복 객장 사용법</h2><div class="sub">처음 왔다면 「🚀 처음이라면」부터! 장소 이름을 누르면 바로 순간이동해요.</div><div class="gtabs" id="gTabs"></div><div class="gbody" id="gBody"></div><button class="mbtn sec" data-close>닫기</button></div></div>
 <div class="modal" id="mNpc"><div class="mbox" style="width:min(520px,100%)"><h2>🧓 레가 아저씨</h2><div class="sub">“어이 개미 친구! 오늘 시장 딱 3줄로 알려줄게.”</div><div id="npcBody"></div><div class="small" style="margin-top:8px;color:#8fa0bd">⚠ 재미·참고용 요약이에요. 투자 조언이 아니며 투자 판단과 책임은 본인에게 있어요.</div><button class="mbtn sec" data-close>닫기</button></div></div>
@@ -1342,7 +1349,7 @@ const FLY = { sp: false, ck: false, up: false, dn: false, upT: 0, dnT: 0, hold: 
   heldUp() { return this.sp || this.up || performance.now() < this.upT; }, heldDn() { return this.ck || this.dn || performance.now() < this.dnT; } };
 const GSH = mesh(new THREE.CircleGeometry(.7, 20), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: .4, depthWrite: false }), null, [0, 0, 0], [-Math.PI / 2, 0, 0]); GSH.visible = false; scene.add(GSH);
 const typing = () => { const a = document.activeElement; return a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA' || a.tagName === 'SELECT'); };
-addEventListener('keydown', e => { if (e.key === 'Escape' && document.body.classList.contains('photo')) { photoMode(false); return; }
+addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && (e.key || '').toLowerCase() === 'k') { e.preventDefault(); openCmd(); return; } if (e.key === 'Escape' && document.body.classList.contains('photo')) { photoMode(false); return; }
   if (typing()) { if (e.key === 'Escape') document.activeElement.blur(); return; }
   if (document.querySelector('.modal.on')) { if (e.key === 'Escape') closeModals(); return; }
   const k = (e.key || "").toLowerCase(); if (!k) return;
@@ -1408,7 +1415,7 @@ function updatePlayer(dt) {
   if (keys.has('w') || keys.has('arrowup')) iz -= 1; if (keys.has('s') || keys.has('arrowdown')) iz += 1;
   if (keys.has('a') || keys.has('arrowleft')) ix -= 1; if (keys.has('d') || keys.has('arrowright')) ix += 1;
   ix += joy.x; iz += joy.y; const rawZ = iz;
-  const run = keys.has('shift') || runToggle || Math.hypot(joy.x, joy.y) > .97;
+  const run = keys.has('shift') || runToggle || (ME.runRoute && ME.target && ME.target.rt) || Math.hypot(joy.x, joy.y) > .97;
   let mx = 0, mz = 0;
   const L = Math.hypot(ix, iz);
   if (L > .12) {
@@ -4544,7 +4551,53 @@ function walkToHub() {
   if (n.d > 28) { toast('🚶 걸어서 가기는 법당·초보 사냥터 근처에서 시작해요. 멀면 ⚡ 바로 이동을 써 보세요'); return; }
   const rest = WPATH.slice(n.i + 1).map(p => ({ x: p[0], z: p[1], rt: true }));
   rest.push({ x: HUBP.x, z: HUBP.z + 2, rt: true, done: () => { toast('🌐 세계 포털 광장 도착!'); tapeNote('🌐 세계 포털 광장 — 문으로 들어가 보세요 · ♨ 찜질방 오픈!', { ms: 3000, cls: 'tip' }); } });
-  ME.fly = false; ME.fh = null; ME.seat = -1; ME.lie = false; ME.route = rest; ME.target = ME.route.shift(); tapeNote('🚶 빛의 길을 따라 자동으로 걸어가요 · 직접 움직이면 취소', { ms: 2600, cls: 'tip' });
+  ME.fly = false; ME.fh = null; ME.seat = -1; ME.lie = false; ME.route = rest; ME.target = ME.route.shift(); ME.runRoute = true; ME.dest = { x: HUBP.x, z: HUBP.z + 2, label: '세계 포털 광장' }; tapeNote('🚶 빛의 길을 따라 자동으로 걸어가요 · 직접 움직이면 취소', { ms: 2600, cls: 'tip' });
+}
+const CMD_ACT = [['bRep', '📈', '시장 리포트', '시황 뉴스 신호 리포트 시장'], ['bPred', '🔮', '오늘의 예측', '예측 베팅 상승 하락'], ['bGb', '📖', '방명록', '글 남기기'], ['bSea', '🏆', '랭킹', '순위 시즌'], ['bPrice', '💹', '시세 입력', '가격 수동'], ['bBag', '🎒', '가방', '장비 아이템 인벤토리'], ['bWorld', '🌐', '세계 관문', '세계 찜질방 별 던전 포털'], ['bMap', '🗺', '지도·이동', '순간이동 텔레포트 위치'], ['qShop', '🛍', '상점', '구매 아이템'], ['qEnh', '🔨', '강화', '대장간 업그레이드'], ['qCard', '🃏', '카드', '도감 수집'], ['qEv', '📅', '이벤트·출석', '출석 보상'], ['qAuto', '🤖', '자동사냥', '사냥 오토'], ['qView', '🔭', '시야 바꾸기', '줌 카메라'], ['qOut', '⚔', '야외 사냥터로', '사냥 몬스터 이동'], ['bPhoto', '📸', '사진 모드', '스크린샷'], ['bBgm', '🎵', '음악 켜기/끄기', '브금 bgm'], ['bMute', '🔔', '소리 켜기/끄기', '효과음 음소거'], ['bMe', '🙍', '내 정보', '프로필 닉네임 평단'], ['bLink', '🔗', '방 링크 복사', '공유 초대']];
+let cmdSel = 0;
+function cmdRec(nm) { if (!nm) return; const r = LS.get('lv3d_cmdrec', []).filter(x => x !== nm); r.unshift(nm); LS.set('lv3d_cmdrec', r.slice(0, 6)); }
+function cmdItems() {
+  const L = [];
+  CMD_ACT.forEach(([id, ico, nm, kw]) => { const b = $(id); if (!b) return; L.push({ cat: '기능', ico, nm, kw, btns: [['열기', () => { closeModals(); setTimeout(() => b.click(), 60); }]] }); });
+  TPS.forEach(([nm, x, z]) => L.push({ cat: '장소', ico: '📍', nm, kw: nm, btns: [['⚡ 이동', () => tpTo(x, z, nm)], ['🚶 걸어서', () => walkTo(x, z, null, nm)]] }));
+  const seen = {}; Object.keys(INTER).forEach(k => { const it = INTER[k]; if (!it || !it.name || it.type === 'rz' || /^(boss|crate|wboss)$/.test(it.type || '') || k === 'wb' || k === 'mob' || seen[it.name] || typeof it.X !== 'number') return; seen[it.name] = 1; const nm = it.name.replace(/\s*\(E\)/, ''); L.push({ cat: '가서 하기', ico: '👆', nm, kw: it.name, btns: [['🚶 가서 사용', () => walkTo(it.X, it.Z, k, nm)]] }); });
+  return L;
+}
+function renderCmd() {
+  const q = ($('cmdQ').value || '').trim().toLowerCase(), B = $('cmdList'); B.textContent = ''; const all = cmdItems(); let list;
+  if (q) { const qs = q.split(/\s+/); list = all.map(it => { const t = (it.nm + ' ' + (it.kw || '') + ' ' + it.cat).toLowerCase(); if (!qs.every(w => t.includes(w))) return null; return { it, sc: (it.nm.toLowerCase().includes(qs[0]) ? 2 : 0) + (it.cat === '기능' ? 1 : 0) }; }).filter(Boolean).sort((a, b) => b.sc - a.sc).map(x => x.it); }
+  else { const rec = LS.get('lv3d_cmdrec', []).map(n => all.find(i => i.nm === n)).filter(Boolean); list = rec.map(i => Object.assign({}, i, { cat: '최근' })).concat(all); }
+  if (!list.length) { B.appendChild(el('div', 'small', '찾는 항목이 없어요. 다른 말로 검색해 보세요 (예: 지도, 낚시, 가방)')); return; }
+  cmdSel = Math.min(cmdSel, list.length - 1); let cur = '';
+  list.forEach((it, i) => {
+    if (it.cat !== cur) { cur = it.cat; B.appendChild(el('div', 'cmdh', cur === '최근' ? '🕘 최근 사용' : cur === '기능' ? '⚙ 기능' : cur === '장소' ? '📍 장소 (이동·걸어서)' : '👆 가서 하기 (자동으로 걸어가 사용)')); }
+    const r = el('div', 'cmdrow' + (i === cmdSel ? ' sel' : '')), cn = el('div', 'cn', it.nm), cb = el('div', 'cb'); r.appendChild(el('i', null, it.ico)); r.append(cn, cb);
+    it.btns.forEach(([t, f], bi) => { const b = el('button', 'gbtn', t); b.type = 'button'; b.onclick = e => { e.stopPropagation(); cmdRec(it.nm); f(); }; cb.appendChild(b); if (bi === 0) r.onclick = () => { cmdRec(it.nm); f(); }; });
+    r._run = () => { cmdRec(it.nm); it.btns[0][1](); }; B.appendChild(r);
+  });
+}
+function openCmd() { if (!entered) return; if (REALM) { toast('지금은 세계 안이에요. 🚪 문 앞에서 나가면 메뉴 검색을 쓸 수 있어요'); return; } cmdSel = 0; $('cmdQ').value = ''; openModal('mCmd'); renderCmd(); setTimeout(() => { try { $('cmdQ').focus(); } catch (e) {} }, 80); }
+{ const q = $('cmdQ'); q.addEventListener('input', () => { cmdSel = 0; renderCmd(); });
+  q.addEventListener('keydown', e => { const rows = [...$('cmdList').querySelectorAll('.cmdrow')]; if (e.key === 'Escape') { e.preventDefault(); closeModals(); return; } if (!rows.length) return;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); cmdSel = (cmdSel + (e.key === 'ArrowDown' ? 1 : -1) + rows.length) % rows.length; rows.forEach((r, i) => r.classList.toggle('sel', i === cmdSel)); rows[cmdSel].scrollIntoView({ block: 'nearest' }); }
+    else if (e.key === 'Enter') { e.preventDefault(); const r = rows[cmdSel] || rows[0]; if (r && r._run) r._run(); } }); }
+function walkTo(x, z, use, label) {
+  if (!entered) return; if (REALM) { toast('지금은 세계 안이에요'); return; } closeModals();
+  let tx = x, tz = z; if (use) { const dx = x - ME.X, dz = z - ME.Z, d = Math.hypot(dx, dz) || 1; if (d > 1.6) { tx = x - dx / d * 1.5; tz = z - dz / d * 1.5; } }
+  const pts = [], hall = v => v > -17.2;
+  if (Math.hypot(tx - HUBP.x, tz - HUBP.z) < 16 && !hall(tx)) { const n = wpNear(ME.X, ME.Z); if (n.d < 30) WPATH.slice(n.i + 1).forEach(p => pts.push(p)); }
+  else if (hall(ME.X) && !hall(tx)) pts.push([-15.5, 26.5], [-20, 28], [-28, 28]);
+  else if (!hall(ME.X) && hall(tx)) pts.push([-28, 28], [-20, 28], [-15.5, 26.5]);
+  pts.push([tx, tz]); let len = 0, px = ME.X, pz = ME.Z; pts.forEach(p => { len += Math.hypot(p[0] - px, p[1] - pz); px = p[0]; pz = p[1]; });
+  const rt = pts.map(p => ({ x: p[0], z: p[1], rt: true })); rt[rt.length - 1].done = () => { if (use) useInter(use); else toast('📍 ' + (label || '목적지') + ' 도착!'); };
+  ME.fly = false; ME.fh = null; ME.seat = -1; ME.lie = false; ME.route = rt; ME.target = ME.route.shift(); ME.runRoute = len > 35; ME.dest = { x: tx, z: tz, label: label || '목적지' };
+  tapeNote('🚶 ' + (label || '목적지') + '(으)로 자동 이동 · 약 ' + Math.round(len) + 'm · 직접 움직이면 취소', { ms: 2600, cls: 'tip' });
+}
+const DST = (() => { const g = new THREE.Group(), r = new THREE.Mesh(new THREE.RingGeometry(.9, 1.2, 32), new THREE.MeshBasicMaterial({ color: 0xffe14a, transparent: true, opacity: .85, side: THREE.DoubleSide, depthWrite: false, toneMapped: false })), b = new THREE.Mesh(new THREE.CylinderGeometry(.18, .18, 6, 10, 1, true), new THREE.MeshBasicMaterial({ color: 0xffe14a, transparent: true, opacity: .35, depthWrite: false, toneMapped: false })); r.rotation.x = -Math.PI / 2; r.position.y = .08; b.position.y = 3; g.add(r, b); g.visible = false; scene.add(g); return g; })();
+function tickRoute39(dt) {
+  const on = !!(ME.target && ME.target.rt && ME.dest && entered && !REALM), ch = $('routeChip');
+  if (on) { let d = Math.hypot(ME.target.x - ME.X, ME.target.z - ME.Z), px = ME.target.x, pz = ME.target.z; (ME.route || []).forEach(p => { d += Math.hypot(p.x - px, p.z - pz); px = p.x; pz = p.z; }); $('rcL').textContent = ME.dest.label; $('rcD').textContent = '남은 ' + Math.round(d) + 'm'; ch.style.display = 'block'; DST.visible = true; DST.position.set(ME.dest.x, groundAt(ME.dest.x, ME.dest.z, 0), ME.dest.z); DST.children[0].scale.setScalar(1 + .15 * Math.sin(clock.elapsedTime * 5)); }
+  else { if (ch.style.display !== 'none') ch.style.display = 'none'; DST.visible = false; }
 }
 function buildWorld39() {
   // --- 빛의 길 ---
@@ -4596,7 +4649,7 @@ function buildWorld39() {
 }
 buildWorld39();
 function tickGate39(dt) {
-  const t = clock.elapsedTime; W39.t.value = t;
+  const t = clock.elapsedTime; W39.t.value = t; tickRoute39(dt);
   W39.runes.forEach((r, i) => { const a = t * .9 + i / 8 * Math.PI * 2; r.position.set(Math.cos(a) * 2.95, 3.1 + Math.sin(a) * 2.95, 0); r.rotation.set(t * 2 + i, t * 1.5, 0); });
   if (W39.lab) W39.lab.position.y = 6.6 + Math.sin(t * 1.6) * .14; if (W39.ring) W39.ring.material.opacity = .42 + Math.sin(t * 2.4) * .18;
   W39.arrows.forEach(a => { a.mt.opacity = .16 + .7 * Math.pow(Math.max(0, Math.sin(t * 3.4 - a.gi * 1.57)), 2); });
@@ -4676,7 +4729,7 @@ function tickMap(dt) { mapT += dt; if (mapT < .2) return; mapT = 0; drawMap($('m
 function tpTo(x, z, name) { if (!entered) return; if (REALM) { realmLeave(() => tpTo(x, z, name)); return; } if (!cd('tp', movePerk().tpcd)) { toast(`순간이동은 ${movePerk().tpcd / 1000}초에 한 번!`); return; } endFish(); ME.fly = false; ME.climb = false; ME.Y = 0; ME.vy = 0; ME.seat = -1; ME.lie = false; ME.X = x; ME.Z = z; ME.target = null; { const yw = /투기장|레이드|들판/.test(name || '') ? Math.PI : 0; cam.yaw = yw; ME.ry = yw ? 0 : Math.PI; cam.tx = x; cam.tz = z; } sync(true); closeModals(); toast(`✨ ${name} (으)로 순간이동!`); spawn(x, 1, z, 50, 0x9ee8ff, 3, -2, 1); }
 { const VIEWS = [['기본', () => matchMedia('(pointer:coarse)').matches ? 26 : 18, .5], ['넓게', () => 40, .8], ['전체 보기', () => 62, 1.2], ['가까이', () => 11, .45]]; let vi = 0;
   $('qView').onclick = () => { vi = (vi + 1) % VIEWS.length; const V = VIEWS[vi]; cam.dist = V[1](); cam.pitch = V[2]; toast(`🔭 시야: ${V[0]} (두 손가락 / 휠로 자유 조절)`); };
-  $('qMap').onclick = () => $('bMap').click(); $('qWorld').onclick = () => openWorlds(); $('bWorld').onclick = () => openWorlds(); $('qOut').onclick = () => tpTo(-32, 28, '🌱 초보 사냥터 (야외)');
+  $('qMap').onclick = () => $('bMap').click(); $('qWorld').onclick = () => openWorlds(); $('qSearch').onclick = () => openCmd(); $('bSearch').onclick = () => openCmd(); $('routeChip').onclick = () => { ME.target = null; ME.route = null; toast('🚶 자동 이동을 취소했어요'); }; $('bWorld').onclick = () => openWorlds(); $('qOut').onclick = () => tpTo(-32, 28, '🌱 초보 사냥터 (야외)');
   $('qEnh').onclick = openEnh; $('qShop').onclick = () => openShop('q'); $('qCard').onclick = openCard; $('qEv').onclick = openEv; $('qBag').onclick = () => $('bBag').click(); $('qSea').onclick = () => $('bSea').click(); }
 function renderTp() { const B = $('tpList'); B.textContent = ''; TPS.forEach(([n, x, z]) => { const b = el('button', 'gbtn', n); b.type = 'button'; b.onclick = () => tpTo(x, z, n); B.appendChild(b); }); }
 // ---- 매 프레임 ----
@@ -5279,7 +5332,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '39';
+const APP_V = '40';
 {
   let shown = false;
   const check = async () => {
@@ -5573,11 +5626,11 @@ if (EMBED) {
   const upd = () => { if (!ef) return; const need = !document.hasFocus() && entered && !TOUCH; ef.classList.toggle('on', need); };
   addEventListener('blur', () => setTimeout(upd, 60)); addEventListener('focus', upd); addEventListener('pointerdown', () => { try { window.focus(); } catch (e) {} setTimeout(upd, 30); });
   setInterval(upd, 1500);
-  const GO = { world: 'bWorld', sig: 'openSig', rep: 'bRep', mkt: 'bMkt', map: 'bMap', bag: 'bBag', pred: 'bPred' };
+  const GO = { menu: 'bSearch', world: 'bWorld', sig: 'openSig', rep: 'bRep', mkt: 'bMkt', map: 'bMap', bag: 'bBag', pred: 'bPred' };
   addEventListener('message', ev => { if (ev.origin !== 'https://levergachi.github.io') return; const d = ev.data; if (!d || d.type !== 'wb:go' || !GO[d.to]) return; try { if (d.to === 'sig') openSig(); else { const b = document.getElementById(GO[d.to]); b && b.click(); } } catch (e) {} });
   try { parent.postMessage({ type: 'wb:ready', v: APP_V }, 'https://levergachi.github.io'); } catch (e) {}
 }
-window.__room3d = { w39: () => ({ GATE, WPATH, PADS, BOOSTS, FLY, ME }), startFly: () => startFly(), openWorlds: () => openWorlds(), walkHub: () => walkToHub(), flyz: () => ({ fly: ME.fly, fh: ME.fh, Y: ME.Y, glide: ME.glide, boost: ME.boostT, route: ME.route && ME.route.length, tgt: ME.target && [ME.target.x, ME.target.z] }), dexN: () => dexTypes().size, sig: () => SIG, openSig: () => openSig(), heatKR: v => { heatKR = !!v; mkRedraw(); }, hostTab: t => { hoTab = t; renderHost(); }, ban: (uid, nick, m, min) => hostBan({ uid, nick }, m, min), isMuted: (u, n) => isMuted(u, n), setLook: t => setLook(t), look: () => curLook(), hallK: () => myAnt && myAnt.hallK, sc: () => myAnt && myAnt.root.scale.x, cast: n => castSkill(n), mp: t => movePerk(t), evoC: (a, b) => evoCard(a, b), fly: () => !!ME.fly, mobk: () => MOBK.length, pk: () => ({ inPK: inPK(ME.X, ME.Z), duel: DUEL, btn: $('pkBtn').classList.contains('on'), w: G.pkW | 0, hp: HPS.hp, max: HPS.max }), pkFx: (uid, atk) => pkFx({ uid, kind: 'pk:' + id8(live.uid) + ':' + atk }), duelS: uid => startDuel(uid), board: () => BOARD, setHost2: v => { HOST = !!v; }, enh: () => Object.assign({ atk: atkOf(lvOf(G.pts)), hp: maxHp(lvOf(G.pts)) }, G.enh), addSt: n => addStone(n), addCoin: n => addCoin(n), coin: () => G.coin, shop: () => G.shop, q: () => qToday(), buy: id => buy(id), useIt: id => useItem(id), cs: () => myCs(), enhTry: () => enhTry(), ev: ms => curEvent(ms), drawCard: () => { drawCard(); return $('cardCv').toDataURL('image/png').length; }, setW: w => { weather = w; }, vis: () => VIS, tbl: () => ({ cur: TBL_CUR, auto: tblAuto, u: Object.assign({}, TBLU), m: Object.fromEntries(Object.entries(TBLM).map(([k, v]) => [k, v.length])) }), tblSel: id => tblSelect(id), nko: () => ({ n: Object.keys(NKO).length, orig: nkoOrig, sample: Object.entries(NKO).slice(0, 2) }), newsKo: t => newsKo(t), tblT: () => TBLS, grantGive: (u, n, o) => grantGive(u, n, o), gset: (pts, en) => { G.pts = pts; G.enh = G.enh || { l: 0, st: 0, f: 0 }; G.enh.l = en; G.inv.push('w99-0-8', 'h99-0-8'); saveG(); }, acctLogin: async (id, pw) => { $('fId').value = id; $('fPw').value = pw; return acctLogin(); }, acctSaveNow: () => acctSaveNow(), acctMerge: d => acctMerge(d), gst: () => ({ pts: G.pts, en: enhL(), inv: G.inv.length, coin: G.coin, ak: G.ak }), setAcct: (id, key) => { ACCT = { id, key }; },  jack: (s, m, f) => jackpot(s, m, f), jq: () => [JQ.length, jOpen],  walk: (x, z) => walkable(x, z), mePos: () => [ME.X, ME.Z], deb: () => ({ topic: DEB_TOPIC, side: mySide(), seats: SEATS.filter(q => q.tbl === 'arena').length, cnt: debCnt() }), sitI: i => sitOn(i), awk: () => ({ lv: awkLv(), on: awkActive(), atk: atkOf(lvOf(G.pts)), cd: AW.cd - Date.now() }), awkGo: () => awkGo(), gkGo: () => gkGo(), gk: () => ({ on: !!GK, balls: GKB.length, cd: gkCd - Date.now(), pos: GKB.map(o => [o.m.position.x, o.m.position.y, o.m.position.z, o.m.scale.x, o.m.visible, !!o.m.parent]) }), setPts: p => { G.pts = p; updHud(); }, enhSet: l => { G.enh.l = l; }, mobN: () => MOBS.length, pred: () => ({ t: predTarget(), P: PRED, S: G.predS }), openPred: () => openPred(), predVote: (s2, v) => predVote(s2, v), predHost: (d, s2, r) => predHostSet(d, s2, r), mobSk: (i, f) => { const m = MOBS[i]; return mobSkill(m, Math.hypot(m.x - ME.X, m.z - ME.Z), f); }, stun: () => Math.max(0, (HPS.stun || 0) - Date.now()), stunAt: () => HPS.stun || 0, pet: () => ({ pet: G.pet, car: G.car, ride: G.ride, riding: riding(), petO: [...PETO.keys()].length, spd: movePerk().spd, atk: atkOf(lvOf(G.pts)) }), giveCoin: n => { G.coin = n; saveG(); }, top: (cx, cz, w, y) => { const c = new THREE.OrthographicCamera(-w / 2, w / 2, w / 2, -w / 2, .1, 300); c.position.set(cx, y || 7, cz); c.up.set(0, 0, -1); c.lookAt(cx, 0, cz); renderer.setSize(800, 800, false); renderer.render(scene, c); return $('gl').toDataURL('image/png'); },
+window.__room3d = { openCmd: () => openCmd(), walkTo: (x, z, u, l) => walkTo(x, z, u, l), w39: () => ({ GATE, WPATH, PADS, BOOSTS, FLY, ME }), startFly: () => startFly(), openWorlds: () => openWorlds(), walkHub: () => walkToHub(), flyz: () => ({ fly: ME.fly, fh: ME.fh, Y: ME.Y, glide: ME.glide, boost: ME.boostT, route: ME.route && ME.route.length, tgt: ME.target && [ME.target.x, ME.target.z] }), dexN: () => dexTypes().size, sig: () => SIG, openSig: () => openSig(), heatKR: v => { heatKR = !!v; mkRedraw(); }, hostTab: t => { hoTab = t; renderHost(); }, ban: (uid, nick, m, min) => hostBan({ uid, nick }, m, min), isMuted: (u, n) => isMuted(u, n), setLook: t => setLook(t), look: () => curLook(), hallK: () => myAnt && myAnt.hallK, sc: () => myAnt && myAnt.root.scale.x, cast: n => castSkill(n), mp: t => movePerk(t), evoC: (a, b) => evoCard(a, b), fly: () => !!ME.fly, mobk: () => MOBK.length, pk: () => ({ inPK: inPK(ME.X, ME.Z), duel: DUEL, btn: $('pkBtn').classList.contains('on'), w: G.pkW | 0, hp: HPS.hp, max: HPS.max }), pkFx: (uid, atk) => pkFx({ uid, kind: 'pk:' + id8(live.uid) + ':' + atk }), duelS: uid => startDuel(uid), board: () => BOARD, setHost2: v => { HOST = !!v; }, enh: () => Object.assign({ atk: atkOf(lvOf(G.pts)), hp: maxHp(lvOf(G.pts)) }, G.enh), addSt: n => addStone(n), addCoin: n => addCoin(n), coin: () => G.coin, shop: () => G.shop, q: () => qToday(), buy: id => buy(id), useIt: id => useItem(id), cs: () => myCs(), enhTry: () => enhTry(), ev: ms => curEvent(ms), drawCard: () => { drawCard(); return $('cardCv').toDataURL('image/png').length; }, setW: w => { weather = w; }, vis: () => VIS, tbl: () => ({ cur: TBL_CUR, auto: tblAuto, u: Object.assign({}, TBLU), m: Object.fromEntries(Object.entries(TBLM).map(([k, v]) => [k, v.length])) }), tblSel: id => tblSelect(id), nko: () => ({ n: Object.keys(NKO).length, orig: nkoOrig, sample: Object.entries(NKO).slice(0, 2) }), newsKo: t => newsKo(t), tblT: () => TBLS, grantGive: (u, n, o) => grantGive(u, n, o), gset: (pts, en) => { G.pts = pts; G.enh = G.enh || { l: 0, st: 0, f: 0 }; G.enh.l = en; G.inv.push('w99-0-8', 'h99-0-8'); saveG(); }, acctLogin: async (id, pw) => { $('fId').value = id; $('fPw').value = pw; return acctLogin(); }, acctSaveNow: () => acctSaveNow(), acctMerge: d => acctMerge(d), gst: () => ({ pts: G.pts, en: enhL(), inv: G.inv.length, coin: G.coin, ak: G.ak }), setAcct: (id, key) => { ACCT = { id, key }; },  jack: (s, m, f) => jackpot(s, m, f), jq: () => [JQ.length, jOpen],  walk: (x, z) => walkable(x, z), mePos: () => [ME.X, ME.Z], deb: () => ({ topic: DEB_TOPIC, side: mySide(), seats: SEATS.filter(q => q.tbl === 'arena').length, cnt: debCnt() }), sitI: i => sitOn(i), awk: () => ({ lv: awkLv(), on: awkActive(), atk: atkOf(lvOf(G.pts)), cd: AW.cd - Date.now() }), awkGo: () => awkGo(), gkGo: () => gkGo(), gk: () => ({ on: !!GK, balls: GKB.length, cd: gkCd - Date.now(), pos: GKB.map(o => [o.m.position.x, o.m.position.y, o.m.position.z, o.m.scale.x, o.m.visible, !!o.m.parent]) }), setPts: p => { G.pts = p; updHud(); }, enhSet: l => { G.enh.l = l; }, mobN: () => MOBS.length, pred: () => ({ t: predTarget(), P: PRED, S: G.predS }), openPred: () => openPred(), predVote: (s2, v) => predVote(s2, v), predHost: (d, s2, r) => predHostSet(d, s2, r), mobSk: (i, f) => { const m = MOBS[i]; return mobSkill(m, Math.hypot(m.x - ME.X, m.z - ME.Z), f); }, stun: () => Math.max(0, (HPS.stun || 0) - Date.now()), stunAt: () => HPS.stun || 0, pet: () => ({ pet: G.pet, car: G.car, ride: G.ride, riding: riding(), petO: [...PETO.keys()].length, spd: movePerk().spd, atk: atkOf(lvOf(G.pts)) }), giveCoin: n => { G.coin = n; saveG(); }, top: (cx, cz, w, y) => { const c = new THREE.OrthographicCamera(-w / 2, w / 2, w / 2, -w / 2, .1, 300); c.position.set(cx, y || 7, cz); c.up.set(0, 0, -1); c.lookAt(cx, 0, cz); renderer.setSize(800, 800, false); renderer.render(scene, c); return $('gl').toDataURL('image/png'); },
   scene, camera, cam,
   ready: () => entered && !!room, uid: () => live.uid, me: () => Object.assign({}, ME, { data: entered ? myData() : null }), peers: () => peersData,
   peerPos: uid => { const r = remotes.get(uid); return r ? { X: r.cur.x, Z: r.cur.z, moving: r.moving, walking: r.ant ? r.ant.moving : r.moving, detail: !!r.ant } : null; },
