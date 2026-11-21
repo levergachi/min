@@ -32,12 +32,12 @@
   const doorLbl = true; void doorLbl;
   // 상호작용
   const S = LS.get('lv3d_sauna', null) || { d: '', n: 0, tot: 0, claim: 0 }; if (S.d !== kstDate()) { S.d = kstDate(); S.n = 0; } const save = () => LS.set('lv3d_sauna', S);
-  const DAILY = 150; let heat = 5, sik = 0, lastTick = 0, lockUntil = 0, comboT = 0, wasHot = 0, lastSq = 0, inKiln = false, inIce = false, over = 0;
+  const now0 = () => performance.now(); let lastCine = 0, lastIceC = 0, wasIce = false; const DAILY = 150; let heat = 5, sik = 0, lastTick = 0, lockUntil = 0, comboT = 0, wasHot = 0, lastSq = 0, inKiln = false, inIce = false, over = 0;
   addInter('rz_kiln', { name: '🔥 불가마 땀 짜내기', X: -8.5, Z: -4.6, h: 2.6, btn: '🔥<br>땀', fn: () => { const t = performance.now();
     if (t < lockUntil) { toast('🥵 잠깐 쉬어야 해요…'); return; } if (t - lastSq < 5000) { toast('⏳ 땀은 5초에 한 번만 짜져요'); return; }
     if (heat < 60) { toast('😌 아직 덜 달궈졌어요! 가마 안에서 조금 더 버텨요 (60% 이상)'); return; } if (heat >= 96) { toast('🚨 너무 뜨거워요! 지금 나가요!'); return; }
-    lastSq = t; const sweet = heat >= 70 && heat <= 92, g = givePts(sweet ? 14 : 5, sweet ? .05 : .02); S.tot += sweet ? 5 : 2; save(); fx.sweat(); floatMe(sweet ? `💦 황금 땀방울! +${g}` : `💧 +${g}`, sweet ? 'big' : 'txt'); if (sweet) tapeNote(`💦 황금 땀방울! 공덕 +${g}`, { ms: 1800, cls: 'tip' }); } });
-  addInter('rz_sik', { name: '🥤 식혜 (코인 30)', X: -8, Z: 6.6, h: 1.8, btn: '🥤<br>식혜', fn: () => { if ((G.coin | 0) < 30) { toast('🪙 코인이 부족해요 (30코인)'); return; } G.coin -= 30; saveG(); try { api.hud(); } catch (e) {} sik = performance.now() + 5 * 60e3; toast('🥤 시원한 식혜! 5분간 열이 천천히 올라요'); fx.sweat(); } });
+    lastSq = t; const sweet = heat >= 70 && heat <= 92, g = givePts(sweet ? 14 : 5, sweet ? .05 : .02); S.tot += sweet ? 5 : 2; save(); fx.sweat(); if (now0() - lastCine > 22000) { lastCine = now0(); api.cine && api.cine('sauna'); } floatMe(sweet ? `💦 황금 땀방울! +${g}` : `💧 +${g}`, sweet ? 'big' : 'txt'); if (sweet) tapeNote(`💦 황금 땀방울! 공덕 +${g}`, { ms: 1800, cls: 'tip' }); } });
+  addInter('rz_sik', { name: '🥤 식혜 (코인 30)', X: -8, Z: 6.6, h: 1.8, btn: '🥤<br>식혜', fn: () => { if ((G.coin | 0) < 30) { toast('🪙 코인이 부족해요 (30코인)'); return; } G.coin -= 30; saveG(); try { api.hud(); } catch (e) {} sik = performance.now() + 5 * 60e3; toast('🥤 시원한 식혜! 5분간 열이 천천히 올라요'); fx.sweat(); api.cine && api.cine('sikhye'); } });
   addInter('rz_card', { name: '🎫 단골 카드 (한정 칭호)', X: 8, Z: 6.6, h: 1.8, btn: '🎫<br>카드', fn: () => { const T = [[100, '찜질방 단골', 120], [300, '맥반석 달인', 400], [1000, '불가마 전설', 1500]];
     const nx = T.find(x => S.tot >= x[0] && S.claim < x[0]);
     if (nx) { S.claim = nx[0]; save(); G.title = nx[1]; saveG(); addCoin(growCoin(nx[2]), '단골 카드'); dropItem(nx[0] >= 1000 ? 4 : 2); toast(`🎫 한정 칭호 「${nx[1]}」 획득!`); fx.firework(); return; }
@@ -54,6 +54,7 @@
       if (inKiln) { heat = Math.min(100, heat + 4.5 * res * dt); wasHot = Math.max(wasHot, heat); } else if (inIce) heat = Math.max(0, heat - 14 * dt); else heat = Math.max(0, heat - 3 * dt);
       if (heat >= 100 && now > lockUntil) { lockUntil = now + 10000; heat = 45; over++; api.warp(8.5, -4.5); toast('🥵 너무 뜨거워 기절! 얼음방으로 실려갔어요 (10초간 보상 없음)'); }
       if (inIce && wasHot >= 70 && heat <= 30 && now - comboT > 30000) { comboT = now; wasHot = 0; const g = givePts(10, .04); S.tot += 3; save(); tapeNote(`❄🔥 냉온욕 콤보! 공덕 +${g}`, { ms: 2200, cls: 'tip' }); fx.firework(); }
+      if (inIce && !wasIce && heat >= 45 && now - lastIceC > 15000) { lastIceC = now; api.cine && api.cine('ice'); } wasIce = inIce;
       if (inIce && heat <= 10) wasHot = 0;
       if (inKiln && heat >= 30 && heat < 95 && now > lockUntil && now - lastTick > 4000) { lastTick = now; if (S.n < DAILY) { S.n++; S.tot++; const g = givePts(2, .01); save(); floatMe(`💧 +${g}`, 'txt'); } else if (S.n === DAILY) { S.n++; tapeNote('오늘 땀 보상은 여기까지! 내일 또 와요 🧖', { ms: 2600, cls: 'tip' }); } }
       const pct = Math.round(heat), col = pct >= 90 ? '#ff2a2a' : pct >= 70 ? '#ff8a1e' : pct >= 30 ? '#e8b020' : '#2da8e8';

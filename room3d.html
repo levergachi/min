@@ -44,6 +44,22 @@ canvas.wide{width:100%;height:auto;border-radius:10px;display:block}
 .sigBan{position:fixed;left:50%;top:130px;transform:translateX(-50%);z-index:21;background:linear-gradient(90deg,#14301c,#2a2a08);border:1px solid #2fe07a;border-radius:14px;padding:10px 12px;color:#eaffef;display:flex;gap:8px;align-items:center;flex-wrap:wrap;max-width:94vw;box-shadow:0 10px 30px rgba(0,0,0,.5),0 0 20px rgba(47,224,122,.35);font-size:13px}.sigBan b{font-size:14px}.sigBan button,.sigBan a{border:0;border-radius:9px;padding:6px 11px;background:#2fe07a;color:#05230f;font-weight:900;cursor:pointer;text-decoration:none;font-family:inherit}.sigBan .sec{background:#2a3550;color:#e8edf5}.sigBan.eco{background:linear-gradient(90deg,#1a2a4a,#1a3a2a);border-color:#7fb0ff}
 @media (max-width:760px){.idxg{grid-template-columns:repeat(3,1fr)}.optg{grid-template-columns:repeat(2,1fr)}.rsec.two{grid-template-columns:1fr}.rtabs button{font-size:12px;padding:6px 8px}.myf .row{flex-wrap:wrap}.sigBan{top:150px}}
 #flash{position:fixed;inset:0;background:#dfe8ff;opacity:0;pointer-events:none;transition:opacity .12s;z-index:3}
+#cineT,#cineB{position:fixed;left:0;right:0;height:0;background:#000;z-index:4;pointer-events:none;transition:height .45s cubic-bezier(.2,.8,.2,1)}
+#cineT{top:0}#cineB{bottom:0}
+body.cine #cineT,body.cine #cineB{height:9vh}
+#cineV{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:0;transition:opacity .5s;background:radial-gradient(ellipse at 50% 55%,transparent 45%,rgba(0,0,0,.55) 100%)}
+body.cine #cineV{opacity:1}
+#cineCap{position:fixed;left:0;right:0;bottom:30vh;text-align:center;z-index:5;pointer-events:none;font-weight:900;font-size:clamp(17px,4.6vw,26px);color:#fff;text-shadow:0 2px 0 #000,0 0 14px rgba(255,200,120,.9);opacity:0;transform:translateY(8px);transition:opacity .3s,transform .3s;letter-spacing:.02em;padding:0 10px}
+#cineCap.on{opacity:1;transform:none}
+#cineBan{position:fixed;left:0;right:0;top:24%;text-align:center;z-index:6;pointer-events:none;font-weight:900;font-size:clamp(30px,9.5vw,70px);color:#fff;-webkit-text-stroke:2px #000;text-shadow:0 4px 0 #b3001b,0 0 26px rgba(255,60,60,.9);opacity:0;white-space:nowrap}
+#cineBan.on{animation:banIn 1.6s cubic-bezier(.2,.9,.2,1) forwards}
+#cineBan.gold{text-shadow:0 4px 0 #a86b00,0 0 30px rgba(255,210,80,.95)}
+#cineBan.blue{text-shadow:0 4px 0 #0a4a8a,0 0 30px rgba(120,200,255,.95)}
+@keyframes banIn{0%{opacity:0;transform:scale(2.6) rotate(-4deg)}14%{opacity:1;transform:scale(.92) rotate(1deg)}22%{transform:scale(1.06)}30%{transform:scale(1)}78%{opacity:1}100%{opacity:0;transform:scale(1.15) translateY(-14px)}}
+#cineSp{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:0;background:repeating-conic-gradient(from 0deg at 50% 52%,rgba(255,255,255,.0) 0 5deg,rgba(255,255,255,.55) 5.4deg 6deg);-webkit-mask-image:radial-gradient(circle at 50% 52%,transparent 22%,#000 70%);mask-image:radial-gradient(circle at 50% 52%,transparent 22%,#000 70%);transition:opacity .25s}
+#cineSp.on{opacity:.55;animation:spd .35s linear infinite}
+@keyframes spd{from{transform:rotate(0)}to{transform:rotate(6deg)}}
+@media(prefers-reduced-motion:reduce){#cineBan.on{animation:none;opacity:1}#cineSp.on{animation:none}}
 #labels{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:2}
 .lab{position:absolute;left:0;top:0;text-align:center;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:2px}
 .lab .say{background:#fff;color:#111;font-size:13px;padding:5px 9px;border-radius:12px;max-width:220px;white-space:normal;word-break:break-all;box-shadow:0 3px 10px rgba(0,0,0,.4);margin-bottom:3px;position:relative}
@@ -375,7 +391,7 @@ input,select{font-family:inherit}
 </head>
 <body>
 <canvas id="gl"></canvas>
-<div id="flash"></div><div id="rFade"></div><canvas id="miniMap" class="pe" width="420" height="256" title="눌러서 큰 지도 · 순간이동"></canvas><div id="wbBar"><div id="wbName"></div><button type="button" id="wbGo">🚀 레이드 가기</button><div class="wbhp"><i id="wbHp"></i></div><div id="wbTxt"></div><div id="wbTop"></div></div>
+<div id="flash"></div><div id="cineT"></div><div id="cineB"></div><div id="cineV"></div><div id="cineSp"></div><div id="cineCap"></div><div id="cineBan"></div><div id="rFade"></div><canvas id="miniMap" class="pe" width="420" height="256" title="눌러서 큰 지도 · 순간이동"></canvas><div id="wbBar"><div id="wbName"></div><button type="button" id="wbGo">🚀 레이드 가기</button><div class="wbhp"><i id="wbHp"></i></div><div id="wbTxt"></div><div id="wbTop"></div></div>
 <div id="labels"></div>
 <div id="nogl"><div><h2>이 기기에서는 3D(WebGL)를 쓸 수 없습니다</h2><p class="small">그래픽 가속이 꺼져 있거나 지원되지 않는 브라우저입니다.</p><p class="small">최신 크롬(Chrome)이나 사파리로 열거나, 브라우저를 업데이트한 뒤 다시 시도해 주세요. 설정에서 「하드웨어 가속」이 켜져 있어야 합니다.</p><p><a class="hb pri" href="index.html">원복 계산기로 가기 →</a></p></div></div>
 
@@ -1201,16 +1217,17 @@ function animAnt(a, dt, t) {
   const sw = a.moving ? Math.sin(a.phase) * (a.run ? .9 : .65) : 0, bob = a.moving && !REDUCE ? Math.abs(Math.sin(a.phase)) * .08 : 0;
   // 점프 (fx 기반 포물선)
   let jy = 0; if (a.jumpT >= 0) { a.jumpT += dt; const u = a.jumpT / .7; if (u >= 1) { a.jumpT = -1; if (a === myAnt) SND.land(); } else jy = 4 * 1.5 * u * (1 - u); }
-  a.body.position.y = (a.sit ? -.42 : 0) + bob + jy;
+  const sitN = a.sit || (a.act && a.act.sit && !a.moving); if (a.act && a.act.cn && a.moving) a.act = null;
+  a.body.position.y = (sitN ? -.42 : 0) + bob + jy;
   a.shadow.scale.setScalar(.6 * (1 - Math.min(.5, jy / 3))); a.shadow.material.opacity = .38;
-  a.legs.forEach((l, i) => { if (a.sit) { l.rotation.set(-1.4, 0, (i % 2 ? -1 : 1) * .35); } else { l.rotation.set((i === 0 || i === 3 ? sw : -sw), 0, 0); } });
+  a.legs.forEach((l, i) => { if (sitN) { l.rotation.set(-1.4, 0, (i % 2 ? -1 : 1) * .35); } else { l.rotation.set((i === 0 || i === 3 ? sw : -sw), 0, 0); } });
   // 기본 자세: 합장
   let ux = a.moving ? .12 : 0, hx = 0;
   let ar = [[-1.05, 0, .55], [-1.05, 0, -.55]];
   if (a.moving) ar = [[-sw * .9, 0, .12], [sw * .9, 0, -.12]];
   if (weather === 'party' && !a.moving && !a.act) { const w = Math.sin(t * 6) * .3; ar = [[-2.7, 0, .3 + w], [-2.7, 0, -.3 + w]]; }
   if (weather === 'gloom' && !a.act) hx = .5;
-  a.can.visible = false;
+  a.can.visible = false; if (a.towel) a.towel.visible = a.towelB.visible = false; if (a.cup) a.cup.visible = false;
   if (a.act) {
     const e = t - a.act.t0, u = Math.min(1, e / a.act.d), k = a.act.k;
     if (e > a.act.d) a.act = null;
@@ -1222,6 +1239,16 @@ function animAnt(a, dt, t) {
     else if (k === 'punch') { const c = Math.max(0, Math.sin(e * 22)); ar = [[-1.55 * c - .2, 0, .25], [-1.55 * (1 - c) - .2, 0, -.25]]; }
     else if (k === 'dance') { ux = Math.sin(e * 8) * .2; a.upper.rotation.z = Math.sin(e * 8) * .25; ar = [[-2.4 + Math.sin(e * 8) * .6, 0, .4], [-2.4 - Math.sin(e * 8) * .6, 0, -.4]]; }
     else if (k === 'cheer') { ar = [[-2.9, 0, .4], [-2.9, 0, -.4]]; }
+    else if (k === 'sauna') { ux = -.1 + Math.sin(e * 2.2) * .04; hx = -.3 + Math.sin(e * 2.2) * .06; ar = [[-.85, 0, .5], [-1.25 + Math.sin(e * 5) * .28, 0, -.55]]; }
+    else if (k === 'towel') { cineTowel(a); const w = Math.sin(e * 13); ux = .06; hx = .12 + Math.sin(e * 6.5) * .05; ar = [[-.85, 0, .5], [e < 1.2 ? -2.4 + w * .1 : -1.9 + w * .1, 0, e < 1.2 ? -.1 + w * .5 : -.75 + w * .35]]; }
+    else if (k === 'shiver') { const sh = Math.sin(e * 55); ux = .18; hx = .3; a.upper.rotation.z = sh * .07; ar = [[-1.35, 0, .95], [-1.35, 0, -.95]]; }
+    else if (k === 'drink') { cineCup(a); const u2 = Math.min(1, e / .7), gl = e > .9 ? Math.sin(e * 14) * .03 : 0; ux = -.28 * u2; hx = -.55 * u2 + gl; ar = [[-.9, 0, .5], [-2.25 * u2 - 1.25 * (1 - u2), 0, -.2]]; if (a.cupL) a.cupL.position.y = .15 - Math.min(.12, Math.max(0, e - 1.2) * .05); a.cup.rotation.x = -.5 * u2; }
+    else if (k === 'reel') { const c = Math.sin(e * 16) * .3; ux = .15; ar = [[-1.5 + c, 0, .3], [-1.5 - c, 0, -.3]]; }
+    else if (k === 'trophy') { ar = [[-2.9, 0, .5], [-2.9, 0, -.5]]; ux = -.1; a.body.position.y += Math.abs(Math.sin(e * 7)) * .22; }
+    else if (k === 'gather') { const tr = Math.sin(e * 40) * .04; ux = -.2; hx = -.4; ar = [[-3.0 + tr, 0, .55], [-3.0 - tr, 0, -.55]]; }
+    else if (k === 'thrust') { const u2 = Math.min(1, e / .25); ux = .15 + .3 * u2; ar = [[-1.57 * u2 - 3 * (1 - u2), 0, .1], [-1.57 * u2 - 3 * (1 - u2), 0, -.1]]; }
+    else if (k === 'power') { const sh = Math.sin(e * 60) * (e < 1.9 ? .05 : 0); a.body.position.y -= .18 * Math.min(1, e / .5) * (e < 1.9 ? 1 : 0); ux = .12; hx = .35; a.upper.rotation.z = sh; ar = [[.15, 0, .65], [.15, 0, -.65]]; }
+    else if (k === 'flex') { const w = Math.sin(e * 9) * .12; ux = -.05; ar = [[-2.2, 0, .95 + w], [-2.2, 0, -.95 - w]]; }
   }
   if (a.swim) { const c = Math.sin(t * 6 + a.phase) * 1.1; ar = [[-2.2 + c, 0, .6], [-2.2 - c, 0, -.6]]; }
   if (a.fishing || a.rod) { if (!a.rod) { a.rod = mesh(GEO.cyl, FM(0x6b3d1f), [.03, 1.8, .03], [0, -.55, .75], [1.15, 0, 0]); a.arms[1].add(a.rod); } a.rod.visible = !!a.fishing; if (a.fishing) ar[1] = [-1.25, 0, -.15]; }
@@ -1401,7 +1428,7 @@ function do108() {
   const d = kstDate(); if (G.b108.d !== d) G.b108 = { d, n: 0 };
   if (G.b108.n >= 108) { toast('오늘 108배는 이미 완주했어요 🙏'); room.sendFx('bow'); return; }
   G.b108.n++; saveG(); room.sendFx('bow'); addPts(1); upd108();
-  if (G.b108.n === 108) { G.title = '108배 완주'; saveG(); addPts(108); room.sendFx('b108'); toast('🏆 108배 완주! 칭호 획득'); sync(true); }
+  if (G.b108.n === 108) { G.title = '108배 완주'; saveG(); addPts(108); room.sendFx('b108'); toast('🏆 108배 완주! 칭호 획득'); sync(true); setTimeout(() => cine('b108', 1), 400); }
 }
 function upd108() {
   const n = G.b108.d === kstDate() ? G.b108.n : 0; $('ring').style.display = n > 0 ? 'flex' : 'none';
@@ -1418,7 +1445,7 @@ function addPts(n) {
   if (after > before && after === 98) setTimeout(() => toast('🐣 …어라? 다시 아기개미?! 태초의 개미 — 초월 후광이 빛나요. 마지막 한 걸음!'), 1600);
   if (after > before) addCoin(30 + after * 5, '진화 축하');
   if (after > before && entered) setTimeout(() => { try { evoCard(after, before); } catch (e) { console.warn(e); } }, after === 49 || after === 99 ? 4500 : 1200);
-  if (after > before) { room.sendFx('levelup'); toast(`🎉 진화! ${TIER_ICON[after]} ${LV[after][1]} (${after + 1}/${LV.length}단계)` + (LV[after + 1] ? ' · 다음은 ???' : '')); refreshHbButtons(); if (myAnt) applyTier(myAnt, lvOf(myLookPts())); if (myLabel) fillLabel(myLabel, myData(), true); }
+  if (after > before) { room.sendFx('levelup'); setTimeout(() => cine('levelup', 1), 300); toast(`🎉 진화! ${TIER_ICON[after]} ${LV[after][1]} (${after + 1}/${LV.length}단계)` + (LV[after + 1] ? ' · 다음은 ???' : '')); refreshHbButtons(); if (myAnt) applyTier(myAnt, lvOf(myLookPts())); if (myLabel) fillLabel(myLabel, myData(), true); }
   sync(false);
 }
 function milestoneFx(t) {
@@ -1473,6 +1500,71 @@ document.querySelectorAll('[data-emo]').forEach(b => b.onclick = () => { if (cd(
 
 function antOf(uid) { if (uid === live.uid) return myAnt; const r = remotes.get(uid); return r ? r.ant : null; }
 function hostFw() { for (let i = 0; i < 4; i++) setTimeout(() => SND.firework(), i * 450); const pal = [0xffd76a, 0xff4fd8, 0x2fd0ff, 0xff4d57, 0x7dff9e]; for (let i = 0; i < 7; i++) setTimeout(() => spawn((Math.random() - .5) * 20, 5 + Math.random() * 5, -11 + Math.random() * 4, 90, pal[i % 5], 6, 3, 1.8, 2), i * 260); toast('🎆 방장님의 축포!'); try { SND.level(); } catch (e) {} }
+
+/* ================= v38: 🎬 모션 연출 엔진 (클로즈업 시네마틱 + 재미있는 동작) =================
+   cine(name)  : 내 캐릭터 연출 (카메라 확대 + 레터박스 + 자막 + 동작 + 파티클) — 다른 사람에겐 동작만 보여요(fx cn:이름)
+   cineAct(a,name,mine) : 동작/파티클만 */
+const CINES = {
+  sauna:  { dur: 5.8, dist: 4.4, pitch: 0.42, ty: 1.45, spin: .55, caps: [[0, '♨ 후아… 가마 속은 천국이야'], [2.3, '🧻 쓰윽쓱~ 땀 닦는 중'], [4.4, '😌 개운하다…']], acts: [[0, 'sauna', 2.35, 1], [2.3, 'towel', 2.3, 1], [4.55, 'cheer', 1.2, 0]], fx: 'sweat' },
+  ice:    { dur: 4.4, dist: 4.2, pitch: 0.4, ty: 1.5, spin: .3, caps: [[0, '🧊 으아아 차가워!!'], [2.4, '❄ 시~원하다!!']], acts: [[0, 'shiver', 2.4, 0], [2.4, 'cheer', 1.6, 0]], fx: 'ice' },
+  sikhye: { dur: 4.4, dist: 3.9, pitch: 0.4, ty: 1.7, spin: .25, caps: [[0, '🥤 식혜 한 사발~'], [1.7, '꿀꺽 꿀꺽 꿀꺽…'], [3.5, '캬아~ 시원하다!']], acts: [[0, 'drink', 3.4, 0], [3.4, 'cheer', 1, 0]], fx: 'sik' },
+  catch:  { dur: 3.2, dist: 5, pitch: 0.28, ty: 1.6, spin: .4, caps: [[0, '🎣 걸렸다!!'], [1.3, '🐟 월척이다!!!']], acts: [[0, 'reel', 1.3, 0], [1.3, 'trophy', 1.9, 0]], fx: 'splash' },
+  b108:   { dur: 4.2, dist: 5.2, pitch: 0.22, ty: 1.9, spin: .35, caps: [[0, '🙏 108배 완주…'], [1.8, '✨ 공덕이 차오른다!!']], acts: [[0, 'bow', 1.6, 0], [1.8, 'gather', 2.2, 0]], fx: 'gold', ban: ['108배!', 'gold', 1.8] },
+  levelup:{ dur: 4.4, dist: 6, pitch: 0.2, ty: 1.9, spin: .5, caps: [[0, '✨ 기운이 솟구친다…'], [2.2, '🌟 진화!!']], acts: [[0, 'gather', 2.2, 0], [2.2, 'cheer', 2.2, 0]], fx: 'gold', ban: ['LEVEL UP!', 'gold', 2.2] },
+  fight:  { dur: 2.4, dist: 6, pitch: 0.22, ty: 1.6, spin: -.3, caps: [], acts: [[0, 'flex', 1.2, 0]], fx: 'spark', ban: ['FIGHT!', '', 0] },
+  win:    { dur: 3.6, dist: 4.6, pitch: 0.24, ty: 1.7, spin: .6, caps: [[.5, '🏆 내가 이겼다!!']], acts: [[0, 'flex', 1.5, 0], [1.5, 'cheer', 2, 0]], fx: 'gold', ban: ['K.O.!!', '', 0] },
+  gather: { dur: 4.1, dist: 12, pitch: .06, ty: 4.4, spin: 0, caps: [[0, '🌕 모두의 기를 모아라!!'], [2.6, '조금만 더…!!']], acts: [[0, 'gather', 4, 0]], fx: 'genki', ban: ['원기옥!!', 'blue', 0] },
+  fire:   { dur: 1.9, dist: 11, pitch: .14, ty: 2.4, spin: -.25, caps: [[0, '🌕 받아라 원기옥!!!']], acts: [[0, 'thrust', 1.1, 0], [1.1, 'cheer', .8, 0]], fx: '', ban: null },
+  power:  { dur: 3.8, dist: 5.4, pitch: 0.16, ty: 1.7, spin: .4, caps: [[0, '⚡ 으오오오오…!!'], [1.9, '💥 각성!!!']], acts: [[0, 'power', 2.0, 0], [2.0, 'cheer', 1.8, 0]], fx: 'aura', ban: ['초 각 성 !!', 'gold', 1.9] },
+  jackpot:{ dur: 3.2, dist: 5.4, pitch: 0.26, ty: 1.7, spin: .6, caps: [[0, '🎰 대박!!!']], acts: [[0, 'cheer', 2.6, 0]], fx: 'coin' },
+  attend: { dur: 2.6, dist: 5.4, pitch: 0.26, ty: 1.7, spin: .3, caps: [[.2, '📅 오늘도 출석 완료!']], acts: [[0, 'bow', 1, 0], [1, 'cheer', 1.4, 0]], fx: 'spark' }
+};
+let CINE = null;
+const _cb = {};
+function cineEl(id) { return _cb[id] || (_cb[id] = document.getElementById(id)); }
+function cineBan(txt, cls, ms) { const b = cineEl('cineBan'); if (!b) return; b.className = ''; b.textContent = txt; void b.offsetWidth; b.className = 'on ' + (cls || ''); clearTimeout(b._t); b._t = setTimeout(() => { b.className = ''; }, ms || 1700); }
+function cineCap(txt) { const c = cineEl('cineCap'); if (!c) return; if (!txt) { c.classList.remove('on'); return; } c.textContent = txt; c.classList.add('on'); }
+function cineTowel(a) { if (!a.towel) { a.towel = mesh(GEO.box, FM(0xffffff, { roughness: .95 }), [.55, .12, .36], [0, -.66, .2], [0, 0, .25]); a.arms[1].add(a.towel); a.towelB = mesh(GEO.box, FM(0xff7a9a), [.56, .125, .08], [0, -.66, .2], [0, 0, .25]); a.arms[1].add(a.towelB); } a.towel.visible = a.towelB.visible = true; }
+function cineCup(a) { if (!a.cup) { a.cup = mesh(GEO.cyl, FM(0xfff3d6, { roughness: .5 }), [.2, .26, .2], [0, -.66, .22]); a.arms[1].add(a.cup); a.cupL = mesh(GEO.cyl, FM(0xc4612a, { roughness: .4 }), [.17, .05, .17], [0, .15, 0]); a.cup.add(a.cupL); } a.cup.visible = true; }
+function cineFxTick(a, kind, e, dt) {
+  if (!a || !a.root) return; const P = a.root.position, y0 = (P.y || 0), hy = y0 + (a.sit || (a.act && a.act.sit) ? 1.45 : 1.95), r = Math.random;
+  if (kind === 'sweat') { if (r() < dt * 14) spawn(P.x + (r() - .5) * .7, hy + .1, P.z + (r() - .5) * .5, 1, 0xaee9ff, .5, 7, .8); if (r() < dt * 5) spawn(P.x + (r() - .5) * 1.2, y0 + 1.2, P.z + (r() - .5) * 1.2, 1, 0xffffff, .6, -1.4, 1.3, 1.2); if (r() < dt * 3) spawn(P.x, y0 + 1, P.z, 1, 0xff9a4a, 1.2, -1, .8, 1); }
+  else if (kind === 'ice') { if (r() < dt * 26) { const q = r() * 6.28, d = 1 + r() * 1.4; spawn(P.x + Math.cos(q) * d, y0 + 2.2 + r(), P.z + Math.sin(q) * d, 1, 0xdff6ff, .4, 2.2, 1.3); } if (e < 2.4 && r() < dt * 9) spawn(P.x, hy, P.z, 1, 0xffffff, .8, -.6, 1, 1); }
+  else if (kind === 'sik') { if (e > 1.5 && e < 3.4 && r() < dt * 7) spawn(P.x + (r() - .5) * .4, hy - .1, P.z + .5, 1, 0xd98a4a, .6, 5, .6); if (e > 3.3 && r() < dt * 24) spawn(P.x, hy, P.z, 1, 0xffe27a, 2.2, 1, .9, 2); }
+  else if (kind === 'gold') { if (r() < dt * 34) { const q = r() * 6.28, d = 1.6 + r() * 1.8; spawn(P.x + Math.cos(q) * d, y0 + .2, P.z + Math.sin(q) * d, 1, r() > .5 ? 0xffd76a : 0xfff4c0, .3, -4.5, 1.2, 4.5); } }
+  else if (kind === 'aura') { if (r() < dt * 46) { const q = r() * 6.28; spawn(P.x + Math.cos(q) * .9, y0 + .1, P.z + Math.sin(q) * .9, 1, e > 1.9 ? 0xfff09a : 0xffd04a, .3, -7, .8, 7); } if (e > 1.9 && e < 2.15 && !a._pw) { a._pw = 1; ringFx(P.x, P.z, 0xffe27a, 14); spawn(P.x, y0 + 1.2, P.z, 140, 0xffe95a, 9, 2, 1.2, 3); } if (e < 1.9) a._pw = 0; }
+  else if (kind === 'genki') { if (r() < dt * 30) { const q = r() * 6.28, d = 7 + r() * 5; spawn(P.x + Math.cos(q) * d, 1 + r() * 4, P.z + Math.sin(q) * d, 1, 0xbfe6ff, .2, -1, 1.4); } }
+  else if (kind === 'coin') { if (r() < dt * 30) spawn(P.x + (r() - .5) * 3, y0 + 5, P.z + (r() - .5) * 3, 1, r() > .4 ? 0xffd76a : 0xffffff, .8, 6, 1.3); }
+  else if (kind === 'splash') { if (e < .6 && r() < dt * 30) spawn(P.x + Math.sin(a.ry) * 2, y0 + .2, P.z + Math.cos(a.ry) * 2, 1, 0x9ee8ff, 2, 6, .8, 2); }
+  else if (kind === 'spark') { if (r() < dt * 22) spawn(P.x + (r() - .5) * 1.4, y0 + 1 + r() * 1.4, P.z + (r() - .5) * 1.4, 1, 0xffe27a, 2, 2, .6, 1); }
+}
+function cineAct(a, name, mine) {
+  const C = CINES[name]; if (!a || !C) return; if (!mine && myAnt && Math.hypot(a.root.position.x - ME.X, a.root.position.z - ME.Z) > 45) return;
+  const t0 = clock.elapsedTime;
+  C.acts.forEach(([at, k, d, sit]) => { const run = () => { if (!a.root.parent && a !== myAnt) return; a.act = { k, t0: clock.elapsedTime, d, sit: sit ? 1 : 0, cn: 1 }; }; if (at <= 0) run(); else setTimeout(run, at * 1000); });
+  if (C.fx) { let last = performance.now(); const iv = setInterval(() => { const now = performance.now(), dt = Math.min(.1, (now - last) / 1000); last = now; const e = clock.elapsedTime - t0; if (e > C.dur || !a.root) { clearInterval(iv); return; } cineFxTick(a, C.fx, e, dt); }, 33); }
+}
+function cine(name, local) {
+  const C = CINES[name]; if (!C || !entered || !myAnt || CINE || HPS.ko || document.querySelector('.modal.on')) return false;
+  cineAct(myAnt, name, true); if (!local) { try { room.sendFx('cn:' + name); } catch (e) {} }
+  if (C.ban) setTimeout(() => cineBan(C.ban[0], C.ban[1], 1700), (C.ban[2] || 0) * 1000);
+  const t0 = clock.elapsedTime; CINE = { name, C, t0, caps: C.caps.slice(), ended: false, my: 0 };
+  document.body.classList.add('cine');
+  if (name === 'gather' || name === 'power' || name === 'fight' || name === 'win') { quake(name === 'power' ? .35 : .2, C.dur * .7); }
+  if (name === 'win' || name === 'fire') { const sp = cineEl('cineSp'); sp.classList.add('on'); setTimeout(() => sp.classList.remove('on'), 900); }
+  return true;
+}
+function cineEnd() { if (!CINE) return; CINE.ended = true; CINE.endAt = clock.elapsedTime; document.body.classList.remove('cine'); cineCap(''); }
+function cineTick() {
+  if (!CINE) return; const e = clock.elapsedTime - CINE.t0;
+  while (CINE.caps.length && e >= CINE.caps[0][0]) cineCap(CINE.caps.shift()[1]);
+  if (!CINE.ended && (e > CINE.C.dur || HPS.ko || (ME.moving && e > .7))) cineEnd();
+  if (CINE.ended && clock.elapsedTime - CINE.endAt > .7) CINE = null;
+}
+function cineCamW() { // 0..1 카메라 블렌드
+  if (!CINE) return 0; const e = clock.elapsedTime - CINE.t0, i = Math.min(1, e / .55), o = CINE.ended ? Math.max(0, 1 - (clock.elapsedTime - CINE.endAt) / .6) : 1, w = Math.min(i, o); return w * w * (3 - 2 * w);
+}
+
 /* ---- 진화 연출: 빛기둥 + 충격파 + 금빛 조명 + 화면 섬광 ---- */
 const evoList = [];
 const pillarGeo = new THREE.CylinderGeometry(.9, 1.4, 14, 24, 1, true), ringGeo = new THREE.RingGeometry(.8, 1.1, 48);
@@ -1566,12 +1658,12 @@ function gkBoom(x, z, mine) { ringFx(x, z, 0xbfe6ff, 16); ringFx(x, z, 0xffffff,
 let GK = null, gkCd = 0, wasRide = false;
 function gkGo() { if (!entered || HPS.ko) return; if (lvOf(G.pts) < 99) { toast('🔒 원기옥은 100단계 「차트 밖의 창조주」부터!'); return; } if (hallBlock('원기옥')) return; if (GK) return;
   const left = gkCd - Date.now(); if (left > 0) { toast(`🌕 원기옥 다시 모으려면 ${Math.ceil(left / 1000)}초`); return; }
-  GK = { ball: gkBall(live.uid), give: new Set() }; gkCd = Date.now() + GK_CD; room.sendFx('gk:s'); toast('🌕 원기옥을 모으는 중!! 모두의 기를 모아라 — 4초 뒤 발사'); quake(.25, 4); try { SND.bell(); } catch (e) {} setTimeout(gkFire, 4000); }
+  GK = { ball: gkBall(live.uid), give: new Set() }; gkCd = Date.now() + GK_CD; room.sendFx('gk:s'); cine('gather', 1); toast('🌕 원기옥을 모으는 중!! 모두의 기를 모아라 — 4초 뒤 발사'); quake(.25, 4); try { SND.bell(); } catch (e) {} setTimeout(gkFire, 4000); }
 function gkTarget() { const c = []; if (WB && !WB.dead) c.push([WB_POS.x, WB_POS.z, Math.hypot(WB_POS.x - ME.X, WB_POS.z - ME.Z)]); for (const k in BOSS) { const it = INTER[k]; if (it) c.push([it.X, it.Z, Math.hypot(it.X - ME.X, it.Z - ME.Z)]); } if (typeof MOBS !== 'undefined') MOBS.forEach(m => { if (m.dead <= 0) c.push([m.x, m.z, Math.hypot(m.x - ME.X, m.z - ME.Z)]); });
   const n = c.filter(v => v[2] < 40).sort((a, b) => a[2] - b[2])[0]; if (n) return { x: n[0], z: n[1] }; return { x: ME.X - Math.sin(ME.ry + Math.PI) * 12, z: ME.Z - Math.cos(ME.ry + Math.PI) * 12 }; }
 function gkFire() { const o = GK; GK = null; if (!o || !entered) { if (o) gkKill(o.ball); return; } const T = gkTarget(), t = lvOf(G.pts), gv = Math.min(8, o.give.size);
   const dmg = Math.min(499995, Math.round(atkOf(t) * 30 * (1 + gv * .25) * (BUFF.until > Date.now() ? 1.5 : 1) * ampK())); const P = o.ball.m.position;
-  o.ball.fly = { t0: performance.now(), x0: P.x, y0: P.y, z0: P.z, x: T.x, z: T.z }; room.sendFx(`gk:f:${Math.round(T.x)}:${Math.round(T.z)}`);
+  o.ball.fly = { t0: performance.now(), x0: P.x, y0: P.y, z0: P.z, x: T.x, z: T.z }; room.sendFx(`gk:f:${Math.round(T.x)}:${Math.round(T.z)}`); CINE = null; document.body.classList.remove('cine'); cine('fire', 1);
   setTimeout(() => { const n = gkHits(T.x, T.z, dmg); floatAtObj(T.x, 3, T.z, `🌕 ${fmt(dmg, 0)}!!`); addPts(80 + gv * 25 + (n ? 40 : 0)); toast(`🌕 원기옥 명중!! ${n}마리 · 피해 ${fmt(dmg, 0)}` + (gv ? ` (기를 보탠 개미 ${gv}명 · 위력 +${gv * 25}%)` : '')); }, 720); }
 function gkHits(tx, tz, dmg) { const hits = []; if (WB && !WB.dead && Math.hypot(WB_POS.x - tx, WB_POS.z - tz) < 18) hits.push([WB.key, dmg, null]); for (const k in BOSS) { const it = INTER[k]; if (it && Math.hypot(it.X - tx, it.Z - tz) < 14) hits.push([k, dmg, k]); }
   if (typeof MOBS !== 'undefined') MOBS.forEach(m => { if (m.dead <= 0 && Math.hypot(m.x - tx, m.z - tz) < 14) hits.push([m.key, dmg, 'mob' + m.i]); });
@@ -1587,14 +1679,14 @@ function awkGo() { if (!entered || HPS.ko) return; const n = awkLv();
   setAura(myAnt, n); quake(.4 + n * .1, 1); ringFx(ME.X, ME.Z, A.c, 6 + n * 1.5); spawn(ME.X, 1, ME.Z, 80 + n * 30, A.c, 7 + n, 2, 1.4, 4); try { SND.evolve(); } catch (e) {}
   const F = $('flash'); if (F) { F.style.background = '#' + A.c.toString(16).padStart(6, '0'); F.style.opacity = '.45'; setTimeout(() => { F.style.opacity = '0'; F.style.background = ''; }, 260); }
   if (myAnt) floatAt(myAnt, `⚡ ${A.n}!!`, 'big'); toast(`⚡ 하아아앗!! ${A.n} 「${A.d}」 — 공격 ×${A.atk} · 속도 ×${A.spd} · 체력 회복 (${AWK_DUR / 1000}초)`);
-  room.sendFx('aw:' + n); sync(true); clearTimeout(AW.tm); AW.tm = setTimeout(() => { setAura(myAnt, 0); sync(true); toast(`⚡ 각성이 풀렸어요 · ${AWK_CD / 1000}초 뒤 다시 각성!`); updHud(); }, AWK_DUR + 50); updHud(); }
+  room.sendFx('aw:' + n); cine('power'); sync(true); clearTimeout(AW.tm); AW.tm = setTimeout(() => { setAura(myAnt, 0); sync(true); toast(`⚡ 각성이 풀렸어요 · ${AWK_CD / 1000}초 뒤 다시 각성!`); updHud(); }, AWK_DUR + 50); updHud(); }
 function awkUnlock(n) { const A = AWK[n - 1]; if (!A) return; try { coinRain(4); } catch (e) {} try { SND.firework(); } catch (e) {} addLog(`🌟 ${A.n} 「${A.d}」 해금!! ⚡ 버튼(키보드 V)으로 변신해 보세요`, true); toast(`🌟 새 각성 해금! ${A.n} 「${A.d}」 — 공격 ×${A.atk} · 속도 ×${A.spd}`); room.sendFx('awu:' + n); }
 function awkFx(fx) { const k = String(fx.kind), a = antOf(fx.uid), nk = nickOf(fx.uid);
   if (k.startsWith('awu:')) { const A = AWK[(parseInt(k.slice(4), 10) || 1) - 1]; if (A && fx.uid !== live.uid) addLog(`🌟 ${nk}님이 ${A.n} 「${A.d}」 해금!!`, true); return; }
   if (k.startsWith('aw:')) { if (fx.uid === live.uid) return; const n = parseInt(k.slice(3), 10) || 1, A = AWK[n - 1]; if (!A || !a) return; const P = a.root.position; ringFx(P.x, P.z, A.c, 6 + n); spawn(P.x, 1, P.z, 60 + n * 20, A.c, 6 + n, 2, 1.3, 3); floatAt(a, `⚡ ${A.n}!!`, 'big'); if (Math.hypot(P.x - ME.X, P.z - ME.Z) < 30) quake(.25, .6); return; }
-  if (k === 'gk:s') { if (fx.uid === live.uid || !a) return; gkBall(fx.uid); if (entered) showPop({ ic: '🌕', t: `${nk}님이 원기옥을 모아요!`, b: '4초 안에 누르면 기를 보태 위력이 커져요 (+공덕)', dur: 4200, go: '🙌 기 보태기', on: () => { room.sendFx('gk:g:' + id8(fx.uid)); addPts(10); toast('🙌 기를 보탰어요! 원기옥 위력 +25%'); } }); return; }
+  if (k === 'gk:s') { if (fx.uid === live.uid || !a) return; cineAct(a, 'gather', false); gkBall(fx.uid); if (entered) showPop({ ic: '🌕', t: `${nk}님이 원기옥을 모아요!`, b: '4초 안에 누르면 기를 보태 위력이 커져요 (+공덕)', dur: 4200, go: '🙌 기 보태기', on: () => { room.sendFx('gk:g:' + id8(fx.uid)); addPts(10); toast('🙌 기를 보탰어요! 원기옥 위력 +25%'); } }); return; }
   if (k.startsWith('gk:g:')) { if (!isMe8(k.slice(5)) || !GK || fx.uid === live.uid) return; GK.give.add(fx.uid); GK.ball.give = GK.give.size; toast(`🙌 ${nk}님이 기를 보탰어요! (${GK.give.size}명)`); return; }
-  if (k.startsWith('gk:f:')) { if (fx.uid === live.uid) return; const pr = k.split(':'), x = +pr[2], z = +pr[3], o = GKB.find(b => b.uid === fx.uid && !b.fly) || gkBall(fx.uid); const P = o.m.position; if (!P.y && a) P.copy(a.root.position).setY(5); o.fly = { t0: performance.now(), x0: P.x, y0: P.y, z0: P.z, x, z }; return; } }
+  if (k.startsWith('gk:f:')) { if (fx.uid === live.uid) return; cineAct(a, 'fire', false); const pr = k.split(':'), x = +pr[2], z = +pr[3], o = GKB.find(b => b.uid === fx.uid && !b.fly) || gkBall(fx.uid); const P = o.m.position; if (!P.y && a) P.copy(a.root.position).setY(5); o.fly = { t0: performance.now(), x0: P.x, y0: P.y, z0: P.z, x, z }; return; } }
 function updAwBtn() { const B = $('awBar'); if (!B) return; const s100 = entered && lvOf(G.pts) >= 99, hc = entered && !!CARS[G.car]; B.style.display = s100 || hc ? '' : 'none'; $('awBtn').style.display = $('gkBtn').style.display = s100 ? '' : 'none'; $('rideBtn').style.display = hc ? '' : 'none';
   if (hc) { const rb = $('rideBtn'), rl = (CARS[G.car].n.split(' ')[0]) + `<small>${G.ride ? '내리기' : '타기'}</small>`; if (rb.dataset.l !== rl) { rb.dataset.l = rl; rb.innerHTML = rl; } rb.classList.toggle('act', riding()); }
   if (!s100) return;
@@ -1645,6 +1737,7 @@ function onFxCb0(fx) {
   else if (k === 'ko') { floatAt(a, '😵 기절!', 'big'); spawn(P.x, 2, P.z, 30, 0xffd76a, 3, 4, 1); }
   else if (k === 'rv') { floatAt(a, '✨ 부활!', 'txt'); spawn(P.x, 1, P.z, 40, 0x7dffb0, 3, -2, 1.2); }
   else if (k === 'roof') { floatAt(a, '🏢 옥상 정복!', 'big'); addLog(`🏢 ${nickOf(fx.uid)}님이 원복 빌딩 옥상에 올랐다!`, true); }
+  else if (k.startsWith('cn:')) { if (fx.uid !== live.uid) cineAct(a, k.slice(3), false); }
   else if (k === 'bow') { a.act = { k: 'bow', t0: t, d: 1 }; SND.bow(); }
   else if (k === 'clap') { a.act = { k: 'clap', t0: t, d: 1.2 }; [0, .15, .3, .45].forEach(d => setTimeout(SND.clap, d * 1000)); floatAt(a, '👏'); }
   else if (k === 'water') { a.act = { k: 'water', t0: t, d: 1.8 }; SND.water(); for (let i = 0; i < 6; i++) setTimeout(() => { const s = new THREE.Vector3(); a.can.getWorldPosition(s); spawn(s.x + Math.sin(a.root.rotation.y) * .3, s.y, s.z + Math.cos(a.root.rotation.y) * .3, 8, 0x6ab7ff, .8, 9, .8); }, 200 + i * 220); floatAt(a, '💧'); }
@@ -4181,7 +4274,7 @@ function catchFish() {
   const F = FISHING; F.done = 1; clearTimeout(F.tm2); let r = Math.random() * 100, pick = FISH[0]; for (const f of FISH) { if (r < f[1]) { pick = f; break; } r -= f[1]; }
   G.fish = G.fish || {}; G.fish[pick[0]] = (G.fish[pick[0]] || 0) + 1; saveG(); addPts(pick[2]);
   toast(`🎣 ${pick[0]} 낚았다! +${Math.round(pick[2] * ptsMul(lvOf(G.pts)))} 공덕 (총 ${Object.values(G.fish).reduce((a, b) => a + b, 0)}마리)`); floatAt(myAnt, '🎣 ' + pick[0], 'big');
-  qProg('fish'); addCoin(5 + Math.round(pick[2] / 20)); if (pick[2] >= 90) room.sendFx('fish:' + FISH.indexOf(pick)); if (Math.random() < .12 * LK()) dropItem(0); spawn(PIER.x0 - 1, .5, ME.Z, 40, 0x2fd0ff, 4, 7, .8); setTimeout(endFish, 600);
+  qProg('fish'); addCoin(5 + Math.round(pick[2] / 20)); if (pick[2] >= 90) room.sendFx('fish:' + FISH.indexOf(pick)); if (pick[2] >= 50) cine('catch'); else cineAct(myAnt, 'catch', true); if (Math.random() < .12 * LK()) dropItem(0); spawn(PIER.x0 - 1, .5, ME.Z, 40, 0x2fd0ff, 4, 7, .8); setTimeout(endFish, 600);
 }
 function endFish() { if (FISHING) { clearTimeout(FISHING.tm); clearTimeout(FISHING.tm2); } FISHING = null; ME.fishing = false; sync(true); }
 // ---- ☁ 천국 라운지 (소통 전용: 몬스터·레이드 금지, 바깥 소리 차단) ----
@@ -4323,14 +4416,14 @@ function jackGive(t) {
   if (t === 'A') { BUFF.until = Math.min(Date.now() + 3 * 3600e3, Math.max(Date.now(), BUFF.until) + 20 * 60e3); addCoin(200, '잭팟'); return '공덕 +1배 부스터 20분 연장 + 🪙 200'; }
   if (t === 'B') { try { dropItem(5); } catch (e) {} return '전설 장비 상자가 열렸어요!'; }
   const c = jrnd(300, 800); addCoin(c, '잭팟'); return `🪙 코인 +${c}`; }
-function jackNext() { if (JQ.length && document.querySelector('.modal.on')) { jOpen = true; setTimeout(jackNext, 1500); return; } const q = JQ.shift(); if (!q) { jOpen = false; return; } jOpen = true; const T = JT[q.t], big = ['SSS', 'SS', 'S'].includes(q.t);
+function jackNext() { if (JQ.length && (document.querySelector('.modal.on') || (typeof CINE !== 'undefined' && CINE))) { jOpen = true; setTimeout(jackNext, 1500); return; } const q = JQ.shift(); if (!q) { jOpen = false; return; } jOpen = true; const T = JT[q.t], big = ['SSS', 'SS', 'S'].includes(q.t);
   const o = document.createElement('div'); o.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(5,8,18,.78);display:flex;align-items:center;justify-content:center;padding:20px'; const b = document.createElement('div'); b.style.cssText = `width:min(340px,100%);text-align:center;border-radius:22px;padding:26px 18px;background:#121a2e;border:3px solid ${T.c};box-shadow:0 0 40px ${T.c}88;color:#fff;font-family:inherit`;
   const ic = document.createElement('div'); ic.textContent = '🎁'; ic.style.cssText = 'font-size:84px;line-height:1.1;animation:jkS .35s infinite alternate'; const st = document.createElement('style'); st.textContent = '@keyframes jkS{from{transform:rotate(-9deg) scale(1)}to{transform:rotate(9deg) scale(1.12)}}'; b.append(st, ic); const sub = document.createElement('div'); sub.textContent = `🎰 잭팟 상자 · ${JSRC[q.src] || ''}`; sub.style.cssText = 'font-size:13px;opacity:.8;margin-top:6px'; b.appendChild(sub); o.appendChild(b); document.body.appendChild(o);
   try { SND.bell(); } catch (e) {}
   setTimeout(() => { ic.style.animation = 'none'; ic.textContent = q.t === 'SSS' ? '🌈' : q.t === 'SS' ? '💎' : q.t === 'S' ? '🏆' : q.t === 'G' ? '🎁' : q.t === 'A' ? '🍀' : q.t === 'B' ? '🎒' : '🪙'; ic.style.fontSize = '96px';
     const h = document.createElement('div'); h.textContent = T.n + (big ? '!!!' : '!'); h.style.cssText = `font-size:${big ? 30 : 24}px;font-weight:900;color:${T.c};margin-top:8px`; const d = document.createElement('div'); d.textContent = q.txt; d.style.cssText = 'font-size:15px;font-weight:700;margin:10px 0 16px;line-height:1.5;word-break:keep-all'; const ok = document.createElement('button'); ok.type = 'button'; ok.textContent = '확인'; ok.style.cssText = `border:0;border-radius:999px;padding:11px 34px;font-weight:900;font-size:16px;background:${T.c};color:#111;cursor:pointer`; ok.onclick = () => { o.remove(); jackNext(); }; b.append(h, d, ok);
     try { if (big) { SND.firework(); coinRain(q.t === 'SSS' ? 8 : 4); } else SND.level(); } catch (e) {} }, 1300); }
-function jackpot(src, m, force) { if (!entered) { setTimeout(() => jackpot(src, m, force), 3000); return; } const t = force || jackRoll(m), txt = jackGive(t); G.jp = G.jp || { n: 0 }; G.jp.n++; saveG(); if (t === 'SSS' || t === 'SS' || t === 'G') { try { room.sendFx('jp:' + t); } catch (e) {} } JQ.push({ t, txt, src }); if (!jOpen) jackNext(); }
+function jackpot(src, m, force) { if (!entered) { setTimeout(() => jackpot(src, m, force), 3000); return; } const t = force || jackRoll(m), txt = jackGive(t); G.jp = G.jp || { n: 0 }; G.jp.n++; saveG(); if (t === 'SSS' || t === 'SS' || t === 'G') { try { room.sendFx('jp:' + t); } catch (e) {} } if (t === 'SSS' || t === 'SS' || t === 'S') cine('jackpot', 1); JQ.push({ t, txt, src }); if (!jOpen) jackNext(); }
 function jackFx(fx) { if (fx.uid === live.uid) return; const t = String(fx.kind).slice(3), n = nickOf(fx.uid); if (t === 'G') { addCoin(300, '깜짝 선물'); toast(`🎁 ${n}님의 잭팟 덕분에 🪙 300 받았어요!`); addLog(`🎁 ${n}님이 잭팟! 접속 중인 모두에게 🪙 300 선물!`, true); } else if (JT[t]) { addLog(`🎰 ${n}님이 ${JT[t].n} 잭팟!! 🎆`, true); try { coinRain(3); } catch (e) {} } }
 
 let wasHeaven = false; window.__inHeaven = () => entered && inHeaven(ME.X, ME.Z);
@@ -4390,7 +4483,7 @@ async function realmEnter(id) {
     const api = { THREE, group, GEO, mesh, M: (c, o) => new THREE.MeshStandardMaterial(Object.assign({ color: c }, o || {})), sign: signPlane,
       addInter: (k, d) => { INTER[k] = Object.assign({ type: 'rz' }, d, { X: R_ORG.x + d.X, Z: R_ORG.z + d.Z }); const l = el('div', 'olab', d.name); labels.appendChild(l); olabs[k] = l; keys.push(k); },
       toast, tapeNote, gauge: realmGauge, LS, kstDate, givePts, growCoin, addCoin, G, saveG, dropItem, floatMe: (t, c) => { try { floatAt(myAnt, t, c); } catch (e) {} }, hud: () => updHud(), leave: () => realmLeave(),
-      fx: { sweat: () => sp(14, 0x9ee8ff), firework: () => { try { SND.firework(); } catch (e) {} spawn(ME.X, 3, ME.Z, 60, 0xffd76a, 6, 3, 1.5, 3); } },
+      cine: n => cine(n), fx: { sweat: () => sp(14, 0x9ee8ff), firework: () => { try { SND.firework(); } catch (e) {} spawn(ME.X, 3, ME.Z, 60, 0xffd76a, 6, 3, 1.5, 3); } },
       warp: (x, z) => { ME.X = R_ORG.x + x; ME.Z = R_ORG.z + z; ME.target = null; cam.tx = ME.X; cam.tz = ME.Z; sync(true); } };
     const inst = build(api); REALM = { id, group, inst, keys, back: { x: ME.X, z: ME.Z }, cam: { d: cam.dist, p: cam.pitch } };
     endFish(); ME.fly = false; ME.climb = false; ME.Y = 0; ME.vy = 0; ME.seat = -1; ME.lie = false; ME.target = null;
@@ -4521,7 +4614,7 @@ function openNpc() {
 function attCheck() {
   const d = kstDate(); G.att = G.att || { d: '', n: 0 }; if (G.att.d === d) return false;
   const yest = kstDateOf(Date.now() - 864e5); let n = G.att.d === yest ? G.att.n + 1 : 1; if (n > 7) n = 1; G.att = { d, n }; saveG(); addCoin(n >= 7 ? 1500 : 100 + n * 40, '출석');
-  setTimeout(() => { givePts(10 + n * 5, .05); if (n === 7) { dropItem(5); toast('🎁 7일 연속 출석! 전설 상자 오픈!!'); try { SND.firework(); } catch (e) {} } else toast(`📅 출석 ${n}일째! +공덕 (7일 연속이면 전설 상자)`); renderAtt(); if (!document.querySelector('.modal.on')) openModal('mAtt'); setTimeout(() => jackpot(n === 7 ? 'att7' : 'att', n === 7 ? 12 : 3), 1800); }, 3200);
+  setTimeout(() => { cine('attend'); givePts(10 + n * 5, .05); if (n === 7) { dropItem(5); toast('🎁 7일 연속 출석! 전설 상자 오픈!!'); try { SND.firework(); } catch (e) {} } else toast(`📅 출석 ${n}일째! +공덕 (7일 연속이면 전설 상자)`); renderAtt(); if (!document.querySelector('.modal.on')) openModal('mAtt'); setTimeout(() => jackpot(n === 7 ? 'att7' : 'att', n === 7 ? 12 : 3), 1800); }, 3200);
   return true;
 }
 function renderAtt() { const A = G.att || { d: '', n: 0 }, today = A.d === kstDate(), g = $('attGrid'); g.textContent = ''; for (let i = 1; i <= 7; i++) { const ok = i <= A.n && (today || A.d === kstDateOf(Date.now() - 864e5)); const c = el('div', (ok ? 'ok' : '') + (today && i === A.n ? ' today' : '')); c.append(el('i', null, i === 7 ? '🎁' : ok ? '✅' : '⬜'), document.createTextNode(i + '일')); g.appendChild(c); }
@@ -5001,8 +5094,10 @@ function loop() {
   cam.tx += (tgtX - cam.tx) * kk; cam.tz += (tgtZ - cam.tz) * kk; cam.ty += ((2 + (entered ? (ME.Y || 0) : 0)) - cam.ty) * kk;
   if (!entered) cam.yaw = Math.sin(t * .15) * .35;
   scene.fog.density = .0042 / (1 + Math.max(0, cam.dist - 14) / 18); tickSky(dt, t); labels.classList.toggle('far', cam.dist > 32);
-  const cp = Math.cos(cam.pitch); camera.position.set(cam.tx + Math.sin(cam.yaw) * cp * cam.dist, cam.ty + Math.sin(cam.pitch) * cam.dist, cam.tz + Math.cos(cam.yaw) * cp * cam.dist);
-  camera.lookAt(cam.tx - Math.sin(cam.yaw) * 3, cam.ty + 1.3, cam.tz - Math.cos(cam.yaw) * 3); applyQuake();
+  cineTick(); let cD = cam.dist, cP = cam.pitch, cY = cam.yaw, cT = cam.ty, cLa = 3, cLy = cam.ty + 1.3; const cw = REDUCE ? 0 : cineCamW();
+  if (cw > 0 && CINE) { const C = CINE.C, e = clock.elapsedTime - CINE.t0, ty = (ME.Y || 0) + C.ty, sd = TOUCH ? 1.12 : 1, yT = ME.ry + Math.sin(e * (C.spin || 0)) * .5 + (C.spin ? Math.sign(C.spin) * 0 : 0); let dy = Math.atan2(Math.sin(yT - cY), Math.cos(yT - cY)); cY += dy * cw; cD += (C.dist * sd - cD) * cw; cP += (C.pitch - cP) * cw; cT += ((ME.Y || 0) + C.ty * .45 - cT) * cw; cLa = 3 * (1 - cw * .9); cLy = cT + 1.3 + (ty - (cT + 1.3)) * cw; }
+  const cp = Math.cos(cP); camera.position.set(cam.tx + Math.sin(cY) * cp * cD, cT + Math.sin(cP) * cD, cam.tz + Math.cos(cY) * cp * cD);
+  camera.lookAt(cam.tx - Math.sin(cY) * cLa, cLy, cam.tz - Math.cos(cY) * cLa); applyQuake();
   // 촛불·전광판
   flames.forEach((f, i) => { const s = 1 + Math.sin(t * 13 + i * 3) * .12 + Math.sin(t * 7.3 + i) * .08; f.scale.set(.09 * s, .2 * s, .09 * s); candleLights[i].intensity = 9 * s; });
   tTex.offset.x = (tTex.offset.x + dt * .035) % 1; glow.material.opacity = .06 + Math.sin(t * 1.4) * .02 + (weather === 'party' ? .06 : 0);
@@ -5041,7 +5136,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '37';
+const APP_V = '38';
 {
   let shown = false;
   const check = async () => {
@@ -5187,7 +5282,7 @@ function pkFx(fx) {
 function pkKoFx(fx) { // 누군가(fx.uid)가 쓰러짐 · 쓰러뜨린 사람 = id8
   const killer = uidOf8(String(fx.kind).slice(5)), loser = fx.uid, dl = DUEL && (DUEL.uid === loser || DUEL.uid === killer) && (killer === live.uid || loser === live.uid);
   addLog(`${dl ? '🤺 결투 결과' : '⚔ PK존'}: ${nickOf(killer)}님이 ${nickOf(loser)}님을 쓰러뜨렸다!`, true);
-  if (killer === live.uid) { G.pkW = (G.pkW | 0) + 1; saveG(); addCoin(dl ? 60 : 15, dl ? '결투 승리' : 'PK 승리'); qProg('mob'); if (myAnt) floatAt(myAnt, dl ? '🏆 결투 승리!' : '⚔ KO!', 'big'); try { SND.level(); } catch (e) {} }
+  if (killer === live.uid) { G.pkW = (G.pkW | 0) + 1; saveG(); addCoin(dl ? 60 : 15, dl ? '결투 승리' : 'PK 승리'); qProg('mob'); if (myAnt) floatAt(myAnt, dl ? '🏆 결투 승리!' : '⚔ KO!', 'big'); try { SND.level(); } catch (e) {} cine('win'); }
   if (dl) endDuel(killer === live.uid ? '🏆 결투 승리!' : '😵 결투 패배… 다음엔 이길 거예요');
 }
 function endDuel(msg) { if (!DUEL) return; DUEL = null; $('duelBar').classList.remove('on'); if (msg) toast(msg); updPkBtn(); }
@@ -5204,7 +5299,7 @@ function duelFx(fx) { const k = String(fx.kind), ty = k.slice(0, 2), tg = k.slic
   else if (ty === 'da') startDuel(from, 0); else if (ty === 'dn') toast(`🙅 ${nk}님이 결투를 거절했어요`); }
 function startDuel(uid, side) { DUEL = { uid, t0: Date.now(), until: Date.now() + DUEL_SEC * 1000 + 3000 }; const nk = nickOf(uid);
   if (entered && side != null) { try { endFish(); } catch (e) {} autoOff(); const P = { x: PKZ.x, z: PKZ.z + (side ? 7 : -7) }; ME.fly = false; ME.climb = false; ME.Y = 0; ME.vy = 0; ME.seat = -1; ME.lie = false; ME.target = null; ME.X = P.x; ME.Z = P.z; ME.ry = side ? Math.PI : 0; cam.tx = P.x; cam.tz = P.z; cam.yaw = side ? 0 : Math.PI; HPS.hp = HPS.max; hpUi(); sync(true); spawn(P.x, 1, P.z, 50, 0xff5a3a, 3, -2, 1); }
-  toast(`🤺 ${nk}님과 결투! PK 대경기장으로 이동 · 3…`); setTimeout(() => toast('2…'), 1000); setTimeout(() => toast('1… ⚔ 시작!'), 2000); addLog(`🤺 ${PROF.nick} vs ${nk} 결투 시작!`, true); try { SND.bell(); } catch (e) {} updPkBtn(); }
+  toast(`🤺 ${nk}님과 결투! PK 대경기장으로 이동 · 3…`); setTimeout(() => toast('2…'), 1000); setTimeout(() => { toast('1… ⚔ 시작!'); cine('fight'); }, 2000); addLog(`🤺 ${PROF.nick} vs ${nk} 결투 시작!`, true); try { SND.bell(); } catch (e) {} updPkBtn(); }
 function updPkBtn() { const on = entered && ((CFG2().pk !== false && inPK(ME.X, ME.Z)) || (DUEL && Date.now() < DUEL.until)); $('pkBtn').classList.toggle('on', !!on);
   if (DUEL) { const left = Math.max(0, Math.ceil((DUEL.until - Date.now()) / 1000)); $('duelBar').classList.add('on'); $('duelBar').textContent = `🤺 결투 중: ${nickOf(DUEL.uid)} · ${Math.min(DUEL_SEC, left)}초 · E·공격 버튼 = 기본공격 · 스킬도 맞아요!`; if (left <= 0) endDuel('⏱ 결투 시간 끝 — 무승부!'); else if (Date.now() - DUEL.t0 > 6000 && !remotes.has(DUEL.uid)) endDuel('상대가 나갔어요 — 결투 종료'); } }
 setInterval(updPkBtn, 500);
@@ -5343,6 +5438,9 @@ window.__room3d = { dexN: () => dexTypes().size, sig: () => SIG, openSig: () => 
   mobs: () => MOBS.map(m => ({ i: m.i, x: +m.x.toFixed(1), z: +m.z.toFixed(1), hp: mobHp(m), dead: m.dead > 0 })), hitMob: i => hitMob(MOBS[i]), fishing: () => FISHING ? { bite: !!FISHING.bite, done: !!FISHING.done } : null, heaven: () => inHeaven(ME.X, ME.Z), gb: () => GB.length, bgmWant: () => bgmWant(),
   walk: (x, z) => walkable(x, z), zone: () => { const z = zoneAt(ME.X, ME.Z); return z && z.n; }, wk: off => weekId(off), att: () => G.att, sea: () => ({ p: seaPts(), list: seaList }), npc: () => npcLines(), calm: () => CALM, block: () => [...BLOCK], mobN: () => MOBS.length, openNpc: () => openNpc(), visMobs: () => MOBS.filter(m => m.o.g.visible).length,
   setY: y => { ME.Y = y; }, hp: () => ({ hp: HPS.hp, max: HPS.max, ko: HPS.ko }), wb: () => WB ? { key: WB.key, hits: WB.hits, max: WB.max, mine: WB.mine } : null,
+  cineAt: (n, sec) => { const C = CINES[n]; if (!C) return false; clearInterval(window.__cineHold); cine(n); const act = C.acts.filter(x => x[0] <= sec).pop(); if (act) myAnt.act = { k: act[1], t0: 0, d: 999, sit: act[3] ? 1 : 0, cn: 1 }; window.__cineHold = setInterval(() => { if (CINE) { CINE.t0 = clock.elapsedTime - sec; CINE.ended = false; CINE.caps = C.caps.filter(c => c[0] > sec); } if (myAnt.act && act) myAnt.act.t0 = clock.elapsedTime - (sec - act[0]); }, 16); return true; }, cineRel: () => { clearInterval(window.__cineHold); cineEnd(); },
+  cineProbe: () => { const w = o => { const v = new THREE.Vector3(); o.getWorldPosition(v); return [+v.x.toFixed(2), +v.y.toFixed(2), +v.z.toFixed(2)]; }; return { head: w(myAnt.head), towel: myAnt.towel ? w(myAnt.towel) : null, tv: myAnt.towel && myAnt.towel.visible, cup: myAnt.cup ? w(myAnt.cup) : null, cv: myAnt.cup && myAnt.cup.visible, root: [myAnt.root.position.x, myAnt.root.position.y, myAnt.root.position.z], ry: myAnt.ry }; },
+  cine: n => cine(n), cineSt: () => ({ on: !!CINE, w: cineCamW(), name: CINE && CINE.name, ended: CINE && CINE.ended }), cineEnd: () => cineEnd(),
   pv: t => previewOf(t), camYaw: () => cam.yaw, evo: () => { evolveFx(myAnt, true); return true; }, bgm: () => ({ cur: bgmCur, ac: AC && AC.state }), host: () => HOST, setHost: v => { HOST = !!v; $('bFw').style.display = HOST ? '' : 'none'; setAntLook(myAnt, PROF.color, PROF.hb, G.pts, HOST); fillLabel(myLabel, myData(), true); sync(true); }, setMarket: (q, h, x) => { MK.q = q || {}; MK.h = h || {}; if (x) Object.assign(MK, x); mkRedraw(); try { renderRep(); updMyStock(true); } catch (e) {} }, rep: t => openRep(t), sigTest: () => { LS.set('lv3d_sigseen', ['OLD|x']); return loadBot(true).then(() => !!document.querySelector('.sigBan')); }, my: () => myStock(), eco: () => ECO, fxLog, tier: t => { applyTier(myAnt, t); return myAnt.tier; }, realm: () => REALM && REALM.id, rem: () => [...remotes.values()].map(r => ({ n: r.data.nick, rg: r.data.rg || '', x: +r.cur.x.toFixed(1), z: +r.cur.z.toFixed(1), tx: +r.tgt.x.toFixed(1), tz: +r.tgt.z.toFixed(1), vis: !!r.ant })), realmDbg: () => REALM && REALM.inst.dbg, scn: () => { const m = {}; scene.children.forEach(o => { const k = o.type + ':' + (o.geometry ? o.geometry.type : '') + ':' + (o.children ? o.children.length : 0); m[k] = (m[k] || 0) + 1; }); return m; }, rinfo2: () => ({ geo: renderer.info.memory.geometries, tex: renderer.info.memory.textures, prog: renderer.info.programs ? renderer.info.programs.length : 0, objs: scene.children.length, inter: Object.keys(INTER).length, lab: Object.keys(olabs).length }), pos: () => ({ x: ME.X, z: ME.Z }), enterRealm: id => realmEnter(id), leaveRealm: () => realmLeave(), hub: HUBP, pts: () => G.pts, rewT: p => { G.pts = p; const t = lvOf(p); return { t, span: spanOf(), raid: growPts(480, .30), daily: growPts(20, .04), coin: growCoin(50) }; }, growth: () => growthOnEnter(), setPts: p => { G.pts = p; updHud(); },  fps: () => fps, seats: SEATS, sitOn: i => sitOn(i), screenOf: uid => { const r = uid === live.uid ? { cur: { x: ME.X, z: ME.Z } } : remotes.get(uid); return r ? project(r.cur.x, 1, r.cur.z) : null; }
 };
 </script>
