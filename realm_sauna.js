@@ -58,7 +58,7 @@
       if (inIce && heat <= 10) wasHot = 0;
       if (inKiln && heat >= 30 && heat < 95 && now > lockUntil && now - lastTick > 4000) { lastTick = now; if (S.n < DAILY) { S.n++; S.tot++; const g = givePts(2, .01); save(); floatMe(`💧 +${g}`, 'txt'); } else if (S.n === DAILY) { S.n++; tapeNote('오늘 땀 보상은 여기까지! 내일 또 와요 🧖', { ms: 2600, cls: 'tip' }); } }
       const pct = Math.round(heat), col = pct >= 90 ? '#ff2a2a' : pct >= 70 ? '#ff8a1e' : pct >= 30 ? '#e8b020' : '#2da8e8';
-      gauge(`${inKiln ? '🔥 불가마' : inIce ? '❄ 얼음방' : '♨ 찜질방'} · 열기 ${pct}%` + (now < sik ? ' · 🥤식혜' : '') + (pct >= 90 && inKiln ? ' · 🚨 나가요!' : pct >= 70 && inKiln ? ' · 🔥 땀 짜내기!' : ''), pct, col);
+      gauge(`${inKiln ? '🔥 불가마' : inIce ? '❄ 얼음방' : '♨ 찜질방'} · 열기 ${pct}%` + (now < sik ? ' · 🥤식혜' : '') + (pct >= 90 && inKiln ? ' · 🚨 나가요!' : pct >= 70 && inKiln ? ' · 🔥 땀 짜내기!' : inKiln && pct < 60 ? ' · 🎯 60%부터 황금 땀(E)' : ''), pct, col, 60);
       kmouth.material.emissiveIntensity = 1.4 + Math.sin(t * 6) * .4;
     },
     dbg: { setHeat: v => { heat = v; wasHot = Math.max(wasHot, v); }, get: () => ({ heat, S, over }) },

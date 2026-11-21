@@ -502,6 +502,23 @@ button:focus-visible,a:focus-visible,[role=button]:focus-visible{outline:2px sol
 .floaty.dj{font-size:24px;font-weight:900;color:#9ef0ff;text-shadow:0 0 14px #2ad0ff,0 2px 2px #000;white-space:nowrap}
 .floaty.dk{font-size:34px;font-weight:900;color:#fff0a0;text-shadow:0 0 18px #ffb020,0 3px 3px #000;white-space:nowrap}
 </style>
+<style id="ds45">
+body.inRealm #aMk{display:none!important}
+#tapeNote.gauge.mk::after{content:'';position:absolute;top:2px;bottom:2px;left:var(--mk,60%);width:3px;margin-left:-1px;background:#fff;border-radius:2px;box-shadow:0 0 6px #fff,0 0 2px #000}
+#langGate{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%,#2a1c0e,#0b0f1c 70%);padding:20px}
+#langGate .lgBox{width:min(420px,100%);text-align:center;color:#fff}
+#langGate .lgLogo{font-size:64px;line-height:1;filter:drop-shadow(0 6px 18px rgba(255,170,60,.45))}
+#langGate h1{margin:10px 0 4px;font-size:36px;font-weight:900;letter-spacing:-.5px}
+#langGate h1 span{display:block;font-size:15px;font-weight:800;color:#ffb020;letter-spacing:4px;margin-top:6px}
+#langGate .lgTag{margin:8px 0 24px;color:#cfd6e6;font-size:15px}
+#langGate .lgBtns{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#langGate .lgBtns button{padding:16px 10px;border-radius:16px;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:#fff;font-weight:800;font-size:18px;font-family:inherit;cursor:pointer}
+#langGate .lgBtns button.def{border-color:#ffb020;background:linear-gradient(135deg,#ff7a59,#ffb020);color:#1a1206}
+#langGate .lgNote{margin-top:18px;font-size:12px;color:#8f9ab2;line-height:1.5}
+body.city #mEnter:not(.showAdv) .adv{display:none!important}
+#fMore{margin:2px 0 8px}
+.cityB{font-size:11px;font-weight:800;color:#1a1206;background:#ffb020;border-radius:8px;padding:2px 6px;margin-left:4px;vertical-align:middle}
+</style>
 </head>
 <body>
 <canvas id="gl"></canvas>
@@ -703,6 +720,21 @@ const EMBED = /[?&]embed=1/.test(location.search) || (() => { try { return windo
 if (EMBED) document.body.classList.add('embed');
 const LS = { get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
 const qs = new URLSearchParams(location.search);
+/* ================= 🏙 v45 개미시티 미리보기 스위치 · 언어 엔진 =================
+   ?city=1 → 이 기기에서 개미시티 미리보기 켜기, ?city=0 → 끄기. 꺼져 있으면 v44와 똑같이 동작 */
+const QS0 = new URLSearchParams(location.search);
+{ const c = QS0.get('city'); if (c === '1') LS.set('lv3d_city', 1); else if (c === '0') LS.set('lv3d_city', 0); }
+const CITY = !!LS.get('lv3d_city', 0);
+let LANG = 'ko';
+if (CITY) { const q = QS0.get('lang'); if (q === 'en' || q === 'ko') LS.set('lv3d_lang', q); const sv = LS.get('lv3d_lang', ''); LANG = sv === 'en' || sv === 'ko' ? sv : (/^ko/i.test(navigator.language || '') ? 'ko' : 'en'); }
+const EN = () => CITY && LANG === 'en';
+const T = (ko, en) => (EN() ? en : ko);
+const I18 = { d: null, rx: [], miss: new Set() }; window.__i18n = I18;
+function trText(s0) { if (!EN() || !I18.d || typeof s0 !== 'string') return s0; const k = s0.trim(); if (!k || !/[가-힣]/.test(k)) return s0; const v = I18.d[k]; if (v != null) return s0.replace(k, () => v); for (const [re, to] of I18.rx) if (re.test(k)) { const r = k.replace(re, to); return s0.replace(k, () => r); } if (I18.miss.size < 400) I18.miss.add(k); return s0; }
+function trNode(root) { if (!EN() || !I18.d || !root) return; const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT), L = []; while (w.nextNode()) L.push(w.currentNode);
+  L.forEach(n => { const k = n.nodeValue.trim(); if (!k || !/[가-힣]/.test(k)) return; const v = I18.d[k]; if (v != null) n.nodeValue = n.nodeValue.replace(k, () => v); });
+  if (root.querySelectorAll) root.querySelectorAll('[placeholder],[title]').forEach(e => ['placeholder', 'title'].forEach(a => { const k = (e.getAttribute(a) || '').trim(); if (k && I18.d[k] != null) e.setAttribute(a, I18.d[k]); })); }
+function i18nLoad() { if (!EN() || I18.d) return Promise.resolve(); return new Promise(res => { const sc = document.createElement('script'); sc.src = 'i18n_en.js?v=' + APP_V; sc.onload = () => { const X = window.I18N_EN || {}; I18.d = X.dict || {}; I18.rx = X.rx || []; res(); }; sc.onerror = () => res(); document.head.appendChild(sc); }); }
 let ROOM = LVX.roomFromUrl(); // 없으면 채널 고르기 창에서 정함
 const CAP = LVX.CAP;
 const KF = '"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif';
@@ -2284,11 +2316,11 @@ document.querySelectorAll('.tabs button[data-tab]').forEach(b => b.onclick = () 
 $('pClose').onclick = () => $('panel').classList.remove('open');
 $('sheetBtn').onclick = () => $('panel').classList.toggle('open');
 $('hud').onclick = () => $('hud').classList.toggle('open');
-function openModal(id) { $(id).classList.add('on'); keys.clear(); }
+function openModal(id) { $(id).classList.add('on'); keys.clear(); if (EN()) try { trNode($(id)); } catch (e) {} }
 function closeModals() { document.querySelectorAll('.modal.on').forEach(m => { if (m.id !== 'mEnter' || entered) m.classList.remove('on'); }); }
 document.querySelectorAll('[data-close]').forEach(b => b.onclick = closeModals);
 document.querySelectorAll('.modal').forEach(m => m.addEventListener('pointerdown', e => { if (e.target === m) closeModals(); }));
-let toastT = 0; function toast(t) { const d = $('toast'); d.textContent = t; d.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => d.classList.remove('on'), 2200); }
+let toastT = 0; function toast(t) { const d = $('toast'); d.textContent = trText(t); d.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => d.classList.remove('on'), 2200); }
 $('bLink').onclick = () => { const u = location.href; const done = () => toast('방 링크를 복사했어요'); try { navigator.clipboard.writeText(u).then(done, () => { prompt0(u); }); } catch (e) { prompt0(u); } };
 function prompt0(u) { const ta = el('textarea'); ta.value = u; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); toast('방 링크를 복사했어요'); } catch (e) { toast(u); } ta.remove(); }
 
@@ -2355,7 +2387,7 @@ const MK = { q: {}, h: {} };
 let tnQ = [], tnBusy = 0, wxNoteKey = null;
 let wbNear = false;
 function tapeRaid() { const N = $('tapeNote'); if (!N) return; if (!WB || WB.dead || !wbNear) { if (N.classList.contains('raid') && !tnBusy) N.className = ''; return; } if (tnBusy) return; const hp = Math.max(0, WB.max - WB.hits), left = Math.max(0, Math.ceil((WB.start + WB_ACT - Date.now()) / 1000)); N.className = 'raid'; N.style.setProperty('--hp', (hp / WB.max * 100) + '%'); N.textContent = `👹 ${WB.K.name.replace(/!/g, '')} · HP ${Math.round(hp / WB.max * 100)}% · ⏱ ${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')} · 내 기여 ${WB.mine}`; }
-function tapeNote(text, o) { o = o || {}; tnQ.push({ text, ms: o.ms || 2500, cls: o.cls || '', go: o.go || null }); if (tnQ.length > 3) tnQ.splice(0, tnQ.length - 3); if (!tnBusy) tnNext(); }
+function tapeNote(text, o) { o = o || {}; text = trText(text); tnQ.push({ text, ms: o.ms || 2500, cls: o.cls || '', go: o.go || null }); if (tnQ.length > 3) tnQ.splice(0, tnQ.length - 3); if (!tnBusy) tnNext(); }
 function tnNext() { const N = $('tapeNote'); if (!N) return; const x = tnQ.shift(); if (!x) { tnBusy = 0; return; } tnBusy = 1;
   N.textContent = x.text; N.className = 'on ' + x.cls + (x.go ? ' go' : ''); N.onclick = x.go ? () => { N.className = ''; x.go(); } : null;
   setTimeout(() => { N.className = ''; setTimeout(tnNext, 300); }, x.ms); }
@@ -4671,6 +4703,7 @@ function cmdItems() {
   CMD_ACT.forEach(([id, ico, nm, kw]) => { const b = $(id); if (!b) return; L.push({ cat: '기능', ico, nm, kw, btns: [['열기', () => { closeModals(); setTimeout(() => b.click(), 60); }]] }); });
   TPS.forEach(([nm, x, z]) => L.push({ cat: '장소', ico: '📍', nm, kw: nm, btns: [['⚡ 이동', () => tpTo(x, z, nm)], ['🚶 걸어서', () => walkTo(x, z, null, nm)]] }));
   const seen = {}; Object.keys(INTER).forEach(k => { const it = INTER[k]; if (!it || !it.name || it.type === 'rz' || /^(boss|crate|wboss)$/.test(it.type || '') || k === 'wb' || k === 'mob' || seen[it.name] || typeof it.X !== 'number') return; seen[it.name] = 1; const nm = it.name.replace(/\s*\(E\)/, ''); L.push({ cat: '가서 하기', ico: '👆', nm, kw: it.name, btns: [['🚶 가서 사용', () => walkTo(it.X, it.Z, k, nm)]] }); });
+  L.push({ cat: T('도움말', 'Help'), ico: '🪂', nm: T('활강·비행 하는 법', 'How to glide and fly'), kw: '활강 비행 날기 날개 glide fly', btns: [[T('보기', 'Show'), () => { closeModals(); setTimeout(() => toast(T('🪂 활강: 높은 곳에서 떨어질 때 점프를 꾹 · 🕊 비행: 50단계부터 공중에서 점프 꾹(상승)·C(하강)', '🪂 Glide: hold Jump while falling · 🕊 Fly: from stage 50, hold Jump in the air to rise, C to descend')), 80); }]] });
   return L;
 }
 function renderCmd() {
@@ -4774,7 +4807,7 @@ function tickGate39(dt) {
 }
 let RBUSY = false; const RLOAD = {}, sleep = ms => new Promise(r => setTimeout(r, ms));
 function loadRealm(id) { return RLOAD[id] || (RLOAD[id] = new Promise((res, rej) => { if (window.WB_REALMS && WB_REALMS[id]) return res(WB_REALMS[id]); const sc = document.createElement('script'); sc.src = `realm_${id}.js?v=${APP_V}`; sc.onload = () => window.WB_REALMS && WB_REALMS[id] ? res(WB_REALMS[id]) : rej(new Error('realm')); sc.onerror = () => { delete RLOAD[id]; rej(new Error('load')); }; document.head.appendChild(sc); })); }
-function realmGauge(txt, pct, col) { const N = $('tapeNote'); if (!N) return; if (txt == null) { if (N.classList.contains('gauge')) N.className = ''; return; } if (tnBusy) return; if (!N.classList.contains('gauge')) N.className = 'gauge'; N.style.setProperty('--hp', pct + '%'); N.style.setProperty('--gc', col || '#e8590c'); if (N.textContent !== txt) N.textContent = txt; }
+function realmGauge(txt, pct, col, mk) { const N = $('tapeNote'); if (!N) return; if (txt == null) { if (N.classList.contains('gauge')) N.className = ''; return; } if (tnBusy) return; if (!N.classList.contains('gauge')) N.className = 'gauge'; N.style.setProperty('--hp', pct + '%'); N.style.setProperty('--gc', col || '#e8590c'); N.classList.toggle('mk', mk != null); if (mk != null) N.style.setProperty('--mk', mk + '%'); if (N.textContent !== txt) N.textContent = txt; }
 function disposeGroup(grp) { const shared = new Set(Object.values(GEO)); grp.traverse(o => { if (o.isMesh) { if (!shared.has(o.geometry)) o.geometry.dispose(); [].concat(o.material).forEach(m => { if (m.map) m.map.dispose(); m.dispose(); }); } }); }
 function realmView() { cam.tx = ME.X; cam.tz = ME.Z; cam.ty = 2; sync(true); try { if (peersData) onPeersCb(peersData); } catch (e) { console.warn(e); } }
 async function realmEnter(id) {
@@ -4806,7 +4839,7 @@ async function realmEnter(id) {
       floatW: (x, y, z, txt, cls) => { const p = project(R_ORG.x + x, y, R_ORG.z + z); if (!p) return; const d = el('div', 'floaty' + (cls ? ' ' + cls : ''), txt); d.style.left = p.x + 'px'; d.style.top = p.y + 'px'; d.style.transform = 'translate(-50%,-100%)'; labels.appendChild(d); setTimeout(() => d.remove(), 1400); },
       spark: (x, y, z, n, c, sp, g, life, up) => spawn(R_ORG.x + x, y, R_ORG.z + z, n, c, sp == null ? 3 : sp, g == null ? 6 : g, life || .8, up || 0),
       warp: (x, z) => { ME.X = R_ORG.x + x; ME.Z = R_ORG.z + z; ME.target = null; cam.tx = ME.X; cam.tz = ME.Z; sync(true); } };
-    const inst = build(api); REALM = { id, group, inst, keys, back: { x: ME.X, z: ME.Z }, cam: { d: cam.dist, p: cam.pitch } };
+    const inst = build(api); REALM = { id, group, inst, keys, back: { x: ME.X, z: ME.Z }, cam: { d: cam.dist, p: cam.pitch } }; document.body.classList.add('inRealm');
     endFish(); ME.fly = false; ME.climb = false; ME.Y = 0; ME.vy = 0; ME.seat = -1; ME.lie = false; ME.target = null;
     ME.X = R_ORG.x + inst.spawn.x; ME.Z = R_ORG.z + inst.spawn.z; ME.ry = inst.spawn.ry || 0; cam.yaw = 0; cam.pitch = 1.05; cam.dist = inst.camDist ? inst.camDist() : (TOUCH ? 30 : 24); rain.visible = clouds.visible = confetti.visible = false; applyWeather(); realmView();
     $('rFade').classList.remove('on'); tapeNote(`${RDEF[id].n} 입장! 나가려면 🚪 문 앞에서 [나가기]`, { ms: 2800, cls: 'tip' });
@@ -4815,7 +4848,7 @@ async function realmEnter(id) {
 }
 async function realmLeave(cb) {
   if (!REALM || RBUSY) return; RBUSY = true; $('rFade').classList.add('on'); await sleep(380);
-  const R = REALM; REALM = null; realmGauge(null); { const hh = document.getElementById('rzHud'); if (hh) hh.remove(); } ME.dodge = null; autoOff(); R.keys.forEach(k => { delete INTER[k]; if (olabs[k]) { olabs[k].remove(); delete olabs[k]; } }); scene.remove(R.group); disposeGroup(R.group); try { R.inst.dispose && R.inst.dispose(); } catch (e) {}
+  const R = REALM; REALM = null; document.body.classList.remove('inRealm'); realmGauge(null); { const hh = document.getElementById('rzHud'); if (hh) hh.remove(); } ME.dodge = null; autoOff(); R.keys.forEach(k => { delete INTER[k]; if (olabs[k]) { olabs[k].remove(); delete olabs[k]; } }); scene.remove(R.group); disposeGroup(R.group); try { R.inst.dispose && R.inst.dispose(); } catch (e) {}
   ME.X = R.back.x; ME.Z = R.back.z; ME.target = null; ME.Y = 0; ME.vy = 0; cam.dist = R.cam.d; cam.pitch = R.cam.p; rain.visible = clouds.visible = weather === 'gloom'; confetti.visible = weather === 'party'; applyWeather(); realmView();
   $('rFade').classList.remove('on'); RBUSY = false; if (cb) setTimeout(cb, 50);
 }
@@ -5337,7 +5370,7 @@ let offerCount = 0, mokCount = 0;
 function enter() {
   entered = true; wxNoteKey = null; setTimeout(() => { try { computeWeather(); } catch (e) {} }, 1200); setTimeout(() => { try { grantListen(); } catch (e) {} }, 2500);
   myAnt = makeAnt(PROF.color, PROF.hb, myLookPts(), HOST); setGear(myAnt, G.eq); HPS.max = maxHp(lvOf(G.pts)); HPS.hp = HPS.max; HPS.ko = 0; ME.Y = 0; ME.vy = 0; ME.climb = false; scene.add(myAnt.root); myLabel = makeLabel(true);
-  const sp = { x: -12 + Math.random() * 24, z: 8 + Math.random() * 5 }; ME.X = sp.x; ME.Z = sp.z; ME.ry = Math.PI; // 많은 인원이 한곳에 겹치지 않게 넓게 퍼뜨려 등장 ME.X = sp.x; ME.Z = sp.z; ME.ry = Math.PI; myAnt.root.rotation.y = Math.PI;
+  const sp = { x: -12 + Math.random() * 24, z: 8 + Math.random() * 5 }; ME.X = sp.x; ME.Z = sp.z; ME.ry = Math.PI; if (CITY) { const sf = LS.get('lv3d_safe', null); if (sf && Date.now() - sf.t < 3 * 864e5 && Math.abs(sf.x) < 400 && Math.abs(sf.z) < 400 && walkable(sf.x, sf.z)) { ME.X = sf.x; ME.Z = sf.z; } } if (EN()) setTimeout(() => { try { trNode(document.body); } catch (e) {} }, 400); // 많은 인원이 한곳에 겹치지 않게 넓게 퍼뜨려 등장 ME.X = sp.x; ME.Z = sp.z; ME.ry = Math.PI; myAnt.root.rotation.y = Math.PI;
   cam.yaw = 0; cam.tx = ME.X; cam.tz = ME.Z;
   room.onPeers(onPeersCb);
   room.onChat(onChatCb, hist => { if (HOST) hist.forEach(m => { if (!isCleared(m)) { cacheChat(m); addLog(m); } }); else if (hist.length) addLog('💬 입장 전 대화는 방장만 볼 수 있어요. 지금부터의 대화가 보여요!', true); addLog('객장에 들어왔습니다. 전광판을 향해 🙏', true); try { const L = LVX.linkList(); if (L.length) addLog('📣 레버가치전문가 — ' + L.map(l => l.icon + l.name).join(' · ') + ' (상단 「📣 레버가치」 버튼)', true); } catch (e) {} });
@@ -5361,6 +5394,32 @@ function enter() {
   { const dk = 'lv3d_daily'; if (LS.get(dk, '') !== kstDate()) { LS.set(dk, kstDate()); setTimeout(() => { const gp = givePts(20, .04); toast(`🎁 오늘 첫 입장 보너스 +${fmt(gp, 0)}`); }, 1500); } }
 }
 
+/* ================= 🏙 v45 개미시티 입구 (미리보기에서만) ================= */
+function langGate() { return new Promise(res => { const o = el('div'); o.id = 'langGate';
+  o.innerHTML = '<div class="lgBox"><div class="lgLogo">🐜</div><h1>개미시티<span>ANT CITY</span></h1><p class="lgTag">Where the market moves the streets.</p><div class="lgBtns"><button type="button" data-l="ko">한국어</button><button type="button" data-l="en">English</button></div><p class="lgNote">In Korea, small investors are called “ants.” · 가상 시장 · Fictional market</p></div>';
+  o.querySelectorAll('button').forEach(b => { if (b.dataset.l === LANG) b.classList.add('def'); b.onclick = () => { LANG = b.dataset.l; LS.set('lv3d_lang', LANG); o.remove(); res(LANG); }; }); document.body.appendChild(o); }); }
+const EN_N1 = ['Lucky', 'Brave', 'Calm', 'Swift', 'Tiny', 'Moon', 'Bold', 'Sunny', 'Happy', 'Steady'], EN_N2 = ['Ant', 'Holder', 'Bull', 'Saver', 'Runner'];
+const enName = () => (EN_N1[Math.floor(Math.random() * EN_N1.length)] + EN_N2[Math.floor(Math.random() * EN_N2.length)]).slice(0, 10) + String(Math.floor(Math.random() * 90) + 10);
+function applyBrand() { document.title = T('개미시티 — 개미들이 사는 주식 월드', 'Ant City — Where the market moves the streets');
+  const lg = document.querySelector('header .logo'); if (lg) lg.innerHTML = '<span class="mk">▲</span>' + T('개미시티', 'Ant City') + ' <span class="cityB">' + T('미리보기', 'preview') + '</span>';
+  if (!$('bLang')) { const b = el('button', 'lvx-pill pe', EN() ? '🌐 한국어' : '🌐 English'); b.type = 'button'; b.id = 'bLang';
+    b.onclick = () => { const to = EN() ? 'ko' : 'en'; LS.set('lv3d_lang', to); location.href = location.pathname + '?' + (ROOM ? 'room=' + encodeURIComponent(ROOM) + '&' : '') + 'lang=' + to + (entered ? '&go=1' : ''); };
+    document.querySelector('header').appendChild(b); } }
+function cityEntryUi() { const M = $('mEnter'); if (!M || M.dataset.city) return; M.dataset.city = '1';
+  M.querySelector('h2').textContent = T('🐜 개미시티 입장', '🐜 Enter Ant City');
+  const sub = M.querySelector('.sub'); if (sub) sub.textContent = T('튜토리얼 없이 바로 도시로 들어가요. 종목·평단·계정은 «더보기»에서 고를 수 있어요.', 'In Korea, small investors are called “ants.” Welcome to their city.');
+  const adv = [$('fStk') && $('fStk').closest('.f'), $('fKoru') && $('fKoru').closest('.row'), $('fHost') && $('fHost').closest('.f'), $('fColor') && $('fColor').closest('.f'), $('fHb') && $('fHb').closest('.f'), $('acctBox'), $('fGo') && $('fGo').nextElementSibling].filter(Boolean);
+  adv.forEach(e => e.classList.add('adv'));
+  const more = () => T('⚙ 더보기 (종목·평단·계정·꾸미기)', '⚙ More options (stock, avg. price, account, style)');
+  const mb = el('button', 'mbtn sec', more()); mb.type = 'button'; mb.id = 'fMore'; mb.onclick = () => { const on = M.classList.toggle('showAdv'); mb.textContent = on ? T('▲ 간단히 보기', '▲ Fewer options') : more(); };
+  if (adv[0]) adv[0].before(mb);
+  $('fGo').textContent = T('🏙 도시로 들어가기', '🏙 Enter the city');
+  const pk = $('fPick').onclick; $('fPick').onclick = e => { if (EN()) $('fNick').value = enName(); else if (pk) pk(e); };
+  if (!$('fNick').value.trim()) $('fPick').onclick();
+  const fe = $('fErr'); if (fe && EN()) new MutationObserver(() => { const t2 = trText(fe.textContent); if (t2 !== fe.textContent) fe.textContent = t2; }).observe(fe, { childList: true, characterData: true, subtree: true }); }
+async function autoRoom(l) { try { const C = LVX.CHANNELS || []; const ns = await Promise.all(C.map(c => Promise.resolve(LVX.countOnce(l, c)).catch(() => 0))); let best = null, bn = -1; C.forEach((c, i) => { const n = ns[i] | 0; if (n < CAP * .9 && n > bn) { bn = n; best = c; } }); return best; } catch (e) { return null; } }
+async function cityBoot(l) { document.body.classList.add('city'); if (!LS.get('lv3d_lang', '')) await langGate(); await i18nLoad(); applyBrand(); trNode(document.body); cityEntryUi(); if (!ROOM) ROOM = await autoRoom(l); }
+setInterval(() => { try { if (CITY && entered && !REALM && !ME.fly && !ME.glide && !ME.swim && !HPS.ko && (ME.Y || 0) < .2 && walkable(ME.X, ME.Z)) LS.set('lv3d_safe', { x: Math.round(ME.X * 10) / 10, z: Math.round(ME.Z * 10) / 10, t: Date.now() }); } catch (e) {} }, 5000);
 async function chooseRoom(l) {
   // 정원(CAP) 확인 후 입장할 채널 확정. 꽉 차면 다시 고르기
   for (let tries = 0; tries < 20; tries++) {
@@ -5386,6 +5445,7 @@ function placeBanners() { try { const h = document.querySelector('header').getBo
 placeBanners(); addEventListener('resize', placeBanners); setTimeout(placeBanners, 800);
 initLive().then(async l => {
   liveRef = l;
+  if (CITY) { try { await cityBoot(l); } catch (e) { console.warn('city', e); } }
   await chooseRoom(l);
   try { history.replaceState(null, '', location.pathname + '?room=' + encodeURIComponent(ROOM)); } catch (e) {}
   setRoomPill(0);
@@ -5459,7 +5519,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '44';
+const APP_V = '45';
 {
   let shown = false;
   const check = async () => {
@@ -5503,7 +5563,8 @@ function evoCard(after, before) {
   const tips = []; if (LV[after + 1]) tips.push(`다음 진화: ${TIER_ICON[after + 1]} ${LV[after + 1][1]} (${fmt(LV[after + 1][0] - G.pts, 0)} 공덕 남음)`); if (ns != null) tips.push(`${ns + 1}단계: 새 스킬 슬롯 해금`); if (nx) tips.push(`${nx[0] + 1}단계: ${nx[1]}`);
   if (tips.length) { const t2 = el('div', 'evoNext'); t2.textContent = '🎯 ' + tips.join('\n🎯 '); B.appendChild(t2); }
   const big = L.some(x => /새 스킬 슬롯|새 능력|최종 스킬/.test(x[0])) || after === 12 || (after + 1) % 10 === 0;
-  if (big && !document.querySelector('.modal.on')) openModal('mEvo');
+  const busy = !!REALM || AUTO || Date.now() - (HPS.last || 0) < 6000 || (typeof cool !== 'undefined' && performance.now() - (cool.atk || -1e9) < 5000);
+  if (big && !busy && !document.querySelector('.modal.on')) openModal('mEvo');
   else { const M = $('evoMini'); M.textContent = ''; M.append(el('b', null, $('evoTitle').textContent), el('span', null, `⚔ ${L[1][1]} · ❤ ${L[2][1]}`), el('small', null, '🎯 ' + (tips[0] || ''))); M.classList.remove('on'); void M.offsetWidth; M.classList.add('on'); M.onclick = () => { M.classList.remove('on'); openModal('mEvo'); }; }
 }
 
