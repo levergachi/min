@@ -1532,6 +1532,7 @@ INTER.rz_sauna = { name: '♨ 찜질방 입장', type: 'rz', X: HUBP.x - 6, Z: H
 INTER.rz_star = { name: '🔭 별 관측소 입장', type: 'rz', X: HUBP.x, Z: HUBP.z - 4.2, h: 5.6, btn: '🔭<br>입장', fn: () => realmEnter('star') };
 INTER.rz_dun = { name: '🏰 던전 입장', type: 'rz', X: HUBP.x + 6, Z: HUBP.z - 4.6, h: 5.6, btn: '🏰<br>입장', fn: () => realmEnter('dungeon') };
 INTER.wgate = { name: '🌐 세계 관문 · 다른 세계로 (E)', type: 'rz', X: GATE.x, Z: GATE.z, h: 5.9, btn: '🌐<br>세계', fn: () => openWorlds() };
+INTER.race = { name: T('🏁 각설탕 특급 · 원복 코스 (E)', '🏁 Sugar Cube Express (E)'), type: 'rz', X: 4.2, Z: 2.4, h: 3.6, get btn() { return T('🏁<br>출발', '🏁<br>Go'); }, fn: () => raceOpen() };
 const olabs = {}; Object.keys(INTER).forEach(k => { const d = el('div', 'olab', INTER[k].name); labels.appendChild(d); olabs[k] = d; });
 const prompt = el('div', 'prompt'); prompt.append(el('kbd', null, 'E'), document.createTextNode('상호작용')); labels.appendChild(prompt);
 const _v = new THREE.Vector3();
@@ -1645,7 +1646,7 @@ function updatePlayer(dt) {
     else { mx = dx / d; mz = dz / d; if (d < .5 && !ME.target.rt) { mx *= d / .5; mz *= d / .5; } }
   }
   if (HPS.ko || Date.now() < (HPS.stun || 0) || ME.dodge) { mx = 0; mz = 0; ME.target = null; }
-  const MP = movePerk(), spd = (run ? 9 : 5) * dt * (ME.swim ? .55 : 1) * MP.spd * (ME.fly ? 1.4 : 1) * (ME.glide ? 1.3 : 1) * (ME.boostT > 0 ? 1.65 : 1); let mv = Math.hypot(mx, mz) > .01;
+  const MP = movePerk(), spd = (run ? 9 : 5) * dt * (ME.swim ? .55 : 1) * MP.spd * raceSpd() * (ME.fly ? 1.4 : 1) * (ME.glide ? 1.3 : 1) * (ME.boostT > 0 ? 1.65 : 1); let mv = Math.hypot(mx, mz) > .01;
   if (HPS.kb) { HPS.kb.t -= dt; const nx = clampX(ME.X + HPS.kb.x * dt), nz = clampZ(ME.Z + HPS.kb.z * dt); if (!blockedAt(nx, nz, ME.Y || 0) && walkable(nx, nz)) { ME.X = nx; ME.Z = nz; } if (HPS.kb.t <= 0) HPS.kb = null; }
   if (ME.autoPause > 0) ME.autoPause -= dt;
   if (ME.dodge) { const D = ME.dodge; D.t -= dt; const nx = clampX(ME.X + D.x * dt), nz = clampZ(ME.Z + D.z * dt); if (!blockedAt(nx, nz, ME.Y || 0) && walkable(nx, nz)) { ME.X = nx; ME.Z = nz; } else D.t = 0; if (Math.random() < .7) spawn(ME.X, .4, ME.Z, 2, 0xbfe0ff, 1, 2, .35); if (D.t <= 0) ME.dodge = null; sync(false); }
@@ -4220,7 +4221,7 @@ function physStep(dt, mx, mz, spd, iz) {
   else { ME.Y = g; ME.vy = 0; }
   return false;
 }
-function tryJump() { if (ME.climb) { ME.climb = false; ME.vy = 4; return true; } if (ME.fly) { FLY.upT = performance.now() + 280; return false; } if ((ME.Y || 0) - groundAt(ME.X, ME.Z, ME.Y || 0) > .05) return airJump(); ME.vy = 9.6; return true; }
+function tryJump() { if (ME.climb) { ME.climb = false; ME.vy = 4; return true; } if (ME.fly) { FLY.upT = performance.now() + 280; return false; } if ((ME.Y || 0) - groundAt(ME.X, ME.Z, ME.Y || 0) > .05) return raceCoyote() || airJump() || raceBuf(); ME.vy = 9.6 * raceJmp(); return true; }
 function useRope() { if (ME.climb) return; const onRoof = (ME.Y || 0) >= ROOF.h - .1; if ((ME.Y || 0) > .2 && !onRoof) return; if (onRoof) { ME.Y = ROPE.top - .3; } ME.climb = true; ME.seat = -1; ME.lie = false; ME.Y = Math.max(ME.Y || 0, .05); toast('🪢 밧줄 잡았다! ↑(W) 오르기 · ↓(S) 내려가기 · 점프로 놓기'); sync(true); }
 // ---- 매 프레임 ----
 let hpT = 0;
@@ -5025,6 +5026,281 @@ if (CITY) {
   bakeMerge(S, false, { rough: .62, metal: .08 });
   window.__city = { signs: signs.length, windows: WIN.length, tree: TREE };
 }
+/* ================= 🏁 v47 각설탕 특급 · 원복 코스 =================
+   광장 하늘에 떠 있는 각설탕 발판 길 — 가격 100에서 50까지 뚝 떨어졌다가 다시 100으로(원복!) 돌아오는 V자 코스.
+   · 레버리지 다이얼 1배/2배/3배: 코스 모양은 같고 변동성(움직이는·깜빡이는 발판)과 보상 배율만 달라져요
+   · 체크포인트 3개 · 떨어지면 1초 뒤 마지막 체크포인트에서 다시 · 개인 최고기록 · 내 고스트 · 고스트 편지(서버 저장 없음) */
+const RACE = { gt: 0, on: false, st: 'idle', lev: 1, t0: 0, ms: 0, cp: 0, cpT: [0, 0, 0], rec: [], recAt: 0, falling: 0, ghost: null, ghostF: null, msg: '', msgT: 0 };
+const RPL = []; // 코스 발판 (PLAT 에도 들어감)
+const RCP = []; // 체크포인트 발판 번호 [CP1, CP2, CP3]
+let RFIN = null, RSTART = null;
+const RDYN = []; // 움직이거나 깜빡이는 발판 (개별 메시)
+const RPATH = [[0, -5], [-13, 3], [7, 11], [-13, 19], [7, 27], [-13, 35], [3, 43], [-12, 51], [0, 58]];
+const RGATE = { x: 4.2, z: 2.4 }; // 지상 출발 게이트 (E)
+const RMINH = 5;
+function raceSpd() { return RACE.on && RACE.st !== 'done' ? R_LEV[RACE.lev].spd : 1; }
+function raceJmp() { return RACE.on && RACE.st !== 'done' ? R_LEV[RACE.lev].jmp : 1; }
+// 달리기 보조: 코요테 100ms(발판 끝에서 막 떨어진 직후에도 점프 가능) · 점프 선입력 120ms(착지 직전에 누른 점프도 인정)
+function raceCoyote() { if (!RACE.on || RACE.st === 'done') return false; const n = RACE.gt * 1000; if (n - (RACE.lastG || -9e9) < 100 && (ME.vy || 0) <= .5 && (ME.Y || 0) > 1) { ME.vy = 9.6 * raceJmp(); RACE.lastG = -9e9; try { SND.jump(); } catch (e) {} return true; } return false; }
+function raceBuf() { if (RACE.on && RACE.st !== 'done') RACE.jbuf = RACE.gt * 1000; return false; }
+function rpPrice(f) { return f < .38 ? 100 - 50 * (f / .38) : f < .62 ? 50 : 50 + 50 * ((f - .62) / .38); }
+function rpH(price) { return price * .1; }
+if (CITY) {
+  const SG = new THREE.Group(); scene.add(SG); // 움직이지 않는 부분은 하나로 합침
+  const seg = []; let L = 0;
+  for (let i = 0; i < RPATH.length - 1; i++) { const a = RPATH[i], b = RPATH[i + 1], l = Math.hypot(b[0] - a[0], b[1] - a[1]); seg.push({ a, b, l, s0: L }); L += l; }
+  const ptAt = s => { s = Math.max(0, Math.min(L, s)); for (const g of seg) if (s <= g.s0 + g.l + 1e-6) { const u = (s - g.s0) / g.l; return [g.a[0] + (g.b[0] - g.a[0]) * u, g.a[1] + (g.b[1] - g.a[1]) * u]; } const e = RPATH[RPATH.length - 1]; return [e[0], e[1]]; };
+  const SUG = FM(0xf7f2e8, { roughness: .85 }), SUGD = FM(0xdcd3c2, { roughness: .9 });
+  const accOf = f => f < .38 ? 0x4d8dff : f < .62 ? 0x9a8fc4 : 0xff4d57;
+  // 발판 자리: 길을 따라 걸으며 '앞 발판과 모서리 사이 간격'이 GAP 이 되는 곳에 놓아요 (모퉁이에서도 간격이 일정) · 체크포인트는 조금 더 크게
+  const CPS = [.19, .62, .81].map(f => f * L), half = (w, d, ux, uz) => Math.min(w / 2 / (Math.abs(ux) || 1e-6), d / 2 / (Math.abs(uz) || 1e-6));
+  function layout(GAP) {
+    const out = [{ s: 0, w: 5, d: 4, kind: 'start' }]; let cp = 0, prev = ptAt(0), pw = 5, pd = 4, ps = 0;
+    const gapTo = (q, w, d) => { const dx = q[0] - prev[0], dz = q[1] - prev[1], D = Math.hypot(dx, dz) || 1e-6, ux = dx / D, uz = dz / D; return D - half(pw, pd, ux, uz) - half(w, d, ux, uz); };
+    const place = (w, d) => { let s2 = ps + .5; for (; s2 < L; s2 += .04) if (gapTo(ptAt(s2), w, d) >= GAP) break; return s2; };
+    let endGap = 99, n = 0;
+    while (n++ < 80) {
+      endGap = gapTo(ptAt(L), 5, 4); if (endGap <= GAP + .4) break;
+      let w = 2.6, d = 2.6, s2 = place(w, d), kind = 'n', k = 0;
+      if (cp < 3 && s2 >= CPS[cp]) { w = 3.6; d = 3; s2 = place(w, d); kind = 'cp'; k = cp + 1; cp++; }
+      if (s2 >= L - 1) break;
+      out.push({ s: s2, w, d, kind, k }); prev = ptAt(s2); pw = w; pd = d; ps = s2;
+    }
+    endGap = gapTo(ptAt(L), 5, 4); return { out, endGap, cp };
+  }
+  let best = null; for (let g = 1.7; g <= 2.5; g += .01) { const r = layout(g); if (r.cp < 3) continue; const sc = Math.abs(r.endGap - g) + (r.endGap < g - .4 ? 5 : 0); if (!best || sc < best.sc) best = { r, sc, g }; }
+  const plan = best.r.out; plan.push({ s: L, w: 5, d: 4, kind: 'fin' }); window.__raceLayout = { gap: best.g, endGap: best.r.endGap, n: plan.length };
+  plan.forEach((p, i) => {
+    const f = p.s / L, pr = rpPrice(f), [x, z] = ptAt(p.s), h = rpH(pr);
+    const o = { x, z, w: p.w, d: p.d, h, hb: h, bx: x, race: 1, price: pr, f, kind: p.kind, k: p.k || 0, i };
+    RPL.push(o); PLAT.push(o);
+    if (p.kind === 'cp') RCP[p.k - 1] = i; if (p.kind === 'fin') RFIN = o; if (p.kind === 'start') RSTART = o;
+  });
+  // ---- 모양 ----
+  const bodyG = GEO.box;
+  function buildPlat(o) {
+    const g = new THREE.Group(); g.position.set(o.x, 0, o.z);
+    const acc = o.kind === 'cp' ? 0xffc83a : o.kind === 'start' || o.kind === 'fin' ? 0xff9a3d : accOf(o.f);
+    g.add(mesh(bodyG, SUG, [o.w, .5, o.d], [0, o.h - .25, 0]), mesh(bodyG, FM(acc, { roughness: .45, emissive: new THREE.Color(acc).multiplyScalar(.28).getHex() }), [o.w + .06, .07, o.d + .06], [0, o.h + .005, 0]),
+      mesh(bodyG, SUGD, [o.w * .8, .12, o.d * .8], [0, o.h - .56, 0]));
+    // 각설탕 알갱이 (윗면 가장자리 모서리 장식)
+    [-1, 1].forEach(sx => [-1, 1].forEach(sz => g.add(mesh(GEO.sph, SUG, [.09, .06, .09], [sx * (o.w / 2 - .22), o.h + .06, sz * (o.d / 2 - .22)]))));
+    return g;
+  }
+  RPL.forEach(o => {
+    const g = buildPlat(o);
+    if (o.mv || o.fl) { g.traverse(m => { m.userData.noBake = 1; }); scene.add(g); o.g = g; o.tops = []; g.children.forEach((c, ci) => { if (ci === 1) { c.material = c.material.clone(); o.topM = c.material; } }); RDYN.push(o); }
+    else SG.add(g);
+  });
+  // 체크포인트 깃발 · 출발/도착 문
+  const poleM = FM(0xc8d0dc, { metalness: .6, roughness: .35 });
+  RCP.forEach((pi, k) => { const o = RPL[pi]; const fl = mesh(GEO.cyl, poleM, [.05, 2.4, .05], [o.x + o.w / 2 - .3, o.h + 1.2, o.z - o.d / 2 + .3]); SG.add(fl);
+    SG.add(mesh(GEO.box, FB(0xffc83a), [.9, .55, .03], [o.x + o.w / 2 + .15, o.h + 2.05, o.z - o.d / 2 + .3])); });
+  const dsign = (txt, w, h, bg, fg, x, y, z, flip) => { const s1 = signPlane(txt, w, h, bg, fg); s1.position.set(x, y, z); if (flip) s1.rotation.y = Math.PI; scene.add(s1); const s2 = signPlane(txt, w, h, bg, fg); s2.position.set(x, y, z + (flip ? -.04 : .04)); s2.rotation.y = flip ? 0 : Math.PI; scene.add(s2); return s1; };
+  const gate = (o, txt, col) => { const gm = FM(col, { roughness: .5, metalness: .2 }); [-1, 1].forEach(s => SG.add(mesh(GEO.box, gm, [.3, 3.6, .3], [o.x + s * (o.w / 2 - .2), o.h + 1.8, o.z]))); SG.add(mesh(GEO.box, gm, [o.w, .3, .3], [o.x, o.h + 3.6, o.z]));
+    dsign(txt, o.w + 1.2, 1.0, '#fff3dc', '#ff7a2a', o.x, o.h + 4.4, o.z, true); };
+  gate(RSTART, T('🏁 START · 100', '🏁 START · 100'), 0xff9a3d); gate(RFIN, T('🎉 원복! · 100', '🎉 BREAKEVEN! · 100'), 0xff4d57);
+  RCP.forEach((pi, k) => { const o = RPL[pi]; dsign(T(`🚩 체크포인트 ${k + 1} · ${Math.round(o.price)}`, `🚩 Checkpoint ${k + 1} · ${Math.round(o.price)}`), 3.6, .6, '#fff3c4', '#e08a00', o.x, o.h + 3.1, o.z - o.d / 2 + .3, true); });
+  // 가격표 (4번째 발판마다 작은 숫자)
+  RPL.forEach(o => { if (o.kind === 'n' && o.i % 4 === 2) { const s = signPlane(String(Math.round(o.price)), 1.5, .55, o.f < .38 ? '#e8f0ff' : o.f < .62 ? '#efeaff' : '#ffe8ea', o.f < .38 ? '#4d8dff' : o.f < .62 ? '#7a6bc4' : '#ff4d57'); s.position.set(o.x, o.h + 1.6, o.z); s.rotation.y = Math.PI; scene.add(s); } });
+  { const mid = ptAt(L * .5); const s = signPlane(T('⬇ 저점 50 — 여기서 버티면 원복!', '⬇ Low 50 — hold on, breakeven ahead!'), 7, .9, '#efeaff', '#7a6bc4'); s.position.set(mid[0], rpH(50) + 3.6, mid[1]); s.rotation.y = Math.PI; scene.add(s); }
+  bakeMerge(SG, false, { rough: .8 });
+  // ---- 지상 출발 게이트 ----
+  {
+    const g = new THREE.Group(); g.position.set(RGATE.x, 0, RGATE.z);
+    const sm = FM(0xf7f2e8, { roughness: .85 }), orm = FM(0xff9a3d, { roughness: .4, emissive: 0x4a2000 });
+    [-1.6, 1.6].forEach(x => g.add(mesh(GEO.box, sm, [.9, 2.6, .9], [x, 1.3, 0]), mesh(GEO.box, orm, [1, .16, 1], [x, 2.62, 0])));
+    g.add(mesh(GEO.box, sm, [4.2, .5, .7], [0, 2.8, 0]));
+    g.add(mesh(GEO.cyl, FM(0x1d2a4a, { roughness: .6 }), [1.5, .06, 1.5], [0, .03, 0]));
+    bakeMerge(g, false, { rough: .8 }); scene.add(g);
+    const two = (txt, w, h, bg, fg, y) => { const f = signPlane(txt, w, h, bg, fg); f.position.set(RGATE.x, y, RGATE.z - .5); scene.add(f); const k = signPlane(txt, w, h, bg, fg); k.position.set(RGATE.x, y, RGATE.z + .5); k.rotation.y = Math.PI; scene.add(k); };
+    two(T('🏁 각설탕 특급', '🏁 SUGAR CUBE EXPRESS'), 4.4, .8, '#fff3dc', '#ff7a2a', 3.5); two(T('원복 코스 (E)', 'Breakeven Course (E)'), 4.4, .7, '#fff3dc', '#7a6bc4', 2.75);
+    const cube = mesh(GEO.box, FM(0xffffff, { roughness: .6, emissive: 0x333333 }), [.5, .5, .5], [RGATE.x, 4.4, RGATE.z], [.5, .4, 0]); scene.add(cube);
+    CITYW.tick.push((dt, t) => { cube.rotation.y += dt * 1.6; cube.position.y = 4.4 + Math.sin(t * 2) * .12; });
+  }
+  /* INTER.race 는 라벨 때문에 본체(INTER.wgate 옆)에서 만들어 둠 */
+}
+
+/* ---------- 고스트 편지 (서버 저장 없이 문자열로 주고받기) ---------- */
+function rcB64(u8) { let s = ''; for (let i = 0; i < u8.length; i++) s += String.fromCharCode(u8[i]); return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+function rcUnB64(t) { t = t.replace(/-/g, '+').replace(/_/g, '/'); while (t.length % 4) t += '='; const s = atob(t), u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u; }
+// pts: [[x,y,z]...] 0.25초 간격 → 0.5초(≤70초) 또는 1초 간격으로 줄여 600자 안에 넣음. 길면 null
+function ghostEncode(lev, ms, nick, pts, base) {
+  if (!pts || pts.length < 4) return null; base = base || '';
+  const nb = new TextEncoder().encode(Array.from(String(nick || '')).slice(0, 6).join(''));
+  for (const code of [0, 1]) {
+    const step = code ? 4 : 2, out = [], q = [], n0 = pts.length; for (let i = 0; i < n0; i += step) q.push(pts[i]); if (q[q.length - 1] !== pts[n0 - 1]) q.push(pts[n0 - 1]);
+    out.push(1, (lev & 3) | (code << 2), (ms >> 16) & 255, (ms >> 8) & 255, ms & 255, nb.length); nb.forEach(b => out.push(b)); out.push((q.length >> 8) & 255, q.length & 255);
+    const i16 = v => { v = Math.max(-32768, Math.min(32767, v)); out.push((v >> 8) & 255, v & 255); };
+    let px = 0, py = 0, pz = 0;
+    q.forEach((p, i) => { const x = Math.round(p[0] * 10), y = Math.round(p[1] * 10), z = Math.round(p[2] * 10), dx = x - px, dy = y - py, dz = z - pz;
+      if (i === 0 || Math.abs(dx) > 126 || Math.abs(dy) > 126 || Math.abs(dz) > 126) { out.push(128); i16(x); i16(y); i16(z); } else out.push(dx & 255, dy & 255, dz & 255); px = x; py = y; pz = z; });
+    const s = base + 'ANT1:' + rcB64(Uint8Array.from(out)); if (s.length <= 600) return s;
+  }
+  return null;
+}
+function ghostDecode(str) {
+  try {
+    str = String(str || '').trim(); const m = str.match(/ANT1:([A-Za-z0-9_-]{8,700})/); if (!m) return null; const u = rcUnB64(m[1]); let i = 0; if (u[i++] !== 1) return null;
+    const b1 = u[i++], lev = b1 & 3, code = (b1 >> 2) & 1, ms = (u[i++] << 16) | (u[i++] << 8) | u[i++], nl = u[i++]; if (lev < 1 || lev > 3 || ms < 3000 || ms > 300000 || nl > 24) return null;
+    const nick = new TextDecoder().decode(u.slice(i, i + nl)); i += nl; const n = (u[i++] << 8) | u[i++]; if (n < 2 || n > 400) return null;
+    const rd16 = () => { const v = (u[i++] << 8) | u[i++]; return v > 32767 ? v - 65536 : v; }; const pts = []; let px = 0, py = 0, pz = 0;
+    for (let k = 0; k < n; k++) { if (i >= u.length) return null; const b = u[i++]; if (b === 128) { px = rd16(); py = rd16(); pz = rd16(); } else { const s8 = v => v > 127 ? v - 256 : v; px += s8(b); py += s8(u[i++]); pz += s8(u[i++]); }
+      if (Math.abs(px) > 3000 || py < -50 || py > 400 || Math.abs(pz) > 3000) return null; pts.push([px / 10, py / 10, pz / 10]); }
+    return { nick: nick.replace(/[<>&"]/g, ''), lev, ms, dt: code ? 1 : .5, pts };
+  } catch (e) { return null; }
+}
+window.__ghost = { encode: ghostEncode, decode: ghostDecode };
+try { const m = location.hash.match(/g=(ANT1:[A-Za-z0-9_-]+)/); if (m) { const d = ghostDecode(m[1]); if (d) { const all = LS.get('lv3d_race_fg', {}); all[d.lev] = { nick: d.nick, ms: d.ms, dt: d.dt, pts: d.pts.map(p => [Math.round(p[0] * 10), Math.round(p[1] * 10), Math.round(p[2] * 10)]) }; LS.set('lv3d_race_fg', all); LS.set('lv3d_race_lev', d.lev); RACE.pending = d; } history.replaceState(null, '', location.pathname + location.search); } } catch (e) {}
+
+/* ---------- 기록 저장 ---------- */
+const RKEY = 'lv3d_race2';
+function rcRec() { const r = LS.get(RKEY, {}); return r && typeof r === 'object' ? r : {}; }
+function fmtMs(ms) { if (!(ms >= 0)) return '--:--.-'; const s = ms / 1000, m = Math.floor(s / 60); return `${m}:${(s - m * 60).toFixed(1).padStart(4, '0')}`; }
+const R_LEV = [null, { ico: '🐢', mul: 1, spd: 1, jmp: 1, fall: 1000, ko: '1배 · 기본', en: '1x · Basic', kd: '속도·점프 그대로 · 떨어지면 1초', ed: 'Normal speed & jump · 1s respawn' }, { ico: '🐇', mul: 1.5, spd: 1.15, jmp: 1.08, fall: 2000, ko: '2배 · 빠르게', en: '2x · Fast', kd: '속도·점프 +15% · 떨어지면 2초 쉬어요', ed: '+15% speed & jump · 2s respawn' }, { ico: '🚀', mul: 2, spd: 1.3, jmp: 1.15, fall: 3000, ko: '3배 · 마진콜', en: '3x · Margin call', kd: '속도·점프 +30% · 떨어지면 3초 쉬어요', ed: '+30% speed & jump · 3s respawn' }];
+
+/* ---------- 화면 (창 · 시간표) ---------- */
+let rcModal = null, rcHud = null, rcStyle = null;
+function rcUi() {
+  if (rcModal) return;
+  rcStyle = document.createElement('style'); rcStyle.id = 'ds47';
+  rcStyle.textContent = '#raceHud{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 64px);transform:translateX(-50%);z-index:30;display:none;pointer-events:none;text-align:center}'
+    + '#raceHud.on{display:block}#raceHud .rh{display:inline-flex;gap:10px;align-items:center;padding:6px 14px;border-radius:99px;background:rgba(10,14,34,.78);border:1.5px solid #ff9a3d;color:#fff;font-weight:900;font-size:15px;box-shadow:0 4px 16px rgba(0,0,0,.4)}'
+    + '#raceHud .rh b{font-variant-numeric:tabular-nums;font-size:19px;color:#ffd76a;min-width:64px}#raceHud .rm{margin-top:6px;font-weight:900;font-size:14px;color:#fff;text-shadow:0 2px 6px #000,0 0 10px #000;min-height:20px}'
+    + '#raceHud button{pointer-events:auto;margin-left:4px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;border-radius:99px;font-size:12px;padding:3px 9px;font-weight:800}'
+    + '#mRace .rcl{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}#mRace .rcl button{border:1.5px solid #3a4a6a;background:rgba(20,28,52,.8);color:#e8edf5;border-radius:12px;padding:10px 6px;font-weight:800;cursor:pointer;line-height:1.25}'
+    + '#mRace .rcl button.on{border-color:#ff9a3d;background:linear-gradient(160deg,rgba(255,154,61,.28),rgba(255,92,122,.2));box-shadow:0 0 0 2px rgba(255,154,61,.35)}#mRace .rcl .i{font-size:26px;display:block}#mRace .rcl .t{font-size:13px;display:block}#mRace .rcl .d{font-size:11px;font-weight:600;color:#aab6cc;display:block;margin-top:3px}'
+    + '#mRace .rcr{background:rgba(10,14,34,.6);border:1px solid #2a3a5a;border-radius:12px;padding:10px 12px;margin:8px 0;font-size:13px;line-height:1.55}#mRace .rcr b{color:#ffd76a}#mRace textarea{width:100%;min-height:58px;border-radius:10px;background:#0b1226;color:#dfe8ff;border:1px solid #2a3a5a;padding:8px;font-size:12px;box-sizing:border-box}'
+    + '#mRace .rcb{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}#mRace .rcb .mbtn{flex:1;min-width:120px}#mRace .big{font-size:30px;font-weight:900;color:#ffd76a;text-align:center;margin:2px 0}';
+  document.head.appendChild(rcStyle);
+  rcModal = el('div', 'modal'); rcModal.id = 'mRace'; document.body.appendChild(rcModal);
+  rcHud = el('div'); rcHud.id = 'raceHud'; rcHud.innerHTML = '<div class="rh"><span id="rhLev"></span><b id="rhT">0:00.0</b><span id="rhCp"></span><button type="button" id="rhQuit"></button></div><div class="rm" id="rhMsg"></div>'; document.body.appendChild(rcHud);
+  rcHud.querySelector('#rhQuit').onclick = () => raceCancel(true);
+  rcModal.addEventListener('pointerdown', e => { if (e.target === rcModal) closeModals(); });
+}
+function raceMsg(t, ms) { RACE.msg = t; RACE.msgT = performance.now() + (ms || 1800); const m = document.getElementById('rhMsg'); if (m) m.textContent = trText(t); }
+function raceHudUpdate() {
+  if (!rcHud) return; rcHud.classList.toggle('on', RACE.on);
+  if (!RACE.on) return;
+  const ms = RACE.st === 'run' ? RACE.gt * 1000 - RACE.t0 : RACE.st === 'done' ? RACE.ms : 0;
+  document.getElementById('rhT').textContent = fmtMs(ms); document.getElementById('rhLev').textContent = R_LEV[RACE.lev].ico + ' ' + RACE.lev + 'x';
+  document.getElementById('rhCp').textContent = '🚩 ' + RACE.cp + '/3'; document.getElementById('rhQuit').textContent = T('🏳 그만', '🏳 Quit');
+  const m = document.getElementById('rhMsg'); if (RACE.msg && performance.now() > RACE.msgT) { RACE.msg = ''; } const want = RACE.msg ? trText(RACE.msg) : RACE.st === 'ready' ? T('앞 발판으로 점프! 발판을 벗어나면 시간이 시작돼요', 'Jump to the next platform — the clock starts when you leave') : ''; if (m.textContent !== want) m.textContent = want;
+}
+function raceOpen(result) {
+  if (!entered) return; if (REALM) { toast(T('지금은 세계 안이에요. 광장에서 도전해요', 'Not available inside a world')); return; } rcUi();
+  const rec = rcRec(), lv = RACE.lev || LS.get('lv3d_race_lev', 1) || 1; RACE.lev = lv;
+  const M = rcModal; M.textContent = ''; const box = el('div', 'mbox'); box.style.width = 'min(540px,100%)'; box.style.maxHeight = '92vh'; box.style.overflow = 'auto'; M.appendChild(box);
+  box.appendChild(el('h2', '', T('🏁 각설탕 특급 · 원복 코스', '🏁 Sugar Cube Express · Breakeven Course')));
+  if (result) { const r = el('div', 'rcr'); r.appendChild(el('div', 'big', fmtMs(result.ms))); const l1 = el('div', '', result.pb ? T('🏆 새 개인 최고기록!', '🏆 New personal best!') : T(`내 최고 ${fmtMs(result.best)} · 차이 +${((result.ms - result.best) / 1000).toFixed(1)}초`, `Best ${fmtMs(result.best)} · +${((result.ms - result.best) / 1000).toFixed(1)}s`)); l1.style.textAlign = 'center'; r.appendChild(l1);
+    if (result.xp > 0) { const l2 = el('div', '', T(`🎁 오늘 첫 완주 보너스 XP +${fmt(result.xp, 0)} (${result.lev}배 ×${R_LEV[result.lev].mul})`, `🎁 First clear today: XP +${fmt(result.xp, 0)} (${result.lev}x ×${R_LEV[result.lev].mul})`)); l2.style.textAlign = 'center'; r.appendChild(l2); }
+    if (result.cp) { const sp = el('div', 'small'); sp.style.textAlign = 'center'; sp.textContent = '🚩 ' + result.cp.map((c, i) => fmtMs(c) + (result.oldCp && result.oldCp[i] ? ` (${c - result.oldCp[i] <= 0 ? '' : '+'}${((c - result.oldCp[i]) / 1000).toFixed(1)})` : '')).join(' · '); r.appendChild(sp); }
+    box.appendChild(r); }
+  else box.appendChild(el('div', 'sub', T('가격이 100에서 50까지 뚝 떨어졌다가 다시 100으로! 각설탕 발판을 밟고 원복(회복)까지 달려요. 떨어져도 1초 뒤 체크포인트에서 다시 시작해요.', 'Price drops from 100 to 50, then recovers to 100! Hop the sugar-cube platforms all the way to breakeven. Fall off and you restart from the last checkpoint after 1 second.')));
+  const lev = el('div', 'rcl'); box.appendChild(lev);
+  const info = el('div', 'rcr'); box.appendChild(info);
+  const draw = () => { lev.textContent = ''; [1, 2, 3].forEach(n => { const D = R_LEV[n], b = el('button'); b.type = 'button'; b.className = RACE.lev === n ? 'on' : ''; b.appendChild(el('span', 'i', D.ico)); b.appendChild(el('span', 't', T(D.ko, D.en))); b.appendChild(el('span', 'd', T(D.kd, D.ed) + ` · XP ×${D.mul}`));
+      b.onclick = () => { RACE.lev = n; LS.set('lv3d_race_lev', n); draw(); }; lev.appendChild(b); });
+    const r = rec[RACE.lev]; info.textContent = ''; const l = el('div'); l.innerHTML = ''; l.appendChild(document.createTextNode(T('내 최고기록 ', 'Personal best '))); const bb = el('b', '', r ? fmtMs(r.ms) : '--:--.-'); l.appendChild(bb); l.appendChild(document.createTextNode(r ? T(` · 완주 ${r.n || 1}번`, ` · ${r.n || 1} clears`) : T(' · 아직 기록이 없어요', ' · no record yet'))); info.appendChild(l);
+    if (r && r.cp) info.appendChild(el('div', 'small', T('체크포인트 ', 'Splits ') + r.cp.map(fmtMs).join(' · ')));
+    const fg = LS.get('lv3d_race_fg', {})[RACE.lev]; if (fg) info.appendChild(el('div', 'small', T(`👻 친구 고스트: ${fg.nick || '?'} · ${fmtMs(fg.ms)}`, `👻 Friend ghost: ${fg.nick || '?'} · ${fmtMs(fg.ms)}`))); };
+  draw();
+  const row = el('div', 'rcb'); box.appendChild(row);
+  const go = el('button', 'mbtn', T('🏁 출발! (위로 올라가요)', '🏁 Go! (up to the course)')); go.type = 'button'; go.onclick = () => raceBegin(RACE.lev); row.appendChild(go);
+  // 고스트 편지
+  const det = el('details'); det.style.margin = '8px 0'; box.appendChild(det); const sm = el('summary', '', T('👻 고스트 편지 (내 기록을 친구에게 · 서버에 저장 안 돼요)', '👻 Ghost letter (share your run as text · nothing is stored on a server)')); sm.style.cursor = 'pointer'; sm.style.fontWeight = '800'; det.appendChild(sm);
+  const ta = el('textarea'); ta.placeholder = T('받은 고스트 편지 링크를 여기에 붙여넣고 「받기」 (링크를 눌러 들어와도 자동으로 받아져요)', 'Paste a ghost letter link here and press Receive (opening the link also works)'); det.appendChild(ta);
+  const r2 = el('div', 'rcb'); det.appendChild(r2); const msg = el('div', 'small'); det.appendChild(msg);
+  const send = el('button', 'mbtn sec', T('📨 내 고스트 편지(링크) 복사', '📨 Copy my ghost letter (link)')); send.type = 'button'; r2.appendChild(send);
+  send.onclick = () => { const r = rcRec()[RACE.lev]; if (!r || !r.g) { msg.textContent = T('먼저 이 배율로 완주해 보세요', 'Finish this multiplier first'); return; } const pts = []; for (let k = 0; k < r.g.length; k += 3) pts.push([r.g[k] / 10, r.g[k + 1] / 10, r.g[k + 2] / 10]);
+    const s = ghostEncode(RACE.lev, Math.round(r.ms), PROF.nick, pts, location.href.split('#')[0].split('?')[0] + '#g='); if (!s) { msg.textContent = T('기록이 너무 길어서 편지에 못 담아요 (2분 이하만 가능)', 'Run too long for a letter (max ~2 min)'); return; }
+    ta.value = s; ta.select(); let ok = false; try { ok = document.execCommand('copy'); } catch (e) {} try { navigator.clipboard && navigator.clipboard.writeText(s); ok = true; } catch (e) {}
+    msg.textContent = T(`✅ ${s.length}자 — ${ok ? '복사했어요! 친구에게 붙여넣어 보내세요' : '위 글자를 길게 눌러 복사하세요'}`, `✅ ${s.length} chars — ${ok ? 'copied! paste it to a friend' : 'select and copy the text above'}`); };
+  const recv = el('button', 'mbtn sec', T('📩 받기', '📩 Receive')); recv.type = 'button'; r2.appendChild(recv);
+  recv.onclick = () => { const d = ghostDecode(ta.value); if (!d) { msg.textContent = T('편지를 읽지 못했어요. 받은 링크를 통째로 붙여넣어 주세요', 'Could not read it — paste the whole link'); return; } const all = LS.get('lv3d_race_fg', {}); all[d.lev] = { nick: d.nick, ms: d.ms, dt: d.dt, pts: d.pts.map(p => [Math.round(p[0] * 10), Math.round(p[1] * 10), Math.round(p[2] * 10)]) }; LS.set('lv3d_race_fg', all); RACE.lev = d.lev; LS.set('lv3d_race_lev', d.lev); draw();
+    msg.textContent = T(`✅ ${d.nick || '친구'}님의 ${d.lev}배 고스트(${fmtMs(d.ms)})를 받았어요! 이 배율로 출발하면 같이 달려요`, `✅ Got ${d.nick || 'a friend'}'s ${d.lev}x ghost (${fmtMs(d.ms)})! Start that multiplier to race it`); };
+  const x = el('button', 'mbtn sec', T('닫기', 'Close')); x.type = 'button'; x.onclick = () => closeModals(); box.appendChild(x);
+  openModal('mRace');
+}
+window.__race = { RACE, RPL, RCP, openRace: raceOpen };
+
+/* ---------- 달리기 시작 · 끝 ---------- */
+function ghostAnt(col, label) {
+  const a = makeAnt(col, label, 0, false); a.root.traverse(o => { if (o.isMesh || o.isSprite) { const set = m => { const c = m.clone(); c.transparent = true; c.opacity = Math.min(c.opacity == null ? 1 : c.opacity, .42); c.depthWrite = false; return c; }; o.material = Array.isArray(o.material) ? o.material.map(set) : set(o.material); } });
+  a.root.scale.multiplyScalar(.95); scene.add(a.root); return a;
+}
+function raceGhostsOff() { ['ghost', 'ghostF'].forEach(k => { const g = RACE[k]; if (g) { scene.remove(g.a.root); RACE[k] = null; } }); }
+function raceBegin(lev) {
+  if (!entered || REALM) return; closeModals(); rcUi(); RACE.lev = lev || 1; LS.set('lv3d_race_lev', RACE.lev);
+  raceGhostsOff(); const rec = rcRec()[RACE.lev];
+  if (rec && rec.g && rec.g.length >= 6) RACE.ghost = { a: ghostAnt(0x7fe9ff, T('내 기록', 'My best')), pts: rec.g, dt: .25, ms: rec.ms, k: 10 };
+  const fg = LS.get('lv3d_race_fg', {})[RACE.lev]; if (fg && fg.pts && fg.pts.length >= 2) RACE.ghostF = { a: ghostAnt(0xffb36b, fg.nick || T('친구', 'Friend')), pts: fg.pts.flat(), dt: fg.dt, ms: fg.ms, k: 10 };
+  RACE.on = true; RACE.st = 'ready'; RACE.cp = 0; RACE.cpT = [0, 0, 0]; RACE.rec = []; RACE.recAt = 0; RACE.falling = 0; RACE.t0 = 0; RACE.ms = 0; RACE.msg = ''; RACE.gt = 0;
+  RPL.forEach(o => { if (o.mv) { o.amp = RACE.lev >= 2 ? (RACE.lev === 3 ? 2.2 : 1.5) : 0; } if (o.fl) o.flOn = RACE.lev >= 3; });
+  raceTp(RSTART); toast(T(`🏁 ${RACE.lev}배 코스 — 준비되면 앞 발판으로!`, `🏁 ${RACE.lev}x course — jump ahead when ready!`));
+}
+function raceTp(o) {
+  ME.fly = false; ME.fh = null; ME.climb = false; ME.seat = -1; ME.lie = false; ME.target = null; ME.route = null; if (typeof AUTO !== 'undefined' && AUTO) autoOff(T('레이스 중이에요', 'Racing'));
+  ME.X = o.x; ME.Z = o.z + (o.kind === 'start' ? -.6 : 0); ME.Y = o.h + .02; ME.vy = 0; ME.dj2 = false; ME.ry = 0; cam.yaw = Math.PI; cam.tx = ME.X; cam.tz = ME.Z; try { sync(true); } catch (e) {}
+  spawn(o.x, o.h + .2, o.z, 12, 0xffd76a, 2, 2, .6);
+}
+function raceCancel(toGround) {
+  if (!RACE.on) return; RACE.on = false; RACE.st = 'idle'; raceGhostsOff(); RPL.forEach(o => { if (o.mv) { o.amp = 0; } if (o.fl) { o.flOn = false; } });
+  if (toGround) { ME.X = RGATE.x; ME.Z = RGATE.z + 2.2; ME.Y = 0; ME.vy = 0; cam.tx = ME.X; cam.tz = ME.Z; try { sync(true); } catch (e) {} toast(T('🏳 광장으로 내려왔어요', 'Back on the plaza')); }
+  raceHudUpdate();
+}
+function onPlat(o, tol) { return Math.abs(ME.X - o.x) <= o.w / 2 + .05 && Math.abs(ME.Z - o.z) <= o.d / 2 + .05 && Math.abs((ME.Y || 0) - o.h) <= (tol || .6); }
+function raceFinish() {
+  RACE.st = 'done'; RACE.ms = RACE.gt * 1000 - RACE.t0; const ms = RACE.ms, lev = RACE.lev, all = rcRec(), old = all[lev], pb = !old || ms < old.ms;
+  const best = pb ? ms : old.ms; let xp = 0; const d = kstDate(), day = LS.get('lv3d_race_day', {}); if (day.d !== d) { day.d = d; day.l = {}; }
+  if (!day.l[lev]) { day.l[lev] = 1; LS.set('lv3d_race_day', day); xp = givePts(12 * R_LEV[lev].mul * 2, .03); }
+  const rec = { ms: pb ? ms : old.ms, n: ((old && old.n) || 0) + 1, cp: pb ? RACE.cpT.slice() : old.cp, g: pb ? RACE.rec.slice() : old.g, d };
+  all[lev] = rec; LS.set(RKEY, all);
+  for (let i = 0; i < 4; i++) spawn(RFIN.x + (Math.random() - .5) * 3, RFIN.h + 1.5, RFIN.z + (Math.random() - .5) * 3, 24, [0xffd76a, 0xff4d57, 0x4fe3c8, 0xffffff][i], 4, 3, 1.2);
+  try { SND.land(); } catch (e) {} raceMsg(T('🎉 원복 완료!', '🎉 Breakeven!'), 3000);
+  const res = { ms, best, pb, xp, lev, cp: RACE.cpT.slice(), oldCp: old && old.cp }; RACE.last = res;
+  setTimeout(() => { if (RACE.st === 'done') { raceGhostsOff(); RACE.on = false; RACE.st = 'idle'; raceHudUpdate(); RPL.forEach(o => { if (o.mv) o.amp = 0; if (o.fl) o.flOn = false; }); raceOpen(res); } }, 1800);
+}
+function ghostAt(g, ms) { const f = ms / 1000 / g.dt, i = Math.floor(f), u = f - i, n = g.pts.length / 3 | 0; if (n < 1) return null; const a = Math.max(0, Math.min(n - 1, i)), b = Math.max(0, Math.min(n - 1, i + 1)), P = g.pts, k = g.k; return [(P[a * 3] + (P[b * 3] - P[a * 3]) * u) / k, (P[a * 3 + 1] + (P[b * 3 + 1] - P[a * 3 + 1]) * u) / k, (P[a * 3 + 2] + (P[b * 3 + 2] - P[a * 3 + 2]) * u) / k, i >= n - 1]; }
+const rcPrev = { x: 0, z: 0 };
+CITYW.tick.push((dt, t) => {
+  if (RACE.pending && entered && !REALM && !RACE.on) { const d = RACE.pending; RACE.pending = null; RACE.lev = d.lev; toast(T(`👻 ${d.nick || '친구'}님의 고스트 편지를 받았어요!`, `👻 Got ${d.nick || 'a friend'}'s ghost letter!`)); setTimeout(() => raceOpen(), 600); }
+  // 움직이는/깜빡이는 발판은 레이스 밖에서는 가만히
+  for (const o of RDYN) {
+    if (o.mv) { const amp = o.amp || 0, nx = o.bx + Math.sin(t * o.sp + o.ph) * amp, dx = nx - o.x;
+      if (dx) { if (RACE.on && RACE.st !== 'done' && (ME.Y || 0) > 0 && Math.abs((ME.Y || 0) - o.h) < .2 && Math.abs(ME.X - o.x) <= o.w / 2 && Math.abs(ME.Z - o.z) <= o.d / 2) { const cx = ME.X + dx; if (walkable(cx, ME.Z)) ME.X = cx; } o.x = nx; o.g.position.x = nx; } }
+    if (o.fl) { if (!o.flOn) { if (o.h !== o.hb) { o.h = o.hb; o.g.visible = true; } if (o.topM && o.warn) { o.warn = 0; o.topM.emissive.setHex(0); } continue; }
+      const ph = (t + o.fph) % 3.6, on = ph < 2.5, warn = on && ph > 1.9; const h = on ? o.hb : -99; if (o.h !== h) { o.h = h; o.g.visible = on; }
+      if (o.topM) { const w = warn ? (Math.sin(t * 24) > 0 ? 1 : 0) : 0; if (w !== o.warn) { o.warn = w; o.topM.emissive.setHex(w ? 0xff2a2a : 0); } } }
+  }
+  if (!RACE.on) return;
+  if (!entered || REALM) { raceCancel(false); return; }
+  RACE.gt += dt; const now = RACE.gt * 1000; // 게임 시계: 프레임이 느려도 같은 코스는 같은 시간 (기록이 공정)
+  // 비행·활강 금지 (공정한 달리기)
+  ME.fly = false; ME.fh = null; FLY.lock = true; FLY.hold = 0;
+  if (RACE.st === 'ready') { if ((ME.Y || 0) > 8 && !onPlat(RSTART, 1.2) && Math.abs(ME.Z - RSTART.z) < 14) { RACE.st = 'run'; RACE.t0 = now; RACE.rec = [ME.X, ME.Y, ME.Z].map(v => Math.round(v * 10)); RACE.recAt = now; raceMsg(T('⏱ 시작!', '⏱ GO!'), 900); } }
+  if (RACE.st === 'run') {
+    if (now - RACE.recAt >= 250) { RACE.recAt += 250; if (now - RACE.recAt > 500) RACE.recAt = now; RACE.rec.push(Math.round(ME.X * 10), Math.round(ME.Y * 10), Math.round(ME.Z * 10)); }
+    // 체크포인트
+    const nx = RACE.cp; if (nx < 3) { const o = RPL[RCP[nx]]; if (onPlat(o, .8)) { RACE.cp = nx + 1; const el0 = now - RACE.t0; RACE.cpT[nx] = el0; const r = rcRec()[RACE.lev]; let dif = ''; if (r && r.cp && r.cp[nx]) { const d = (el0 - r.cp[nx]) / 1000; dif = ` (${d <= 0 ? '' : '+'}${d.toFixed(1)}s)`; }
+        raceMsg(T(`🚩 체크포인트 ${RACE.cp}/3 · ${fmtMs(el0)}${dif}`, `🚩 Checkpoint ${RACE.cp}/3 · ${fmtMs(el0)}${dif}`), 2200); try { SND.pop(); } catch (e) {} spawn(o.x, o.h + .3, o.z, 14, 0xffc83a, 2.4, 2, .7); } }
+    if (RACE.cp === 3 && onPlat(RFIN, .8)) { raceFinish(); }
+  }
+  { const gnd = groundAt(ME.X, ME.Z, ME.Y || 0); if ((ME.Y || 0) <= gnd + .06 && (ME.vy || 0) <= .5) { RACE.lastG = now; if (RACE.jbuf && now - RACE.jbuf < 120) { RACE.jbuf = 0; ME.vy = 9.6 * raceJmp(); try { SND.jump(); } catch (e) {} } } }
+  // 떨어짐: 배율별 1·2·3초 뒤 마지막 체크포인트로
+  if (RACE.st === 'ready' || RACE.st === 'run') {
+    if ((ME.Y || 0) < RMINH - 1.4 && ME.Z < RSTART.z + 30) { if (!RACE.falling) { const fs = R_LEV[RACE.lev].fall / 1000; RACE.falling = now; raceMsg(T(`💫 앗! ${fs}초 뒤 체크포인트로 돌아가요`, `💫 Oops! Back to the checkpoint in ${fs}s`), R_LEV[RACE.lev].fall + 100); }
+      else if (now - RACE.falling >= R_LEV[RACE.lev].fall) { RACE.falling = 0; const inPlaza = ME.X > -18 && ME.X < 18 && ME.Z > -9 && ME.Z < 66; if (!inPlaza) { raceCancel(false); return; } raceTp(RACE.cp ? RPL[RCP[RACE.cp - 1]] : RSTART); if (RACE.st === 'run') RACE.t0 += 0; } }
+    else RACE.falling = 0;
+  }
+  // 고스트 재생
+  if (RACE.st === 'run') { const el1 = now - RACE.t0; ['ghost', 'ghostF'].forEach(k => { const g = RACE[k]; if (!g) return; const p = ghostAt(g, el1); if (!p) return; const R = g.a.root; const dx = p[0] - R.position.x, dz = p[2] - R.position.z; R.position.set(p[0], p[1], p[2]); g.a.moving = !p[3] && Math.hypot(dx, dz) > .004; if (Math.hypot(dx, dz) > .01) g.a.ry = Math.atan2(dx, dz); try { animAnt(g.a, dt, t); } catch (e) {} }); }
+  raceHudUpdate();
+});
+window.__race.begin = raceBegin; window.__race.cancel = raceCancel; window.__race.tpTo = i => raceTp(RPL[i]); window.__race.fin = raceFinish;
+window.__race.setTarget = (x, z) => { ME.target = x == null ? null : { x, z }; }; window.__race.jump = () => tryJump(); window.__race.me = () => ({ x: ME.X, y: ME.Y, z: ME.Z, vy: ME.vy });
+window.__race.info = () => ({ on: RACE.on, st: RACE.st, cp: RACE.cp, lev: RACE.lev, ms: RACE.st === 'run' ? RACE.gt * 1000 - RACE.t0 : RACE.ms, cpT: RACE.cpT.slice(), rec: RACE.rec.length, ghost: !!RACE.ghost, ghostF: !!RACE.ghostF, last: RACE.last || null });
+{ let rr0 = null; window.__race.noRender = on => { if (!rr0) rr0 = renderer.render.bind(renderer); renderer.render = on ? () => {} : rr0; }; } // 시험용: 그림 그리기를 건너뛰어 빠르게 달려 보기
 // ---- 📖 방명록 ----
 let GB = [];
 const gbCan = document.createElement('canvas'); gbCan.width = 1024; gbCan.height = 640; const gbTex = new THREE.CanvasTexture(gbCan); gbTex.colorSpace = THREE.SRGBColorSpace;
@@ -5248,7 +5524,7 @@ async function realmLeave(cb) {
 }
 function tickRealm(dt, t) { const R = REALM; if (!R || RBUSY) return; try { R.inst.tick && R.inst.tick(dt, t, { x: ME.X - R_ORG.x, z: ME.Z - R_ORG.z, y: ME.Y || 0, ry: ME.ry }); } catch (e) { console.warn(e); } }
 
-const TPS = [['🌐 세계 관문 (광장 안)', GATE.x + 3, GATE.z - 1.5], ['🌐 세계 포털 광장', HUBP.x, HUBP.z + 5], ['🏙 중앙 광장', 0, 9], ['🚪 야외 게이트', 13.6, -7.4], ['📖 방명록', 8.4, 0], ['☕ 병뚜껑 카페', HEAVEN.x, HEAVEN.z + 2.5], ['🌳 시세나무', 10.5, 43.4], ['🌀 포털 광장', -8.5, 23], ['📊 종목 토론 테이블', -3, 32.4], ['🏟 원형 토론장', -6, 46.2], ['🏢 원복 빌딩 계단', 15.6, -7.6], ['🌱 초보 사냥터', -32, 28], ['⚔ PK존', -46, 44.2], ['🎣 낚시터 부두', -56, 4], ['🏕 존버 캠핑장', CAMP.x, CAMP.z + 6], ['🌲 중급 숲', -100, 12], ['⚔ 보스 투기장', ARENA.x, ARENA.z - 16], ['🌋 화산지대', -165, 12], ['🌋 레이드 광장', RAIDP.x, RAIDP.z - 16], ['☠ 지옥 들판', -64, 98]];
+const TPS = [['🌐 세계 관문 (광장 안)', GATE.x + 3, GATE.z - 1.5], ['🏁 각설탕 특급 출발선', 4.2, 5.4], ['🌐 세계 포털 광장', HUBP.x, HUBP.z + 5], ['🏙 중앙 광장', 0, 9], ['🚪 야외 게이트', 13.6, -7.4], ['📖 방명록', 8.4, 0], ['☕ 병뚜껑 카페', HEAVEN.x, HEAVEN.z + 2.5], ['🌳 시세나무', 10.5, 43.4], ['🌀 포털 광장', -8.5, 23], ['📊 종목 토론 테이블', -3, 32.4], ['🏟 원형 토론장', -6, 46.2], ['🏢 원복 빌딩 계단', 15.6, -7.6], ['🌱 초보 사냥터', -32, 28], ['⚔ PK존', -46, 44.2], ['🎣 낚시터 부두', -56, 4], ['🏕 존버 캠핑장', CAMP.x, CAMP.z + 6], ['🌲 중급 숲', -100, 12], ['⚔ 보스 투기장', ARENA.x, ARENA.z - 16], ['🌋 화산지대', -165, 12], ['🌋 레이드 광장', RAIDP.x, RAIDP.z - 16], ['☠ 지옥 들판', -64, 98]];
 function drawMap(cv, big) {
   const c = cv.getContext('2d'), W = cv.width, H = cv.height;
   if (REALM) { c.clearRect(0, 0, W, H); c.fillStyle = REALM.id === 'star' ? 'rgba(10,16,44,.9)' : REALM.id === 'dungeon' ? 'rgba(34,6,12,.92)' : 'rgba(40,20,8,.88)'; c.fillRect(0, 0, W, H); c.fillStyle = REALM.id === 'star' ? '#cfe0ff' : REALM.id === 'dungeon' ? '#ffb4a0' : '#ffd9a0'; c.font = `bold ${Math.round(H / 7)}px sans-serif`; c.textAlign = 'center'; c.fillText(RDEF[REALM.id].n + ' 안', W / 2, H / 2); return; }
@@ -5929,7 +6205,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '46';
+const APP_V = '47';
 {
   let shown = false;
   const check = async () => {
@@ -5954,7 +6230,7 @@ const APP_V = '46';
 const MPERK = [[19, '🏃 이동속도 +15%'], [29, '🦘 2단 점프 (공중에서 한 번 더 점프)'], [39, '🏃 이동속도 +30%'], [49, '🕊 둥실 비행! 공중에서 점프를 한 번 더(또는 꾹) · 점프 꾹=상승 · C/앉기=하강'], [69, '⚡ 이동속도 +50% · 순간이동 쿨타임 6초 → 2초'], [99, '🌌 이동속도 +70% · 비행 속도 최고']];
 function movePerk(t) { t = t == null ? lvOf(G.pts) : t; return { spd: (t >= 99 ? 1.7 : t >= 69 ? 1.5 : t >= 39 ? 1.3 : t >= 19 ? 1.15 : 1) * (1 + GS().agi / 100) * awkSpd() * rideSpd(), dj: t >= 29, fly: t >= 49, tpcd: t >= 69 ? 2000 : 6000 }; }
 function airJump() { const M = movePerk(); if (ME.fly) return false;
-  if (M.dj && !ME.dj2) { ME.dj2 = true; ME.vy = 9.6; try { SND.pop(); } catch (e) {} if (myAnt) { spawn(ME.X, (ME.Y || 0) + .3, ME.Z, 14, 0xffffff, 2.5, 4, .5); myAnt.flipT = 0; } try { room.sendFx('flip'); } catch (e) {} return true; }
+  if (M.dj && !ME.dj2) { ME.dj2 = true; ME.vy = 9.6 * raceJmp(); try { SND.pop(); } catch (e) {} if (myAnt) { spawn(ME.X, (ME.Y || 0) + .3, ME.Z, 14, 0xffffff, 2.5, 4, .5); myAnt.flipT = 0; } try { room.sendFx('flip'); } catch (e) {} return true; }
   if (M.fly) { startFly(); return true; }
   return false; }
 function perksUpTo(t) { return MPERK.filter(p => p[0] <= t).map(p => p[1]); }
