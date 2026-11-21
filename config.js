@@ -1,5 +1,5 @@
 // =====================================================================
-//  레버가치 원복 계산기 / 원복 법당 — 설정 파일
+//  레버가치 원복 계산기 / 개미시티 — 설정 파일
 //  비워 두면: 시세는 수동 입력, 법당은 '같은 브라우저 탭끼리'만 연결되는 미리보기 모드
 //  채우면:   누구나 접속해 같은 법당에서 만나고, 시세가 자동 반영됩니다.
 //  (설정 방법은 README.md 참고)
@@ -41,6 +41,7 @@ window.LEVER_CONFIG = {
   links: [
     { icon: "📝", name: "네이버 블로그", desc: "미국주식·AI 인프라·레버리지 분석 글", url: "https://blog.naver.com/leverage_expert" },
     { icon: "💬", name: "오픈카톡방", desc: "저점매수 신호봇 가입 · 같이 이야기해요", url: "https://open.kakao.com/o/gq92qKDi" },
+    { icon: "📲", name: "텔레그램 신호봇", desc: "저점반전 신호 알림 받기", url: "https://t.me/lever_stock_bot" },
     { icon: "📈", name: "저점매수 신호 웹페이지", desc: "레버가치 신호봇 등급·성과 한눈에", url: "https://levergachi.github.io/" }
   ],
 

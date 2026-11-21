@@ -1,5 +1,5 @@
 /* =====================================================================
- *  extras.js — 계산기·객장 공용 UI 부품 (일반 <script>, 전역 LVX)
+ *  extras.js — 계산기·개미시티 공용 UI 부품 (일반 <script>, 전역 LVX)
  *   · ❓ 사용법 알약 + 첫 방문 3단계 안내 카드
  *   · 프로필(레버가치전문가 사진·이름) / ☕ 후원하기 — config.js 에 값이 있을 때만 표시
  *   · 채널 고르기 창 (ch1…ch10, 인원 표시, 자동 입장, 정원 초과 막기)
@@ -65,7 +65,7 @@
 
   /* ---------- 사용법 ---------- */
   var GUIDES = {
-    room: { title: "🐜 원복 객장 사용법", steps: ["닉네임·평단 넣고 <입장>", "방향키·조이스틱으로 이동 — 시주함·목탁 같은 물건 가까이 가면 <E>", "이모티콘·몸짓·채팅으로 같이 기도하고 수다 떨기"] },
+    room: { title: "🐜 개미시티 사용법", steps: ["닉네임 넣고 <도시로 들어가기>", "방향키·조이스틱으로 이동 — 저금통·응원 북·운세 자판기 가까이 가면 <E>", "🌳 시세나무 오르기 · ☕ 카페에서 수다 · 채팅·이모티콘으로 같이 놀기"] },
     calc: { title: "🧮 원복 계산기 사용법", steps: ["내 평단·현재가 입력", "현재 코스피(또는 필라델피아 반도체지수) 입력", "결과 카드에서 '몇 포인트 가야 원복인지' 확인"] }
   };
   var guideEl = null;
@@ -144,7 +144,7 @@
   }
   function linksBtn() {
     if (!linkList().length) return null;
-    var b = el("button", "lvx-lnk", "📣 레버가치"); b.type = "button"; b.id = "lvxLinks"; b.title = "블로그 · 오픈카톡 · 신호 웹페이지";
+    var b = el("button", "lvx-lnk", "📣 레버가치"); b.type = "button"; b.id = "lvxLinks"; b.title = "블로그 · 오픈카톡 · 텔레그램 · 신호 웹페이지";
     b.onclick = function () {
       var m = el("div", "lvx-modal"), box = el("div", "lvx-box"); m.appendChild(box);
       box.appendChild(el("h3", null, "📣 레버가치전문가 채널"));

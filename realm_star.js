@@ -1,4 +1,4 @@
-/* 🔭 별 관측소 (원복 객장 세계 #2) — 힐링 + 수집형 · M 크기
+/* 🔭 별 관측소 (개미시티 세계 #2) — 힐링 + 수집형 · M 크기
    build(api) → { bounds, walk(x,z), spawn, tick(dt,t,me), sky, dbg, dispose }  좌표는 세계 안 로컬(원형 반경 14.5) */
 (window.WB_REALMS = window.WB_REALMS || {}).star = function (api) {
   const { THREE, group, GEO, mesh, M, sign, addInter, toast, tapeNote, gauge, LS, kstDate, givePts, growCoin, addCoin, G, floatMe, fx, leave, dropItem, saveG, camera } = api;
@@ -98,7 +98,7 @@
   addInter('rz_wish', { name: '🌠 소원 빌기', X: WS.x - 2, Z: WS.z, h: 2.6, btn: '🌠<br>소원', fn: () => { const t = performance.now();
     if (!wishNow()) { toast('🌠 별똥별이 떨어지는 순간에 빌어야 이뤄져요! 하늘을 지켜봐요 ✨'); return; }
     winUntil = 0; if (S.wn >= WISH_DAILY) { toast('🌠 오늘은 소원을 충분히 빌었어요 (내일 또!)'); return; } S.wn++; S.wish++; const g = givePts(28, .08); addCoin(growCoin(70), '소원 성취'); save(); fx.firework(); floatMe(`🌠 +${g}`, 'txt');
-    tapeNote(`🌠 소원이 하늘에 닿았어요! 공덕 +${g} (오늘 ${S.wn}/${WISH_DAILY})`, { ms: 3000, cls: 'tip' }); if (S.wish % 5 === 0) { dropItem(2); toast('🎁 소원 5번 성취! 별빛 선물이 떨어졌어요'); } } });
+    tapeNote(`🌠 소원이 하늘에 닿았어요! XP +${g} (오늘 ${S.wn}/${WISH_DAILY})`, { ms: 3000, cls: 'tip' }); if (S.wish % 5 === 0) { dropItem(2); toast('🎁 소원 5번 성취! 별빛 선물이 떨어졌어요'); } } });
   addInter('rz_book', { name: '📜 별자리 도감 (칭호)', X: BK.x + 2, Z: BK.z + 1.4, h: 2.6, btn: '📜<br>도감', fn: () => { const T = [[3, '별 헤는 개미', 150], [6, '별자리 박사', 380], [8, '은하수 개미', 800]], n = S.seen.length, nx = T.find(x => n >= x[0] && S.claim < x[0]);
     if (nx) { S.claim = nx[0]; save(); G.title = nx[1]; saveG(); addCoin(growCoin(nx[2]), '도감 보상'); dropItem(nx[0] >= 8 ? 4 : 2); fx.firework(); toast(`📜 한정 칭호 「${nx[1]}」 획득!`); return; }
     const nn = T.find(x => S.claim < x[0]); toast(nn ? `📜 별자리 ${n}/${CONS.length} — ${nn[0]}개를 모으면 「${nn[1]}」!` : '📜 모든 별자리를 모았어요. 당신은 은하수 개미 ✨'); } });
@@ -118,9 +118,9 @@
       if (Math.random() < dt * .12) spawnMeteor(false);
       for (let i = meteors.length - 1; i >= 0; i--) { const m = meteors[i]; m.t += dt / m.dur; if (m.t >= 1) { group.remove(m.g); m.g.traverse(o => { if (o.material) o.material.dispose(); }); meteors.splice(i, 1); continue; } m.g.position.lerpVectors(m.from, m.to, m.t); }
       if (consT > 0) { consT -= dt; const a = Math.min(1, consT / 1.5); consGrp.children.forEach(o => { if (o.material) o.material.opacity = a; }); consGrp.visible = consT > 0; if (consT <= 0) { while (consGrp.children.length) { const o = consGrp.children.pop(); o.geometry && o.geometry.dispose(); o.material && o.material.dispose(); } } }
-      // 담요 위: 별 헤기 (공덕 천천히)
+      // 담요 위: 별 헤기 (XP 천천히)
       const inB = me.x >= BL.x0 && me.x <= BL.x1 && me.z >= BL.z0 && me.z <= BL.z1, now = performance.now();
-      if (inB && !wasBlanket) tapeNote('🌌 담요에 올라 별을 헤는 중… 조용히 공덕이 쌓여요', { ms: 2400, cls: 'tip' }); wasBlanket = inB;
+      if (inB && !wasBlanket) tapeNote('🌌 담요에 올라 별을 헤는 중… 조용히 XP가 쌓여요', { ms: 2400, cls: 'tip' }); wasBlanket = inB;
       if (inB && now - lastBlanket > 4000) { lastBlanket = now; if (S.n < DAILY) { S.n++; const g = givePts(2, .01); save(); floatMe(`✨ +${g}`, 'txt'); } }
       gauge(`🔭 별 관측소 · 별자리 ${S.seen.length}/${CONS.length} · 소원 ${S.wn}/${WISH_DAILY}` + (on ? ' · 🌠 지금 소원 빌기!' : inB ? ` · 🌌 별 헤기 ${S.n}/${DAILY}` : ''), Math.round(S.seen.length / CONS.length * 100), on ? '#ffd76a' : '#6a8ee8');
     },

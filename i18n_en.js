@@ -1,4 +1,4 @@
-/* 개미시티 영어 문구 사전 (v45 1차: 입장·HUD·조작·오류·자주 나오는 알림)
+/* 개미시티 영어 문구 사전 (v45 1차 + v46 도시 개편: 광장·카페·시세나무·간판)
    window.I18N_EN = { dict: {한국어: English}, rx: [[정규식, 바꿀 말 또는 함수]] } — 새 문구는 dict 에 추가 */
 (function () {
   var W = { '찜질방': 'Sauna', '별 관측소': 'Star Observatory', '폭락의 지하 묘지': 'Crash Catacombs', '세계 포털 광장': 'World Portal Plaza' };
@@ -17,16 +17,16 @@
     '📸 사진': '📸 Photo', '📲 앱 설치': '📲 Install app', '👑 방장 관리': '👑 Host tools', '🎵 음악': '🎵 Music', '🔔 소리 켬': '🔔 Sound on', '🔕 소리 끔': '🔕 Sound off',
     '내 정보': 'My profile', '방 링크': 'Room link', '계산기 →': 'Calculator →', '❓ 사용법': '❓ Help', '📣 레버가치': '📣 Levergachi', '☕ 후원': '☕ Support',
     // 상태 카드·채팅
-    '개미': 'Ant', '공덕': 'XP', '🔍 눌러서 진화 도감 보기': '🔍 Tap to open the evolution book', '/ 108배': '/ 108 bows', '108배 방석에서 E': 'Press E on the 108-bow cushion',
+    '개미': 'Ant', '🔍 눌러서 진화 도감 보기': '🔍 Tap to open the evolution book', '108 꾸벅 발판에서 E': 'Press E on the 108-bow pad',
     '시황: 데이터 없음 → 평온': 'Market mood: no data → calm', '대화': 'Chat', '몸짓': 'Emotes', '랭킹': 'Ranking', '친구': 'Friends', '💬 채널': '💬 Channel',
     '🌐 거시': '🌐 Macro', '🏟 토론': '🏟 Debate', '⬇ 새 메시지': '⬇ New messages', '전송': 'Send', '💬 말하기…': '💬 Say something…', '몸짓 · 전광판을 향해': 'Emotes · toward the big board',
-    '🙇 절하기': '🙇 Bow', '👏 박수': '👏 Clap', '💧 물타기': '💧 Pour water', '🔴 매수연타': '🔴 Buy! Buy!', '🦘 점프': '🦘 Jump', '🕺 춤': '🕺 Dance',
-    '🔥 파이어!': '🔥 FIRE!', '🔔 타종': '🔔 Ring the bell', '🚀 떡상기원': '🚀 To the moon', '이모티콘': 'Emoji', '지금 객장에 있는 개미 공덕 순위': 'XP ranking of the ants here now',
+    '🙇 꾸벅 인사': '🙇 Bow', '👏 박수': '👏 Clap', '💧 물타기': '💧 Pour water', '🔴 매수연타': '🔴 Buy! Buy!', '🦘 점프': '🦘 Jump', '🕺 춤': '🕺 Dance',
+    '🔥 파이어!': '🔥 FIRE!', '🔔 타종': '🔔 Ring the bell', '🚀 떡상기원': '🚀 To the moon', '이모티콘': 'Emoji', '지금 광장에 있는 개미 XP 순위': 'XP ranking of the ants here now',
     // 빠른 막대·조작
     '더보기': 'More', '검색': 'Search', '자동사냥': 'Auto-hunt', '이동': 'Travel', '세계': 'Worlds', '야외': 'Outdoors', '시야': 'View', '강화': 'Upgrade',
     '상점': 'Shop', '카드': 'Card', '이벤트': 'Events', '가방': 'Bag', '✕ 취소': '✕ Cancel',
     'WASD·방향키 이동 · Shift 달리기 · Space 점프 · E 상호작용 · 드래그 시점 · 휠 줌 · 바닥 클릭 이동': 'WASD/arrows move · Shift run · Space jump · E interact · drag to look · wheel zoom · click the ground to walk',
-    '달리기': 'Run', '앉기': 'Sit', '일어나기': 'Stand', '점프': 'Jump', '스킬': 'Skill', '목탁': 'Moktak', '상호': 'Use', '작용': '', '자동': 'Auto',
+    '달리기': 'Run', '앉기': 'Sit', '일어나기': 'Stand', '점프': 'Jump', '스킬': 'Skill', '북': 'Drum', '상호': 'Use', '작용': '', '자동': 'Auto',
     '재미용 · 투자 조언 아님 · 시세는 출처·시각과 함께 표시 · 수익 빨강▲ 손실 파랑▼': 'For fun · not investment advice · prices shown with source and time · Korean colors: red ▲ up, blue ▼ down',
     // 입장 창
     '닉네임 (12자)': 'Nickname (12 characters)', '이름 뽑기': 'Random', '📌 내 대표 종목': '📌 My main stock', '(국내·미국 아무 종목 · 선택)': '(Korean or US · optional)',
@@ -39,7 +39,7 @@
     '닉네임을 입력하거나 «이름 뽑기»를 눌러 주세요.': 'Type a nickname or press «Random».', '평단은 0보다 큰 숫자여야 합니다.': 'Average price must be a number above 0.',
     '방장 코드가 맞지 않습니다. (방장이 아니면 비워 두세요)': 'Wrong host code. (Leave it empty unless you are the host)',
     // 창·도움말
-    '🗺 원복 월드 지도 · 순간이동': '🗺 World map · teleport', '닫기': 'Close', '닫기 ✕': 'Close ✕', '취소': 'Cancel', '🌐 세계 관문': '🌐 World gate',
+    '🗺 개미시티 지도 · 순간이동': '🗺 Ant City map · teleport', '닫기': 'Close', '닫기 ✕': 'Close ✕', '취소': 'Cancel', '🌐 세계 관문': '🌐 World gate',
     'Enter=첫 결과 · ↑↓ 선택 · Esc 닫기 ·': 'Enter = first result · ↑↓ select · Esc close ·', '로 언제든 열기': 'opens this anytime',
     '🎉 진화!': '🎉 Evolved!', '새로 생긴 능력과 버프예요 — 계속 키우면 더 강해져요!': 'New abilities and buffs — keep growing to get stronger!', '좋아요! 💪': 'Nice! 💪',
     '👢 강퇴되었어요': '👢 You were removed from the room', '시간이 지나면 자동으로 다시 들어올 수 있어요': 'You can come back automatically after a while',
@@ -49,13 +49,13 @@
     '📲 앱처럼 설치하기': '📲 Install like an app', '홈 화면에 아이콘이 생기고 주소창 없이 전체 화면으로 열려요': 'Adds an icon to your home screen and opens full screen',
     '🏆 주간 시즌 랭킹': '🏆 Weekly season ranking',
     // 속성(placeholder·title)
-    '예: 존버보살27': 'e.g. LuckyAnt27', '예) 현대차 · 005380 · TSLA · 엔비디아': 'e.g. TSLA · NVDA · 005930', '평단가': 'Avg. price', '선택': 'Optional',
+    '예: 존버개미27': 'e.g. LuckyAnt27', '예) 현대차 · 005380 · TSLA · 엔비디아': 'e.g. TSLA · NVDA · 005930', '평단가': 'Avg. price', '선택': 'Optional',
     '방장이 아니면 비워 두세요': 'Leave empty unless you are the host', '아이디': 'ID', '비밀번호(4자 이상)': 'Password (4+ characters)', '한마디 (Enter)': 'Say something (Enter)',
-    '🔎 무엇을 할까요? 예) 지도 · 낚시 · 찜질방 · 가방 · 108배': '🔎 What do you want to do? e.g. map · fishing · sauna · bag', '채널 바꾸기': 'Change channel',
+    '🔎 무엇을 할까요? 예) 지도 · 낚시 · 찜질방 · 가방 · 시세나무': '🔎 What do you want to do? e.g. map · fishing · sauna · bag · Ticker Tree', '채널 바꾸기': 'Change channel',
     '눌러서 큰 지도 · 순간이동': 'Tap for the big map · teleport', '쪽지함': 'Messages', '누르면 자동 이동 취소': 'Tap to cancel auto-walk', '각성 (V)': 'Awaken (V)', '원기옥 (B)': 'Spirit bomb (B)', '탈것 타기/내리기 (X)': 'Ride / dismount (X)',
     // 알림
     '✨ 부활! 체력 가득': '✨ Revived! Full HP', '😵 기절! 5초 뒤 입구에서 부활해요': '😵 Knocked out! You respawn at the entrance in 5 s',
-    '😵 기절! 5초 뒤 💬 라운지 모닥불에서 부활 (앉아 있으면 공격 안 받아요)': '😵 Knocked out! You respawn at the 💬 lounge campfire in 5 s (sitting keeps you safe)',
+    '😵 기절! 5초 뒤 ☕ 병뚜껑 카페에서 부활 (앉아 있으면 공격 안 받아요)': '😵 Knocked out! You respawn at the ☕ Bottle Cap Café in 5 s (sitting keeps you safe)',
     '🤖 자동사냥 시작! 가까운 몬스터를 찾아 싸워요 (조이스틱을 움직이면 멈춰요)': '🤖 Auto-hunt on! It finds and fights nearby monsters (move the joystick to stop)',
     '😥 세계를 불러오지 못했어요. 잠시 뒤 다시 시도해 주세요': '😥 Could not load the world. Please try again in a moment',
     '😵 기절 중에는 못 들어가요': '😵 You cannot enter while knocked out', '🌋 레이드 중에는 못 들어가요': '🌋 You cannot enter during a raid',
@@ -64,7 +64,31 @@
     '이미 다른 개미가 앉아 있어요': 'Another ant is already sitting there',
     '🗺 오른쪽 위 지도(또는 🌀 포털)를 누르면 사냥터·투기장·레이드 광장으로 순간이동!': '🗺 Tap the map at the top right (or a 🌀 portal) to teleport to hunting grounds, the arena and the raid plaza!',
     '🌐 푸른 빛기둥 = 세계 관문! 들어가면 찜질방·포털 광장으로 가요': '🌐 The blue light pillar is the world gate! Step in to reach the sauna and the portal plaza',
-    '확인': 'OK'
+    // v46 개미시티: 광장·카페·시세나무·도시 말
+    'XP 모으는 법': 'How to earn XP', '(또는 상호작용 버튼)': '(or the Use button)',
+    '꾸벅 인사 +3 · 물타기 +2 · 응원 북 +1 · 저금 +5 · 1분 머물기 +1 · 108 꾸벅 완주 +108 · 🌳 시세나무 꼭대기 하루 보너스': 'Bow +3 · Pour water +2 · Cheer drum +1 · Piggy bank +5 · Stay 1 min +1 · 108 bows +108 · 🌳 Ticker Tree top: daily bonus',
+    '🐷 저금통·🥁 응원 북·🙇 108 발판·🥠 운세 자판기·투표 게시판 가까이 가면': 'Get close to the 🐷 piggy bank · 🥁 cheer drum · 🙇 108 pad · 🥠 fortune kiosk · poll board and press',
+    '🐷 응원 저금통': '🐷 Cheer piggy bank', '🥠 포춘쿠키 운세': '🥠 Fortune cookie', '🥁 응원 북': '🥁 Cheer drum', '🙇 108 꾸벅 발판': '🙇 108-bow pad',
+    '🥁 응원 북 비트 패드': '🥁 Cheer drum beat pad', '내 박자 그대로 모두에게 들려요 · 키보드 T': 'Everyone hears your rhythm · key T', '오늘 북 0번': 'Drum hits today: 0',
+    '📈 개미시티 시장 리포트 센터': '📈 Ant City market report', '❓ 개미시티 사용법': '❓ How to play Ant City', '📖 개미시티 방명록': '📖 Ant City guestbook',
+    '오늘의 포춘쿠키 점괘 ·': "Today's fortune cookie ·", '빈 의자가 없어요 — 잠깐 서서 구경해요': 'No free seats — enjoy the view standing for a bit',
+    '☕ 병뚜껑 카페 — 바깥 소리가 꺼지고, 몬스터도 못 들어와요. 커피 한 잔 하며 수다 떨어요 💬': '☕ Bottle Cap Café — outside noise is muted and monsters cannot come in. Grab a coffee and chat 💬',
+    '오늘 108 꾸벅은 이미 완주했어요 🙇': 'You already finished 108 bows today 🙇', '🏆 108 꾸벅 완주! 칭호 획득': '🏆 108 bows done! Title earned',
+    '네이버 블로그': 'Naver blog', '오픈카톡방': 'Open chat (Kakao)', '저점매수 신호 웹페이지': 'Signal web page', '텔레그램 신호봇': 'Telegram signal bot', '📣 레버가치전문가 채널': '📣 Levergachi channels',
+    // 3D 간판
+    '☕ 병뚜껑 카페': '☕ Bottle Cap Café', '🌀 포털 · ☕ 카페 ↓ 뒤쪽 | ⚔ 야외 = 왼쪽 문': '🌀 Portal · ☕ Café ↓ behind | ⚔ Outdoors = left gate', '🏙 개미시티 광장 →': '🏙 Ant City Plaza →',
+    '⚔ 야외 사냥터 →': '⚔ Hunting grounds →', '⚔ 왼쪽 문 = 야외 사냥터 · 🎣 낚시': '⚔ Left gate = hunting grounds · 🎣 fishing', '🏢 원복 빌딩 옥상': '🏢 Breakeven Tower roof',
+    '📈 양봉 계단 점프 ↑ 옥상까지!': '📈 Jump the candle stairs ↑ to the roof!', '🌀 순간이동 포털 — 사냥터·투기장·레이드 바로 가기': '🌀 Teleport portal — hunting · arena · raids',
+    '⚔ 야외 사냥터 · PK존 · 레이드 ▶ 여기!': '⚔ Hunting · PK zone · raids ▶ here!', '📖 방명록 — 한 줄 남겨요!': '📖 Guestbook — leave a line!', '🇺🇸 미국장': '🇺🇸 US market', '🇰🇷 국장': '🇰🇷 Korean market',
+    '🎣 낚시터 · 🏊 호수 (수영 가능)': '🎣 Fishing · 🏊 lake (swimming OK)', '⚔ 보스 투기장 — 시장 세력을 혼내 주자!': '⚔ Boss arena — teach the market bullies a lesson!', '🏕 존버 캠핑장 — 누우면 회복': '🏕 HODL campsite — lie down to heal',
+    '🌋 재난 레이드 광장 — 8분마다 보스 출현': '🌋 Disaster raid plaza — a boss every 8 min', '☠ 지옥 들판 — Lv40~100 · 경험치 대박!': '☠ Hell fields — Lv40–100 · huge XP!', '⚔ PK 대경기장 — 안에서는 서로 공격 가능!': '⚔ PK stadium — PvP allowed inside!',
+    '입구 게시판에서 🤺 1:1 결투 신청': 'Request a 🤺 1:1 duel at the entrance board', '🤺 결투 신청': '🤺 Duel', '🚪 OUTDOOR GATE': '🚪 OUTDOOR GATE',
+    '🌱 초보 사냥터 · 🎣 호수 ↙ | 🏕 캠핑장 ↗': '🌱 Beginner grounds · 🎣 lake ↙ | 🏕 campsite ↗', '🌲 중급 숲 ↙ (Lv12~24) | ⚔ 투기장 ↗': '🌲 Mid forest ↙ (Lv12–24) | ⚔ arena ↗', '🌋 화산지대 ↙ (Lv24~36) | 🌋 레이드 광장 ↗': '🌋 Volcano ↙ (Lv24–36) | 🌋 raid plaza ↗',
+    '🏕 캠핑장 ↑': '🏕 Campsite ↑', '⚔ 투기장 ↑': '⚔ Arena ↑', '🌋 레이드 광장 ↑': '🌋 Raid plaza ↑', '🌲 중급 숲 ↓': '🌲 Mid forest ↓', '🌋 화산지대 ↓': '🌋 Volcano ↓',
+    'SELL 매도폭탄': 'SELL BOMB', '물량 💰': 'BAGS 💰', '세금 고지서': 'TAX BILL', '손절 상자': 'Stop-loss box', '물림 상자': 'Bagholder box', '빚투 상자': 'Margin box', '마진콜 상자': 'Margin-call box', '반대매매 상자': 'Liquidation box', '뇌동매매 상자': 'FOMO box',
+    '🌐 세계 포털 광장': '🌐 World Portal Plaza', '♨ 찜질방': '♨ Sauna', '🔭 별 관측소': '🔭 Star Observatory', '🏰 던전': '🏰 Dungeon', '🌐 세계 포털 → 빛의 길 쭉!': '🌐 World portal → follow the light path!', '🌐 포털 광장 조금만 더 ↑': '🌐 Portal plaza — almost there ↑',
+    '🌐 세계 포털 광장 · 어서 오세요': '🌐 World Portal Plaza · welcome', '🌐 세계 관문 · 다른 세계로!': '🌐 World gate · to other worlds!', '💬 오늘 시장 3줄 요약!': "💬 Today's market in 3 lines!", '📰 최근 이슈': '📰 Latest news',
+    '📌 공지': '📌 Notice', '확인': 'OK'
   };
   var WHY = { '출석': 'check-in', '진화 축하': 'evolution bonus', '잭팟': 'jackpot', '던전 클리어': 'dungeon clear', '퀘스트': 'quest' };
   var rx = [
@@ -76,8 +100,15 @@
     [/^🪙 \+([\d,]+) 코인 \((.+)\)$/, function (m, n, w) { return '🪙 +' + n + ' coins (' + (WHY[w] || w) + ')'; }],
     [/^🎉 진화! (.+) \((\d+)\/100단계\) · 다음은 (.+)$/, '🎉 Evolved! $1 (stage $2/100) · next: $3'],
     [/^🎁 오늘 첫 입장 보너스 \+([\d,]+)$/, '🎁 First visit today +$1 XP'],
-    [/^📅 출석 (\d+)일째! \+공덕 \(7일 연속이면 전설 상자\)$/, '📅 Check-in day $1! +XP (7 days in a row: legendary box)'],
-    [/^🎯 (.+)까지 ([\d,]+) 공덕 · 레이드 1승 ≈ (\d+)%$/, '🎯 $2 XP to $1 · one raid win ≈ $3%']
+    [/^📅 출석 (\d+)일째! \+XP \(7일 연속이면 전설 상자\)$/, '📅 Check-in day $1! +XP (7 days in a row: legendary box)'],
+    [/^🎯 (.+)까지 ([\d,]+) XP · 레이드 1승 ≈ (\d+)%$/, '🎯 $2 XP to $1 · one raid win ≈ $3%'],
+    [/^🏙 광장 안에서는 (.+) 사용 금지예요 — 🚪 야외 게이트로 나가서 써 주세요!$/, function (m, a) { return '🏙 No ' + (a === '스킬' ? 'skills' : a) + ' in the plaza — go out through the 🚪 outdoor gate first!'; }],
+    [/^🐷 응원 저금통 · 누적 ([\d,]+)닢$/, '🐷 Cheer piggy bank · $1 coins'],
+    [/^🥁 응원 북 · ([\d,]+)회$/, '🥁 Cheer drum · $1 hits'],
+    [/^오늘 북 ([\d,]+)번 · 리듬 타면 XP가 쌓여요$/, 'Drum hits today: $1 · keep the rhythm to earn XP'],
+    [/^🌳 시세나무 꼭대기 도착! 오늘의 등반 보너스 XP \+([\d,]+)$/, '🌳 Top of the Ticker Tree! Daily climb bonus XP +$1'],
+    [/^🏢 원복 빌딩 옥상 도착! 오늘의 등반 보너스 XP \+([\d,]+)$/, '🏢 Breakeven Tower roof! Daily climb bonus XP +$1'],
+    [/^🛌 푹 쉬고 왔네요! 휴식 보너스 XP \+([\d,]+)$/, '🛌 Welcome back, well rested! Rest bonus XP +$1']
   ];
   window.I18N_EN = { dict: dict, rx: rx, worlds: W };
 })();

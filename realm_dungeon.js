@@ -122,7 +122,7 @@
   // ── 진행
   const startWave = () => { const list = WAVES[wave]; unit = Math.max(20, api.unit()); healed = false; list.forEach((k, i) => { const a = i / list.length * 6.28 + Math.random() * .5, r = k === 'boss' ? 0 : 9 + Math.random() * 2; spawnMob(k, Math.cos(a) * r, Math.sin(a) * r - 2); });
     bossT = 2.5; bossStage = 0; say(wave === 4 ? '👹 보스 「폭락 대마왕」! 구르기(Z)로 피하고, 균열 게이지를 채워 BREAK!' : `⚔ 웨이브 ${wave + 1}/${WAVES.length} 시작! (${list.length}마리)`, 2800); };
-  const checkWave = () => { if (alive().length) return; if (wave >= WAVES.length - 1) return; const g = givePts(30 + wave * 10, .05); wave++; S.maxW = Math.max(S.maxW, wave); save(); api.heal(Math.round(api.hp().max * .4)); say(`✅ 웨이브 클리어! 공덕 +${g} · 체력 회복 · 다음 웨이브 준비…`, 2600); countdown = 3.2; };
+  const checkWave = () => { if (alive().length) return; if (wave >= WAVES.length - 1) return; const g = givePts(30 + wave * 10, .05); wave++; S.maxW = Math.max(S.maxW, wave); save(); api.heal(Math.round(api.hp().max * .4)); say(`✅ 웨이브 클리어! XP +${g} · 체력 회복 · 다음 웨이브 준비…`, 2600); countdown = 3.2; };
   const clearAll = () => { mobs.slice().forEach(m => { if (!m.dead) killMob(m); }); mobs.length = 0; proj.forEach(p => group.remove(p.m)); proj.length = 0; for (let i = tele.length - 1; i >= 0; i--) rmTele(i); heals.forEach(h => group.remove(h.m)); heals.length = 0; if (ringSh) { group.remove(ringSh.m); ringSh = null; } };
   const setAutoUi = on => { autoOn = !!on; api.setAuto(autoOn); };
   const startRun = () => { if (phase === 'run' || countdown > 0) { toast('이미 도전 중이에요!'); return; } if (api.hp().ko) return; clearAll();
@@ -130,7 +130,7 @@
   const failRun = () => { phase = 'lobby'; countdown = 0; clearAll(); if (autoOn) setAutoUi(false); say(`💀 던전 실패… (웨이브 ${wave + 1}에서 쓰러짐) 제단에서 다시 도전할 수 있어요`, 3600); };
   const clearRun = () => { phase = 'win'; runMs = Math.round(now() - t0); clearAll();
     S.tot++; S.maxW = WAVES.length; const newBest = !autoUsed && (!S.best || runMs < S.best); if (newBest) S.best = runMs; const paid = S.cl < DAILY_CLEARS; S.cl++;
-    if (paid) { const g = givePts(220, .3); addCoin(growCoin(600), '던전 클리어'); dropItem(3); api.fx.firework(); say(`🏆 던전 클리어! ${(runMs / 1000).toFixed(1)}초 · 최고 ${maxCombo}콤보 · 공덕 +${g} · 장비 상자!${autoUsed ? ' (자동사냥은 기록 제외)' : ''} (오늘 ${S.cl}/${DAILY_CLEARS})`, 4600); }
+    if (paid) { const g = givePts(220, .3); addCoin(growCoin(600), '던전 클리어'); dropItem(3); api.fx.firework(); say(`🏆 던전 클리어! ${(runMs / 1000).toFixed(1)}초 · 최고 ${maxCombo}콤보 · XP +${g} · 장비 상자!${autoUsed ? ' (자동사냥은 기록 제외)' : ''} (오늘 ${S.cl}/${DAILY_CLEARS})`, 4600); }
     else say(`🏆 던전 클리어! ${(runMs / 1000).toFixed(1)}초 · 최고 ${maxCombo}콤보 (오늘 보상 ${DAILY_CLEARS}번은 모두 받았어요)`, 4600);
     if (!S.title) { S.title = 1; G.title = '던전 정복자'; saveG(); dropItem(5); toast('🏅 한정 칭호 「던전 정복자」 + 전설 상자!'); }
     if (autoOn) setAutoUi(false); save(); setTimeout(() => { if (phase === 'win') phase = 'lobby'; }, 1500); };
