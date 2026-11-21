@@ -1533,6 +1533,9 @@ INTER.rz_star = { name: '🔭 별 관측소 입장', type: 'rz', X: HUBP.x, Z: H
 INTER.rz_dun = { name: '🏰 던전 입장', type: 'rz', X: HUBP.x + 6, Z: HUBP.z - 4.6, h: 5.6, btn: '🏰<br>입장', fn: () => realmEnter('dungeon') };
 INTER.wgate = { name: '🌐 세계 관문 · 다른 세계로 (E)', type: 'rz', X: GATE.x, Z: GATE.z, h: 5.9, btn: '🌐<br>세계', fn: () => openWorlds() };
 INTER.race = { name: T('🏁 각설탕 특급 · 원복 코스 (E)', '🏁 Sugar Cube Express (E)'), type: 'rz', X: 4.2, Z: 2.4, h: 3.6, get btn() { return T('🏁<br>출발', '🏁<br>Go'); }, fn: () => raceOpen() };
+INTER.dr_sauna = { name: T('♨ 보리탕 찜질방 문 (E)', '♨ Barley Sauna door (E)'), type: 'rz', X: -13.6, Z: 31, h: 3.4, get btn() { return T('♨<br>입장', '♨<br>Enter'); }, fn: () => realmEnter('sauna') };
+INTER.dr_star = { name: T('🔭 옥상 관측소 문 (E)', '🔭 Rooftop door (E)'), type: 'rz', X: -13.6, Z: 36, h: 3.4, get btn() { return T('🔭<br>입장', '🔭<br>Enter'); }, fn: () => realmEnter('star') };
+INTER.dr_dungeon = { name: T('🏰 폐선 지하역 문 (E)', '🏰 Old Subway door (E)'), type: 'rz', X: -13.6, Z: 41, h: 3.4, get btn() { return T('🏰<br>입장', '🏰<br>Enter'); }, fn: () => realmEnter('dungeon') };
 const olabs = {}; Object.keys(INTER).forEach(k => { const d = el('div', 'olab', INTER[k].name); labels.appendChild(d); olabs[k] = d; });
 const prompt = el('div', 'prompt'); prompt.append(el('kbd', null, 'E'), document.createTextNode('상호작용')); labels.appendChild(prompt);
 const _v = new THREE.Vector3();
@@ -5085,7 +5088,7 @@ if (CITY) {
     g.add(mesh(bodyG, SUG, [o.w, .5, o.d], [0, o.h - .25, 0]), mesh(bodyG, FM(acc, { roughness: .45, emissive: new THREE.Color(acc).multiplyScalar(.28).getHex() }), [o.w + .06, .07, o.d + .06], [0, o.h + .005, 0]),
       mesh(bodyG, SUGD, [o.w * .8, .12, o.d * .8], [0, o.h - .56, 0]));
     // 각설탕 알갱이 (윗면 가장자리 모서리 장식)
-    [-1, 1].forEach(sx => [-1, 1].forEach(sz => g.add(mesh(GEO.sph, SUG, [.09, .06, .09], [sx * (o.w / 2 - .22), o.h + .06, sz * (o.d / 2 - .22)]))));
+    [-1, 1].forEach(sx => [-1, 1].forEach(sz => g.add(mesh(GEO.box, SUG, [.15, .1, .15], [sx * (o.w / 2 - .22), o.h + .06, sz * (o.d / 2 - .22)]))));
     return g;
   }
   RPL.forEach(o => {
@@ -5324,6 +5327,23 @@ function stampSet(k) {
   });
 }
 window.__stamp = { get: stampGet, set: stampSet, reset: () => { LS.set(STAMP_K, null); stampUi(); } };
+// ---- 🚪 v49 골목 문 3개 (찜질방 · 별 관측소 · 던전) — 광장 서쪽 골목에서 바로 입장 ----
+const DOORS = [
+  { id: 'sauna', z: 31, c: 0xff8a5c, e: 0x5a1a08, ko: '♨ 보리탕 찜질방', en: '♨ Barley Sauna' },
+  { id: 'star', z: 36, c: 0x6ea8ff, e: 0x0c2a5a, ko: '🔭 옥상 관측소', en: '🔭 Rooftop Stargazing' },
+  { id: 'dungeon', z: 41, c: 0xb06bff, e: 0x2a0c5a, ko: '🏰 폐선 지하역 (던전)', en: '🏰 Old Subway (Dungeon)' }
+];
+{
+  const DX = -15.6, fr = FM(0x3a3f52, { roughness: .7 });
+  DOORS.forEach(d => {
+    const g = new THREE.Group(); g.position.set(DX, 0, d.z);
+    g.add(mesh(GEO.box, fr, [.5, 3.2, .5], [0, 1.6, -1]), mesh(GEO.box, fr, [.5, 3.2, .5], [0, 1.6, 1]), mesh(GEO.box, fr, [.5, .5, 2.5], [0, 3.3, 0]), mesh(GEO.box, fr, [1.1, .12, 2.5], [.1, .06, 0]));
+    bakeMerge(g, false, { rough: .8 }); scene.add(g);
+    const pm = new THREE.MeshBasicMaterial({ color: d.c, transparent: true, opacity: .55, fog: false }), panel = mesh(GEO.box, pm, [.08, 2.9, 1.5], [DX + .05, 1.5, d.z]); panel.userData.noBake = 1; scene.add(panel);
+    const s = signPlane(T(d.ko, d.en), 4.2, .8, '#16192a', '#' + d.c.toString(16).padStart(6, '0')); s.position.set(DX + .45, 4.1, d.z); s.rotation.y = Math.PI / 2; scene.add(s);
+    CITYW.tick.push((dt, t) => { pm.opacity = .45 + Math.sin(t * 2 + d.z) * .12; });
+  });
+}
 // ---- 📖 방명록 ----
 let GB = [];
 const gbCan = document.createElement('canvas'); gbCan.width = 1024; gbCan.height = 640; const gbTex = new THREE.CanvasTexture(gbCan); gbTex.colorSpace = THREE.SRGBColorSpace;
@@ -5547,7 +5567,7 @@ async function realmLeave(cb) {
 }
 function tickRealm(dt, t) { const R = REALM; if (!R || RBUSY) return; try { R.inst.tick && R.inst.tick(dt, t, { x: ME.X - R_ORG.x, z: ME.Z - R_ORG.z, y: ME.Y || 0, ry: ME.ry }); } catch (e) { console.warn(e); } }
 
-const TPS = [['🌐 세계 관문 (광장 안)', GATE.x + 3, GATE.z - 1.5], ['🏁 각설탕 특급 출발선', 4.2, 5.4], ['🌐 세계 포털 광장', HUBP.x, HUBP.z + 5], ['🏙 중앙 광장', 0, 9], ['🚪 야외 게이트', 13.6, -7.4], ['📖 방명록', 8.4, 0], ['☕ 병뚜껑 카페', HEAVEN.x, HEAVEN.z + 2.5], ['🌳 시세나무', 10.5, 43.4], ['🌀 포털 광장', -8.5, 23], ['📊 종목 토론 테이블', -3, 32.4], ['🏟 원형 토론장', -6, 46.2], ['🏢 원복 빌딩 계단', 15.6, -7.6], ['🌱 초보 사냥터', -32, 28], ['⚔ PK존', -46, 44.2], ['🎣 낚시터 부두', -56, 4], ['🏕 존버 캠핑장', CAMP.x, CAMP.z + 6], ['🌲 중급 숲', -100, 12], ['⚔ 보스 투기장', ARENA.x, ARENA.z - 16], ['🌋 화산지대', -165, 12], ['🌋 레이드 광장', RAIDP.x, RAIDP.z - 16], ['☠ 지옥 들판', -64, 98]];
+const TPS = [['🚪 골목 문 (찜질방·관측소·던전)', -12.5, 36], ['🌐 세계 관문 (광장 안)', GATE.x + 3, GATE.z - 1.5], ['🏁 각설탕 특급 출발선', 4.2, 5.4], ['🌐 세계 포털 광장', HUBP.x, HUBP.z + 5], ['🏙 중앙 광장', 0, 9], ['🚪 야외 게이트', 13.6, -7.4], ['📖 방명록', 8.4, 0], ['☕ 병뚜껑 카페', HEAVEN.x, HEAVEN.z + 2.5], ['🌳 시세나무', 10.5, 43.4], ['🌀 포털 광장', -8.5, 23], ['📊 종목 토론 테이블', -3, 32.4], ['🏟 원형 토론장', -6, 46.2], ['🏢 원복 빌딩 계단', 15.6, -7.6], ['🌱 초보 사냥터', -32, 28], ['⚔ PK존', -46, 44.2], ['🎣 낚시터 부두', -56, 4], ['🏕 존버 캠핑장', CAMP.x, CAMP.z + 6], ['🌲 중급 숲', -100, 12], ['⚔ 보스 투기장', ARENA.x, ARENA.z - 16], ['🌋 화산지대', -165, 12], ['🌋 레이드 광장', RAIDP.x, RAIDP.z - 16], ['☠ 지옥 들판', -64, 98]];
 function drawMap(cv, big) {
   const c = cv.getContext('2d'), W = cv.width, H = cv.height;
   if (REALM) { c.clearRect(0, 0, W, H); c.fillStyle = REALM.id === 'star' ? 'rgba(10,16,44,.9)' : REALM.id === 'dungeon' ? 'rgba(34,6,12,.92)' : 'rgba(40,20,8,.88)'; c.fillRect(0, 0, W, H); c.fillStyle = REALM.id === 'star' ? '#cfe0ff' : REALM.id === 'dungeon' ? '#ffb4a0' : '#ffd9a0'; c.font = `bold ${Math.round(H / 7)}px sans-serif`; c.textAlign = 'center'; c.fillText(RDEF[REALM.id].n + ' 안', W / 2, H / 2); return; }
@@ -6228,7 +6248,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '48';
+const APP_V = '49';
 {
   let shown = false;
   const check = async () => {
