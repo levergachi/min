@@ -5163,6 +5163,22 @@ const RDYN = []; // 움직이거나 깜빡이는 발판 (개별 메시)
 const RPATH = [[0, -5], [-13, 3], [7, 11], [-13, 19], [7, 27], [-13, 35], [3, 43], [-12, 51], [0, 58]];
 const RGATE = { x: 3, z: 2.4 }, RGW = { x: R_ORG.x + 3, z: R_ORG.z + 2.4 }; // 코스 세계 안 출발 게이트 (로컬 / 세계)
 const RMINH = 5;
+const RTYPE_COL = { mv: 0x41c9ff, lift: 0xb26bff, belt: 0xff9a3d, fl: 0xff4d57 };
+function raceAssign(lev) {
+  const norm = RPL.filter(o => o.kind === 'n'); let sd = 0; if (lev === 4) for (const ch of kstDate()) sd = (sd * 31 + ch.charCodeAt(0)) >>> 0;
+  norm.forEach(o => { o.mv = 0; o.amp = 0; o.lamp = 0; o.belt = 0; o.fl = 0; o.flOn = false; o.type = ''; if (o.g) { o.g.visible = true; o.g.position.y = 0; } o.h = o.hb; o.warn = 0; });
+  if (lev >= 2) {
+    const R = sRng(lev === 4 ? sd || 1 : lev * 7919), P = lev === 2 ? [.2, 0, .12, 0] : lev === 3 ? [.2, .15, .15, .12] : [.22, .15, .15, .12]; let prev = -9;
+    norm.forEach((o, k) => {
+      if (k < 2 || k > norm.length - 3 || k - prev < 2) return; const r = R(); let c = 0, t = ''; ['mv', 'lift', 'belt', 'fl'].forEach((n, j) => { c += P[j]; if (!t && r < c) t = n; }); if (!t) return; prev = k; o.type = t;
+      if (t === 'mv') { o.mv = 1; o.sp = 1.1 + R() * .8; o.ph = R() * 6.28; o.amp = lev === 2 ? 1.2 : 1.6; }
+      else if (t === 'lift') { o.lamp = lev === 3 ? .9 : 1.1; o.sp2 = .9 + R() * .6; o.ph = R() * 6.28; }
+      else if (t === 'belt') { o.belt = (R() < .5 ? -1 : 1) * 2.4; }
+      else { o.fl = 1; o.fph = R() * 3.6; o.flOn = true; }
+    });
+  }
+  norm.forEach(o => { if (!o.topM) return; const c = o.type ? RTYPE_COL[o.type] : o.topC0; o.topM.color.setHex(c); o.topM.emissive.setHex(o.type ? new THREE.Color(c).multiplyScalar(.45).getHex() : o.topE0); });
+}
 function raceSpd() { return RACE.on && RACE.st !== 'done' ? R_LEV[RACE.lev].spd : 1; }
 function raceJmp() { return RACE.on && RACE.st !== 'done' ? R_LEV[RACE.lev].jmp : 1; }
 // 달리기 보조: 코요테 100ms(발판 끝에서 막 떨어진 직후에도 점프 가능) · 점프 선입력 120ms(착지 직전에 누른 점프도 인정)
@@ -5214,7 +5230,7 @@ if (CITY) {
   }
   RPL.forEach(o => {
     const g = buildPlat(o);
-    if (o.mv || o.fl) { g.traverse(m => { m.userData.noBake = 1; }); RT.add(g); o.g = g; o.tops = []; g.children.forEach((c, ci) => { if (ci === 1) { c.material = c.material.clone(); o.topM = c.material; } }); RDYN.push(o); }
+    if (o.kind === 'n') { g.traverse(m => { m.userData.noBake = 1; }); RT.add(g); o.g = g; o.tops = []; g.children.forEach((c, ci) => { if (ci === 1) { c.material = c.material.clone(); o.topM = c.material; } }); o.topC0 = o.topM.color.getHex(); o.topE0 = o.topM.emissive.getHex(); RDYN.push(o); }
     else SG.add(g);
   });
   // 체크포인트 깃발 · 출발/도착 문
@@ -5485,7 +5501,7 @@ try { const m = location.hash.match(/g=(ANT1:[A-Za-z0-9_-]+)/); if (m) { const d
 const RKEY = 'lv3d_race2';
 function rcRec() { const r = LS.get(RKEY, {}); return r && typeof r === 'object' ? r : {}; }
 function fmtMs(ms) { if (!(ms >= 0)) return '--:--.-'; const s = ms / 1000, m = Math.floor(s / 60); return `${m}:${(s - m * 60).toFixed(1).padStart(4, '0')}`; }
-const R_LEV = [null, { ico: '🐢', mul: 1, spd: 1, jmp: 1, fall: 1000, ko: '1배 · 기본', en: '1x · Basic', kd: '속도·점프 그대로 · 떨어지면 1초', ed: 'Normal speed & jump · 1s respawn' }, { ico: '🐇', mul: 1.5, spd: 1.15, jmp: 1.08, fall: 2000, ko: '2배 · 빠르게', en: '2x · Fast', kd: '속도·점프 +15% · 떨어지면 2초 쉬어요', ed: '+15% speed & jump · 2s respawn' }, { ico: '🚀', mul: 2, spd: 1.3, jmp: 1.15, fall: 3000, ko: '3배 · 마진콜', en: '3x · Margin call', kd: '속도·점프 +30% · 떨어지면 3초 쉬어요', ed: '+30% speed & jump · 3s respawn' }];
+const R_LEV = [null, { ico: '🐢', mul: 1, spd: 1, jmp: 1, fall: 1000, ko: '1배 · 기본', en: '1x · Basic', kd: '속도·점프 그대로 · 떨어지면 1초', ed: 'Normal speed & jump · 1s respawn' }, { ico: '🐇', mul: 1.5, spd: 1.15, jmp: 1.08, fall: 2000, ko: '2배 · 빠르게', en: '2x · Fast', kd: '속도·점프 +15% · 떨어지면 2초 쉬어요', ed: '+15% speed & jump · 2s respawn' }, { ico: '🚀', mul: 2, spd: 1.3, jmp: 1.15, fall: 3000, ko: '3배 · 마진콜', en: '3x · Margin call', kd: '속도·점프 +30% · 떨어지면 3초 쉬어요', ed: '+30% speed & jump · 3s respawn' }, { ico: '📅', mul: 2.5, spd: 1.3, jmp: 1.15, fall: 3000, ko: '오늘의 건물', en: "Today's building", kd: '매일 바뀌는 장애물 · 하루 한 번 보너스', ed: 'Daily obstacles · daily bonus' }];
 
 /* ---------- 화면 (창 · 시간표) ---------- */
 let rcModal = null, rcHud = null, rcStyle = null;
@@ -5496,7 +5512,7 @@ function rcUi() {
     + '#raceHud.on{display:block}#raceHud .rh{display:inline-flex;gap:10px;align-items:center;padding:6px 14px;border-radius:99px;background:rgba(10,14,34,.78);border:1.5px solid #ff9a3d;color:#fff;font-weight:900;font-size:15px;box-shadow:0 4px 16px rgba(0,0,0,.4)}'
     + '#raceHud .rh b{font-variant-numeric:tabular-nums;font-size:19px;color:#ffd76a;min-width:64px}#raceHud .rm{margin-top:6px;font-weight:900;font-size:14px;color:#fff;text-shadow:0 2px 6px #000,0 0 10px #000;min-height:20px}'
     + '#raceHud button{pointer-events:auto;margin-left:4px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;border-radius:99px;font-size:12px;padding:3px 9px;font-weight:800}'
-    + '#mRace .rcl{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}#mRace .rcl button{border:1.5px solid #3a4a6a;background:rgba(20,28,52,.8);color:#e8edf5;border-radius:12px;padding:10px 6px;font-weight:800;cursor:pointer;line-height:1.25}'
+    + '#mRace .rcl{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}#mRace .rcl button{border:1.5px solid #3a4a6a;background:rgba(20,28,52,.8);color:#e8edf5;border-radius:12px;padding:10px 6px;font-weight:800;cursor:pointer;line-height:1.25}'
     + '#mRace .rcl button.on{border-color:#ff9a3d;background:linear-gradient(160deg,rgba(255,154,61,.28),rgba(255,92,122,.2));box-shadow:0 0 0 2px rgba(255,154,61,.35)}#mRace .rcl .i{font-size:26px;display:block}#mRace .rcl .t{font-size:13px;display:block}#mRace .rcl .d{font-size:11px;font-weight:600;color:#aab6cc;display:block;margin-top:3px}'
     + '#mRace .rcr{background:rgba(10,14,34,.6);border:1px solid #2a3a5a;border-radius:12px;padding:10px 12px;margin:8px 0;font-size:13px;line-height:1.55}#mRace .rcr b{color:#ffd76a}#mRace textarea{width:100%;min-height:58px;border-radius:10px;background:#0b1226;color:#dfe8ff;border:1px solid #2a3a5a;padding:8px;font-size:12px;box-sizing:border-box}'
     + '#mRace .rcb{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}#mRace .rcb .mbtn{flex:1;min-width:120px}#mRace .big{font-size:30px;font-weight:900;color:#ffd76a;text-align:center;margin:2px 0}';
@@ -5511,7 +5527,7 @@ function raceHudUpdate() {
   if (!rcHud) return; rcHud.classList.toggle('on', RACE.on);
   if (!RACE.on) return;
   const ms = RACE.st === 'run' ? RACE.gt * 1000 - RACE.t0 : RACE.st === 'done' ? RACE.ms : 0;
-  document.getElementById('rhT').textContent = fmtMs(ms); document.getElementById('rhLev').textContent = R_LEV[RACE.lev].ico + ' ' + RACE.lev + 'x';
+  document.getElementById('rhT').textContent = fmtMs(ms); document.getElementById('rhLev').textContent = R_LEV[RACE.lev].ico + ' ' + (RACE.lev === 4 ? T('오늘', 'Daily') : RACE.lev + 'x');
   document.getElementById('rhCp').textContent = '🚩 ' + RACE.cp + '/3'; document.getElementById('rhQuit').textContent = T('🏳 그만', '🏳 Quit');
   const m = document.getElementById('rhMsg'); if (RACE.msg && performance.now() > RACE.msgT) { RACE.msg = ''; } const want = RACE.msg ? trText(RACE.msg) : RACE.st === 'ready' ? T('앞 발판으로 점프! 발판을 벗어나면 시간이 시작돼요', 'Jump to the next platform — the clock starts when you leave') : ''; if (m.textContent !== want) m.textContent = want;
 }
@@ -5527,10 +5543,11 @@ function raceOpen(result) {
   else box.appendChild(el('div', 'sub', T('가격이 100에서 50까지 뚝 떨어졌다가 다시 100으로! 각설탕 발판을 밟고 원복(회복)까지 달려요. 떨어져도 1초 뒤 체크포인트에서 다시 시작해요.', 'Price drops from 100 to 50, then recovers to 100! Hop the sugar-cube platforms all the way to breakeven. Fall off and you restart from the last checkpoint after 1 second.')));
   const lev = el('div', 'rcl'); box.appendChild(lev);
   const info = el('div', 'rcr'); box.appendChild(info);
-  const draw = () => { lev.textContent = ''; [1, 2, 3].forEach(n => { const D = R_LEV[n], b = el('button'); b.type = 'button'; b.className = RACE.lev === n ? 'on' : ''; b.appendChild(el('span', 'i', D.ico)); b.appendChild(el('span', 't', T(D.ko, D.en))); b.appendChild(el('span', 'd', T(D.kd, D.ed) + ` · XP ×${D.mul}`));
+  const draw = () => { lev.textContent = ''; [1, 2, 3, 4].forEach(n => { const D = R_LEV[n], b = el('button'); b.type = 'button'; b.className = RACE.lev === n ? 'on' : ''; b.appendChild(el('span', 'i', D.ico)); b.appendChild(el('span', 't', T(D.ko, D.en))); b.appendChild(el('span', 'd', T(D.kd, D.ed) + ` · XP ×${D.mul}`));
       b.onclick = () => { RACE.lev = n; LS.set('lv3d_race_lev', n); draw(); }; lev.appendChild(b); });
-    const r = rec[RACE.lev]; info.textContent = ''; const l = el('div'); l.innerHTML = ''; l.appendChild(document.createTextNode(T('내 최고기록 ', 'Personal best '))); const bb = el('b', '', r ? fmtMs(r.ms) : '--:--.-'); l.appendChild(bb); l.appendChild(document.createTextNode(r ? T(` · 완주 ${r.n || 1}번`, ` · ${r.n || 1} clears`) : T(' · 아직 기록이 없어요', ' · no record yet'))); info.appendChild(l);
+    const r0 = rec[RACE.lev], r = RACE.lev === 4 && r0 && r0.d !== kstDate() ? null : r0; info.textContent = ''; const l = el('div'); l.innerHTML = ''; l.appendChild(document.createTextNode(T('내 최고기록 ', 'Personal best '))); const bb = el('b', '', r ? fmtMs(r.ms) : '--:--.-'); l.appendChild(bb); l.appendChild(document.createTextNode(r ? T(` · 완주 ${r.n || 1}번`, ` · ${r.n || 1} clears`) : T(' · 아직 기록이 없어요', ' · no record yet'))); info.appendChild(l);
     if (r && r.cp) info.appendChild(el('div', 'small', T('체크포인트 ', 'Splits ') + r.cp.map(fmtMs).join(' · ')));
+    info.appendChild(el('div', 'small', T('🔵 흔들발판 · 🟣 엘리베이터 · 🟠 컨베이어(밀어요) · 🔴 깜빡발판 — 2배부터 나와요', '🔵 swaying · 🟣 elevator · 🟠 conveyor · 🔴 blinking — from 2x')));
     const fg = LS.get('lv3d_race_fg', {})[RACE.lev]; if (fg) info.appendChild(el('div', 'small', T(`👻 친구 고스트: ${fg.nick || '?'} · ${fmtMs(fg.ms)}`, `👻 Friend ghost: ${fg.nick || '?'} · ${fmtMs(fg.ms)}`))); };
   draw();
   const row = el('div', 'rcb'); box.appendChild(row);
@@ -5540,7 +5557,7 @@ function raceOpen(result) {
   const ta = el('textarea'); ta.placeholder = T('받은 고스트 편지 링크를 여기에 붙여넣고 「받기」 (링크를 눌러 들어와도 자동으로 받아져요)', 'Paste a ghost letter link here and press Receive (opening the link also works)'); det.appendChild(ta);
   const r2 = el('div', 'rcb'); det.appendChild(r2); const msg = el('div', 'small'); det.appendChild(msg);
   const send = el('button', 'mbtn sec', T('📨 내 고스트 편지(링크) 복사', '📨 Copy my ghost letter (link)')); send.type = 'button'; r2.appendChild(send);
-  send.onclick = () => { const r = rcRec()[RACE.lev]; if (!r || !r.g) { msg.textContent = T('먼저 이 배율로 완주해 보세요', 'Finish this multiplier first'); return; } const pts = []; for (let k = 0; k < r.g.length; k += 3) pts.push([r.g[k] / 10, r.g[k + 1] / 10, r.g[k + 2] / 10]);
+  send.onclick = () => { if (RACE.lev === 4) { msg.textContent = T('오늘의 건물은 매일 바뀌어서 고스트 편지를 못 보내요', 'Daily building cannot be sent as a ghost letter'); return; } const r = rcRec()[RACE.lev]; if (!r || !r.g) { msg.textContent = T('먼저 이 배율로 완주해 보세요', 'Finish this multiplier first'); return; } const pts = []; for (let k = 0; k < r.g.length; k += 3) pts.push([r.g[k] / 10, r.g[k + 1] / 10, r.g[k + 2] / 10]);
     const s = ghostEncode(RACE.lev, Math.round(r.ms), PROF.nick, pts, location.href.split('#')[0].split('?')[0] + '#g='); if (!s) { msg.textContent = T('기록이 너무 길어서 편지에 못 담아요 (2분 이하만 가능)', 'Run too long for a letter (max ~2 min)'); return; }
     ta.value = s; ta.select(); let ok = false; try { ok = document.execCommand('copy'); } catch (e) {} try { navigator.clipboard && navigator.clipboard.writeText(s); ok = true; } catch (e) {}
     msg.textContent = T(`✅ ${s.length}자 — ${ok ? '복사했어요! 친구에게 붙여넣어 보내세요' : '위 글자를 길게 눌러 복사하세요'}`, `✅ ${s.length} chars — ${ok ? 'copied! paste it to a friend' : 'select and copy the text above'}`); };
@@ -5564,7 +5581,7 @@ function raceBegin(lev) {
   if (rec && rec.g && rec.g.length >= 6) RACE.ghost = { a: ghostAnt(0x7fe9ff, T('내 기록', 'My best')), pts: rec.g, dt: .25, ms: rec.ms, k: 10 };
   const fg = LS.get('lv3d_race_fg', {})[RACE.lev]; if (fg && fg.pts && fg.pts.length >= 2) RACE.ghostF = { a: ghostAnt(0xffb36b, fg.nick || T('친구', 'Friend')), pts: fg.pts.flat(), dt: fg.dt, ms: fg.ms, k: 10 };
   RACE.on = true; RACE.st = 'ready'; RACE.cp = 0; RACE.cpT = [0, 0, 0]; RACE.rec = []; RACE.recAt = 0; RACE.falling = 0; RACE.t0 = 0; RACE.ms = 0; RACE.msg = ''; RACE.gt = 0;
-  RPL.forEach(o => { if (o.mv) { o.amp = RACE.lev >= 2 ? (RACE.lev === 3 ? 2.2 : 1.5) : 0; } if (o.fl) o.flOn = RACE.lev >= 3; });
+  raceAssign(RACE.lev);
   raceTp(RSTART); toast(T(`🏁 ${RACE.lev}배 코스 — 준비되면 앞 발판으로!`, `🏁 ${RACE.lev}x course — jump ahead when ready!`));
 }
 function raceTp(o) {
@@ -5573,21 +5590,21 @@ function raceTp(o) {
   spawn(o.x, o.h + .2, o.z, 12, 0xffd76a, 2, 2, .6);
 }
 function raceCancel(toGround) {
-  if (!RACE.on) return; RACE.on = false; RACE.st = 'idle'; raceGhostsOff(); RPL.forEach(o => { if (o.mv) { o.amp = 0; } if (o.fl) { o.flOn = false; } });
+  if (!RACE.on) return; RACE.on = false; RACE.st = 'idle'; raceGhostsOff(); raceAssign(0);
   if (toGround) { ME.X = RGW.x; ME.Z = RGW.z + 2.2; ME.Y = 0; ME.vy = 0; cam.tx = ME.X; cam.tz = ME.Z; try { sync(true); } catch (e) {} toast(T('🏳 출발선 앞으로 내려왔어요', 'Back at the start line')); }
   raceHudUpdate();
 }
 function onPlat(o, tol) { return Math.abs(ME.X - o.x) <= o.w / 2 + .05 && Math.abs(ME.Z - o.z) <= o.d / 2 + .05 && Math.abs((ME.Y || 0) - o.h) <= (tol || .6); }
 function raceFinish() {
-  RACE.st = 'done'; RACE.ms = RACE.gt * 1000 - RACE.t0; const ms = RACE.ms, lev = RACE.lev, all = rcRec(), old = all[lev], pb = !old || ms < old.ms;
+  RACE.st = 'done'; RACE.ms = RACE.gt * 1000 - RACE.t0; const ms = RACE.ms, lev = RACE.lev, all = rcRec(), old = lev === 4 && all[lev] && all[lev].d !== kstDate() ? null : all[lev], pb = !old || ms < old.ms;
   const best = pb ? ms : old.ms; let xp = 0; const d = kstDate(), day = LS.get('lv3d_race_day', {}); if (day.d !== d) { day.d = d; day.l = {}; }
-  if (!day.l[lev]) { day.l[lev] = 1; LS.set('lv3d_race_day', day); xp = givePts(12 * R_LEV[lev].mul * 2, .03); }
+  if (!day.l[lev]) { day.l[lev] = 1; LS.set('lv3d_race_day', day); xp = givePts(12 * R_LEV[lev].mul * 2, .03); if (lev === 4) setTimeout(() => addCoin(growCoin(100), T('오늘의 건물 첫 완주', "Today's building clear")), 900); }
   const rec = { ms: pb ? ms : old.ms, n: ((old && old.n) || 0) + 1, cp: pb ? RACE.cpT.slice() : old.cp, g: pb ? RACE.rec.slice() : old.g, d };
   all[lev] = rec; LS.set(RKEY, all);
   for (let i = 0; i < 4; i++) spawn(RFIN.x + (Math.random() - .5) * 3, RFIN.h + 1.5, RFIN.z + (Math.random() - .5) * 3, 24, [0xffd76a, 0xff4d57, 0x4fe3c8, 0xffffff][i], 4, 3, 1.2);
   try { SND.land(); } catch (e) {} raceMsg(T('🎉 원복 완료!', '🎉 Breakeven!'), 3000);
   const res = { ms, best, pb, xp, lev, cp: RACE.cpT.slice(), oldCp: old && old.cp }; RACE.last = res;
-  setTimeout(() => { if (RACE.st === 'done') { raceGhostsOff(); RACE.on = false; RACE.st = 'idle'; raceHudUpdate(); RPL.forEach(o => { if (o.mv) o.amp = 0; if (o.fl) o.flOn = false; }); raceOpen(res); } }, 1800);
+  setTimeout(() => { if (RACE.st === 'done') { raceGhostsOff(); RACE.on = false; RACE.st = 'idle'; raceHudUpdate(); raceAssign(0); raceOpen(res); } }, 1800);
 }
 function ghostAt(g, ms) { const f = ms / 1000 / g.dt, i = Math.floor(f), u = f - i, n = g.pts.length / 3 | 0; if (n < 1) return null; const a = Math.max(0, Math.min(n - 1, i)), b = Math.max(0, Math.min(n - 1, i + 1)), P = g.pts, k = g.k; return [(P[a * 3] + (P[b * 3] - P[a * 3]) * u) / k, (P[a * 3 + 1] + (P[b * 3 + 1] - P[a * 3 + 1]) * u) / k, (P[a * 3 + 2] + (P[b * 3 + 2] - P[a * 3 + 2]) * u) / k, i >= n - 1]; }
 const rcPrev = { x: 0, z: 0 };
@@ -5595,6 +5612,8 @@ CITYW.tick.push((dt, t) => {
   if (RACE.pending && entered && !REALM && !RACE.on && !RBUSY) { const d = RACE.pending; RACE.pending = null; RACE.lev = d.lev; toast(T(`👻 ${d.nick || '친구'}님의 고스트 편지를 받았어요!`, `👻 Got ${d.nick || 'a friend'}'s ghost letter!`)); setTimeout(() => realmEnter('race'), 600); }
   // 움직이는/깜빡이는 발판은 레이스 밖에서는 가만히
   for (const o of RDYN) {
+    if (!o.fl) { const lh = o.lamp ? o.lamp * (1 + Math.sin(t * o.sp2 + o.ph)) / 2 : 0; if (o.h !== o.hb + lh) { o.h = o.hb + lh; o.g.position.y = lh; } }
+    if (o.belt && RACE.on && RACE.st !== 'done' && onPlat(o, .4)) { const bx = ME.X + o.belt * dt; if (walkable(bx, ME.Z)) ME.X = bx; }
     if (o.mv) { const amp = o.amp || 0, nx = o.bx + Math.sin(t * o.sp + o.ph) * amp, dx = nx - o.x;
       if (dx) { if (RACE.on && RACE.st !== 'done' && (ME.Y || 0) > 0 && Math.abs((ME.Y || 0) - o.h) < .2 && Math.abs(ME.X - o.x) <= o.w / 2 && Math.abs(ME.Z - o.z) <= o.d / 2) { const cx = ME.X + dx; if (walkable(cx, ME.Z)) ME.X = cx; } o.x = nx; o.g.position.x = nx; } }
     if (o.fl) { if (!o.flOn) { if (o.h !== o.hb) { o.h = o.hb; o.g.visible = true; } if (o.topM && o.warn) { o.warn = 0; o.topM.emissive.setHex(0); } continue; }
@@ -5625,7 +5644,7 @@ CITYW.tick.push((dt, t) => {
   if (RACE.st === 'run') { const el1 = now - RACE.t0; ['ghost', 'ghostF'].forEach(k => { const g = RACE[k]; if (!g) return; const p = ghostAt(g, el1); if (!p) return; const R = g.a.root; const wx = p[0] + R_ORG.x, wz = p[2] + R_ORG.z, dx = wx - R.position.x, dz = wz - R.position.z; R.position.set(wx, p[1], wz); g.a.moving = !p[3] && Math.hypot(dx, dz) > .004; if (Math.hypot(dx, dz) > .01) g.a.ry = Math.atan2(dx, dz); try { animAnt(g.a, dt, t); } catch (e) {} }); }
   raceHudUpdate();
 });
-window.__race.begin = raceBegin; window.__race.cancel = raceCancel; window.__race.tpTo = i => raceTp(RPL[i]); window.__race.fin = raceFinish;
+window.__race.assign = raceAssign; window.__race.types = () => RPL.map(o => o.type || ''); window.__race.begin = raceBegin; window.__race.cancel = raceCancel; window.__race.tpTo = i => raceTp(RPL[i]); window.__race.fin = raceFinish;
 window.__race.setTarget = (x, z) => { ME.target = x == null ? null : { x, z }; }; window.__race.jump = () => tryJump(); window.__race.me = () => ({ x: ME.X, y: ME.Y, z: ME.Z, vy: ME.vy });
 window.__race.info = () => ({ on: RACE.on, st: RACE.st, cp: RACE.cp, lev: RACE.lev, ms: RACE.st === 'run' ? RACE.gt * 1000 - RACE.t0 : RACE.ms, cpT: RACE.cpT.slice(), rec: RACE.rec.length, ghost: !!RACE.ghost, ghostF: !!RACE.ghostF, last: RACE.last || null });
 { let rr0 = null; window.__race.noRender = on => { if (!rr0) rr0 = renderer.render.bind(renderer); renderer.render = on ? () => {} : rr0; }; } // 시험용: 그림 그리기를 건너뛰어 빠르게 달려 보기
@@ -6575,7 +6594,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '56';
+const APP_V = '57';
 {
   let shown = false;
   const check = async () => {
