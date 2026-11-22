@@ -443,6 +443,7 @@ html,body{font-family:var(--font);letter-spacing:-.011em;-webkit-font-smoothing:
 .tape{background:linear-gradient(180deg,#03060c,#070b14);border-bottom:1px solid var(--line2)}
 #miniMap{border:1px solid var(--lineHi);border-radius:var(--r-m);box-shadow:var(--sh-2),0 0 0 1px rgba(0,0,0,.4)}
 /* quick bar buttons */
+.skb.rdy{animation:skrdy .9s ease-out}@keyframes skrdy{0%{box-shadow:0 0 0 0 #ffe9b0;transform:scale(1.18)}100%{box-shadow:0 0 0 14px rgba(255,233,176,0);transform:scale(1)}}
 #qbar button,.skb{transition:transform .14s var(--ease),box-shadow .14s,border-color .14s}
 #qbar button{border:1px solid var(--lineHi);background:linear-gradient(180deg,rgba(24,34,58,.92),rgba(10,16,30,.94));border-radius:var(--r-m);box-shadow:var(--sh-2),inset 0 1px 0 rgba(255,255,255,.07)}
 #qbar button:hover{border-color:rgba(160,210,255,.7)}
@@ -3142,7 +3143,8 @@ function updSkBtn() {
   const t = lvOf(G.pts); for (let s = 0; s < 4; s++) { const b = $('sk' + s); if (!b) continue; const open = !!SK[t] && t >= SLOT_T[s]; b.classList.toggle('lock', !open);
     const left = Math.ceil(skCdLeft(s) / 1000), ic = skName(t, s).split(' ')[0];
     const lb = !open ? `🔒<small>${SLOT_T[s] + 1}단계</small>` : left ? `⏳<small>${left}s</small>` : `${ic}<small>${SLOT_KEY[s].toUpperCase()}</small>`;
-    if (b.dataset.l !== lb) { b.dataset.l = lb; b.innerHTML = lb; b.title = open ? skName(t, s) + ' — ' + (FINALS.has(t) && s === 3 ? SK[t][1] : SLOT_NM[s][1]) : ''; } }
+    { const nowCd = !!left || !open; if (b.dataset.cd === '1' && !nowCd) { b.classList.add('rdy'); setTimeout(() => b.classList.remove('rdy'), 900); } b.dataset.cd = nowCd ? '1' : '0'; }
+    if (b.dataset.l !== lb) { b.dataset.l = lb; b.innerHTML = lb; b.title = open ? trText(skName(t, s)) + ' — ' + trText(FINALS.has(t) && s === 3 ? SK[t][1] : SLOT_NM[s][1]) : ''; } }
   const o = $('aSk'); if (o) o.style.display = 'none';
 }
 setInterval(updSkBtn, 500);
@@ -3166,6 +3168,17 @@ function lookPts(d) { const lk = d && d.lk; return Number.isInteger(lk) && lk >=
 function myLookPts() { return lookPts({ pts: G.pts, lk: G.look >= 0 ? G.look : undefined }); }
 function setLook(t) { G.look = t >= 0 && t < lvOf(G.pts) ? t : -1; saveG(); if (myAnt) { myAnt.tier = -1; applyTier(myAnt, lvOf(myLookPts())); try { setGear(myAnt, G.eq); } catch (e) {} } if (myLabel) fillLabel(myLabel, myData(), true); sync(true); updHud();
   toast(G.look >= 0 ? `🎭 ${G.look + 1}단계 「${LV[G.look][1]}」 모습으로 변신! (능력치는 그대로)` : '🎭 최신 모습으로 돌아왔어요'); try { if ($('mDex').classList.contains('on')) renderDex(); } catch (e) {} }
+// 도감 마일스톤 보상: [필요 종수(0=전종), XP, XP상한, 코인, 아이템 boost, 최소 등급, 칭호]
+const DEX_RW = [[5, 60, .05, 500, 0, 1, ''], [10, 150, .08, 1500, 4, 2, ''], [20, 400, .12, 4000, 8, 3, ''], [30, 1000, .2, 10000, 12, 4, ''], [0, 3000, .3, 30000, 20, 5, '🧌 몬스터 도감 마스터']];
+const dexN = () => MOBK.filter(k => (G.md || {})[k.lv]).length, dexNeed = r => r[0] || MOBK.length;
+function dexClaim(i) {
+  const r = DEX_RW[i], need = dexNeed(r); G.mdr = G.mdr || {}; if (dexN() < need || G.mdr[need]) return; G.mdr[need] = 1;
+  givePts(r[1], r[2]); addCoin(r[3]); setTimeout(() => { try { dropItem(r[4], r[5]); } catch (e) {} }, 300);
+  if (r[6]) { G.title = r[6]; try { sync(true); if (myLabel) fillLabel(myLabel, myData(), true); } catch (e) {} }
+  saveG(); try { SND.level(); } catch (e) {}
+  toast(T(`📖 몬스터 도감 ${need}종 보상! 🪙 +${fmt(r[3], 0)} · XP · 장비${r[6] ? ' · 칭호 [' + r[6] + ']' : ''}`, `📖 Monster dex ${need} reward! 🪙 +${fmt(r[3], 0)} · XP · gear${r[6] ? ' · title' : ''}`));
+  try { renderDex(); } catch (e) {}
+}
 const MPREV = {};
 function mobPreview(K) {
   if (MPREV[K.lv] != null) return MPREV[K.lv];
@@ -3178,17 +3191,21 @@ function mobPreview(K) {
 }
 function renderMobDex(g) {
   const md = G.md || {}, n = MOBK.filter(k => md[k.lv]).length, bar = el('div', 'lookBar');
-  bar.append(el('b', null, '🧌 몬스터 도감'), el('span', null, `만난 몬스터 ${n}/${MOBK.length}종 · 처치하면 기록돼요 (Lv.1 ~ Lv.1000)`)); g.appendChild(bar);
+  bar.append(el('b', null, '🧌 몬스터 도감'), el('span', null, T(`만난 몬스터 ${n}/${MOBK.length}종 · 처치하면 기록돼요 (Lv.1 ~ Lv.1000)`, `Met ${n}/${MOBK.length} monsters · defeat them to record (Lv.1 ~ Lv.1000)`))); g.appendChild(bar);
+  { const rb = el('div', 'lookBar'); rb.style.flexWrap = 'wrap'; rb.append(el('b', null, '🎁 수집 보상'));
+    DEX_RW.forEach((r, i) => { const need = dexNeed(r), done = (G.mdr || {})[need], ok = n >= need, b = el('button', 'gbtn' + (done ? ' on' : ''), done ? T(`✅ ${need}종`, `✅ ${need}`) : ok ? T(`🎁 ${need}종 받기!`, `🎁 Claim ${need}!`) : T(`🔒 ${n}/${need}종`, `🔒 ${n}/${need}`)); b.type = 'button'; b.disabled = !ok || !!done; b.onclick = () => dexClaim(i); rb.appendChild(b); });
+    g.appendChild(rb); }
   MOBK.forEach((K, idx) => {
     const got = md[K.lv] | 0, c = el('div', 'c ' + (got ? 'got' : 'lock')), im = el('img', 'pv'); im.alt = got ? K.name : '???'; c.appendChild(im);
     setTimeout(() => { im.src = mobPreview(K); if (!got) im.style.filter = 'brightness(0) opacity(.5)'; }, 30 + idx * 45);
     c.appendChild(el('b', null, got ? K.name : `Lv.${K.lv} ???`));
     c.appendChild(el('small', got ? null : 'need', got ? `Lv.${K.lv} · ❤ ${fmt(K.hp, 0)} · ⚔ ${fmt(K.atk, 0)}` : '🔒 아직 못 만났어요'));
-    if (got) c.appendChild(el('small', null, `🏆 처치 ${got}회 · 🎁 드랍 ${Math.round(mobDropP(K.lv) * 100)}%${K.lv >= 700 ? ' · 2개' : ''} · ✨ XP ${fmt(K.exp, 0)}`));
+    if (got) c.appendChild(el('small', null, T(`🏆 처치 ${got}회 · 🎁 드랍 ${Math.round(mobDropP(K.lv) * 100)}%${K.lv >= 700 ? ' · 2개' : ''} · ✨ XP ${fmt(K.exp, 0)}`, `🏆 Kills ${got} · 🎁 Drop ${Math.round(mobDropP(K.lv) * 100)}%${K.lv >= 700 ? ' · 2 items' : ''} · ✨ XP ${fmt(K.exp, 0)}`)));
     g.appendChild(c);
   });
 }
-function renderDex() {
+function renderDex() { try { renderDex0(); if (EN()) trNode($('mDex')); } catch (e) { console.warn(e); } }
+function renderDex0() {
   const i = lvOf(G.pts), g = $('dexGrid'); g.textContent = ''; const DTABS = [[0, 11], [12, 19], [20, 29], [30, 39], [40, 49], [50, 59], [60, 69], [70, 79], [80, 89], [90, 99], [0, -1]]; if (dexTab < 0 || dexTab >= DTABS.length) dexTab = Math.max(0, DTABS.findIndex(r => i >= r[0] && i <= r[1]));
   $('dexSub').textContent = `지금 ${i + 1}/${LV.length}단계 · ${TIER_ICON[i]} ${LV[i][1]} — ` + (LV[i + 1] ? `다음 진화까지 ${fmt(LV[i + 1][0] - G.pts, 0)} XP!` : '🌌 최종 엔딩 달성! 차트 밖의 창조주');
   const tabs = $('dexTabs'); tabs.textContent = ''; [['🐜 1~12 개미의 길', 0, 11], ['🏛 13~20 여의도·월가', 12, 19], ['🐉 21~30 시장의 지배자', 20, 29], ['🌌 31~40 숨은 지배자', 30, 39], ['✨ 41~50 초월자', 40, 49], ['🌍 51~60 글로벌 자본', 50, 59], ['⛈ 61~70 거시경제', 60, 69], ['🫧 71~80 위기와 반등', 70, 79], ['🚀 81~90 우주 증시', 80, 89], ['🌟 91~100 차트 밖', 90, 99], ['🧌 몬스터 도감', 0, -1]].forEach(([n, a0, a1], j) => { const b = el('button', j === dexTab ? 'on' : '', n); b.type = 'button'; const got = Math.max(0, Math.min(a1, i) - a0 + 1); b.appendChild(el('small', null, a1 < a0 ? ` ${MOBK.filter(k => (G.md || {})[k.lv]).length}/${MOBK.length}` : ` ${got}/${a1 - a0 + 1}`)); b.onclick = () => { dexTab = j; renderDex(); }; tabs.appendChild(b); });
@@ -3202,7 +3219,7 @@ function renderDex() {
     c.appendChild(el('b', null, `${k + 1}. ${k <= i + 1 || k === 29 || k === 49 || k === 99 ? l[1] : '???'}`));
     c.appendChild(el('small', 'need', k <= i ? '✅ 해금 완료' : `🔒 ${fmt(l[0], 0)} XP` + (k === i + 1 ? ` (앞으로 ${fmt(l[0] - G.pts, 0)})` : '')));
     c.appendChild(el('small', null, `⚔ 공격력 ${atkOf(k)} · ${TIER_PERK[k]}`));
-    { const si = SLOT_T.indexOf(k); if (si >= 0) c.appendChild(el('small', 'sk', `${SLOT_KEY[si].toUpperCase()} ${SLOT_NM[si][0]} 해금 — ${SLOT_NM[si][1]} (쿨 ${SLOT_CD[si]}초)`)); }
+    { const si = SLOT_T.indexOf(k); if (si >= 0) c.appendChild(el('small', 'sk', `${SLOT_KEY[si].toUpperCase()} ${trText(SLOT_NM[si][0])} ${T('해금', 'unlocked')} — ${trText(SLOT_NM[si][1])} (${T('쿨 ' + SLOT_CD[si] + '초', 'cooldown ' + SLOT_CD[si] + 's')})`)); }
     if (k === i) c.appendChild(el('small', 'me', '⬅ 지금 나'));
     if (k <= i) { const on = curLook() === k, b = el('button', 'gbtn lookB' + (on ? ' on' : ''), on ? '✅ 지금 이 모습' : '🎭 이 모습 하기'); b.type = 'button'; b.onclick = e => { e.stopPropagation(); setLook(k === i ? -1 : k); }; c.appendChild(b); }
     if (k === 29) c.appendChild(el('small', 'fin', '🐉 30단계 · 공매도 브레스 · 개미들의 숏 스퀴즈 반격을 조심!'));
@@ -3264,11 +3281,19 @@ function rollItem(boost, minG) {
 }
 // ===== v51: 스킬 4종 재설계 (차분하게) — 1 파이어볼 · 2 관통 일격 · 3 광역 폭풍 · 4 초광역 궁극기 =====
 const SKC = [0xff7a1a, 0x41c9ff, 0x2fe07a, 0xffd76a], SK_RG = [13, 14, 11, 20], SK_BUFF = [5, 6, 8, 10];
+function skSnd(sl) {
+  try {
+    if (sl === 0) sfx((t, d) => { NZ(d, t, .35, .22, 'bandpass', 900, 1.2, 2600); N(d, t, 330, .28, 'sawtooth', .06, .005, 170); });
+    else if (sl === 1) sfx((t, d) => { N(d, t, 1100, .2, 'square', .05, .002, 240); NZ(d, t, .18, .2, 'highpass', 3200); N(d, t + .12, 120, .2, 'sine', .3, .003, 60); });
+    else if (sl === 2) sfx((t, d) => { NZ(d, t, 1, .3, 'bandpass', 500, .8, 3200); [180, 240, 300].forEach(f => N(d, t + .05, f, .7, 'triangle', .08, .01, f * 1.6)); });
+    else { SND.fire(); setTimeout(() => { try { SND.crash(); } catch (e) {} }, 450); }
+  } catch (e) {}
+}
 function skillFxN(a, t, mine, sl) {
   sl = sl | 0; if (sl < 0 || sl > 3) sl = 3;
   const P0 = a.root.position, ry = a.ry, fx = Math.sin(ry), fz = Math.cos(ry), col = SKC[sl];
   a.act = { k: 'cheer', t0: clock.elapsedTime, d: sl >= 2 ? 1.1 : .5};
-  try { SND.fire(); } catch (e) {}
+  skSnd(sl);
   if (mine) { BUFF.until = Date.now() + SK_BUFF[sl] * 1000; hpUi(); }
   const bolt = (x1, y1, z1, x2, y2, z2, c) => { const pts = [new THREE.Vector3(x1, y1, z1), new THREE.Vector3(x2, y2, z2)]; const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: c, transparent: true, toneMapped: false })); scene.add(l); rpgPieces.push({ line: l, t: -.4 }); };
   if (sl === 0) { // 🔥 파이어볼 — 작고 빠른 화염구 한 발
@@ -4587,7 +4612,7 @@ function mobCounter(m, n) {
   const prev = m.hits, first = !m.init; m.init = 1; m.hits = n; mobDraw(m);
   if (!first && Math.floor(n / m.K.hp) > Math.floor(prev / m.K.hp)) { // 처치!
     m.dead = 1.6; const P = m.o.g.position; spawn(P.x, 1, P.z, 50, m.K.col, 5, 6, 1); ringFx(P.x, P.z, 0xffd76a, 4); try { const mine = m.myHit && Date.now() - m.myHit < 12000; withVol(mine ? 1 : volAt(P.x, P.z) * .55, () => SND.ko()); } catch (e) {}
-    if (m.myHit && Date.now() - m.myHit < 12000) { try { G.md = G.md || {}; G.md[m.K.lv] = (G.md[m.K.lv] | 0) + 1; saveG(); } catch (e) {} addPts(m.K.exp); addCoin(mobCoin(m.K.lv)); qProg('mob'); setTimeout(() => floatAt(myAnt, `🏆 ${m.K.name.split(' ').slice(1).join(' ')} 처치 +${Math.round(m.K.exp * ptsMul(lvOf(G.pts)))}`, 'big'), 300); mobDropRoll(m.K); }
+    if (m.myHit && Date.now() - m.myHit < 12000) { try { G.md = G.md || {}; G.md[m.K.lv] = (G.md[m.K.lv] | 0) + 1; saveG(); if (G.md[m.K.lv] === 1) { const nn = dexN(); if (DEX_RW.some(r => dexNeed(r) === nn && !(G.mdr || {})[nn])) setTimeout(() => toast(T('📖 몬스터 도감 보상이 도착했어요! 도감 🧌 탭에서 받으세요', '📖 Monster dex reward ready! Claim it in the 🧌 tab')), 1500); } } catch (e) {} addPts(m.K.exp); addCoin(mobCoin(m.K.lv)); qProg('mob'); setTimeout(() => floatAt(myAnt, `🏆 ${m.K.name.split(' ').slice(1).join(' ')} 처치 +${Math.round(m.K.exp * ptsMul(lvOf(G.pts)))}`, 'big'), 300); mobDropRoll(m.K); }
   }
 }
 // v31: 강한 몬스터의 기술 — 예고 장판이 1.2초 이상 보이니 피할 수 있어요 (모바일 기준 무난하게)
@@ -6333,7 +6358,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '52';
+const APP_V = '53';
 {
   let shown = false;
   const check = async () => {
