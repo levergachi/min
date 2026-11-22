@@ -3237,8 +3237,8 @@ function rollItem(boost, minG) {
   const s = Math.random() < .16 ? 'w' : SLOT_KEYS[Math.floor(Math.random() * SLOT_KEYS.length)];
   return s + '99-' + Math.floor(Math.random() * ITAB[s].length) + '-' + rollGrade(boost || 0, minG);
 }
-function dropItem(boost) {
-  const code = rollItem(boost, boost >= 5 ? 5 : boost >= 3 ? 3 : 0), i = itemInfo(code); G.inv.push(code); dexSave();
+function dropItem(boost, minG) {
+  const code = rollItem(boost, minG != null ? minG : boost >= 5 ? 5 : boost >= 3 ? 3 : 0), i = itemInfo(code); G.inv.push(code); dexSave();
   if (G.inv.length > 300) { const keep = new Set(eqList(G.eq)); G.inv.sort((a, b) => (keep.has(b) - keep.has(a)) || (itemInfo(b).r - itemInfo(a).r)); G.inv.length = 300; }
   if (Math.random() < .3) { G.spray = Math.min(99, (G.spray || 0) + 1); setTimeout(() => toast('🎨 스프레이 +1 (가방에서 색 바꾸기)'), 1400); }
   saveG(); const st = statTxt(itemStats(code), true);
@@ -3930,7 +3930,7 @@ function hurt(dmg, sx, sz, why) {
   if (!entered || HPS.ko || Date.now() < HPS.inv) return; if (inHeaven(ME.X, ME.Z)) return; // 천국은 안전지대
   if (ME.seat >= 0 || ME.lie) return; // 앉거나 누워서 존버하면 안전
   { const ag = GS().agi; if (Math.random() < Math.min(.2, ag / 300)) { HPS.inv = Date.now() + 300; floatAt(myAnt, '💨 회피!', 'txt'); return; } }
-  dmg = Math.max(1, Math.round(dmg * (1 - GS().def / 100)));
+  dmg = Math.max(1, Math.round(dmg * (1 - GS().def / 100))); dmg = Math.min(dmg, Math.max(1, Math.round(maxHp(lvOf(G.pts)) * .6)));
   HPS.inv = Date.now() + 450; HPS.hp -= dmg; HPS.last = Date.now();
   const dx = ME.X - sx, dz = ME.Z - sz, d = Math.hypot(dx, dz) || 1; HPS.kb = { x: dx / d * 10, z: dz / d * 10, t: .25 };
   floatAt(myAnt, '-' + dmg + (why ? ' ' + why : ''), 'hurt'); try { SND.punch(true); } catch (e) {}
@@ -4420,42 +4420,34 @@ const inHeaven = (x, z) => Math.hypot(x - HEAVEN.x, z - HEAVEN.z) < HEAVEN.r;
   [[-55, 31, '🏕 캠핑장 ↑'], [-120, 31, '⚔ 투기장 ↑'], [-188, 31, '🌋 레이드 광장 ↑'], [-118, 25, '🌲 중급 숲 ↓'], [-190, 25, '🌋 화산지대 ↓']].forEach(([x, z, t]) => { const g = signPlane(t, 6, 1, '#ffffff', '#41f0ff'); g.position.set(x, .06, z); g.rotation.set(-Math.PI / 2, 0, Math.PI / 2); scene.add(g); });
 }
 // ---- 🧌 다양한 몬스터 (사냥터) ----
-const MOBK = [
-  { id: 'slime', name: '📉 하락 슬라임', lv: 1, hp: 90, exp: 15, atk: 3, col: 0x3fa9ff },
-  { id: 'cub', name: '🐻 아기 공매도곰', lv: 3, hp: 140, exp: 25, atk: 5, col: 0x8a5a2b },
-  { id: 'bat', name: '🦇 공매도 박쥐', lv: 6, hp: 220, exp: 40, atk: 7, col: 0x6b4bd6 },
-  { id: 'bot', name: '🤖 매도봇', lv: 9, hp: 360, exp: 60, atk: 9, col: 0x8792a8 },
-  { id: 'ghost', name: '👻 손절 유령', lv: 12, hp: 600, exp: 90, atk: 12, col: 0xdfe8ff },
-  { id: 'scorp', name: '🦂 마진콜 전갈', lv: 16, hp: 1100, exp: 140, atk: 15, col: 0xd9542b },
-  { id: 'snake', name: '🐍 물타기 뱀', lv: 20, hp: 2000, exp: 220, atk: 19, col: 0x30a46c },
-  { id: 'zombie', name: '🧟 좀비 기업', lv: 24, hp: 3800, exp: 350, atk: 24, col: 0x7fbf6a },
-  { id: 'wyv', name: '🐲 하락 와이번', lv: 28, hp: 7200, exp: 550, atk: 30, col: 0xb02a3a },
-  { id: 'zombie', name: '🧟 상폐 좀비왕', lv: 32, hp: 12000, exp: 800, atk: 36, col: 0x4a6a3a, sc: 1.6 },
-  { id: 'wyv', name: '🐉 블랙스완 드래곤', lv: 36, hp: 20000, exp: 1200, atk: 42, col: 0x2a2a48, sc: 1.9 },
-  // v19: ☠ 지옥 들판 (Lv40~100) — 같은 단계면 10번 이상 때려야 하는 강적 · 경험치 대박
-  { id: 'ghost', name: '💀 반대매매 해골', lv: 40, hp: 23000, exp: 1344, atk: 74, col: 0x8a8f99, sc: 1.5, elite: 1 },
-  { id: 'scorp', name: '🦂 레버리지 대왕전갈', lv: 45, hp: 26449, exp: 1505, atk: 82, col: 0x8a3ad1, sc: 1.7, elite: 1 },
-  { id: 'bot', name: '🤖 HFT 전투로봇', lv: 50, hp: 35300, exp: 1685, atk: 90, col: 0x23d0ff, sc: 1.8, elite: 1 },
-  { id: 'cub', name: '🐻 공매도 마왕곰', lv: 55, hp: 40900, exp: 1887, atk: 98, col: 0x3a0a0a, sc: 2.3, elite: 1 },
-  { id: 'snake', name: '🐍 무한 물타기 히드라', lv: 60, hp: 47400, exp: 2113, atk: 106, col: 0x14a39a, sc: 1.9, elite: 1 },
-  { id: 'ghost', name: '👻 상장폐지 원혼', lv: 65, hp: 54900, exp: 2366, atk: 114, col: 0xff3a4a, sc: 1.9, elite: 1 },
-  { id: 'zombie', name: '🧟 부실기업 거인', lv: 70, hp: 63700, exp: 2649, atk: 122, col: 0x6a4a2a, sc: 2.3, elite: 1 },
-  { id: 'bat', name: '🦇 서킷브레이커 박쥐왕', lv: 75, hp: 73800, exp: 2966, atk: 130, col: 0xffb020, sc: 2.3, elite: 1 },
-  { id: 'slime', name: '🫠 버블 붕괴 슬라임', lv: 80, hp: 85600, exp: 3321, atk: 138, col: 0xff6ad8, sc: 2.8, elite: 1 },
-  { id: 'wyv', name: '🐲 금리 폭풍 와이번', lv: 85, hp: 99200, exp: 3719, atk: 146, col: 0x2e7ad1, sc: 2.2, elite: 1 },
-  { id: 'bot', name: '🤖 퀀트 기계신', lv: 90, hp: 115000, exp: 4165, atk: 154, col: 0xf2efe6, sc: 2.5, elite: 1 },
-  { id: 'wyv', name: '🐉 대공황 흑룡', lv: 95, hp: 133400, exp: 4664, atk: 162, col: 0x111118, sc: 2.7, elite: 1 },
-  { id: 'ghost', name: '🌌 차트 밖의 혼돈', lv: 100, hp: 154600, exp: 5223, atk: 170, col: 0xb69cff, sc: 3, elite: 1 },
-  // v31: 새 몬스터 (24~29)
-  { id: 'spider', name: '🕷 차트조작 거미', lv: 8, hp: 300, exp: 50, atk: 8, col: 0x4a3060 },
-  { id: 'shark', name: '🦈 작전세력 상어', lv: 14, hp: 900, exp: 120, atk: 14, col: 0x5f86b8 },
-  { id: 'spider', name: '🕷 독거미 세력', lv: 22, hp: 3000, exp: 300, atk: 22, col: 0x8a1f5a, sc: 1.3 },
-  { id: 'shark', name: '🦈 메가 상어 펀드', lv: 30, hp: 9000, exp: 700, atk: 34, col: 0x2a3f6a, sc: 1.6 },
-  { id: 'shark', name: '🦈 고래사냥 메갈로돈', lv: 72, hp: 66000, exp: 2750, atk: 125, col: 0x1a2a40, sc: 2.4, elite: 1 },
-  { id: 'spider', name: '🕷 레버리지 거미여왕', lv: 88, hp: 105000, exp: 3600, atk: 150, col: 0x5a0a3a, sc: 2.3, elite: 1 }
+// ---- 🧌 v50 개미시티 몬스터: 도시 해충·천적 + 시장 괴물 (Lv1~1000) ----
+// [모양, 이름, 레벨, 색, 크기]  저레벨은 적게(14종), 고레벨은 다양하게(26종 · Lv40~1000)
+const MOB_ROS = [
+  ['slime', '🦠 하락 진딧물', 1, 0x9ad24a], ['roach', '🪳 부엌 바퀴', 3, 0x6a3b1d], ['frog', '🐸 물웅덩이 청개구리', 5, 0x44c060], ['spider', '🕷 차트조작 거미', 7, 0x4a3060],
+  ['beetle', '🪲 매도 풍뎅이', 9, 0x1d4d3a], ['wasp', '🐝 공매도 말벌', 12, 0xf0b020], ['rat', '🐀 하수구 쥐', 15, 0x8b8b94], ['bot', '🤖 청소로봇 매도봇', 18, 0x8792a8],
+  ['centipede', '🐛 물타기 지네', 21, 0xc0702a], ['mantis', '🦗 손절 사마귀', 24, 0x6bbf4a, 1.15], ['cub', '🦡 땅굴 공매도 오소리', 27, 0x8a5a2b, 1.2], ['bird', '🐦 비둘기 작전세력', 30, 0x8fa0b8, 1.1],
+  ['scorp', '🦂 마진콜 전갈', 33, 0xd9542b, 1.2], ['ghost', '👻 손절 유령', 36, 0xdfe8ff, 1.2],
+  // ☠ 심연 들판 (Lv40~1000, 정예) — 레벨이 오를수록 체력·공격·경험치가 기하급수로 커져요
+  ['cat', '🐈 길냥이 사냥꾼', 40, 0xd9a066], ['zombie', '🧟 좀비 기업', 46, 0x7fbf6a], ['shark', '🦈 작전세력 상어', 53, 0x5f86b8], ['snake', '🐍 무한 물타기 뱀', 61, 0x30a46c],
+  ['centipede', '🐛 대왕 반대매매 지네', 70, 0x8a3ad1], ['mantis', '🦗 칼날 사마귀 장군', 80, 0x23d0ff], ['beetle', '🪲 장수풍뎅이 투자은행', 92, 0x2a2a48], ['wasp', '🐝 말벌 여왕단', 108, 0xffb020],
+  ['spider', '🕷 레버리지 거미여왕', 126, 0x5a0a3a], ['scorp', '🦂 대왕 전갈 펀드', 147, 0x8a3ad1], ['rat', '🐀 하수구 쥐왕', 172, 0x6a6a74], ['bot', '🤖 HFT 청소로봇 군단장', 202, 0x23d0ff],
+  ['cat', '🐈‍⬛ 흑묘 헤지펀드', 236, 0x15151f], ['bird', '🦅 월가 공매도 독수리', 277, 0x9a6a2a], ['snake', '🐍 바이퍼 히드라', 324, 0x14a39a], ['cub', '🐻 공매도 마왕곰', 380, 0x3a0a0a],
+  ['ghost', '👻 상장폐지 원혼', 445, 0xff3a4a], ['shark', '🦈 고래사냥 메갈로돈', 521, 0x1a2a40], ['wyv', '🐲 금리 폭풍 와이번', 610, 0x2e7ad1], ['zombie', '🧟 부실기업 거인', 715, 0x6a4a2a],
+  ['bot', '🤖 퀀트 기계신', 838, 0xf2efe6], ['wyv', '🐉 대공황 흑룡', 920, 0x111118], ['ghost', '🌌 차트 밖의 혼돈', 970, 0xb69cff], ['wyv', '👑 파산의 군주 — 개미시티의 종말', 1000, 0x7a0a1a]
 ];
-// v31: 더 세게 (6레벨 이상 체력 ×1.8 · 9레벨 이상 공격 ×1.4 · 경험치 ×1.4)
-MOBK.forEach(K => { if (K.lv >= 6) K.hp = Math.round(K.hp * 1.8); if (K.lv >= 9) K.atk = Math.round(K.atk * 1.4); K.exp = Math.round(K.exp * 1.4); });
+const MOB_HP = L => Math.round(L <= 100 ? 100 * Math.pow(L, 1.65) : 100 * Math.pow(100, 1.65) * Math.pow(L / 100, 2.8));
+const MOB_ATK = L => Math.round(L <= 100 ? 2.5 * Math.pow(L, 1.02) : 2.5 * Math.pow(100, 1.02) * Math.pow(L / 100, 2.2));
+const MOB_EXP = L => Math.round(L <= 100 ? 21 * Math.pow(L, 1.27) : 7300 * Math.pow(L / 100, 2.6));
+const mobCoin = L => Math.round(L <= 100 ? 3 + L * .6 : 63 * Math.pow(L / 100, 1.6));
+const mobDropP = L => Math.min(.9, .06 * Math.exp(L * .0037)); // Lv1 6% → Lv100 약 9% → Lv300 18% → Lv500 38% → Lv700 약 80%
+const mobMinG = L => L >= 700 ? 6 : L >= 500 ? 5 : L >= 300 ? 4 : L >= 150 ? 3 : L >= 80 ? 2 : L >= 30 ? 1 : 0;
+function mobDropRoll(K) {
+  if (Math.random() >= mobDropP(K.lv) * LK()) return;
+  const n = K.lv >= 700 ? 2 : 1, boost = Math.min(20, K.lv / 40), mg = mobMinG(K.lv);
+  for (let i = 0; i < n; i++) setTimeout(() => dropItem(boost, mg), 700 + i * 900);
+}
+const MOBK = MOB_ROS.map(([id, name, lv, col, sc]) => ({ id, name, lv, hp: MOB_HP(lv), exp: MOB_EXP(lv), atk: MOB_ATK(lv), col, sc: lv >= 40 ? Math.round((1.4 + 2.2 * Math.log(lv / 40) / Math.log(25)) * 100) / 100 : sc, elite: lv >= 40 ? 1 : 0 }));
+window.__mobk = MOBK;
 // 입구에서 가까울수록 약하고, 멀수록 강함
 const MOB_HOME = [[-31, 22, 0], [-34, 33, 0], [-36, 18, 0], [-39, 37, 0], [-42, 22, 1], [-44, 34, 1], [-46, 12, 1], [-49, 40, 1], [-50, 20, 2], [-55, 34, 2], [-57, 22, 2], [-60, 40, 2], [-62, 30, 3], [-66, 38, 3], [-70, 26, 3], [-73, 36, 3], [-74, 18, 4], [-76, 42, 4],
   [-95, 10, 4], [-108, 4, 4], [-122, 12, 5], [-136, 6, 5], [-100, -12, 5], [-117, -20, 6], [-133, -14, 6], [-145, -30, 6], [-105, -42, 7], [-128, -52, 7],
@@ -4468,7 +4460,18 @@ const MOB_HOME = [[-31, 22, 0], [-34, 33, 0], [-36, 18, 0], [-39, 37, 0], [-42, 
   base.forEach(([x, z, k], i) => { for (let tr = 0; tr < 8; tr++) { const a = R() * 6.28, d = 4.5 + R() * 3.5, nx = x + Math.cos(a) * d, nz = z + Math.sin(a) * d; if (bad(nx, nz)) continue; MOB_HOME.push([Math.round(nx * 10) / 10, Math.round(nz * 10) / 10, i % 2 ? k : VAR(k)]); break; } }); }
 const mobSc = m => m.K.sc || (m.K.id === 'wyv' ? 1.35 : 1);
 MOB_HOME.forEach(h => { const n = wpNear(h[0], h[1]); if (n.d < 9) { const ax = h[0] - n.px, az = h[1] - n.pz, L = Math.hypot(ax, az) || 1; h[0] = Math.round((n.px + ax / L * 9.8) * 10) / 10; h[1] = Math.round((n.pz + az / L * 9.8) * 10) / 10; } }); // v39: 빛의 길 주변은 몬스터 없음
-const MOBS = MOB_HOME.map(([x, z, k], i) => ({ i, key: 'mob' + i, K: MOBK[k], hx: x, hz: z, hits: 0, x, z, ph: i * 1.7, dead: 0, shake: 0, myHit: 0, atkT: 0 }));
+const MOB_SPOTS = (() => {
+  const R = sRng(50050), hell = [], main = [];
+  MOB_HOME.forEach((h, i) => ((h[2] >= 11 && h[2] < 24) || h[2] >= 28 ? hell : main).push(i));
+  const ros = MOBK.filter(K => K.lv <= 100), hr = MOBK.filter(K => K.lv >= 40), out = [];
+  main.forEach(i => { const h = MOB_HOME[i], p = Math.max(0, Math.min(1, (-h[0] - 31) / 190)), L = Math.max(1, Math.round(1 + 99 * Math.pow(p, 1.5) + (R() - .5) * (4 + p * 16))); if (L <= 12 && R() < .55) return; // 저레벨은 조금만
+    const near = ros.slice().sort((a, b) => Math.abs(a.lv - L) - Math.abs(b.lv - L)); out.push([h[0], h[1], near[R() < .35 ? 1 : 0]]); });
+  { const ex = []; hell.forEach(i => { const h = MOB_HOME[i]; for (const [dx, dz] of [[0, -9], [8, -6], [-8, -6], [0, 8], [9, 4]]) { const nx = h[0] + dx, nz = h[1] + dz; if (!walkable(nx, nz) || nz > 110 || nx < -229) continue; if (MOB_HOME.some(q => Math.hypot(q[0] - nx, q[1] - nz) < 6) || ex.some(q => Math.hypot(q[0] - nx, q[1] - nz) < 6)) continue; ex.push([nx, nz, h[2]]); break; } }); ex.forEach(q => { MOB_HOME.push(q); hell.push(MOB_HOME.length - 1); }); } // v50: 심연 들판을 두 배로
+  hell.sort((a, b) => MOB_HOME[b][0] - MOB_HOME[a][0]).forEach((i, rk) => { const h = MOB_HOME[i]; out.push([h[0], h[1], hr[Math.min(hr.length - 1, Math.round(rk * (hr.length - 1) / Math.max(1, hell.length - 1)))]]); });
+  return out;
+})();
+const MOBS = MOB_SPOTS.map(([x, z, K], i) => ({ i, key: 'mx' + i, K, hx: x, hz: z, hits: 0, x, z, ph: i * 1.7, dead: 0, shake: 0, myHit: 0, atkT: 0 }));
+window.__mobs50 = MOBS;
 function makeMob(K) {
   const g = new THREE.Group(), b = new THREE.Group(); g.add(b); const c = FM(K.col, { roughness: .5, emissive: new THREE.Color(K.col).multiplyScalar(.12).getHex() }), dk = FM(new THREE.Color(K.col).multiplyScalar(.55).getHex(), { roughness: .6 }), eyeW = MAT.eyeW, eyeB = MAT.eyeB, P = (geo, m, s, p, r) => { const o = mesh(geo, m, s, p, r); b.add(o); return o; };
   const eyes = (y, z, sp, s = 1) => [-1, 1].forEach(k => { P(GEO.sph, eyeW, [.13 * s, .15 * s, .08 * s], [k * sp, y, z]); P(GEO.sph, eyeB, [.06 * s, .08 * s, .05 * s], [k * sp, y, z + .06 * s]); });
@@ -4487,6 +4490,17 @@ function makeMob(K) {
     case 'shark': P(GEO.sph, c, [.6, .55, 1.4], [0, 1.4, 0]); P(GEO.sph, FM(0xe8eef7), [.48, .3, 1.1], [0, 1.18, .1]); P(GEO.cone, dk, [.18, .6, .35], [0, 2.05, -.1]); P(GEO.cone, dk, [.15, .7, .4], [0, 1.45, -1.5], [-1.57, 0, 0]); [-1, 1].forEach(k => P(GEO.cone, dk, [.08, .5, .25], [k * .55, 1.15, .2], [0, 0, k * 1.9])); eyes(1.55, 1.05, .32, .7); P(GEO.box, FM(0xffffff), [.4, .05, .05], [0, 1.25, 1.32]); break;
     case 'wyv': P(GEO.sph, c, [.8, .7, 1.2], [0, 1.6, 0]); P(GEO.sph, c, [.45, .4, .6], [0, 2.3, 1.1]); P(GEO.cone, dk, [.1, .4, .1], [0, 2.75, .95]); eyes(2.4, 1.6, .2, .8); P(GEO.cone, c, [.25, 1.4, .25], [0, 1.5, -1.5], [-1.4, 0, 0]);
       parts.w = [-1, 1].map(k => { const w = new THREE.Group(); w.position.set(k * .6, 2, 0); w.add(mesh(GEO.sph, dk, [1.3, .05, .7], [k * 1.2, 0, 0])); b.add(w); return w; }); [-1, 1].forEach(k => P(GEO.cyl, dk, [.12, .8, .12], [k * .4, .45, 0])); break;
+    case 'roach': P(GEO.sph, c, [.5, .22, .75], [0, .3, 0]); P(GEO.sph, dk, [.25, .2, .25], [0, .3, .8]); eyes(.4, .95, .1, .6); [-1, 1].forEach(k => { P(GEO.cyl, dk, [.025, .9, .025], [k * .15, .65, 1.05], [-.9, 0, k * .35]); for (let j = 0; j < 3; j++) P(GEO.cyl, dk, [.04, .55, .04], [k * .5, .15, .35 - j * .35], [0, 0, k * 1.1]); }); break;
+    case 'beetle': P(GEO.sph, c, [.6, .45, .8], [0, .55, 0]); P(GEO.box, dk, [.03, .02, 1.2], [0, 1.0, 0]); P(GEO.sph, dk, [.35, .3, .35], [0, .5, .85]); P(GEO.cone, dk, [.1, .6, .1], [0, .85, 1.15], [1.0, 0, 0]); eyes(.62, 1.1, .16, .6); [-1, 1].forEach(k => { for (let j = 0; j < 3; j++) P(GEO.cyl, dk, [.045, .6, .045], [k * .55, .2, .4 - j * .4], [0, 0, k * 1.1]); }); break;
+    case 'wasp': P(GEO.sph, c, [.35, .35, .6], [0, 1.4, -.6]); P(GEO.box, FM(0x222222), [.7, .08, .12], [0, 1.4, -.45]); P(GEO.box, FM(0x222222), [.66, .08, .12], [0, 1.38, -.8]); P(GEO.sph, dk, [.3, .3, .3], [0, 1.45, 0]); P(GEO.sph, c, [.24, .24, .24], [0, 1.5, .35]); eyes(1.55, .5, .11, .6); P(GEO.cone, FB(0x222222), [.06, .35, .06], [0, 1.35, -1.25], [-1.57, 0, 0]);
+      parts.w = [-1, 1].map(k => { const w = new THREE.Group(); w.position.set(k * .25, 1.7, -.1); w.add(mesh(GEO.sph, FM(0xdfefff), [.55, .03, .25], [k * .45, 0, 0])); b.add(w); return w; }); break;
+    case 'mantis': P(GEO.sph, c, [.25, .9, .25], [0, 1.2, 0]); P(GEO.sph, c, [.3, .3, .7], [0, .85, -.55]); P(GEO.sph, c, [.28, .25, .28], [0, 2.05, .15]); eyes(2.1, .35, .14, .7); [-1, 1].forEach(k => { P(GEO.cone, dk, [.08, .9, .08], [k * .32, 1.55, .5], [-1.2, 0, k * .3]); P(GEO.cyl, dk, [.04, .8, .04], [k * .2, .4, -.1], [0, 0, k * .3]); }); break;
+    case 'centipede': for (let k = 0; k < 9; k++) { P(GEO.sph, k % 2 ? c : dk, [.3, .25, .3], [Math.sin(k * .7) * .3, .3, .9 - k * .42]); [-1, 1].forEach(s2 => P(GEO.cyl, dk, [.03, .5, .03], [s2 * .38 + Math.sin(k * .7) * .3, .18, .9 - k * .42], [0, 0, s2 * 1.2])); } P(GEO.sph, c, [.34, .3, .36], [0, .42, 1.3]); eyes(.52, 1.55, .13, .6); [-1, 1].forEach(k => P(GEO.cone, FB(0xff3b4a), [.05, .3, .05], [k * .15, .35, 1.65], [1.4, 0, k * .4])); break;
+    case 'cat': P(GEO.sph, c, [.5, .45, .8], [0, .8, 0]); P(GEO.sph, c, [.38, .34, .34], [0, 1.35, .75]); [-1, 1].forEach(k => { P(GEO.cone, dk, [.1, .22, .08], [k * .22, 1.7, .75]); P(GEO.box, dk, [.14, .6, .14], [k * .28, .3, .45]); P(GEO.box, dk, [.14, .6, .14], [k * .28, .3, -.45]); }); eyes(1.4, 1.05, .14, .8); P(GEO.cyl, c, [.07, .9, .07], [0, 1.2, -.9], [.8, 0, 0]); break;
+    case 'bird': P(GEO.sph, c, [.4, .4, .55], [0, 1.3, 0]); P(GEO.sph, c, [.22, .22, .22], [0, 1.75, .45]); P(GEO.cone, FB(0xffc83a), [.07, .25, .07], [0, 1.72, .75], [1.57, 0, 0]); eyes(1.8, .6, .1, .6); P(GEO.cone, dk, [.18, .5, .18], [0, 1.2, -.7], [-1.5, 0, 0]);
+      parts.w = [-1, 1].map(k => { const w = new THREE.Group(); w.position.set(k * .35, 1.4, 0); w.add(mesh(GEO.sph, dk, [.9, .04, .4], [k * .7, 0, 0])); b.add(w); return w; }); break;
+    case 'rat': P(GEO.sph, c, [.35, .3, .6], [0, .4, 0]); P(GEO.sph, c, [.22, .2, .32], [0, .45, .7]); [-1, 1].forEach(k => P(GEO.sph, FM(0xe8b4b4), [.12, .12, .05], [k * .15, .7, .55])); eyes(.55, .9, .1, .5); P(GEO.cyl, FM(0xe8b4b4), [.035, 1.1, .035], [0, .25, -.85], [1.4, 0, 0]); break;
+    case 'frog': P(GEO.sph, c, [.5, .4, .5], [0, .45, 0]); [-1, 1].forEach(k => { P(GEO.sph, eyeW, [.14, .14, .14], [k * .25, .85, .3]); P(GEO.sph, eyeB, [.07, .07, .07], [k * .25, .88, .42]); P(GEO.sph, dk, [.18, .14, .3], [k * .45, .2, -.2]); }); P(GEO.box, FB(0x2a0a0a), [.5, .04, .02], [0, .45, .5]); break;
   }
   return { g, b, parts };
 }
@@ -4502,12 +4516,12 @@ function mobCounter(m, n) {
   const prev = m.hits, first = !m.init; m.init = 1; m.hits = n; mobDraw(m);
   if (!first && Math.floor(n / m.K.hp) > Math.floor(prev / m.K.hp)) { // 처치!
     m.dead = 1.6; const P = m.o.g.position; spawn(P.x, 1, P.z, 50, m.K.col, 5, 6, 1); ringFx(P.x, P.z, 0xffd76a, 4); try { const mine = m.myHit && Date.now() - m.myHit < 12000; withVol(mine ? 1 : volAt(P.x, P.z) * .55, () => SND.ko()); } catch (e) {}
-    if (m.myHit && Date.now() - m.myHit < 12000) { addPts(m.K.exp); addCoin(3 + Math.round(m.K.lv * .6)); qProg('mob'); setTimeout(() => floatAt(myAnt, `🏆 ${m.K.name.split(' ').slice(1).join(' ')} 처치 +${Math.round(m.K.exp * ptsMul(lvOf(G.pts)))}`, 'big'), 300); if (Math.random() < (.22 + m.K.lv * .006) * LK()) dropItem(m.K.lv >= 20 ? 1 : 0); }
+    if (m.myHit && Date.now() - m.myHit < 12000) { addPts(m.K.exp); addCoin(mobCoin(m.K.lv)); qProg('mob'); setTimeout(() => floatAt(myAnt, `🏆 ${m.K.name.split(' ').slice(1).join(' ')} 처치 +${Math.round(m.K.exp * ptsMul(lvOf(G.pts)))}`, 'big'), 300); mobDropRoll(m.K); }
   }
 }
 // v31: 강한 몬스터의 기술 — 예고 장판이 1.2초 이상 보이니 피할 수 있어요 (모바일 기준 무난하게)
 function mobSkill(m, d, force) { const K = m.K, lv = K.lv, el = !!K.elite, nm = K.name.split(' ')[0], sc = mobSc(m); if (lv < 6) return false; const opts = [];
-  if (d > 2.5) opts.push('shot'); if (lv >= 16 || el) { if (d < 5.5) opts.push('slam'); if (d > 3 && /cub|zombie|bot|shark|wyv/.test(K.id)) opts.push('charge'); } if (!opts.length) return false;
+  if (d > 2.5) opts.push('shot'); if (lv >= 16 || el) { if (d < 5.5) opts.push('slam'); if (d > 3 && /cub|zombie|bot|shark|wyv|cat|beetle|rat|mantis|centipede/.test(K.id)) opts.push('charge'); } if (!opts.length) return false;
   const k = force || opts[Math.floor(Math.random() * opts.length)], say = (t2) => floatAtObj(m.x, 2.2 + sc * 1.2, m.z, t2);
   if (k === 'shot') { addZone({ kind: 'circle', x: ME.X, z: ME.Z, r: 1.7, warn: 1.35, dmg: Math.round(K.atk * 1.2), why: nm + ' 🎯', col: 0xff9a3a }); say('🎯 저격!'); for (let i = 0; i < 6; i++) setTimeout(() => spawn(m.x + (ME.X - m.x) * i / 6, 1.4, m.z + (ME.Z - m.z) * i / 6, 2, 0xffb35a, .5, 0, .5), i * 70); return true; }
   if (k === 'slam') { addZone({ kind: 'circle', x: m.x, z: m.z, r: 3 + sc * .5, warn: 1.4, dmg: Math.round(K.atk * 1.6), why: nm + ' 💫', col: 0xffd23a, stun: el ? 1.4 : 1.1 }); say('💥 내려찍기! (기절 주의)'); m.jump = 1.4; return true; }
@@ -4519,7 +4533,7 @@ function hitMob(m) {
   if (!m || m.dead > 0 || Date.now() < (HPS.stun || 0) || !cd('atk', atkCd(260))) return; ME.ry = Math.atan2(m.x - ME.X, m.z - ME.Z);
   const tier = lvOf(G.pts); let dmg = Math.round(atkOf(tier) * (BUFF.until > Date.now() ? 1.5 : 1)); const crit = Math.random() < critP(tier); if (crit) dmg *= 2; dmg = Math.min(dmg, 99999);
   m.myHit = Date.now(); room.bumpCounter(m.key, dmg); room.sendFx(`mh:${m.i}:${dmg}${crit ? 'c' : ''}`);
-  if (cd('pts-hit', 250)) addPts(3 + Math.floor(m.K.lv / 2)); if (Math.random() < .02 * LK()) dropItem(0);
+  if (cd('pts-hit', 250)) addPts(3 + Math.floor(Math.min(100, m.K.lv) / 2));
 }
 function mobFx(fx) { const p = String(fx.kind).split(':'), m = MOBS[parseInt(p[1], 10)]; if (!m) return; const dmg = parseInt(p[2], 10) || 1, crit = /c$/.test(p[2] || ''); const a = antOf(fx.uid); if (a) a.act = { k: 'punch', t0: clock.elapsedTime, d: .45 };
   m.shake = .3; try { SND.punch(crit); } catch (e) {} spawn(m.x, 1.2, m.z, crit ? 30 : 12, crit ? 0xffd76a : 0xffffff, crit ? 5 : 3, 6, .5); floatAtObj(m.x + (Math.random() - .5), 2.8, m.z, (crit ? '💥 -' : '-') + fK(dmg)); }
@@ -4530,7 +4544,7 @@ function tickMobs(dt, t) {
   const ccx = entered ? ME.X : cam.tx, ccz = entered ? ME.Z : cam.tz;
   MOBS.forEach(m => {
     if (Math.hypot(m.hx - ccx, m.hz - ccz) > 90) { if (!m.far) { m.far = 1; m.o.g.visible = false; } return; } if (m.far) { m.far = 0; m.o.g.visible = true; }
-    const fly = m.K.id === 'bat' || m.K.id === 'ghost' || m.K.id === 'wyv' || m.K.id === 'shark', sp = m.K.id === 'slime' ? .25 : .18;
+    const fly = /^(bat|ghost|wyv|shark|wasp|bird)$/.test(m.K.id), sp = m.K.id === 'slime' ? .25 : .18;
     const nx = m.hx + Math.sin(now * sp + m.ph) * 3.2, nz = m.hz + Math.cos(now * sp * .8 + m.ph * 1.3) * 3.2, dx = nx - m.x, dz = nz - m.z; m.x = nx; m.z = nz;
     const G0 = m.o.g; G0.position.set(m.x, 0, m.z); if (Math.hypot(dx, dz) > 1e-4) G0.rotation.y = Math.atan2(dx, dz);
     const B = m.o.b; B.position.y = fly ? 1 + Math.sin(t * 2 + m.ph) * .3 : m.K.id === 'slime' ? Math.abs(Math.sin(t * 4 + m.ph)) * .35 : 0;
@@ -6248,7 +6262,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '49';
+const APP_V = '50';
 {
   let shown = false;
   const check = async () => {
