@@ -843,7 +843,7 @@ let PROF = LS.get('lv3d_prof', null);
 const saveG = () => { LS.set('lv3d_game', G); if (typeof acctDirty === 'function') acctDirty(); };
 if (!G.enh || typeof G.enh !== 'object') G.enh = { l: 0, st: 0, f: 0 };
 const AWK = [{ p: 8500000, n: '각성 1', d: '황금 오라', c: 0xffd76a, atk: 1.3, spd: 1.12 }, { p: 15000000, n: '각성 2', d: '번개 오라', c: 0xffe95a, atk: 1.6, spd: 1.2, bolt: 1 }, { p: 25000000, n: '각성 3', d: '초각성 장발', c: 0xffb300, atk: 2, spd: 1.3, bolt: 1 }, { p: 40000000, n: '각성 4', d: '붉은 야수', c: 0xff3b3b, atk: 2.5, spd: 1.4, bolt: 1 }, { p: 65000000, n: '각성 5', d: '신의 영역', c: 0x4fd2ff, atk: 3.2, spd: 1.55, bolt: 1 }];
-const AWK_DUR = 60000, AWK_CD = 90000, GK_CD = 150000, PTS_MAX = 1e8; const AW = { on: 0, until: 0, cd: 0, tm: 0 };
+const AWK_DUR = 60000, AWK_CD = 90000, GK_CD = 150000, PTS_FIN = 1e8, PTS_MAX = 1e13; const AW = { on: 0, until: 0, cd: 0, tm: 0 };
 var ENH_MAX = 30; // 🔨 +30까지 (v29: +21~+30 추가) · 높을수록 어렵고, +11부터 위력이 기하급수로
 var ENH_P = [95, 90, 85, 80, 72, 65, 58, 50, 44, 38, 30, 26, 22, 19, 16, 13, 11, 9, 7, 5, 4.5, 4, 3.5, 3, 2.6, 2.3, 2, 1.7, 1.4, 1.2]; // +0→+1 … +19→+20 기본 성공률(%)
 var ENH_GREAT = 8, ENH_DOWN = 15; // 대성공 8%(+2, +10 미만) · +15부터 실패 시 15% 확률로 1단계 하락
@@ -1696,8 +1696,8 @@ function upd108() {
 // XP 배율: 모두 2.5배(방장 3배) · 초반(5단계 전)은 4배로 진화 맛보기 · 레이드 버프 중엔 +1배
 function ptsMul(t) { return (HOST ? 3 : 2.5) * (t < 5 ? 1.6 : 1) + (typeof BUFF !== 'undefined' && BUFF.until > Date.now() ? 1 : 0); }
 function addPts(n) {
-  const before = lvOf(G.pts), awB = awkLv(); let nearK = 1; { const nx0 = LV[before + 1] && LV[before + 1][0]; if (nx0 && n > 0 && nx0 - G.pts > 0 && nx0 - G.pts <= spanOf() * .12) { nearK = 1.3; if (nearNote !== before) { nearNote = before; setTimeout(() => { try { tapeNote(`🔥 진화 임박! 다음 단계까지 ${fmt(nx0 - G.pts, 0)} — XP +30% 부스트`, { ms: 2600, cls: 'tip' }); } catch (e) {} }, 300); } } } const gain = Math.round(n * ptsMul(before) * petB('pts') * nearK); const p0 = G.pts; G.pts = Math.min(PTS_MAX, G.pts + gain); G.coinF = (G.coinF || 0) + gain / 40; if (G.coinF >= 1) { const c = Math.floor(G.coinF); G.coinF -= c; G.coin = Math.min(9999999, (G.coin || 0) + c); } qProg('pts'); saveG(); const after = lvOf(G.pts); updHud();
-  { const awA = awkLv(); if (awA > awB) setTimeout(() => awkUnlock(awA), 1200); if (p0 < PTS_MAX && G.pts >= PTS_MAX) setTimeout(() => { try { coinRain(10); } catch (e) {} addLog('♾️ XP 1억 달성!! 「원복신」 — 더 이상 오를 곳이 없는 전설이 되었어요', true); room.sendFx('final1e8'); }, 1500); }
+  const before = lvOf(G.pts), awB = awkLv(); let nearK = 1; { const nx0 = LV[before + 1] && LV[before + 1][0]; if (nx0 && n > 0 && nx0 - G.pts > 0 && nx0 - G.pts <= spanOf() * .12) { nearK = 1.3; if (nearNote !== before) { nearNote = before; setTimeout(() => { try { tapeNote(`🔥 진화 임박! 다음 단계까지 ${fmt(nx0 - G.pts, 0)} — XP +30% 부스트`, { ms: 2600, cls: 'tip' }); } catch (e) {} }, 300); } } } const gain = Math.round(n * ptsMul(before) * petB('pts') * nearK); const p0 = G.pts; G.pts = Math.min(PTS_MAX, G.pts + gain); G.coinF = (G.coinF || 0) + gain / 40; if (G.coinF >= 1) { const c = Math.floor(G.coinF); G.coinF -= c; G.coin = Math.min(1e13, (G.coin || 0) + c); } qProg('pts'); saveG(); const after = lvOf(G.pts); updHud();
+  { const awA = awkLv(); if (awA > awB) setTimeout(() => awkUnlock(awA), 1200); if (p0 < PTS_FIN && G.pts >= PTS_FIN) setTimeout(() => { try { coinRain(10); } catch (e) {} addLog('♾️ XP 1억 달성!! 「원복신」 — 그래도 여정은 계속돼요, 상한은 없어요', true); room.sendFx('final1e8'); }, 1500); }
   if (after > before && after === 49) setTimeout(() => endingFx(49), 900);
   if (after > before && after === 99) setTimeout(() => endingFx(99), 900);
   if (after > before && [59, 69, 79, 89].includes(after)) setTimeout(() => milestoneFx(after), 900);
@@ -1735,10 +1735,10 @@ function updHud() {
 }
 const tierGrow = t => Math.pow(1.065, Math.min(99, t)); // 단계가 오를수록 보상 기하급수 (99단계 ≈ 500배)
 let nearNote = -1;
-function spanOf() { const t = lvOf(G.pts), nx = LV[t + 1] ? LV[t + 1][0] : PTS_MAX; return Math.max(10, nx - LV[t][0]); }
+function spanOf() { const t = lvOf(G.pts), nx = LV[t + 1] ? LV[t + 1][0] : PTS_FIN; return Math.max(10, nx - LV[t][0]); }
 function growPts(base, cap) { const t = lvOf(G.pts), m = ptsMul(t) * petB('pts'), g = base * m; return Math.round(Math.max(g, Math.min(g * tierGrow(t), spanOf() * (cap || .06)))); } // 최소 기존값, 최대 한 단계의 cap 비율
 function givePts(base, cap) { const gain = growPts(base, cap); addPts(gain / (ptsMul(lvOf(G.pts)) * petB('pts'))); return gain; }
-const growCoin = base => Math.round(Math.min(9999999, base * Math.pow(1.08, Math.min(99, lvOf(G.pts)))));
+const growCoin = base => Math.round(Math.min(1e13, base * Math.pow(1.08, Math.min(99, lvOf(G.pts)))));
 function growthOnEnter() {
   const now = Date.now(), seen = +LS.get('lv3d_seen', 0) || 0, t = lvOf(G.pts), nx = LV[t + 1] && LV[t + 1][0]; LS.set('lv3d_seen', now);
   if (seen && now - seen >= 3 * 3600e3) { const f = Math.min(1, (now - seen) / 864e5), gp = Math.max(30, Math.round(spanOf() * (.02 + .10 * f))); jackPts(gp); tapeNote(`🛌 푹 쉬고 왔네요! 휴식 보너스 XP +${fmt(gp, 0)}`, { ms: 3000, cls: 'tip' }); }
@@ -3336,8 +3336,8 @@ function skAim(R) {
   return b;
 }
 const pkKind = (u, atk, sk, crit) => 'pk:' + id8(u) + ':' + Math.min(1679615, Math.max(1, Math.round(atk))).toString(36) + ':' + sk + (crit ? 'c' : ''); // 20자 제한 → 36진수로 압축
-const HIT_CAP = 999999; // v51: 몬스터·보스·레이드 1타 상한 (PK는 기존 99,999 유지)
-const SK_CAP = 2499999; // v54: 몬스터에게 들어가는 스킬 1타 상한 (남은 체력만큼만 실제로 깎아요)
+const HIT_CAP = 1e12; // v51: 몬스터·보스·레이드 1타 상한 (PK는 기존 99,999 유지)
+const SK_CAP = 1e12; // v54: 몬스터에게 들어가는 스킬 1타 상한 (남은 체력만큼만 실제로 깎아요)
 function bumpBig(key, d, mx) { let left = Math.max(1, Math.round(d)), n = 0; while (left > 0 && n++ < (mx || 10)) { const c = Math.min(99999, left); room.bumpCounter(key, c); left -= c; } }
 function dropItem(boost, minG) {
   const code = rollItem(boost, minG != null ? minG : boost >= 5 ? 5 : boost >= 3 ? 3 : 0), i = itemInfo(code); G.inv.push(code); dexSave();
@@ -3603,7 +3603,7 @@ function enhPity(L) { return L < 10 ? 4 : 1.5; }
 function enhChance(luck) { const L = enhL(); if (L >= ENH_MAX) return 0; return Math.min(100, Math.round((ENH_P[L] + (G.enh.f | 0) * enhPity(L) + (luck ? 10 : 0)) * 10) / 10); }
 function enhCol(L) { return L >= 18 ? '#ff4fd8' : L >= 15 ? '#ff4a3a' : L >= 12 ? '#ffd76a' : L >= 10 ? '#ffb020' : L >= 7 ? '#b69cff' : L >= 4 ? '#41c9ff' : '#9aa6bb'; }
 const pctMul = m => '+' + Math.round((m - 1) * 100) + '%';
-function addCoin(n, why) { n = Math.round(n * petB('coin')); if (!(n > 0)) return; G.coin = Math.min(9999999, (G.coin || 0) + n); saveG(); try { $('hCoin').textContent = '🪙 ' + fmt(G.coin, 0); } catch (e) {} if (why) setTimeout(() => toast(`🪙 +${fmt(n, 0)} 코인 (${why})`), 700); }
+function addCoin(n, why) { n = Math.round(n * petB('coin')); if (!(n > 0)) return; G.coin = Math.min(1e13, (G.coin || 0) + n); saveG(); try { $('hCoin').textContent = '🪙 ' + fmt(G.coin, 0); } catch (e) {} if (why) setTimeout(() => toast(`🪙 +${fmt(n, 0)} 코인 (${why})`), 700); }
 function addStone(n, why) { addCoin(n * 10, why); } // (이전 이름 호환)
 function spendCoin(n) { if ((G.coin || 0) < n) { toast(`🪙 코인이 부족해요 (${fmt(n - (G.coin || 0), 0)} 더 필요)`); return false; } G.coin -= n; saveG(); try { $('hCoin').textContent = '🪙 ' + fmt(G.coin, 0); } catch (e) {} return true; }
 function dexTypes() { const S = new Set(); (Array.isArray(G.dex) ? G.dex : []).forEach(x => { const f = itemCodeFix(x + (/-\d+-\d$/.test(x) ? '' : '-0')); if (f) S.add(f.replace(/-\d$/, '')); }); G.inv.forEach(c => { const f = itemCodeFix(c); if (f) S.add(f.replace(/-\d$/, '')); }); return S; }
@@ -3847,9 +3847,9 @@ $('cardShare').onclick = () => { const cv = $('cardCv'); cv.toBlob(async b => { 
 /* ================= 🔐 계정(아이디·비번) 저장 · 이어하기 ================= */
 let ACCT = LS.get('lv3d_acct', null), acctT = null;
 async function sha(t) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); }
-function acctPack() { return { nick: (PROF && PROF.nick || ACCT.id).slice(0, 12), pts: Math.min(1e8, Math.floor(G.pts)), title: G.title || '', inv: G.inv.join(';').slice(0, 5500), eq: eqStr(G.eq).slice(0, 200), sp: Math.max(0, Math.min(99, G.spray | 0)), enh: `${enhL()},0,${G.enh.f | 0}`, look: G.look | 0, coin: Math.min(9999999, Math.floor(G.coin || 0)), shop: JSON.stringify(G.shop).slice(0, 4000), q: JSON.stringify(G.q || {}).slice(0, 600), dex: (Array.isArray(G.dex) ? G.dex : []).join(';').slice(0, 24000), ts: Date.now() }; }
+function acctPack() { return { nick: (PROF && PROF.nick || ACCT.id).slice(0, 12), pts: Math.min(1e8, Math.floor(G.pts)), title: G.title || '', inv: G.inv.join(';').slice(0, 5500), eq: eqStr(G.eq).slice(0, 200), sp: Math.max(0, Math.min(99, G.spray | 0)), enh: `${enhL()},0,${G.enh.f | 0}`, look: G.look | 0, coin: Math.min(1e13, Math.floor(G.coin || 0)), shop: JSON.stringify(G.shop).slice(0, 4000), q: JSON.stringify(G.q || {}).slice(0, 600), dex: (Array.isArray(G.dex) ? G.dex : []).join(';').slice(0, 24000), ts: Date.now() }; }
 function acctUnpack(d) { G.pts = Math.max(0, Number(d.pts) || 0); G.title = d.title || ''; G.inv = String(d.inv || '').split(';').map(itemCodeFix).filter(Boolean); G.eq = eqParse(d.eq); if (d.sp >= 0) G.spray = Math.min(99, d.sp | 0); if (Number.isInteger(d.look)) G.look = d.look; if (typeof d.dex === 'string') G.dex = d.dex.split(';').filter(x => /^[a-z]\d{1,2}-\d{1,2}$/.test(x)); if (typeof d.enh === 'string') { const q = d.enh.split(',').map(x => Math.max(0, x | 0)); G.enh = { l: Math.min(ENH_MAX, q[0] || 0), st: 0, f: Math.min(60, q[2] || 0) }; if (q[1] > 0) G.coin = (G.coin || 0) + q[1] * 10; }
-  if (d.coin >= 0) G.coin = Math.min(9999999, Number(d.coin) || 0); try { if (typeof d.shop === 'string') { const S = JSON.parse(d.shop); if (S && S.own) G.shop = { own: S.own || {}, cnt: S.cnt || {}, eq: S.eq || { b: 0, t: 0, n: 0 } }; } } catch (e) {} try { if (typeof d.q === 'string') { const Q = JSON.parse(d.q); if (Q && Q.d) G.q = Q; } } catch (e) {} SLOT_KEYS.forEach(k => { if (G.eq[k] && !G.inv.includes(G.eq[k])) G.inv.push(G.eq[k]); }); LS.set('lv3d_game', G); }
+  if (d.coin >= 0) G.coin = Math.min(1e13, Number(d.coin) || 0); try { if (typeof d.shop === 'string') { const S = JSON.parse(d.shop); if (S && S.own) G.shop = { own: S.own || {}, cnt: S.cnt || {}, eq: S.eq || { b: 0, t: 0, n: 0 } }; } } catch (e) {} try { if (typeof d.q === 'string') { const Q = JSON.parse(d.q); if (Q && Q.d) G.q = Q; } } catch (e) {} SLOT_KEYS.forEach(k => { if (G.eq[k] && !G.inv.includes(G.eq[k])) G.inv.push(G.eq[k]); }); LS.set('lv3d_game', G); }
 function acctDirty() { if (!ACCT || !live.savePut || acctT) return; acctT = setTimeout(() => { acctT = null; acctSaveNow(); }, 4000); }
 // ---- v36: 저장 안전장치 (합치기 · 스로틀 · 닫을 때 저장 · 복구 지급) ----
 let ACCT_RS = false, acctFixing = false;
@@ -3862,7 +3862,7 @@ function acctMerge(d) { if (!d) return; const sp = Number(d.pts) || 0, srvNewer 
   if (out.length > 300) { const keep = new Set(eqList(G.eq)); out.sort((a, b) => (keep.has(b) - keep.has(a)) || (itemInfo(b).r - itemInfo(a).r)); out.length = 300; }
   G.inv = out; G.pts = Math.min(PTS_MAX, Math.max(G.pts || 0, sp));
   if (typeof d.enh === 'string') { const q = d.enh.split(',').map(x => Math.max(0, x | 0)); G.enh = G.enh || { l: 0, st: 0, f: 0 }; G.enh.l = Math.min(ENH_MAX, Math.max(G.enh.l | 0, q[0] || 0)); }
-  if (d.coin >= 0) G.coin = Math.min(9999999, Math.max(G.coin || 0, Number(d.coin) || 0)); if (d.sp >= 0) G.spray = Math.min(99, Math.max(G.spray | 0, d.sp | 0));
+  if (d.coin >= 0) G.coin = Math.min(1e13, Math.max(G.coin || 0, Number(d.coin) || 0)); if (d.sp >= 0) G.spray = Math.min(99, Math.max(G.spray | 0, d.sp | 0));
   try { if (typeof d.shop === 'string') { const S = JSON.parse(d.shop); if (S && S.own) { G.shop = G.shop || { own: {}, cnt: {}, eq: { b: 0, t: 0, n: 0 } }; Object.assign(G.shop.own, S.own); Object.keys(S.cnt || {}).forEach(k => { G.shop.cnt[k] = Math.max(G.shop.cnt[k] | 0, S.cnt[k] | 0); }); if (srvNewer && S.eq) G.shop.eq = S.eq; } } } catch (e) {}
   if (typeof d.dex === 'string') { const s = new Set(Array.isArray(G.dex) ? G.dex : []); d.dex.split(';').filter(x => /^[a-z]\d{1,2}-\d{1,2}$/.test(x)).forEach(x => s.add(x)); G.dex = [...s]; }
   LS.set('lv3d_game', G); }
@@ -4816,7 +4816,7 @@ const CC_DAY = 60;
 function cityCoin(base, why) { const d = kstDate(); let o = LS.get('lv3d_cc', null); if (!o || o.d !== d) o = { d, n: 0 };
   const pay = Math.max(0, Math.min(Math.round(base), CC_DAY - o.n)); if (pay > 0) { o.n += pay; LS.set('lv3d_cc', o); addCoin(pay, why); toast(T(`🏙 도시 코인 +${pay} (오늘 ${o.n}/${CC_DAY})`, `🏙 City coins +${pay} (today ${o.n}/${CC_DAY})`)); }
   else toast(T(`🏙 오늘 도시 코인 한도(${CC_DAY})를 모두 받았어요`, `🏙 Daily city-coin cap (${CC_DAY}) reached`)); return pay; }
-window.__cityCoin = cityCoin; window.__jp = (s) => jackpot(s, 1); window.__cardLines = () => cardLines();
+window.__cityCoin = cityCoin; window.__t61 = { addPts, addCoin, hitCap: () => [HIT_CAP, SK_CAP, PTS_MAX], G: () => G }; window.__jp = (s) => jackpot(s, 1); window.__cardLines = () => cardLines();
 function jackGive(t) {
   if (t === 'SSS') { const free = ['pgold', 'pcorn', 'palien'].filter(i => !G.shop.own[i]); let s;
     if (free.length) { const id = free[Math.floor(Math.random() * free.length)]; G.shop.own[id] = 1; G.pet = id; s = `한정 펫 ${PETS[id].e} ${PETS[id].n} 획득! (바로 장착됐어요)`; } else { addCoin(50000, '잭팟'); jackPts(5e6); s = '🪙 50,000 + ⭐ XP 500만!'; }
@@ -6734,7 +6734,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '60';
+const APP_V = '61';
 {
   let shown = false;
   const check = async () => {
