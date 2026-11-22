@@ -5465,6 +5465,63 @@ const MG_B = { x0: -17, x1: 17, z0: -17, z1: 17 };
   };
 };
 
+
+/* ================= 🌊 v58 폭락의 밤 — 매주 금요일 21:00(KST) 3분 · 기기 시계로 계산(서버 0) ================= */
+const CR_START = 21 * 3600, CR_LEN = 180, CR_RALLY = 20, CR_NEED = 120, CRK = 'lv3d_crash';
+const CRASH = { skew: 0, safe: 0, key: '', st: 'off', notes: {}, wave: null, hud: null, txt: '' };
+function crashInfo() {
+  const k = new Date(Date.now() + 9 * 36e5 + CRASH.skew), dow = k.getUTCDay(), sec = k.getUTCHours() * 3600 + k.getUTCMinutes() * 60 + k.getUTCSeconds(), key = k.toISOString().slice(0, 10);
+  if (dow === 5) {
+    if (sec >= CR_START - 600 && sec < CR_START) return { st: 'soon', left: CR_START - sec, key };
+    if (sec >= CR_START && sec < CR_START + CR_LEN) return { st: 'on', left: CR_START + CR_LEN - sec, key };
+    if (sec >= CR_START + CR_LEN && sec < CR_START + CR_LEN + CR_RALLY) return { st: 'rally', left: CR_START + CR_LEN + CR_RALLY - sec, key };
+  }
+  return { st: 'off', left: 0, key };
+}
+const crMS = s => { s = Math.max(0, Math.round(s)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+function crashHud(txt) {
+  if (txt === CRASH.txt) return; CRASH.txt = txt;
+  if (!txt) { if (CRASH.hud) CRASH.hud.style.display = 'none'; return; }
+  if (!CRASH.hud) { CRASH.hud = el('div'); CRASH.hud.style.cssText = 'position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 64px);transform:translateX(-50%);z-index:29;pointer-events:none;text-align:center;padding:6px 16px;border-radius:14px;background:rgba(40,6,14,.85);border:1.5px solid #ff4d57;color:#fff;font-weight:900;font-size:14px;line-height:1.5;box-shadow:0 4px 16px rgba(0,0,0,.45);max-width:92vw'; document.body.appendChild(CRASH.hud); }
+  CRASH.hud.style.display = ''; CRASH.hud.textContent = txt;
+}
+function crashEnd() {
+  if (!entered) return; const ok = CRASH.safe >= CR_NEED, done = LS.get(CRK, '') === CRASH.key; try { SND.firework(); } catch (e) {} spawn(ME.X, 3, ME.Z, 60, 0xffd76a, 6, 3, 1.5, 3);
+  if (ok && !done) { LS.set(CRK, CRASH.key); const xp = givePts(40, .05); addCoin(growCoin(150), T('폭락의 밤 생존', 'Crash Night survivor')); dropItem(2);
+    tapeNote(T(`🎉 원복 랠리! 도시가 복구됐어요 — 지지선 위 ${Math.round(CRASH.safe)}초 · XP +${fmt(xp, 0)}`, `🎉 Breakeven rally! The city is restored — ${Math.round(CRASH.safe)}s above support · XP +${fmt(xp, 0)}`), { ms: 5000, cls: 'tip' }); }
+  else if (ok) tapeNote(T('🎉 원복 랠리! 이번 주 보상은 이미 받았어요', '🎉 Rally! You already claimed this week\'s reward'), { ms: 4000, cls: 'tip' });
+  else tapeNote(T(`📈 원복 랠리 — 지지선 위 ${Math.round(CRASH.safe)}/${CR_NEED}초라 보상은 없어요. 다음 주 금요일 21:00에 또 와요!`, `📈 Rally — only ${Math.round(CRASH.safe)}/${CR_NEED}s above support, no reward. See you next Friday 21:00!`), { ms: 5000, cls: 'tip' });
+}
+CITYW.tick.push((dt, t) => {
+  const I = crashInfo(), inPlaza = entered && !REALM && ME.X > -18 && ME.X < 18 && ME.Z > -9 && ME.Z < 66;
+  if (I.st !== CRASH.st) { const prev = CRASH.st; CRASH.st = I.st;
+    if (I.st === 'on') { CRASH.safe = 0; CRASH.key = I.key; if (entered) { tapeNote(T('🌊 폭락의 밤! 광장 바닥이 하락 물결에 잠겨요 — 발판·나무·옥상 위(지지선)로 올라가 3분 버텨요!', '🌊 Crash Night! The plaza floods — climb onto platforms, trees or the roof and hold for 3 minutes!'), { ms: 5500, cls: 'tip' }); try { SND.ko(); } catch (e) {} quake(.3, .8); } }
+    if (prev === 'on' && I.st === 'rally') crashEnd(); if (I.st === 'off') CRASH.notes = {}; }
+  if (I.st === 'soon' && entered) { if (!CRASH.notes.a) { CRASH.notes.a = 1; tapeNote(T('🌊 오늘 밤 폭락의 밤 준비! 금요일 21:00 광장에서 만나요', '🌊 Crash Night soon — meet in the plaza at Fri 21:00'), { ms: 4000, cls: 'tip' }); } if (I.left <= 60 && !CRASH.notes.b) { CRASH.notes.b = 1; tapeNote(T('🌊 1분 뒤 폭락의 밤! 광장으로 모여요', '🌊 Crash Night in 1 minute! Gather in the plaza'), { ms: 4000, cls: 'tip' }); } }
+  if (I.st === 'on' && inPlaza && !HPS.ko && (ME.Y || 0) >= 1.4) CRASH.safe += dt;
+  // 파도
+  const want = I.st === 'on' ? .95 : -.6;
+  if (!CRASH.wave && I.st === 'on') { CRASH.wave = new THREE.Mesh(new THREE.PlaneGeometry(40, 80), new THREE.MeshBasicMaterial({ color: 0xff3a5a, transparent: true, opacity: .36, side: THREE.DoubleSide, depthWrite: false })); CRASH.wave.rotation.x = -Math.PI / 2; CRASH.wave.position.set(0, -.6, 28); CRASH.wave.renderOrder = 5; scene.add(CRASH.wave); }
+  if (CRASH.wave) { const w = CRASH.wave, y = w.position.y + (want - w.position.y) * Math.min(1, dt * 1.2) + (I.st === 'on' ? Math.sin(t * 2.2) * .004 : 0); w.position.y = y; w.visible = !REALM && y > -.5; w.material.opacity = .3 + Math.sin(t * 3) * .05; }
+  // 표시
+  let tx = '';
+  if (REALM) tx = '';
+  else if (I.st === 'soon') tx = T(`🌊 폭락의 밤 시작까지 ${crMS(I.left)} (금 21:00)`, `🌊 Crash Night in ${crMS(I.left)} (Fri 21:00)`);
+  else if (I.st === 'on') tx = !inPlaza ? T(`🌊 폭락의 밤! 광장으로 모여요 · 남은 ${crMS(I.left)}`, `🌊 Crash Night! Head to the plaza · ${crMS(I.left)} left`) : T(`🌊 지지선 위 ${Math.round(CRASH.safe)}/${CR_NEED}초 · 남은 ${crMS(I.left)}${(ME.Y || 0) < 1.4 ? ' · ⬆ 발판·나무·옥상 위로!' : ''}`, `🌊 Above support ${Math.round(CRASH.safe)}/${CR_NEED}s · ${crMS(I.left)} left${(ME.Y || 0) < 1.4 ? ' · ⬆ climb up!' : ''}`);
+  else if (I.st === 'rally') tx = T('📈 원복 랠리! 도시가 복구돼요', '📈 Breakeven rally! The city recovers');
+  crashHud(entered ? tx : '');
+});
+window.__crash = { info: crashInfo, S: CRASH, skew: ms => { CRASH.skew = ms; } };
+
+/* ================= 📍 v58 여기서 만나기 — 지금 서 있는 곳으로 친구를 부르는 링크 ================= */
+const MEET = { p: null };
+try { const m = location.hash.match(/at=(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/); if (m) { MEET.p = { x: +m[1], z: +m[2] }; history.replaceState(null, '', location.pathname + location.search); } } catch (e) {}
+{ const bm = el('button'); bm.id = 'bMeet'; bm.type = 'button'; bm.style.display = 'none'; document.body.appendChild(bm);
+  bm.onclick = () => { if (!entered) return; if (REALM) { toast(T('📍 세계 안에서는 못 만들어요. 광장이나 야외에서 눌러 주세요', '📍 Not available inside a world')); return; }
+    const u = location.href.split('#')[0] + '#at=' + ME.X.toFixed(1) + ',' + ME.Z.toFixed(1), done = () => toast(T('📍 여기서 만나기 링크를 복사했어요! 친구가 열면 이 자리로 와요', '📍 Meet-here link copied! Your friend will land right here'));
+    try { navigator.clipboard.writeText(u).then(done, () => { prompt0(u); }); } catch (e) { prompt0(u); } }; }
+CITYW.tick.push(() => { if (MEET.p && entered && !REALM && !RBUSY && !HPS.ko) { const p = MEET.p; MEET.p = null; if (walkable(p.x, p.z)) tpTo(p.x, p.z, T('📍 친구가 알려준 곳', "📍 Friend's spot")); else toast(T('📍 링크의 장소로 갈 수 없어요', '📍 Cannot go to that spot')); } });
+
 /* ---------- 고스트 편지 (서버 저장 없이 문자열로 주고받기) ---------- */
 function rcB64(u8) { let s = ''; for (let i = 0; i < u8.length; i++) s += String.fromCharCode(u8[i]); return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
 function rcUnB64(t) { t = t.replace(/-/g, '+').replace(/_/g, '/'); while (t.length % 4) t += '='; const s = atob(t), u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u; }
@@ -5552,6 +5609,7 @@ function raceOpen(result) {
   draw();
   const row = el('div', 'rcb'); box.appendChild(row);
   const go = el('button', 'mbtn', T('🏁 출발! (위로 올라가요)', '🏁 Go! (up to the course)')); go.type = 'button'; go.onclick = () => raceBegin(RACE.lev); row.appendChild(go);
+  const go2 = el('button', 'mbtn sec', T('⏱ 30초 동시 출발 (친구와 같이)', '⏱ Synced start (every :00 / :30)')); go2.type = 'button'; go2.onclick = () => raceBegin(RACE.lev, true); row.appendChild(go2);
   // 고스트 편지
   const det = el('details'); det.style.margin = '8px 0'; box.appendChild(det); const sm = el('summary', '', T('👻 고스트 편지 (내 기록을 친구에게 · 서버에 저장 안 돼요)', '👻 Ghost letter (share your run as text · nothing is stored on a server)')); sm.style.cursor = 'pointer'; sm.style.fontWeight = '800'; det.appendChild(sm);
   const ta = el('textarea'); ta.placeholder = T('받은 고스트 편지 링크를 여기에 붙여넣고 「받기」 (링크를 눌러 들어와도 자동으로 받아져요)', 'Paste a ghost letter link here and press Receive (opening the link also works)'); det.appendChild(ta);
@@ -5575,14 +5633,14 @@ function ghostAnt(col, label) {
   a.root.scale.multiplyScalar(.95); scene.add(a.root); return a;
 }
 function raceGhostsOff() { ['ghost', 'ghostF'].forEach(k => { const g = RACE[k]; if (g) { scene.remove(g.a.root); RACE[k] = null; } }); }
-function raceBegin(lev) {
+function raceBegin(lev, sync) {
   if (!entered || !REALM || REALM.id !== 'race') return; closeModals(); rcUi(); RACE.lev = lev || 1; LS.set('lv3d_race_lev', RACE.lev);
   raceGhostsOff(); const rec = rcRec()[RACE.lev];
   if (rec && rec.g && rec.g.length >= 6) RACE.ghost = { a: ghostAnt(0x7fe9ff, T('내 기록', 'My best')), pts: rec.g, dt: .25, ms: rec.ms, k: 10 };
   const fg = LS.get('lv3d_race_fg', {})[RACE.lev]; if (fg && fg.pts && fg.pts.length >= 2) RACE.ghostF = { a: ghostAnt(0xffb36b, fg.nick || T('친구', 'Friend')), pts: fg.pts.flat(), dt: fg.dt, ms: fg.ms, k: 10 };
-  RACE.on = true; RACE.st = 'ready'; RACE.cp = 0; RACE.cpT = [0, 0, 0]; RACE.rec = []; RACE.recAt = 0; RACE.falling = 0; RACE.t0 = 0; RACE.ms = 0; RACE.msg = ''; RACE.gt = 0;
+  RACE.on = true; RACE.st = sync ? 'wait' : 'ready'; RACE.wait = 0; if (sync) { const n = Date.now(); let w = Math.ceil(n / 30000) * 30000; if (w - n < 6000) w += 30000; RACE.wait = w; } RACE.cp = 0; RACE.cpT = [0, 0, 0]; RACE.rec = []; RACE.recAt = 0; RACE.falling = 0; RACE.t0 = 0; RACE.ms = 0; RACE.msg = ''; RACE.gt = 0;
   raceAssign(RACE.lev);
-  raceTp(RSTART); toast(T(`🏁 ${RACE.lev}배 코스 — 준비되면 앞 발판으로!`, `🏁 ${RACE.lev}x course — jump ahead when ready!`));
+  raceTp(RSTART); toast(sync ? T('⏱ 30초 동시 출발 — 카운트다운이 끝날 때까지 출발선에서 기다려요', '⏱ Synced start — wait on the line for the countdown') : T(`🏁 ${RACE.lev}배 코스 — 준비되면 앞 발판으로!`, `🏁 ${RACE.lev}x course — jump ahead when ready!`));
 }
 function raceTp(o) {
   ME.fly = false; ME.fh = null; ME.climb = false; ME.seat = -1; ME.lie = false; ME.target = null; ME.route = null; if (typeof AUTO !== 'undefined' && AUTO) autoOff(T('레이스 중이에요', 'Racing'));
@@ -5625,6 +5683,11 @@ CITYW.tick.push((dt, t) => {
   RACE.gt += dt; const now = RACE.gt * 1000; // 게임 시계: 프레임이 느려도 같은 코스는 같은 시간 (기록이 공정)
   // 비행·활강 금지 (공정한 달리기)
   ME.fly = false; ME.fh = null; FLY.lock = true; FLY.hold = 0;
+  if (RACE.st === 'wait') { const left = RACE.wait - Date.now();
+    if (Math.hypot(ME.X - RSTART.x, ME.Z - (RSTART.z - .6)) > .9 || Math.abs((ME.Y || 0) - RSTART.h) > .6) raceTp(RSTART);
+    if (left <= 0) { RACE.st = 'ready'; raceMsg(T('🏁 출발!', '🏁 GO!'), 1400); try { SND.pop(); } catch (e) {} }
+    else raceMsg(T(`⏱ 동시 출발까지 ${Math.ceil(left / 1000)}초 — 같은 시각에 출발하는 모두와 함께!`, `⏱ Synced start in ${Math.ceil(left / 1000)}s`), 400);
+    raceHudUpdate(); return; }
   if (RACE.st === 'ready') { if ((ME.Y || 0) > 8 && !onPlat(RSTART, 1.2) && Math.abs(ME.Z - RSTART.z) < 14) { RACE.st = 'run'; RACE.t0 = now; RACE.rec = [ME.X - R_ORG.x, ME.Y, ME.Z - R_ORG.z].map(v => Math.round(v * 10)); RACE.recAt = now; raceMsg(T('⏱ 시작!', '⏱ GO!'), 900); } }
   if (RACE.st === 'run') {
     if (now - RACE.recAt >= 250) { RACE.recAt += 250; if (now - RACE.recAt > 500) RACE.recAt = now; RACE.rec.push(Math.round((ME.X - R_ORG.x) * 10), Math.round(ME.Y * 10), Math.round((ME.Z - R_ORG.z) * 10)); }
@@ -5644,7 +5707,7 @@ CITYW.tick.push((dt, t) => {
   if (RACE.st === 'run') { const el1 = now - RACE.t0; ['ghost', 'ghostF'].forEach(k => { const g = RACE[k]; if (!g) return; const p = ghostAt(g, el1); if (!p) return; const R = g.a.root; const wx = p[0] + R_ORG.x, wz = p[2] + R_ORG.z, dx = wx - R.position.x, dz = wz - R.position.z; R.position.set(wx, p[1], wz); g.a.moving = !p[3] && Math.hypot(dx, dz) > .004; if (Math.hypot(dx, dz) > .01) g.a.ry = Math.atan2(dx, dz); try { animAnt(g.a, dt, t); } catch (e) {} }); }
   raceHudUpdate();
 });
-window.__race.assign = raceAssign; window.__race.types = () => RPL.map(o => o.type || ''); window.__race.begin = raceBegin; window.__race.cancel = raceCancel; window.__race.tpTo = i => raceTp(RPL[i]); window.__race.fin = raceFinish;
+window.__race.assign = raceAssign; window.__race.types = () => RPL.map(o => o.type || ''); window.__race.begin = raceBegin; window.__race.set = o => Object.assign(RACE, o); window.__race.cancel = raceCancel; window.__race.tpTo = i => raceTp(RPL[i]); window.__race.fin = raceFinish;
 window.__race.setTarget = (x, z) => { ME.target = x == null ? null : { x, z }; }; window.__race.jump = () => tryJump(); window.__race.me = () => ({ x: ME.X, y: ME.Y, z: ME.Z, vy: ME.vy });
 window.__race.info = () => ({ on: RACE.on, st: RACE.st, cp: RACE.cp, lev: RACE.lev, ms: RACE.st === 'run' ? RACE.gt * 1000 - RACE.t0 : RACE.ms, cpT: RACE.cpT.slice(), rec: RACE.rec.length, ghost: !!RACE.ghost, ghostF: !!RACE.ghostF, last: RACE.last || null });
 { let rr0 = null; window.__race.noRender = on => { if (!rr0) rr0 = renderer.render.bind(renderer); renderer.render = on ? () => {} : rr0; }; } // 시험용: 그림 그리기를 건너뛰어 빠르게 달려 보기
@@ -5754,7 +5817,7 @@ function walkToHub() {
   rest.push({ x: HUBP.x, z: HUBP.z + 2, rt: true, done: () => { toast('🌐 세계 포털 광장 도착!'); tapeNote('🌐 세계 포털 광장 — 문으로 들어가 보세요 · ♨ 찜질방 오픈!', { ms: 3000, cls: 'tip' }); } });
   ME.fly = false; ME.fh = null; ME.seat = -1; ME.lie = false; ME.route = rest; ME.target = ME.route.shift(); ME.runRoute = true; ME.dest = { x: HUBP.x, z: HUBP.z + 2, label: '세계 포털 광장' }; tapeNote('🚶 빛의 길을 따라 자동으로 걸어가요 · 직접 움직이면 취소', { ms: 2600, cls: 'tip' });
 }
-const CMD_ACT = [['bRep', '📈', '시장 리포트', '시황 뉴스 신호 리포트 시장'], ['bPred', '🔮', '오늘의 예측', '예측 베팅 상승 하락'], ['bGb', '📖', '방명록', '글 남기기'], ['bSea', '🏆', '랭킹', '순위 시즌'], ['bPrice', '💹', '시세 입력', '가격 수동'], ['bBag', '🎒', '가방', '장비 아이템 인벤토리'], ['bWorld', '🌐', '세계 관문', '세계 찜질방 별 던전 포털'], ['bMap', '🗺', '지도·이동', '순간이동 텔레포트 위치'], ['qShop', '🛍', '상점', '구매 아이템'], ['qEnh', '🔨', '강화', '대장간 업그레이드'], ['qCard', '🃏', '카드', '도감 수집'], ['qEv', '📅', '이벤트·출석', '출석 보상'], ['qAuto', '🤖', '자동사냥', '사냥 오토'], ['qView', '🔭', '시야 바꾸기', '줌 카메라'], ['qOut', '⚔', '야외 사냥터로', '사냥 몬스터 이동'], ['bPhoto', '📸', '사진 모드', '스크린샷'], ['bBgm', '🎵', '음악 켜기/끄기', '브금 bgm'], ['bMute', '🔔', '소리 켜기/끄기', '효과음 음소거'], ['bMe', '🙍', '내 정보', '프로필 닉네임 평단'], ['bLink', '🔗', '방 링크 복사', '공유 초대']];
+const CMD_ACT = [['bRep', '📈', '시장 리포트', '시황 뉴스 신호 리포트 시장'], ['bPred', '🔮', '오늘의 예측', '예측 베팅 상승 하락'], ['bGb', '📖', '방명록', '글 남기기'], ['bSea', '🏆', '랭킹', '순위 시즌'], ['bPrice', '💹', '시세 입력', '가격 수동'], ['bBag', '🎒', '가방', '장비 아이템 인벤토리'], ['bWorld', '🌐', '세계 관문', '세계 찜질방 별 던전 포털'], ['bMap', '🗺', '지도·이동', '순간이동 텔레포트 위치'], ['qShop', '🛍', '상점', '구매 아이템'], ['qEnh', '🔨', '강화', '대장간 업그레이드'], ['qCard', '🃏', '카드', '도감 수집'], ['qEv', '📅', '이벤트·출석', '출석 보상'], ['qAuto', '🤖', '자동사냥', '사냥 오토'], ['qView', '🔭', '시야 바꾸기', '줌 카메라'], ['qOut', '⚔', '야외 사냥터로', '사냥 몬스터 이동'], ['bPhoto', '📸', '사진 모드', '스크린샷'], ['bBgm', '🎵', '음악 켜기/끄기', '브금 bgm'], ['bMute', '🔔', '소리 켜기/끄기', '효과음 음소거'], ['bMe', '🙍', '내 정보', '프로필 닉네임 평단'], ['bLink', '🔗', '방 링크 복사', '공유 초대'], ['bMeet', '📍', '여기서 만나기 링크 복사', '친구 위치 공유 초대 만나기 약속']];
 let cmdSel = 0;
 function cmdRec(nm) { if (!nm) return; const r = LS.get('lv3d_cmdrec', []).filter(x => x !== nm); r.unshift(nm); LS.set('lv3d_cmdrec', r.slice(0, 6)); }
 function cmdItems() {
@@ -6594,7 +6657,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '57';
+const APP_V = '58';
 {
   let shown = false;
   const check = async () => {
