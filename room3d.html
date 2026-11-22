@@ -4361,7 +4361,7 @@ const SKY = (() => {
   return { dome, u };
 })();
 scene.background = null;
-const SKYSET = { sunny: CITY ? [0x1f6fe8, 0x8cc9f4, 0xfff0dc, 0xdbeaf6] : [0x1f7bff, 0x8fd3ff, 0xf6fcff, 0xd8efff], storm: [0x4f5d75, 0x8592a8, 0xbcc6d4, 0xa9b4c4], calm: CITY ? [0x3577d6, 0x9cc6ee, 0xffe3c8, 0xd9e5f2] : [0x3d8fe8, 0x9fd2ff, 0xe9f6ff, 0xcfe6ff], gloom: [0x7f97b8, 0xb9c8da, 0xe4ebf3, 0xc9d4e2], party: [0x7a5cf0, 0xff9ad8, 0xffe6c4, 0xf7d6ec], night: [0x03061a, 0x0d1736, 0x1b2a5c, 0x0a1230], dungeon: [0x0b0206, 0x2a0a14, 0x4a1424, 0x180610], race: [0x2b2468, 0xff8f6b, 0xffd9a8, 0x8a5a9a] };
+const SKYSET = { sunny: CITY ? [0x1f6fe8, 0x8cc9f4, 0xfff0dc, 0xdbeaf6] : [0x1f7bff, 0x8fd3ff, 0xf6fcff, 0xd8efff], storm: [0x4f5d75, 0x8592a8, 0xbcc6d4, 0xa9b4c4], calm: CITY ? [0x3577d6, 0x9cc6ee, 0xffe3c8, 0xd9e5f2] : [0x3d8fe8, 0x9fd2ff, 0xe9f6ff, 0xcfe6ff], gloom: [0x7f97b8, 0xb9c8da, 0xe4ebf3, 0xc9d4e2], party: [0x7a5cf0, 0xff9ad8, 0xffe6c4, 0xf7d6ec], night: [0x03061a, 0x0d1736, 0x1b2a5c, 0x0a1230], dungeon: [0x0b0206, 0x2a0a14, 0x4a1424, 0x180610], race: [0x2b2468, 0xff8f6b, 0xffd9a8, 0x8a5a9a], mgd: [0x1b1030, 0xd94a5a, 0xffc2a0, 0x6a2a4a], mgt: [0x1a3a8a, 0x6fb4ff, 0xfff0dc, 0x9ec8f0], mgs: [0x1c5a3a, 0x7fd6a8, 0xf3ffe8, 0x9fd8b8] };
 function skyApply(w) { const S = SKYSET[w] || SKYSET.calm; SKY.u.top.value.set(S[0]); SKY.u.mid.value.set(S[1]); SKY.u.bot.value.set(S[2]); scene.fog.color.set(S[3]); }
 // 먼 배경(카메라를 따라다님 → 아주 멀리 있는 것처럼 보임): 산맥 · 판타지 도시 · 떠 있는 섬 · 무지개 · 낮달
 const FAR = new THREE.Group(); scene.add(FAR);
@@ -5270,6 +5270,185 @@ if (CITY) {
   };
 }
 
+
+/* ================= 🎮 v56 미니게임 1차 — 하락장 피하기 · 상한가 점프 · 원복 저울 ================= */
+const MGK = 'lv3d_mg';
+function mgRec() { const r = LS.get(MGK, {}); return r && typeof r === 'object' ? r : {}; }
+// 기록 · 보상: 게임별 '첫 성공'에만 코인, 반복은 기록 갱신만
+function mgResult(id, ok, val, lowerBetter, coin, always) {
+  const all = mgRec(), o = all[id] || { n: 0, clear: 0, best: null }; o.n++; let pb = false, first = false;
+  if (ok || always) { if (o.best == null || (lowerBetter ? val < o.best : val > o.best)) { o.best = val; pb = true; } }
+  if (ok) { o.clear++; if (o.clear === 1) { first = true; addCoin(growCoin(coin), T('미니게임 첫 성공', 'Mini-game first clear')); } }
+  all[id] = o; LS.set(MGK, all); return { pb, first, best: o.best, n: o.n, clear: o.clear };
+}
+let mgHud = null, mgHudTxt = '';
+function mgHudSet(h) {
+  if (h === mgHudTxt) return; mgHudTxt = h;
+  if (!h) { if (mgHud) mgHud.style.display = 'none'; return; }
+  if (!mgHud) { mgHud = el('div'); mgHud.style.cssText = 'position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 64px);transform:translateX(-50%);z-index:30;pointer-events:none;text-align:center;padding:6px 16px;border-radius:14px;background:rgba(10,14,34,.8);border:1.5px solid #ff9a3d;color:#fff;font-weight:900;font-size:15px;line-height:1.5;box-shadow:0 4px 16px rgba(0,0,0,.4);max-width:92vw'; document.body.appendChild(mgHud); }
+  mgHud.style.display = ''; mgHud.innerHTML = h;
+}
+function mgHudOff() { mgHudTxt = ''; if (mgHud) { mgHud.remove(); mgHud = null; } }
+const mgFmt = s => { s = Math.max(0, s); const m = Math.floor(s / 60); return `${m}:${(s - m * 60).toFixed(1).padStart(4, '0')}`; };
+// 공통 무대: 바닥 · 격자 · 기둥 · 나가기 문 · 시작 패드
+function mgBase(api, d) {
+  const g = api.group;
+  g.add(mesh(GEO.box, FM(d.floor, { roughness: .95 }), [36, .4, 36], [0, -.2, 0]));
+  const gl = FB(d.grid); for (let k = -15; k <= 15; k += 5) g.add(mesh(GEO.box, gl, [36, .02, .12], [0, .01, k]), mesh(GEO.box, gl, [.12, .02, 36], [k, .012, 0]));
+  [-17, 17].forEach(x => [-17, 17].forEach(z => g.add(mesh(GEO.cyl, FM(0x39426e, { roughness: .6 }), [.5, 6, .5], [x, 3, z]), mesh(GEO.sph, FB(d.lamp), [.6, .6, .6], [x, 6.2, z]))));
+  const dm = FM(0x6b3f1d, { roughness: .7 }); [-1.3, 1.3].forEach(s => g.add(mesh(GEO.box, dm, [.5, 4, .5], [-11 + s, 2, 14]))); g.add(mesh(GEO.box, dm, [3.2, .5, .6], [-11, 4.2, 14]));
+  const ds = signPlane(T('🚪 나가기', '🚪 Exit'), 3, .8, '#fff3c4', '#ffb020'); ds.position.set(-11, 5.2, 14); ds.rotation.y = Math.PI; g.add(ds);
+  api.addInter('rz_out', { name: T('🚪 나가기 (E)', '🚪 Exit (E)'), X: -11, Z: 14, h: 3, btn: T('🚪<br>나가기', '🚪<br>Exit'), fn: () => api.leave() });
+  g.add(mesh(GEO.cyl, FB(d.pad), [3.2, .06, 3.2], [0, .04, 12.5]));
+  const ts = signPlane(d.title, 11, 1.5, d.tbg, d.tfg); ts.position.set(0, 8.5, 16.8); ts.rotation.y = Math.PI; g.add(ts);
+  const ps = signPlane(T('🎮 시작 패드 (E)', '🎮 Start pad (E)'), 4, .7, '#fff3dc', '#ff7a2a'); ps.position.set(0, 3.2, 12.5); ps.rotation.y = Math.PI; g.add(ps);
+  api.addInter('mg_go', { name: d.go, X: 0, Z: 12.5, h: 3.2, btn: T('🎮<br>시작', '🎮<br>Start'), fn: d.start });
+}
+const MG_SPAWN = { x: 0, z: 9, ry: Math.PI };
+const MG_B = { x0: -17, x1: 17, z0: -17, z1: 17 };
+
+/* ---- 📉 하락장 피하기: 하늘에서 떨어지는 음봉을 60초 피하기 ---- */
+(window.WB_REALMS = window.WB_REALMS || {}).mgdodge = function (api) {
+  const group = api.group, DUR = 60, S = { st: 'idle', t: 0, life: 3, inv: 0, sp: 0, endAt: 0, endTxt: '' }, POOL = [];
+  const rm = FM(0xff3344, { roughness: .4, emissive: 0x440008 }), wm = FM(0xf2f2f2, { roughness: .6 });
+  for (let i = 0; i < 18; i++) {
+    const c = new THREE.Group(); c.add(mesh(GEO.box, rm, [1, 2.8, 1], [0, 0, 0]), mesh(GEO.box, wm, [.14, 1.6, .14], [0, 2.2, 0]), mesh(GEO.box, wm, [.14, 1.2, .14], [0, -2, 0])); c.visible = false;
+    const ring = mesh(GEO.cyl, FB(0xff3344, .45), [3.6, .05, 3.6], [0, .06, 0]); ring.visible = false; group.add(c, ring); POOL.push({ g: c, ring, on: 0, x: 0, z: 0, w: 0, wm: 1, y: 0, rest: 0 });
+  }
+  const free = () => POOL.find(p => !p.on);
+  function clear() { POOL.forEach(p => { p.on = 0; p.g.visible = false; p.ring.visible = false; }); }
+  function start() {
+    if (S.st === 'play') return; clear(); S.st = 'play'; S.t = 0; S.life = 3; S.inv = 0; S.sp = 1.2; S.endAt = 0; FLY.lock = false; api.warp(0, 0);
+    tapeNote(T('📉 60초 버티기! 바닥에 빨간 원이 뜨면 그 자리에서 벗어나세요 (하트 3개)', '📉 Survive 60s! Move out of the red circles (3 hearts)'), { ms: 3500, cls: 'tip' });
+  }
+  function end(ok) {
+    S.st = 'done'; clear(); const surv = Math.min(DUR, S.t), r = mgResult('dodge', ok, Math.round(surv * 10) / 10, false, 120, true);
+    S.endAt = performance.now() + 4500;
+    if (ok) { S.endTxt = T(`🎉 60초 생존! 원복 성공${r.first ? ' · 첫 성공 코인 지급!' : ''}`, `🎉 Survived 60s!${r.first ? ' First-clear coins!' : ''}`); api.fx.firework(); try { SND.land(); } catch (e) {} }
+    else S.endTxt = T(`📉 하락장에 쓸려갔어요 — ${surv.toFixed(1)}초 버팀${r.pb ? ' · 🏆 최고기록!' : ''}`, `📉 Swept away — ${surv.toFixed(1)}s${r.pb ? ' · 🏆 best!' : ''}`);
+    toast(S.endTxt);
+  }
+  function drop(me) {
+    const p = free(); if (!p) return; const near = Math.random() < .45; let x, z;
+    if (near) { const a = Math.random() * 6.28, d = Math.random() * 3.5; x = me.x + Math.cos(a) * d; z = me.z + Math.sin(a) * d; } else { x = (Math.random() * 2 - 1) * 15; z = (Math.random() * 2 - 1) * 15; }
+    p.x = Math.max(-15.5, Math.min(15.5, x)); p.z = Math.max(-15.5, Math.min(15.5, z)); p.w = 0; p.wm = Math.max(.72, 1.05 - S.t * .0055); p.on = 1; p.y = 14; p.rest = 0;
+    p.ring.position.set(p.x, .06, p.z); p.ring.scale.set(.3, .05, .3); p.ring.visible = true; p.g.position.set(p.x, 14, p.z); p.g.visible = false;
+  }
+  mgBase(api, { floor: 0x241238, grid: 0x5a2a6a, lamp: 0xff6a7a, pad: 0xff4d57, title: T('📉 하락장 피하기', '📉 Dodge the Bear Market'), tbg: '#ffe2e6', tfg: '#ff3b4a', go: T('📉 하락장 피하기 시작 (E)', '📉 Start Dodge (E)'), start });
+  return {
+    sky: 'mgd', camDist: () => (api.touch ? 32 : 26), bounds: MG_B, spawn: MG_SPAWN, walk: (x, z) => x > -17 && x < 17 && z > -17 && z < 17,
+    tick(dt, t, me) {
+      const now = performance.now();
+      if (S.st === 'play') {
+        S.t += dt; S.inv = Math.max(0, S.inv - dt); S.sp -= dt;
+        if (S.sp <= 0) { drop(me); S.sp = Math.max(.2, .85 - S.t * .0105); }
+        for (const p of POOL) { if (!p.on) continue;
+          if (p.on === 1) { p.w += dt; const u = Math.min(1, p.w / p.wm); p.ring.scale.set(.3 + u * 3.3, .05, .3 + u * 3.3); if (p.w >= p.wm) { p.on = 2; p.g.visible = true; p.y = 14; } }
+          else if (p.on === 2) { p.y -= dt * 60; p.g.position.y = Math.max(1.4, p.y); if (p.y <= 1.4) { p.on = 3; p.rest = .35; api.spark(p.x, 1, p.z, 16, 0xff6a7a, 4, 6, .6);
+              if (S.inv <= 0 && Math.hypot(me.x - p.x, me.z - p.z) < 1.9) { S.life--; S.inv = 1.5; api.quake(.25, .3); api.snd('ko'); api.floatMe('💥 -1❤', 'big'); if (S.life <= 0) { end(false); break; } } } }
+          else { p.rest -= dt; p.ring.visible = false; if (p.rest <= 0) { p.on = 0; p.g.visible = false; } } }
+        if (S.st === 'play' && S.t >= DUR) end(true);
+      }
+      const rec = mgRec().dodge;
+      if (S.st === 'play') mgHudSet(`${'❤'.repeat(Math.max(0, S.life))}${'🖤'.repeat(Math.max(0, 3 - S.life))} · ⏱ ${S.t.toFixed(1)} / ${DUR}s${rec && rec.best != null ? ` · 🏆 ${rec.best}s` : ''}`);
+      else if (S.st === 'done' && now < S.endAt) mgHudSet(S.endTxt); else { if (S.st === 'done') S.st = 'idle'; mgHudSet(`📉 ${T('시작 패드(E)에서 시작', 'Press E on the start pad')}${rec && rec.best != null ? ` · 🏆 ${rec.best}s` : ''}`); }
+    },
+    dbg: () => ({ st: S.st, t: S.t, life: S.life, c: POOL.filter(p => p.on === 1 || p.on === 2).map(p => [p.x, p.z, p.on]) }),
+    dispose() { mgHudOff(); }
+  };
+};
+
+/* ---- 📈 상한가 점프: 봉을 밟고 천장(상한가)까지 오르기 · 매일 모양이 바뀌어요 ---- */
+(window.WB_REALMS = window.WB_REALMS || {}).mgtower = function (api) {
+  const group = api.group, N = 34, STEP = 1.0, TOPH = STEP * (N + 1), S = { st: 'idle', t: 0, max: 0, fell: 0, endAt: 0, endTxt: '' }, plats = [];
+  let sd = 0; for (const ch of kstDate()) sd = (sd * 31 + ch.charCodeAt(0)) >>> 0; const R = sRng(sd);
+  let px = 0, pz = 6.5; const up = FM(0xff3b4a, { roughness: .35, emissive: 0x3a0610 }), dn = FM(0x2f7bff, { roughness: .35, emissive: 0x06163a }), wick = FM(0xd9dde6, { roughness: .5 });
+  for (let i = 0; i < N; i++) {
+    let nx, nz, tr = 0;
+    const okP = (x, z, lv) => !(Math.abs(x) > 11 || Math.abs(z) > 11 || (i > 0 && Math.hypot(x - px, z - pz) < 2.9) || (lv < 2 && i > 1 && Math.hypot(x - plats[i - 2].lx, z - plats[i - 2].lz) < 4.4) || (lv < 1 && i > 2 && Math.hypot(x - plats[i - 3].lx, z - plats[i - 3].lz) < 3.8));
+    for (let lv = 0; lv < 3 && tr >= 0; lv++) { // 겹침 규칙을 지키는 자리를 먼저 무작위로, 안 되면 한 바퀴 훑어서 찾고, 그래도 없으면 규칙을 조금 풀어요
+      for (let k = 0; k < 80; k++) { const near = Math.hypot(px, pz) > 7 ? Math.atan2(-pz, -px) + (R() - .5) * 2.6 : R() * 6.28, d = 3.0 + R() * .8; const x = px + Math.cos(near) * d, z = pz + Math.sin(near) * d; if (okP(x, z, lv)) { nx = x; nz = z; tr = -1; break; } }
+      if (tr >= 0) for (let k = 0; k < 72; k++) { const an = k * Math.PI / 36, x = px + Math.cos(an) * 3.4, z = pz + Math.sin(an) * 3.4; if (okP(x, z, lv)) { nx = x; nz = z; tr = -1; break; } }
+    }
+    if (tr >= 0) { nx = px + 3.4; nz = pz; if (Math.abs(nx) > 11) nx = px - 3.4; }
+    px = nx; pz = nz;
+    const h = STEP * (i + 1), o = { x: R_ORG.x + px, z: R_ORG.z + pz, w: 2.7, d: 2.7, h, mg: 1, lx: px, lz: pz }; plats.push(o);
+    group.add(mesh(GEO.box, i % 3 === 2 ? dn : up, [2.7, .4, 2.7], [px, h - .2, pz]), mesh(GEO.cyl, wick, [.06, h - .4, .06], [px, (h - .4) / 2, pz]), mesh(GEO.box, FB(i % 3 === 2 ? 0x7fb0ff : 0xff9aa2, .6), [2.76, .05, 2.76], [px, h + .01, pz]));
+    if ((i + 1) % 10 === 0) { const sg = signPlane(`🚩 ${h.toFixed(0)}m`, 2.4, .6, '#fff3c4', '#e08a00'); sg.position.set(px, h + 1.6, pz); sg.rotation.y = Math.PI; group.add(sg); }
+  }
+  const topx = px, topz = pz, top = { x: R_ORG.x + topx, z: R_ORG.z + topz, w: 5, d: 5, h: TOPH, mg: 1, lx: topx, lz: topz }; plats.push(top);
+  group.add(mesh(GEO.box, FM(0xd4a017, { metalness: .7, roughness: .3, emissive: 0x2a1800 }), [5, .5, 5], [topx, TOPH - .25, topz]), mesh(GEO.cyl, wick, [.1, TOPH - .5, .1], [topx, (TOPH - .5) / 2, topz]));
+  { const sg = signPlane(T('🎉 상한가! +30%', '🎉 LIMIT UP! +30%'), 6, 1.1, '#fff3c4', '#ff7a2a'); sg.position.set(topx, TOPH + 2.4, topz); sg.rotation.y = Math.PI; group.add(sg); group.add(mesh(GEO.cyl, FM(0xc8d0dc, { metalness: .6 }), [.06, 3, .06], [topx + 2, TOPH + 1.5, topz]), mesh(GEO.box, FB(0xff3b4a), [1.1, .6, .03], [topx + 2.6, TOPH + 2.5, topz])); }
+  function start() { S.st = 'ready'; S.t = 0; S.max = 0; S.fell = 0; FLY.lock = true; api.warp(0, 9); tapeNote(T(`📈 오늘의 상한가 타워 (${kstDate().slice(5)}) — 위로 올라가요! 첫 발을 떼면 시간이 시작돼요`, `📈 Today's tower — climb to the top! The clock starts when you leave the ground`), { ms: 3800, cls: 'tip' }); }
+  mgBase(api, { floor: 0x14284a, grid: 0x2a5a9a, lamp: 0xffd76a, pad: 0xffb020, title: T('📈 상한가 점프 · 오늘의 타워', '📈 Limit-Up Jump · Daily Tower'), tbg: '#fff3c4', tfg: '#ff7a2a', go: T('📈 상한가 점프 시작 (E)', '📈 Start Limit-Up Jump (E)'), start });
+  for (let i = PLAT.length - 1; i >= 0; i--) if (PLAT[i].mg) PLAT.splice(i, 1); plats.forEach(o => PLAT.push(o));
+  function finish() {
+    S.st = 'done'; const r = mgResult('tower', true, Math.round(S.t * 10) / 10, true, 150); S.endAt = performance.now() + 5000; FLY.lock = false;
+    S.endTxt = T(`🎉 상한가 도착! ${mgFmt(S.t)}${r.pb ? ' · 🏆 최고기록!' : ''}${r.first ? ' · 첫 성공 코인!' : ''}`, `🎉 Limit up! ${mgFmt(S.t)}${r.pb ? ' · 🏆 best!' : ''}${r.first ? ' · first-clear coins!' : ''}`); api.fx.firework(); try { SND.land(); } catch (e) {} toast(S.endTxt);
+  }
+  return {
+    sky: 'mgt', camDist: () => (api.touch ? 34 : 28), bounds: MG_B, spawn: MG_SPAWN, walk: (x, z) => x > -17 && x < 17 && z > -17 && z < 17,
+    tick(dt, t, me) {
+      const now = performance.now(), rec = mgRec().tower;
+      if (S.st === 'ready' || S.st === 'run') { ME.fly = false; ME.fh = null; FLY.hold = 0; FLY.lock = true;
+        if (S.st === 'ready' && me.y > 1.0) { S.st = 'run'; S.t = 0; }
+        if (S.st === 'run') { S.t += dt; S.max = Math.max(S.max, me.y);
+          if (me.y < .2 && S.max > 5 && !S.fell) { S.fell = 1; toast(T('💫 떨어졌어요 — 시간은 계속 가요! 다시 올라가요', '💫 You fell — the clock keeps running!')); } else if (me.y > 1) S.fell = 0;
+          if (Math.abs(me.x - topx) < 2.6 && Math.abs(me.z - topz) < 2.6 && me.y >= TOPH - .3) finish(); } }
+      const hh = Math.max(0, me.y);
+      if (S.st === 'ready') mgHudSet(`📈 ${T('올라가요! 첫 발을 떼면 시작', 'Climb! Clock starts when you jump')}${rec && rec.best != null ? ` · 🏆 ${mgFmt(rec.best)}` : ''}`);
+      else if (S.st === 'run') mgHudSet(`🏔 ${hh.toFixed(1)} / ${TOPH.toFixed(0)}m · ⏱ ${mgFmt(S.t)}${rec && rec.best != null ? ` · 🏆 ${mgFmt(rec.best)}` : ''}`);
+      else if (S.st === 'done' && now < S.endAt) mgHudSet(S.endTxt); else { if (S.st === 'done') S.st = 'idle'; mgHudSet(`📈 ${T('시작 패드(E)에서 시작', 'Press E on the start pad')}${rec && rec.best != null ? ` · 🏆 ${mgFmt(rec.best)}` : ''}`); }
+    },
+    dbg: () => ({ st: S.st, t: S.t, top: { x: top.x, z: top.z, h: TOPH }, plats: plats.map(o => [o.x, o.z, o.h]) }),
+    dispose() { mgHudOff(); FLY.lock = false; for (let i = PLAT.length - 1; i >= 0; i--) if (PLAT[i].mg) PLAT.splice(i, 1); }
+  };
+};
+
+/* ---- ⚖ 원복 저울: 기울어지는 저울 위에서 45초 균형 잡기 (기울기 0 = 원복) ---- */
+(window.WB_REALMS = window.WB_REALMS || {}).mgscale = function (api) {
+  const group = api.group, DUR = 45, LIM = .45, H0 = 1.7, PL = 5, S = { st: 'idle', t: 0, phi: 0, om: 0, ok: 0, nextW: 2, endAt: 0, endTxt: '' }, WT = [];
+  const pk = new THREE.Group(); pk.position.set(0, H0, 0); group.add(pk);
+  pk.add(mesh(GEO.box, FM(0xf7f2e8, { roughness: .8 }), [PL * 2, .3, 4], [0, -.15, 0]), mesh(GEO.box, FB(0xffb020), [PL * 2 + .06, .05, 4.06], [0, .005, 0]), mesh(GEO.box, FB(0x41c9ff), [.2, .06, 4.06], [0, .02, 0]));
+  group.add(mesh(GEO.cyl, FM(0x39426e, { roughness: .6 }), [.9, H0 - .15, .9], [0, (H0 - .15) / 2, -.2]));
+  const plank = { x: R_ORG.x, z: R_ORG.z, w: PL * 2, d: 4, h: H0, mg: 1 }, steps = [[5.0, .45], [3.8, .9], [2.6, 1.35]].map(([z, h]) => ({ x: R_ORG.x, z: R_ORG.z + z, w: 3, d: 1.2, h, mg: 1 }));
+  steps.forEach(o => group.add(mesh(GEO.box, FM(0xdcd3c2, { roughness: .9 }), [3, o.h, 1.2], [0, o.h / 2, o.z - R_ORG.z])));
+  for (let i = PLAT.length - 1; i >= 0; i--) if (PLAT[i].mg) PLAT.splice(i, 1); PLAT.push(plank, ...steps);
+  const coinM = FM(0xffd24a, { metalness: .6, roughness: .3, emissive: 0x4a3000 });
+  function start() { S.st = 'ready'; S.t = 0; S.phi = S.om = 0; S.ok = 0; S.nextW = 2.5; WT.forEach(w => { group.remove(w.m); }); WT.length = 0; FLY.lock = true; api.warp(0, 8); tapeNote(T('⚖ 저울 위로 올라가 45초 균형 잡기! 금화가 떨어지는 쪽이 기울어져요 · 몸무게(서 있는 쪽)도 기울여요', '⚖ Step on the scale and balance for 45s! Falling coins tip their side — so does your weight'), { ms: 4200, cls: 'tip' }); }
+  mgBase(api, { floor: 0x143a26, grid: 0x2a7a4a, lamp: 0x9dffb5, pad: 0x4fe3c8, title: T('⚖ 원복 저울', '⚖ Breakeven Scale'), tbg: '#dffff0', tfg: '#1ea672', go: T('⚖ 원복 저울 시작 (E)', '⚖ Start Breakeven Scale (E)'), start });
+  function end(ok, why) {
+    S.st = 'done'; FLY.lock = false; const bal = Math.round(100 * S.ok / Math.max(.1, S.t)), r = mgResult('scale', ok, bal, false, 100); S.endAt = performance.now() + 5000;
+    if (ok) { S.endTxt = T(`🎉 45초 원복 유지! 균형률 ${bal}%${r.pb ? ' · 🏆 최고기록!' : ''}${r.first ? ' · 첫 성공 코인!' : ''}`, `🎉 Held for 45s! Balance ${bal}%${r.pb ? ' · 🏆 best!' : ''}${r.first ? ' · first-clear coins!' : ''}`); api.fx.firework(); try { SND.land(); } catch (e) {} }
+    else S.endTxt = T(`⚖ ${why} — ${S.t.toFixed(1)}초 버팀`, `⚖ ${why} — ${S.t.toFixed(1)}s`);
+    toast(S.endTxt);
+  }
+  return {
+    sky: 'mgs', camDist: () => (api.touch ? 30 : 24), bounds: MG_B, spawn: MG_SPAWN, walk: (x, z) => x > -17 && x < 17 && z > -17 && z < 17,
+    tick(dt, t, me) {
+      const now = performance.now(), rec = mgRec().scale, onP = Math.abs(me.z) <= 2.05 && Math.abs(me.x) <= PL + .05 && me.y > H0 - 1.2;
+      if (S.st === 'ready' || S.st === 'run') { ME.fly = false; ME.fh = null; FLY.hold = 0; FLY.lock = true;
+        if (S.st === 'ready' && onP) { S.st = 'run'; S.t = 0; S.nextW = 2; }
+        if (S.st === 'run') {
+          S.t += dt; const ramp = Math.min(1, S.t / 30), x = onP ? Math.max(-PL, Math.min(PL, me.x)) : 0;
+          if (S.t >= S.nextW) { const side = Math.random() < .5 ? -1 : 1, w = { m: mesh(GEO.sph, coinM, [.9, .9, .9], [side * 3.5, 9, 0]), side, y: 9, imp: .42 * (.8 + .5 * ramp) }; group.add(w.m); WT.push(w); S.nextW = S.t + (2.6 - ramp) + Math.random() * .8; }
+          for (let i = WT.length - 1; i >= 0; i--) { const w = WT[i]; w.y -= dt * 8 * (1 + ramp * .3); w.m.position.y = Math.max(H0 + w.side * 3.5 * Math.sin(S.phi) + .4, w.y); if (w.y <= H0 + .4 + w.side * 3.5 * Math.sin(S.phi)) { S.om -= w.side * w.imp; api.snd('pop'); api.spark(w.side * 3.5, H0 + 1, 0, 8, 0xffd24a, 3, 4, .5); group.remove(w.m); WT.splice(i, 1); } }
+          S.om += (-1.6 * (x / PL) - 1.5 * S.om) * dt; S.phi += S.om * dt; if (Math.abs(S.phi) < .12) S.ok += dt;
+          pk.rotation.z = S.phi; plank.h = H0 + x * Math.sin(S.phi);
+          if (Math.abs(S.phi) > LIM) end(false, T('저울이 기울어 무너졌어요', 'The scale tipped over'));
+          else if (me.y < .6 && S.t > 1.2) end(false, T('저울에서 떨어졌어요', 'You fell off'));
+          else if (S.t >= DUR) end(true);
+        } } else { S.phi *= Math.max(0, 1 - dt * 3); pk.rotation.z = S.phi; plank.h = H0; }
+      const bar = () => { const p = Math.round(Math.max(-1, Math.min(1, S.phi / LIM)) * 8), a = []; for (let i = -8; i <= 8; i++) a.push(i === p ? '🔴' : i === 0 ? '|' : '·'); return a.join(''); };
+      if (S.st === 'ready') mgHudSet(`⚖ ${T('저울 위로 올라가요 (계단 → 저울)', 'Step onto the scale')}${rec && rec.best != null ? ` · 🏆 ${rec.best}%` : ''}`);
+      else if (S.st === 'run') mgHudSet(`${bar()}<br>⏱ ${S.t.toFixed(1)} / ${DUR}s · ${T('균형률', 'Balance')} ${Math.round(100 * S.ok / Math.max(.1, S.t))}%${rec && rec.best != null ? ` · 🏆 ${rec.best}%` : ''}`);
+      else if (S.st === 'done' && now < S.endAt) mgHudSet(S.endTxt); else { if (S.st === 'done') S.st = 'idle'; mgHudSet(`⚖ ${T('시작 패드(E)에서 시작', 'Press E on the start pad')}${rec && rec.best != null ? ` · 🏆 ${rec.best}%` : ''}`); }
+    },
+    dbg: () => ({ st: S.st, t: S.t, phi: S.phi, om: S.om, ok: S.ok }),
+    dispose() { mgHudOff(); FLY.lock = false; for (let i = PLAT.length - 1; i >= 0; i--) if (PLAT[i].mg) PLAT.splice(i, 1); }
+  };
+};
+
 /* ---------- 고스트 편지 (서버 저장 없이 문자열로 주고받기) ---------- */
 function rcB64(u8) { let s = ''; for (let i = 0; i < u8.length; i++) s += String.fromCharCode(u8[i]); return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
 function rcUnB64(t) { t = t.replace(/-/g, '+').replace(/_/g, '/'); while (t.length % 4) t += '='; const s = atob(t), u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u; }
@@ -5513,7 +5692,7 @@ const MAPB = { x0: -233, x1: 20, z0: -73, z1: 113 };
 
 
 /* ================= 🌐 v37 세계 엔진: 허브 포털 · 입장/퇴장 · 세계 번호(rg) 동기화 ================= */
-const RDEF = { sauna: { n: '♨ 찜질방' }, star: { n: '🔭 별 관측소' }, dungeon: { n: '🏰 던전', min: 8 }, race: { n: '🏁 각설탕 특급' } };
+const RDEF = { sauna: { n: '♨ 찜질방' }, star: { n: '🔭 별 관측소' }, dungeon: { n: '🏰 던전', min: 8 }, race: { n: '🏁 각설탕 특급' }, mgdodge: { n: '📉 하락장 피하기' }, mgtower: { n: '📈 상한가 점프' }, mgscale: { n: '⚖ 원복 저울' } };
 { const g = new THREE.Group(); g.position.set(HUBP.x, 0, HUBP.z); scene.add(g);
   g.add(mesh(GEO.cyl, FM(0x10303c, { roughness: .7 }), [12, .25, 12], [0, .12, 0]), mesh(GEO.cyl, FB(0x41c9ff), [12.4, .2, 12.4], [0, .06, 0]), mesh(GEO.cyl, FM(0x0b1d26, { roughness: .8 }), [10.2, .3, 10.2], [0, .13, 0]));
   const sg = signPlane('🌐 세계 포털 광장', 9, 1.5, '#d6f3ff', '#2da8e8'); sg.position.set(0, 8, -8.5); g.add(sg);
@@ -5529,7 +5708,7 @@ function floatMe39(t, c) { try { floatAt(myAnt, t, c); } catch (e) {} }
 function playerFx39(dt) {
   myAnt.fly = !!ME.fly; myAnt.glide = !!ME.glide;
   const fl = !!ME.fly; if (fl !== FLY.lbl) { FLY.lbl = fl; $('aJump').textContent = fl ? '⬆ 상승' : '점프'; if (fl) $('aSit').textContent = '⬇ 하강'; else updSitBtn(); }
-  const rc = !REALM || REALM.id === 'race', gY = rc ? groundAt(ME.X, ME.Z, ME.Y || 0) : 0, hh = (ME.Y || 0) - gY; GSH.visible = rc && hh > .35;
+  const rc = !REALM || REALM.id === 'race' || /^mg/.test(REALM.id), gY = rc ? groundAt(ME.X, ME.Z, ME.Y || 0) : 0, hh = (ME.Y || 0) - gY; GSH.visible = rc && hh > .35;
   if (GSH.visible) { GSH.position.set(ME.X, gY + .04, ME.Z); GSH.scale.setScalar(Math.max(.5, 1.5 - hh * .06)); GSH.material.opacity = Math.max(.12, .42 - hh * .02); }
   if (ME.fly && ME.moving && Math.random() < dt * 16) spawn(ME.X - Math.sin(ME.ry) * .4, (ME.Y || 0) + .35, ME.Z - Math.cos(ME.ry) * .4, 1, 0xffffff, .5, 0, 1.1);
   if (ME.glide && Math.random() < dt * 8) spawn(ME.X, (ME.Y || 0) + 2.6, ME.Z, 1, 0xffc6d8, .6, 1, .9);
@@ -5543,6 +5722,9 @@ function renderWorlds() {
   card('♨', '찜질방', '땀 빼고 식혜 한 잔 · XP가 쌓여요 · 지금 오픈!', [['♨ 바로 입장', () => { closeModals(); realmEnter('sauna'); }]]);
   card('🔭', '별 관측소', '별똥별에 소원 빌고 별자리를 모아요 · 지금 오픈!', [['🔭 바로 입장', () => { closeModals(); realmEnter('star'); }]]);
   card('🏁', '각설탕 특급 · 원복 코스', '점프 미니게임 맵! 100→50→100 원복 코스 · 기록·고스트 · 배율 1~3배', [['🏁 바로 입장', () => { closeModals(); realmEnter('race'); }]]);
+  card('📉', '하락장 피하기', '하늘에서 떨어지는 음봉을 60초 피해요 · 하트 3개 · 첫 성공 코인', [['📉 바로 입장', () => { closeModals(); realmEnter('mgdodge'); }]]);
+  card('📈', '상한가 점프', '봉을 밟고 상한가까지 오르기 · 매일 모양이 바뀌는 오늘의 타워', [['📈 바로 입장', () => { closeModals(); realmEnter('mgtower'); }]]);
+  card('⚖', '원복 저울', '기울어지는 저울 위에서 45초 균형 잡기 · 기울기 0 = 원복', [['⚖ 바로 입장', () => { closeModals(); realmEnter('mgscale'); }]]);
   card('🏰', '던전 · 폭락의 지하 묘지', '혼자 도전! 웨이브 4 + 보스 · 9단계부터 · 클리어하면 장비 상자', [['🏰 바로 입장', () => { closeModals(); realmEnter('dungeon'); }]]);
 }
 function openWorlds() { if (!entered) return; if (REALM) { toast('지금은 세계 안이에요. 🚪 문 앞에서 나가면 다시 열려요'); return; } renderWorlds(); openModal('mWorld'); }
@@ -6393,7 +6575,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '55';
+const APP_V = '56';
 {
   let shown = false;
   const check = async () => {
