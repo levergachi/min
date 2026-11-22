@@ -3112,8 +3112,8 @@ function squeezeFx(fx) {
 const skCd = {};
 // ✨ 스킬 슬롯 4개: 1단계 기본기 · 7단계 연속타격 · 15단계 광역폭풍 · 23단계 궁극기
 var SLOT_T = [0, 6, 14, 22]; const FINALS = new Set([29, 49, 99]);
-var SLOT_NM = [['🔥 파이어볼', '화염구 한 발 — 가볍고 빠른 기본기'], ['⚡ 관통 일격', '한 명에게 꽂히는 강력한 일점 타격'], ['🌪 광역 폭풍', '주변(반경 11) 전부에게 폭풍 피해'], ['💥 궁극기', '넓은 범위(반경 20)를 쓸어버리는 초광역']];
-var SLOT_CD = [4, 6, 9, 16], SLOT_MUL = [3, 6, 4, 12], SLOT_KEY = ['q', 'r', 'f', 'g'];
+var SLOT_NM = [['🔥 파이어볼', '화염구 한 발 — 가볍고 빠른 기본기'], ['⚡ 관통 일격', '한 명에게 꽂히는 강력한 일점 타격'], ['🌪 광역 폭풍', '주변(반경 13) 전부에게 폭풍 피해'], ['💥 궁극기', '넓은 범위(반경 24)를 쓸어버리는 초광역']];
+var SLOT_CD = [4, 6, 9, 16], SLOT_MUL = [3, 8, 6, 16], SLOT_KEY = ['q', 'r', 'f', 'g'];
 function skName(t, s) { return FINALS.has(t) && s === 3 ? SK[t][0] : SLOT_NM[s][0]; }
 function skCdLeft(s) { return Math.max(0, (skCd['s' + s] || 0) - Date.now()); }
 
@@ -3132,11 +3132,11 @@ function castSkill(s) {
   const buff = (BUFF.until > Date.now() ? 1.5 : 1) * ampK(), raw = Math.round(atkOf(t) * SLOT_MUL[s] * buff * (FINALS.has(t) && s === 3 ? (t === 99 ? 2.4 : t === 49 ? 2 : 1.6) : 1)), dmg = Math.min(HIT_CAP, raw);
   if (REALM) { try { REALM.inst.onSkill && REALM.inst.onSkill(s, raw); } catch (e) { console.warn(e); } return; }
   const hits = []; // [counterKey, 피해, 보스키|null]
-  const AR = SK_RG[s], capN = s === 3 ? 12 : 8, wbNear = WB && !WB.dead && Math.hypot(WB_POS.x - ME.X, WB_POS.z - ME.Z) < (s === 3 ? 24 : 15);
+  const AR = SK_RG[s], capN = s === 3 ? 16 : 10, dmgM = Math.min(SK_CAP, raw), wbNear = WB && !WB.dead && Math.hypot(WB_POS.x - ME.X, WB_POS.z - ME.Z) < (s === 3 ? 28 : 17);
   if (s >= 2) { if (wbNear) hits.push([WB.key, dmg, null]); for (const k in BOSS) { const it = INTER[k]; if (Math.hypot(it.X - ME.X, it.Z - ME.Z) < AR) hits.push([k, dmg, k]); } }
   else { let best = null, bd = AR; for (const k in BOSS) { const it = INTER[k], d = Math.hypot(it.X - ME.X, it.Z - ME.Z); if (d < bd) { bd = d; best = k; } } if (wbNear) hits.push([WB.key, dmg, null]); else if (best) hits.push([best, dmg, best]); }
-  if (typeof MOBS !== 'undefined') { if (s >= 2) { const L2 = []; MOBS.forEach(m => { if (m.dead <= 0) { const d0 = Math.hypot(m.x - ME.X, m.z - ME.Z); if (d0 < AR) L2.push([d0, m]); } }); L2.sort((p, q) => p[0] - q[0]).slice(0, capN).forEach(([, m]) => hits.push([m.key, dmg, 'mob' + m.i])); } else if (!hits.length) { const m = mobAt(ME.X, ME.Z, AR); if (m) hits.push([m.key, dmg, 'mob' + m.i]); } }
-  hits.forEach(([key, d, bk], j) => { if (bk && !bk.startsWith('mob')) raidHits[bk] = Date.now(); else if (!bk && WB) WB.mine += d; if (bk && bk.startsWith('mob')) { const m = MOBS[+bk.slice(3)]; m.myHit = Date.now(); bumpBig(key, d); setTimeout(() => room.sendFx(`mh:${m.i}:${d}c`), 500 + j * 90); return; } bumpBig(key, d); if (bk) { setTimeout(() => room.sendFx(`hit:${bk}:${d}c`), 600 + j * 120); } else { setTimeout(() => room.sendFx(`wbh:${d}c`), 600); } });
+  if (typeof MOBS !== 'undefined') { if (s >= 2) { const L2 = []; MOBS.forEach(m => { if (m.dead <= 0) { const d0 = Math.hypot(m.x - ME.X, m.z - ME.Z); if (d0 < AR) L2.push([d0, m]); } }); L2.sort((p, q) => p[0] - q[0]).slice(0, capN).forEach(([, m]) => hits.push([m.key, dmgM, 'mob' + m.i])); } else if (!hits.length) { const m = mobAt(ME.X, ME.Z, AR); if (m) hits.push([m.key, dmgM, 'mob' + m.i]); } }
+  hits.forEach(([key, d, bk], j) => { if (bk && !bk.startsWith('mob')) raidHits[bk] = Date.now(); else if (!bk && WB) WB.mine += d; if (bk && bk.startsWith('mob')) { const m = MOBS[+bk.slice(3)]; m.myHit = Date.now(); bumpBig(key, mobClamp(m, d), 25); setTimeout(() => room.sendFx(`mh:${m.i}:${d}c`), 500 + j * 90); return; } bumpBig(key, d); if (bk) { setTimeout(() => room.sendFx(`hit:${bk}:${d}c`), 600 + j * 120); } else { setTimeout(() => room.sendFx(`wbh:${d}c`), 600); } });
   if (cd('pts-sk' + s, 1500)) addPts(6 + s * 4 + (hits.length ? 6 : 0));
 }
 function updSkBtn() {
@@ -3280,7 +3280,7 @@ function rollItem(boost, minG) {
   return s + '99-' + Math.floor(Math.random() * ITAB[s].length) + '-' + rollGrade(boost || 0, minG);
 }
 // ===== v51: 스킬 4종 재설계 (차분하게) — 1 파이어볼 · 2 관통 일격 · 3 광역 폭풍 · 4 초광역 궁극기 =====
-const SKC = [0xff7a1a, 0x41c9ff, 0x2fe07a, 0xffd76a], SK_RG = [13, 14, 11, 20], SK_BUFF = [5, 6, 8, 10];
+const SKC = [0xff7a1a, 0x41c9ff, 0x2fe07a, 0xffd76a], SK_RG = [13, 14, 13, 24], SK_RGP = [13, 14, 11, 20], SK_BUFF = [5, 6, 8, 10];
 function skSnd(sl) {
   try {
     if (sl === 0) sfx((t, d) => { NZ(d, t, .35, .22, 'bandpass', 900, 1.2, 2600); N(d, t, 330, .28, 'sawtooth', .06, .005, 170); });
@@ -3309,15 +3309,15 @@ function skillFxN(a, t, mine, sl) {
     if (mine) quake(.22, .3);
   } else if (sl === 2) { // 🌪 광역 폭풍 — 반경 11, 초록 번개 + 소용돌이
     floatAt(a, '🌪 광역 폭풍', 'big'); setTimeout(() => floatAt(a, '광역!!', 'txt'), 300);
-    for (let i = 0; i < 3; i++) setTimeout(() => ringFx(P0.x, P0.z, i % 2 ? 0xffffff : col, 11, .1 + i * .02), i * 150);
+    for (let i = 0; i < 3; i++) setTimeout(() => ringFx(P0.x, P0.z, i % 2 ? 0xffffff : col, 13, .1 + i * .02), i * 150);
     for (let i = 0; i < 4; i++) { const an = i / 4 * 6.28 + .4, x = P0.x + Math.cos(an) * 6, z = P0.z + Math.sin(an) * 6; const m = mesh(GEO.cyl, FB(col, .32), [1.2, 4.4, 1.2], [x, 2.2, z]); m.material = m.material.clone(); m.userData.own = 1; fly(m, new THREE.Vector3(-Math.sin(an) * 2.4, 0, Math.cos(an) * 2.4), 1.2, 6); }
-    for (let i = 0; i < 6; i++) setTimeout(() => { const an = Math.random() * 6.28, d = 2 + Math.random() * 8, x = P0.x + Math.cos(an) * d, z = P0.z + Math.sin(an) * d; bolt(x, 9, z, x, .3, z, 0xc8ffd8); spawn(x, .5, z, 14, col, 3, 5, .6); }, 120 + i * 100);
+    for (let i = 0; i < 6; i++) setTimeout(() => { const an = Math.random() * 6.28, d = 2 + Math.random() * 10, x = P0.x + Math.cos(an) * d, z = P0.z + Math.sin(an) * d; bolt(x, 9, z, x, .3, z, 0xc8ffd8); spawn(x, .5, z, 14, col, 3, 5, .6); }, 120 + i * 100);
     spawn(P0.x, 1, P0.z, 60, col, 6, 3, 1); if (mine) quake(.35, .5);
   } else { // 💥 궁극기 — 반경 20, 황금 기둥 + 운석 비
     floatAt(a, '💥 궁극기', 'big'); [['궁극기!!!', 300], ['하늘이 갈라진다!', 650]].forEach(([tx, d]) => setTimeout(() => floatAt(a, tx, 'txt'), d));
     try { skillPower(a, 18, 0xffd76a, false); } catch (e) { console.warn(e); }
-    for (let i = 0; i < 3; i++) setTimeout(() => ringFx(P0.x, P0.z, i % 2 ? 0xff4d57 : 0xffd76a, 20, .1 + i * .02), 150 + i * 200);
-    for (let i = 0; i < 14; i++) setTimeout(() => { const an = Math.random() * 6.28, d = 2 + Math.random() * 16, x = P0.x + Math.cos(an) * d, z = P0.z + Math.sin(an) * d; const m = mesh(GEO.sph, FB(i % 2 ? 0xff9a2a : 0xffd76a), [.5, .5, .5], [x, 13, z]); fly(m, new THREE.Vector3(0, -22, 0), .58, 0); setTimeout(() => { spawn(x, .5, z, 36, i % 2 ? 0xff7a1a : 0xffd76a, 6, 6, .8); ringFx(x, z, 0xffb020, 4.5); try { if (i % 3 === 0) SND.crash(); } catch (e) {} }, 580); }, 300 + i * 85);
+    for (let i = 0; i < 3; i++) setTimeout(() => ringFx(P0.x, P0.z, i % 2 ? 0xff4d57 : 0xffd76a, 24, .1 + i * .02), 150 + i * 200);
+    for (let i = 0; i < 18; i++) setTimeout(() => { const an = Math.random() * 6.28, d = 2 + Math.random() * 20, x = P0.x + Math.cos(an) * d, z = P0.z + Math.sin(an) * d; const m = mesh(GEO.sph, FB(i % 2 ? 0xff9a2a : 0xffd76a), [.5, .5, .5], [x, 13, z]); fly(m, new THREE.Vector3(0, -22, 0), .58, 0); setTimeout(() => { spawn(x, .5, z, 36, i % 2 ? 0xff7a1a : 0xffd76a, 6, 6, .8); ringFx(x, z, 0xffb020, 4.5); try { if (i % 3 === 0) SND.crash(); } catch (e) {} }, 580); }, 300 + i * 85);
     if (mine) quake(.8, 1.1);
   }
   knock(a, [0, 0, 5, 9][sl], 1.4);
@@ -3332,7 +3332,8 @@ function skAim(R) {
 }
 const pkKind = (u, atk, sk, crit) => 'pk:' + id8(u) + ':' + Math.min(1679615, Math.max(1, Math.round(atk))).toString(36) + ':' + sk + (crit ? 'c' : ''); // 20자 제한 → 36진수로 압축
 const HIT_CAP = 999999; // v51: 몬스터·보스·레이드 1타 상한 (PK는 기존 99,999 유지)
-function bumpBig(key, d) { let left = Math.max(1, Math.round(d)), n = 0; while (left > 0 && n++ < 10) { const c = Math.min(99999, left); room.bumpCounter(key, c); left -= c; } }
+const SK_CAP = 2499999; // v54: 몬스터에게 들어가는 스킬 1타 상한 (남은 체력만큼만 실제로 깎아요)
+function bumpBig(key, d, mx) { let left = Math.max(1, Math.round(d)), n = 0; while (left > 0 && n++ < (mx || 10)) { const c = Math.min(99999, left); room.bumpCounter(key, c); left -= c; } }
 function dropItem(boost, minG) {
   const code = rollItem(boost, minG != null ? minG : boost >= 5 ? 5 : boost >= 3 ? 3 : 0), i = itemInfo(code); G.inv.push(code); dexSave();
   if (G.inv.length > 300) { const keep = new Set(eqList(G.eq)); G.inv.sort((a, b) => (keep.has(b) - keep.has(a)) || (itemInfo(b).r - itemInfo(a).r)); G.inv.length = 300; }
@@ -4531,19 +4532,19 @@ const MOB_ROS = [
   ['ghost', '👻 상장폐지 원혼', 445, 0xff3a4a], ['shark', '🦈 고래사냥 메갈로돈', 521, 0x1a2a40], ['wyv', '🐲 금리 폭풍 와이번', 610, 0x2e7ad1], ['zombie', '🧟 부실기업 거인', 715, 0x6a4a2a],
   ['bot', '🤖 퀀트 기계신', 838, 0xf2efe6], ['wyv', '🐉 대공황 흑룡', 920, 0x111118], ['ghost', '🌌 차트 밖의 혼돈', 970, 0xb69cff], ['wyv', '👑 파산의 군주 — 개미시티의 종말', 1000, 0x7a0a1a]
 ];
-const MOB_HP = L => Math.round(L <= 100 ? 100 * Math.pow(L, 1.65) : 100 * Math.pow(100, 1.65) * Math.pow(L / 100, 2.8));
+const MOB_HP = L => Math.round(L <= 100 ? 100 * Math.pow(L, 1.65) : 100 * Math.pow(100, 1.65) * Math.pow(L / 100, 1.2 + .7 * Math.log10(L / 100))); // v54: Lv300 ≈ 108만 · Lv1000 ≈ 1,580만 (옛 432만 · 1.26억)
 const MOB_ATK = L => Math.round(L <= 100 ? 2.5 * Math.pow(L, 1.02) : 2.5 * Math.pow(100, 1.02) * Math.pow(L / 100, 2.2));
 const MOB_EXP = L => Math.round(L <= 100 ? 21 * Math.pow(L, 1.27) : 7300 * Math.pow(L / 100, 2.6));
 const mobCoin = L => Math.round(L <= 100 ? 3 + L * .6 : 63 * Math.pow(L / 100, 1.6));
-const mobDropP = L => Math.min(.9, .06 * Math.exp(L * .0037)); // Lv1 6% → Lv100 약 9% → Lv300 18% → Lv500 38% → Lv700 약 80%
+const mobDropP = L => Math.min(.9, .06 * Math.exp(L * .0037)) * (L >= 700 ? .15 : L >= 500 ? .5 : 1); // v54: 처치가 빨라진 만큼 고레벨 드랍 하향 // Lv1 6% → Lv100 약 9% → Lv300 18% → Lv500 38% → Lv700 약 80%
 const mobMinG = L => L >= 700 ? 6 : L >= 500 ? 5 : L >= 300 ? 4 : L >= 150 ? 3 : L >= 80 ? 2 : L >= 30 ? 1 : 0;
 function mobDropRoll(K) {
   if (Math.random() >= mobDropP(K.lv) * LK()) return;
-  const n = K.lv >= 700 ? 2 : 1, boost = Math.min(20, K.lv / 40), mg = mobMinG(K.lv);
+  const n = 1, boost = Math.min(20, K.lv / 40), mg = mobMinG(K.lv);
   for (let i = 0; i < n; i++) setTimeout(() => dropItem(boost, mg), 700 + i * 900);
 }
 const MOBK = MOB_ROS.map(([id, name, lv, col, sc]) => ({ id, name, lv, hp: MOB_HP(lv), exp: MOB_EXP(lv), atk: MOB_ATK(lv), col, sc: lv >= 40 ? Math.round((1.4 + 2.2 * Math.log(lv / 40) / Math.log(25)) * 100) / 100 : sc, elite: lv >= 40 ? 1 : 0 }));
-window.__mobk = MOBK; window.__scene = scene; window.__cam = camera; window.__THREE = THREE;
+window.__mobk = MOBK; window.__mobSkill = (i, k) => mobSkill(MOBS[i], 5, k); window.__scene = scene; window.__cam = camera; window.__THREE = THREE;
 // 입구에서 가까울수록 약하고, 멀수록 강함
 const MOB_HOME = [[-31, 22, 0], [-34, 33, 0], [-36, 18, 0], [-39, 37, 0], [-42, 22, 1], [-44, 34, 1], [-46, 12, 1], [-49, 40, 1], [-50, 20, 2], [-55, 34, 2], [-57, 22, 2], [-60, 40, 2], [-62, 30, 3], [-66, 38, 3], [-70, 26, 3], [-73, 36, 3], [-74, 18, 4], [-76, 42, 4],
   [-95, 10, 4], [-108, 4, 4], [-122, 12, 5], [-136, 6, 5], [-100, -12, 5], [-117, -20, 6], [-133, -14, 6], [-145, -30, 6], [-105, -42, 7], [-128, -52, 7],
@@ -4607,28 +4608,33 @@ MOBS.forEach(m => {
   const d = el('div', 'olab bossl moblab'); d.append(el('b', null, `Lv.${m.K.lv} ${m.K.name}`), el('div', 'hpb', '')); d.lastChild.appendChild(el('i')); labels.appendChild(d); mobLabs[m.key] = d;
 });
 function mobHp(m) { return m.K.hp - (m.hits % m.K.hp); }
+function mobClamp(m, d) { return Math.max(1, Math.min(Math.round(d), mobHp(m))); }
 function mobDraw(m) { const d = mobLabs[m.key]; d.querySelector('.hpb i').style.width = (mobHp(m) / m.K.hp * 100) + '%'; }
 function mobCounter(m, n) {
   const prev = m.hits, first = !m.init; m.init = 1; m.hits = n; mobDraw(m);
   if (!first && Math.floor(n / m.K.hp) > Math.floor(prev / m.K.hp)) { // 처치!
-    m.dead = 1.6; const P = m.o.g.position; spawn(P.x, 1, P.z, 50, m.K.col, 5, 6, 1); ringFx(P.x, P.z, 0xffd76a, 4); try { const mine = m.myHit && Date.now() - m.myHit < 12000; withVol(mine ? 1 : volAt(P.x, P.z) * .55, () => SND.ko()); } catch (e) {}
+    m.dead = 1.6; m.enr = 0; const P = m.o.g.position; spawn(P.x, 1, P.z, 50, m.K.col, 5, 6, 1); ringFx(P.x, P.z, 0xffd76a, 4); try { const mine = m.myHit && Date.now() - m.myHit < 12000; withVol(mine ? 1 : volAt(P.x, P.z) * .55, () => SND.ko()); } catch (e) {}
     if (m.myHit && Date.now() - m.myHit < 12000) { try { G.md = G.md || {}; G.md[m.K.lv] = (G.md[m.K.lv] | 0) + 1; saveG(); if (G.md[m.K.lv] === 1) { const nn = dexN(); if (DEX_RW.some(r => dexNeed(r) === nn && !(G.mdr || {})[nn])) setTimeout(() => toast(T('📖 몬스터 도감 보상이 도착했어요! 도감 🧌 탭에서 받으세요', '📖 Monster dex reward ready! Claim it in the 🧌 tab')), 1500); } } catch (e) {} addPts(m.K.exp); addCoin(mobCoin(m.K.lv)); qProg('mob'); setTimeout(() => floatAt(myAnt, `🏆 ${m.K.name.split(' ').slice(1).join(' ')} 처치 +${Math.round(m.K.exp * ptsMul(lvOf(G.pts)))}`, 'big'), 300); mobDropRoll(m.K); }
   }
 }
 // v31: 강한 몬스터의 기술 — 예고 장판이 1.2초 이상 보이니 피할 수 있어요 (모바일 기준 무난하게)
-function mobSkill(m, d, force) { const K = m.K, lv = K.lv, el = !!K.elite, nm = K.name.split(' ')[0], sc = mobSc(m); if (lv < 6) return false; const opts = [];
-  if (d > 2.5) opts.push('shot'); if (lv >= 16 || el) { if (d < 5.5) opts.push('slam'); if (d > 3 && /cub|zombie|bot|shark|wyv|cat|beetle|rat|mantis|centipede/.test(K.id)) opts.push('charge'); } if (!opts.length) return false;
+function mobSkill(m, d, force) { const K = m.K, lv = K.lv, el = !!K.elite, nm = K.name.split(' ')[0], sc = mobSc(m), KA = K.atk * (m.enr ? 1.3 : 1); if (lv < 6) return false; const opts = [];
+  if (d > 2.5) opts.push('shot'); if (el && lv >= 120) opts.push('rain'); if (el && lv >= 250 && d < 9) opts.push('wave'); if (el && lv >= 450 && d < 9) opts.push('cross'); if (lv >= 16 || el) { if (d < 5.5) opts.push('slam'); if (d > 3 && /cub|zombie|bot|shark|wyv|cat|beetle|rat|mantis|centipede/.test(K.id)) opts.push('charge'); } if (!opts.length) return false;
   const k = force || opts[Math.floor(Math.random() * opts.length)], say = (t2) => floatAtObj(m.x, 2.2 + sc * 1.2, m.z, t2);
-  if (k === 'shot') { addZone({ kind: 'circle', x: ME.X, z: ME.Z, r: 1.7, warn: 1.35, dmg: Math.round(K.atk * 1.2), why: nm + ' 🎯', col: 0xff9a3a }); say('🎯 저격!'); for (let i = 0; i < 6; i++) setTimeout(() => spawn(m.x + (ME.X - m.x) * i / 6, 1.4, m.z + (ME.Z - m.z) * i / 6, 2, 0xffb35a, .5, 0, .5), i * 70); return true; }
-  if (k === 'slam') { addZone({ kind: 'circle', x: m.x, z: m.z, r: 3 + sc * .5, warn: 1.4, dmg: Math.round(K.atk * 1.6), why: nm + ' 💫', col: 0xffd23a, stun: el ? 1.4 : 1.1 }); say('💥 내려찍기! (기절 주의)'); m.jump = 1.4; return true; }
-  if (k === 'charge') { const ang = Math.atan2(ME.X - m.x, ME.Z - m.z); addZone({ kind: 'line', x: m.x, z: m.z, ang, len: Math.min(12, d + 3), w: 2.2, warn: 1.25, dmg: Math.round(K.atk * 1.5), why: nm + ' 💨', col: 0xff3a5a }); say('💨 돌진!'); return true; } return false; }
+  if (k === 'shot') { addZone({ kind: 'circle', x: ME.X, z: ME.Z, r: 1.7, warn: 1.35, dmg: Math.round(KA * 1.2), why: nm + ' 🎯', col: 0xff9a3a }); say('🎯 저격!'); for (let i = 0; i < 6; i++) setTimeout(() => spawn(m.x + (ME.X - m.x) * i / 6, 1.4, m.z + (ME.Z - m.z) * i / 6, 2, 0xffb35a, .5, 0, .5), i * 70); return true; }
+  if (k === 'slam') { addZone({ kind: 'circle', x: m.x, z: m.z, r: 3 + sc * .5, warn: 1.4, dmg: Math.round(KA * 1.6), why: nm + ' 💫', col: 0xffd23a, stun: el ? 1.4 : 1.1 }); say('💥 내려찍기! (기절 주의)'); m.jump = 1.4; return true; }
+  if (k === 'charge') { const ang = Math.atan2(ME.X - m.x, ME.Z - m.z); addZone({ kind: 'line', x: m.x, z: m.z, ang, len: Math.min(12, d + 3), w: 2.2, warn: 1.25, dmg: Math.round(KA * 1.5), why: nm + ' 💨', col: 0xff3a5a }); say('💨 돌진!'); return true; }
+  if (k === 'rain') { say(T('☄ 파편 낙하!', '☄ Falling debris!')); for (let i = 0; i < 4; i++) setTimeout(() => { if (m.dead > 0 || HPS.ko) return; const an = Math.random() * 6.28, rr = i === 0 ? 0 : 2 + Math.random() * 4; addZone({ kind: 'circle', x: ME.X + Math.cos(an) * rr, z: ME.Z + Math.sin(an) * rr, r: 1.9, warn: 1.4, dmg: Math.round(KA * .9), why: nm + ' ☄', col: 0xff7a3a }); }, i * 380); return true; }
+  if (k === 'wave') { say(T('🌊 충격파! 안쪽이나 바깥으로!', '🌊 Shockwave! Get in or get out!')); addZone({ kind: 'donut', x: m.x, z: m.z, r0: 3.2, r: 8.5 + sc * .6, warn: 1.7, dmg: Math.round(KA * 1.4), why: nm + ' 🌊', col: 0x4fc3ff }); return true; }
+  if (k === 'cross') { say(T('✚ 십자 베기!', '✚ Cross slash!')); const a0 = Math.atan2(ME.X - m.x, ME.Z - m.z); for (let q = 0; q < 4; q++) addZone({ kind: 'line', x: m.x, z: m.z, ang: a0 + q * Math.PI / 2 + .39, len: 13, w: 2, warn: 1.5, dmg: Math.round(KA * 1.5), why: nm + ' ✚', col: 0xff3a5a }); return true; }
+  return false; }
 function stunMe(sec) { if (!entered || HPS.ko) return; HPS.stun = Date.now() + sec * 1000; ME.target = null; if (myAnt) floatAt(myAnt, '💫 기절!', 'big'); try { if (navigator.vibrate) navigator.vibrate([60, 40, 60]); } catch (e) {}
   const t0 = Date.now(); const iv = setInterval(() => { if (Date.now() > HPS.stun || !myAnt) { clearInterval(iv); return; } const P = myAnt.root.position, H = myAnt.labelH || 2.35, q = (Date.now() - t0) / 120; spawn(P.x + Math.cos(q) * .55, (P.y || 0) + H + .2, P.z + Math.sin(q) * .55, 1, 0xffe14a, .2, 0, .35); }, 60); }
 function mobAt(x, z, R) { let best = null, bd = R; MOBS.forEach(m => { if (m.dead > 0) return; const d = Math.hypot(m.x - x, m.z - z); if (d < bd) { bd = d; best = m; } }); return best; }
 function hitMob(m) {
   if (!m || m.dead > 0 || Date.now() < (HPS.stun || 0) || !cd('atk', atkCd(260))) return; ME.ry = Math.atan2(m.x - ME.X, m.z - ME.Z);
   const tier = lvOf(G.pts); let dmg = Math.round(atkOf(tier) * (BUFF.until > Date.now() ? 1.5 : 1)); const crit = Math.random() < critP(tier); if (crit) dmg *= 2; dmg = Math.min(dmg, HIT_CAP);
-  m.myHit = Date.now(); bumpBig(m.key, dmg); room.sendFx(`mh:${m.i}:${dmg}${crit ? 'c' : ''}`);
+  m.myHit = Date.now(); bumpBig(m.key, mobClamp(m, dmg)); room.sendFx(`mh:${m.i}:${dmg}${crit ? 'c' : ''}`);
   if (cd('pts-hit', 250)) addPts(3 + Math.floor(Math.min(100, m.K.lv) / 2));
 }
 function mobFx(fx) { const p = String(fx.kind).split(':'), m = MOBS[parseInt(p[1], 10)]; if (!m) return; const dmg = parseInt(p[2], 10) || 1, crit = /c$/.test(p[2] || ''); const a = antOf(fx.uid); if (a) a.act = { k: 'punch', t0: clock.elapsedTime, d: .45 };
@@ -4650,7 +4656,7 @@ function tickMobs(dt, t) {
     if (m.shake > 0) { m.shake -= dt; B.position.x = Math.sin(t * 90) * .15; } else B.position.x = 0;
     if (m.dead > 0) { m.dead -= dt; G0.visible = m.dead < .1 || Math.floor(m.dead * 8) % 2 === 0; G0.scale.setScalar(mobSc(m) * Math.max(.05, m.dead > 1 ? 1 : m.dead)); if (m.dead <= 0) { G0.visible = true; G0.scale.setScalar(mobSc(m) ||  1); spawn(m.x, 1, m.z, 20, 0x9ee8ff, 2, -2, 1); } }
     // 근처 개미 공격 (예고 장판)
-    if (entered && m.dead <= 0 && !HPS.ko && (ME.Y || 0) < 1.5) { const d = Math.hypot(ME.X - m.x, ME.Z - m.z); m.atkT -= dt; m.skT = m.skT == null ? 2 + Math.random() * 5 : m.skT - dt; if (d < 10 && m.skT <= 0 && mobSkill(m, d)) { m.skT = (m.K.elite ? 6 : 8.5) + Math.random() * 4; m.atkT = Math.max(m.atkT, 1.6); } else if (d < 4.6 && m.atkT <= 0) { m.atkT = 2.6 + Math.random(); addZone({ kind: 'circle', x: ME.X, z: ME.Z, r: 1.4, warn: 1.3, dmg: m.K.atk, why: m.K.name.split(' ')[0], col: 0xff5a3a, boom: false }); } }
+    if (entered && m.dead <= 0 && !HPS.ko && (ME.Y || 0) < 1.5) { const d = Math.hypot(ME.X - m.x, ME.Z - m.z); m.atkT -= dt; m.skT = m.skT == null ? 2 + Math.random() * 5 : m.skT - dt; if (!m.enr && m.K.elite && d < 14 && mobHp(m) < m.K.hp * .3) { m.enr = 1; m.skT = Math.min(m.skT, .8); floatAtObj(m.x, 3.6, m.z, T('💢 격노!', '💢 Enraged!')); try { quake(.2, .3); } catch (e) {} } if (d < 10 && m.skT <= 0 && mobSkill(m, d)) { m.skT = ((m.K.elite ? 6 : 8.5) + Math.random() * 4) * (m.enr ? .6 : 1); m.atkT = Math.max(m.atkT, 1.6); } else if (d < 4.6 && m.atkT <= 0) { m.atkT = 2.6 + Math.random(); addZone({ kind: 'circle', x: ME.X, z: ME.Z, r: 1.4, warn: 1.3, dmg: m.K.atk, why: m.K.name.split(' ')[0], col: 0xff5a3a, boom: false }); } }
   });
 }
 function placeMobLabs() { const cx = entered ? ME.X : cam.tx, cz = entered ? ME.Z : cam.tz; const near = MOBS.filter(m => m.dead <= 0).map(m => [m, Math.hypot(m.x - cx, m.z - cz)]).filter(a => a[1] < 22).sort((a, b) => a[1] - b[1]).slice(0, 6).map(a => a[0]); MOBS.forEach(m => { const d = mobLabs[m.key]; if (!near.includes(m)) { d.style.visibility = 'hidden'; return; } place(d, m.x, (m.K.id === 'wyv' ? 4.2 : m.K.id === 'bat' || m.K.id === 'ghost' ? 3.6 : m.K.id === 'zombie' ? 3 : 2.4), m.z); }); }
@@ -6358,7 +6364,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '53';
+const APP_V = '54';
 {
   let shown = false;
   const check = async () => {
@@ -6481,7 +6487,7 @@ function pkTarget() { if (!entered || !(inPK(ME.X, ME.Z) || (DUEL && Date.now() 
 
 function pkTargets(R) { const L = []; remotes.forEach((r, uid) => { if (!canFight(uid) || (r.data && r.data.pose === 'lie')) return; const d = Math.hypot(r.cur.x - ME.X, r.cur.z - ME.Z); if (d < R) L.push([uid, d]); }); return L.sort((a, b) => a[1] - b[1]).map(x => x[0]); }
 function pkSkill(t, s) { // 스킬도 PK 상대에게 맞아요: 1·2번 단일, 3번 반경 11(4명), 4번 반경 20(8명)
-  const L = pkTargets(SK_RG[s]); if (!L.length) return; const atk = Math.round(atkOf(t) * ampK());
+  const L = pkTargets(SK_RGP[s]); if (!L.length) return; const atk = Math.round(atkOf(t) * ampK());
   L.slice(0, [1, 1, 4, 8][s]).forEach((u, j) => { const crit = Math.random() < critP(t); setTimeout(() => room.sendFx(pkKind(u, atk, s + 1, crit)), 350 + j * 90); });
 }
 function pkAttack() {
