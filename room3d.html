@@ -1966,7 +1966,7 @@ function onFxCb(fx) { // 남의 효과: 거리에 따라 소리 줄이기 · 남
 function onFxCb0(fx) {
   fxLog.push(fx.kind + '@' + fx.uid); if (fxLog.length > 60) fxLog.shift();
   if (entered && fx.uid !== live.uid && /^(sk:|hit:|mh:)/.test(String(fx.kind || ''))) { const a0 = antOf(fx.uid); if (a0 && Math.hypot(a0.root.position.x - ME.X, a0.root.position.z - ME.Z) > 45) return; } // 🤫 멀리서 싸우는 소리는 안 들림
-  if (String(fx.kind || '').startsWith('sk:')) { const a = antOf(fx.uid), pr = fx.kind.split(':'), t = parseInt(pr[1], 10), sl = parseInt(pr[2] || '0', 10) || 0; if (a && SK[t]) skillFx(a, t, fx.uid === live.uid, sl); return; }
+  if (String(fx.kind || '').startsWith('sk:')) { const a = antOf(fx.uid), pr = fx.kind.split(':'), t = parseInt(pr[1], 10), sl = parseInt(pr[2] || '0', 10) || 0; if (a && SK[t]) skillFx(a, t, fx.uid === live.uid, sl, pr[3] === 'o'); return; }
   if (/^(aw:|awu:|gk:)/.test(String(fx.kind || ''))) { awkFx(fx); return; }
   if (/^jp:/.test(String(fx.kind || ''))) { jackFx(fx); return; }
   if (fx.kind === 'final1e8') { if (fx.uid !== live.uid) { addLog(`♾️ ${nickOf(fx.uid)}님이 XP 1억 「원복신」 달성!!! 🎆`, true); try { coinRain(5); } catch (e) {} } return; }
@@ -3040,7 +3040,8 @@ function tickFlyers(dt) { for (let i = flyers.length - 1; i >= 0; i--) { const f
 const candleM = { r: new THREE.MeshBasicMaterial({ color: 0xff2030, toneMapped: false }), g: new THREE.MeshBasicMaterial({ color: 0x2fe07a, toneMapped: false }) };
 function ringFx(x, z, col, size, y = .1) { const m = new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: .85, side: THREE.DoubleSide, toneMapped: false, depthWrite: false }); const r = mesh(ringGeo, m, [1, 1, 1], [x, y, z], [-Math.PI / 2, 0, 0]); r.userData.own = 1; scene.add(r); flyers.push({ m: r, v: new THREE.Vector3(), life: .9, t: 0, spin: 0, grav: 0, grow: size }); }
 function tickFlyersG(dt) { flyers.forEach(f => { if (f.grow) f.m.scale.setScalar(1 + (f.t / f.life) * f.grow); }); tickFlyers(dt); }
-function skillFx(a, t, mine, sl) {
+function skillFx(a, t, mine, sl, old) {
+  if (!old && !(sl === 3 && FINALS.has(t))) return skillFxN(a, t, mine, sl);
   sl = sl || 0; const S0 = SK[t]; if (!S0) return; let S = S0;
   if (sl === 1) S = ['⚡ 연속 타격', '', 6, 0x41c9ff, ['번쩍!', '연타!!', '콰콰쾅!'], 'dash'];
   else if (sl === 2) S = ['🌪 광역 폭풍', '', 9, 0x2fe07a, ['폭풍!', '휘이잉~', '광역!!'], 'wave'];
@@ -3110,9 +3111,9 @@ function squeezeFx(fx) {
 const skCd = {};
 // ✨ 스킬 슬롯 4개: 1단계 기본기 · 7단계 연속타격 · 15단계 광역폭풍 · 23단계 궁극기
 var SLOT_T = [0, 6, 14, 22]; const FINALS = new Set([29, 49, 99]);
-var SLOT_NM = [null, ['⚡ 연속 타격', '세 번 연달아 꽂히는 번개 연타'], ['🌪 광역 폭풍', '주변 몬스터 전부에게 폭풍 피해'], ['💥 궁극기', '하늘이 갈라지는 최강의 한 방']];
-var SLOT_CD = [4, 6, 9, 16], SLOT_MUL = [3, 5, 4, 12], SLOT_KEY = ['q', 'r', 'f', 'g'];
-function skName(t, s) { return s === 0 ? SK[t][0] : FINALS.has(t) && s === 3 ? SK[t][0] : SLOT_NM[s][0]; }
+var SLOT_NM = [['🔥 파이어볼', '화염구 한 발 — 가볍고 빠른 기본기'], ['⚡ 관통 일격', '한 명에게 꽂히는 강력한 일점 타격'], ['🌪 광역 폭풍', '주변(반경 11) 전부에게 폭풍 피해'], ['💥 궁극기', '넓은 범위(반경 20)를 쓸어버리는 초광역']];
+var SLOT_CD = [4, 6, 9, 16], SLOT_MUL = [3, 6, 4, 12], SLOT_KEY = ['q', 'r', 'f', 'g'];
+function skName(t, s) { return FINALS.has(t) && s === 3 ? SK[t][0] : SLOT_NM[s][0]; }
 function skCdLeft(s) { return Math.max(0, (skCd['s' + s] || 0) - Date.now()); }
 
 /* ---- 🙏 광장 안: 모두 작은 크기(모습은 그대로) · 스킬 금지 — 전광판 보며 조용히 소통 ---- */
@@ -3124,23 +3125,24 @@ function castSkill(s) {
   s = s | 0; if (!entered || HPS.ko) return; const t = lvOf(G.pts); if (!SK[t]) return;
   if (t < SLOT_T[s]) { toast(`🔒 ${SLOT_NM[s] ? SLOT_NM[s][0] : '스킬'} 은 ${SLOT_T[s] + 1}단계부터!`); return; }
   const left = skCdLeft(s); if (left > 0) { toast(`${skName(t, s)} 쿨타임 ${Math.ceil(left / 1000)}초`); return; }
+  if (s < 2 && !REALM) { const tp = skAim(SK_RG[s]); if (tp) { ME.ry = Math.atan2(tp.x - ME.X, tp.z - ME.Z); if (myAnt) myAnt.ry = ME.ry; } }
   skCd['s' + s] = Date.now() + SLOT_CD[s] * 1000 / (1 + GS().spd / 200); room.sendFx('sk:' + t + ':' + s);
   pkSkill(t, s);
-  const buff = (BUFF.until > Date.now() ? 1.5 : 1) * ampK(), raw = Math.round(atkOf(t) * SLOT_MUL[s] * buff * (FINALS.has(t) && s === 3 ? (t === 99 ? 2.4 : t === 49 ? 2 : 1.6) : 1)), dmg = Math.min(99999, raw);
+  const buff = (BUFF.until > Date.now() ? 1.5 : 1) * ampK(), raw = Math.round(atkOf(t) * SLOT_MUL[s] * buff * (FINALS.has(t) && s === 3 ? (t === 99 ? 2.4 : t === 49 ? 2 : 1.6) : 1)), dmg = Math.min(HIT_CAP, raw);
   if (REALM) { try { REALM.inst.onSkill && REALM.inst.onSkill(s, raw); } catch (e) { console.warn(e); } return; }
   const hits = []; // [counterKey, 피해, 보스키|null]
-  const wbNear = WB && !WB.dead && Math.hypot(WB_POS.x - ME.X, WB_POS.z - ME.Z) < 15;
-  if (s === 2) { if (wbNear) hits.push([WB.key, dmg, null]); for (const k in BOSS) { const it = INTER[k]; if (Math.hypot(it.X - ME.X, it.Z - ME.Z) < 11) hits.push([k, dmg, k]); } }
-  else { let best = null, bd = 11; for (const k in BOSS) { const it = INTER[k], d = Math.hypot(it.X - ME.X, it.Z - ME.Z); if (d < bd) { bd = d; best = k; } } if (wbNear) hits.push([WB.key, dmg, null]); else if (best) hits.push([best, dmg, best]); }
-  if (typeof MOBS !== 'undefined') { if (s === 2) MOBS.forEach(m => { if (m.dead <= 0 && Math.hypot(m.x - ME.X, m.z - ME.Z) < 11) hits.push([m.key, dmg, 'mob' + m.i]); }); else if (!hits.length) { const m = mobAt(ME.X, ME.Z, 11); if (m) hits.push([m.key, dmg, 'mob' + m.i]); } }
-  hits.forEach(([key, d, bk], j) => { if (bk && !bk.startsWith('mob')) raidHits[bk] = Date.now(); else if (!bk && WB) WB.mine += d; if (bk && bk.startsWith('mob')) { const m = MOBS[+bk.slice(3)]; m.myHit = Date.now(); room.bumpCounter(key, d); setTimeout(() => room.sendFx(`mh:${m.i}:${d}c`), 500 + j * 90); return; } room.bumpCounter(key, d); if (bk) { setTimeout(() => room.sendFx(`hit:${bk}:${d}c`), 600 + j * 120); } else { setTimeout(() => room.sendFx(`wbh:${d}c`), 600); } });
+  const AR = SK_RG[s], capN = s === 3 ? 12 : 8, wbNear = WB && !WB.dead && Math.hypot(WB_POS.x - ME.X, WB_POS.z - ME.Z) < (s === 3 ? 24 : 15);
+  if (s >= 2) { if (wbNear) hits.push([WB.key, dmg, null]); for (const k in BOSS) { const it = INTER[k]; if (Math.hypot(it.X - ME.X, it.Z - ME.Z) < AR) hits.push([k, dmg, k]); } }
+  else { let best = null, bd = AR; for (const k in BOSS) { const it = INTER[k], d = Math.hypot(it.X - ME.X, it.Z - ME.Z); if (d < bd) { bd = d; best = k; } } if (wbNear) hits.push([WB.key, dmg, null]); else if (best) hits.push([best, dmg, best]); }
+  if (typeof MOBS !== 'undefined') { if (s >= 2) { const L2 = []; MOBS.forEach(m => { if (m.dead <= 0) { const d0 = Math.hypot(m.x - ME.X, m.z - ME.Z); if (d0 < AR) L2.push([d0, m]); } }); L2.sort((p, q) => p[0] - q[0]).slice(0, capN).forEach(([, m]) => hits.push([m.key, dmg, 'mob' + m.i])); } else if (!hits.length) { const m = mobAt(ME.X, ME.Z, AR); if (m) hits.push([m.key, dmg, 'mob' + m.i]); } }
+  hits.forEach(([key, d, bk], j) => { if (bk && !bk.startsWith('mob')) raidHits[bk] = Date.now(); else if (!bk && WB) WB.mine += d; if (bk && bk.startsWith('mob')) { const m = MOBS[+bk.slice(3)]; m.myHit = Date.now(); bumpBig(key, d); setTimeout(() => room.sendFx(`mh:${m.i}:${d}c`), 500 + j * 90); return; } bumpBig(key, d); if (bk) { setTimeout(() => room.sendFx(`hit:${bk}:${d}c`), 600 + j * 120); } else { setTimeout(() => room.sendFx(`wbh:${d}c`), 600); } });
   if (cd('pts-sk' + s, 1500)) addPts(6 + s * 4 + (hits.length ? 6 : 0));
 }
 function updSkBtn() {
   const t = lvOf(G.pts); for (let s = 0; s < 4; s++) { const b = $('sk' + s); if (!b) continue; const open = !!SK[t] && t >= SLOT_T[s]; b.classList.toggle('lock', !open);
-    const left = Math.ceil(skCdLeft(s) / 1000), ic = s === 0 ? (FINALS.has(t) ? SK[t][0].split(' ')[0] : SK[t] ? SK[t][0].split(' ')[0] : '✨') : skName(t, s).split(' ')[0];
+    const left = Math.ceil(skCdLeft(s) / 1000), ic = skName(t, s).split(' ')[0];
     const lb = !open ? `🔒<small>${SLOT_T[s] + 1}단계</small>` : left ? `⏳<small>${left}s</small>` : `${ic}<small>${SLOT_KEY[s].toUpperCase()}</small>`;
-    if (b.dataset.l !== lb) { b.dataset.l = lb; b.innerHTML = lb; b.title = open ? skName(t, s) + ' — ' + (s === 0 ? SK[t][1] : SLOT_NM[s][1]) : ''; } }
+    if (b.dataset.l !== lb) { b.dataset.l = lb; b.innerHTML = lb; b.title = open ? skName(t, s) + ' — ' + (FINALS.has(t) && s === 3 ? SK[t][1] : SLOT_NM[s][1]) : ''; } }
   const o = $('aSk'); if (o) o.style.display = 'none';
 }
 setInterval(updSkBtn, 500);
@@ -3237,6 +3239,52 @@ function rollItem(boost, minG) {
   const s = Math.random() < .16 ? 'w' : SLOT_KEYS[Math.floor(Math.random() * SLOT_KEYS.length)];
   return s + '99-' + Math.floor(Math.random() * ITAB[s].length) + '-' + rollGrade(boost || 0, minG);
 }
+// ===== v51: 스킬 4종 재설계 (차분하게) — 1 파이어볼 · 2 관통 일격 · 3 광역 폭풍 · 4 초광역 궁극기 =====
+const SKC = [0xff7a1a, 0x41c9ff, 0x2fe07a, 0xffd76a], SK_RG = [13, 14, 11, 20], SK_BUFF = [5, 6, 8, 10];
+function skillFxN(a, t, mine, sl) {
+  sl = sl | 0; if (sl < 0 || sl > 3) sl = 3;
+  const P0 = a.root.position, ry = a.ry, fx = Math.sin(ry), fz = Math.cos(ry), col = SKC[sl];
+  a.act = { k: 'cheer', t0: clock.elapsedTime, d: sl >= 2 ? 1.1 : .5};
+  try { SND.fire(); } catch (e) {}
+  if (mine) { BUFF.until = Date.now() + SK_BUFF[sl] * 1000; hpUi(); }
+  const bolt = (x1, y1, z1, x2, y2, z2, c) => { const pts = [new THREE.Vector3(x1, y1, z1), new THREE.Vector3(x2, y2, z2)]; const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: c, transparent: true, toneMapped: false })); scene.add(l); rpgPieces.push({ line: l, t: -.4 }); };
+  if (sl === 0) { // 🔥 파이어볼 — 작고 빠른 화염구 한 발
+    floatAt(a, '🔥 파이어볼', 'txt');
+    const m = mesh(GEO.sph, FB(0xff7a1a), [.42, .42, .42], [P0.x + fx * 1.2, 1.5, P0.z + fz * 1.2]); fly(m, new THREE.Vector3(fx * 17, 0, fz * 17), .5, 0);
+    for (let i = 0; i < 5; i++) setTimeout(() => spawn(P0.x + fx * (1.5 + i * 1.6), 1.5, P0.z + fz * (1.5 + i * 1.6), 4, 0xffa040, 2, 1, .4), i * 90);
+    setTimeout(() => { const x = P0.x + fx * 8.5, z = P0.z + fz * 8.5; spawn(x, 1.2, z, 26, 0xff7a1a, 4, 5, .6); ringFx(x, z, 0xff7a1a, 3); try { SND.punch(false); } catch (e) {} }, 480);
+  } else if (sl === 1) { // ⚡ 관통 일격 — 앞으로 길게 꽂히는 푸른 창
+    floatAt(a, '⚡ 관통 일격', 'big');
+    const b = mesh(GEO.box, FB(0x9ee8ff, .9), [.28, .28, 15], [P0.x + fx * 8.5, 1.5, P0.z + fz * 8.5], [0, ry, 0]); b.material = b.material.clone(); b.userData.own = 1; fly(b, new THREE.Vector3(0, 0, 0), .35, 0);
+    for (let i = 0; i < 4; i++) setTimeout(() => ringFx(P0.x + fx * (3 + i * 3), P0.z + fz * (3 + i * 3), col, 2.2), i * 60);
+    setTimeout(() => { const x = P0.x + fx * 12, z = P0.z + fz * 12; spawn(x, 1.2, z, 40, col, 5, 5, .7); ringFx(x, z, col, 4); try { SND.punch(true); } catch (e) {} }, 260);
+    if (mine) quake(.22, .3);
+  } else if (sl === 2) { // 🌪 광역 폭풍 — 반경 11, 초록 번개 + 소용돌이
+    floatAt(a, '🌪 광역 폭풍', 'big'); setTimeout(() => floatAt(a, '광역!!', 'txt'), 300);
+    for (let i = 0; i < 3; i++) setTimeout(() => ringFx(P0.x, P0.z, i % 2 ? 0xffffff : col, 11, .1 + i * .02), i * 150);
+    for (let i = 0; i < 4; i++) { const an = i / 4 * 6.28 + .4, x = P0.x + Math.cos(an) * 6, z = P0.z + Math.sin(an) * 6; const m = mesh(GEO.cyl, FB(col, .32), [1.2, 4.4, 1.2], [x, 2.2, z]); m.material = m.material.clone(); m.userData.own = 1; fly(m, new THREE.Vector3(-Math.sin(an) * 2.4, 0, Math.cos(an) * 2.4), 1.2, 6); }
+    for (let i = 0; i < 6; i++) setTimeout(() => { const an = Math.random() * 6.28, d = 2 + Math.random() * 8, x = P0.x + Math.cos(an) * d, z = P0.z + Math.sin(an) * d; bolt(x, 9, z, x, .3, z, 0xc8ffd8); spawn(x, .5, z, 14, col, 3, 5, .6); }, 120 + i * 100);
+    spawn(P0.x, 1, P0.z, 60, col, 6, 3, 1); if (mine) quake(.35, .5);
+  } else { // 💥 궁극기 — 반경 20, 황금 기둥 + 운석 비
+    floatAt(a, '💥 궁극기', 'big'); [['궁극기!!!', 300], ['하늘이 갈라진다!', 650]].forEach(([tx, d]) => setTimeout(() => floatAt(a, tx, 'txt'), d));
+    try { skillPower(a, 18, 0xffd76a, false); } catch (e) { console.warn(e); }
+    for (let i = 0; i < 3; i++) setTimeout(() => ringFx(P0.x, P0.z, i % 2 ? 0xff4d57 : 0xffd76a, 20, .1 + i * .02), 150 + i * 200);
+    for (let i = 0; i < 14; i++) setTimeout(() => { const an = Math.random() * 6.28, d = 2 + Math.random() * 16, x = P0.x + Math.cos(an) * d, z = P0.z + Math.sin(an) * d; const m = mesh(GEO.sph, FB(i % 2 ? 0xff9a2a : 0xffd76a), [.5, .5, .5], [x, 13, z]); fly(m, new THREE.Vector3(0, -22, 0), .58, 0); setTimeout(() => { spawn(x, .5, z, 36, i % 2 ? 0xff7a1a : 0xffd76a, 6, 6, .8); ringFx(x, z, 0xffb020, 4.5); try { if (i % 3 === 0) SND.crash(); } catch (e) {} }, 580); }, 300 + i * 85);
+    if (mine) quake(.8, 1.1);
+  }
+  knock(a, [0, 0, 5, 9][sl], 1.4);
+}
+// 가장 가까운 적(몬스터·보스·PK 상대)을 향해 몸을 돌려요 — 단일 스킬용
+function skAim(R) {
+  let b = null, bd = R;
+  if (typeof MOBS !== 'undefined') MOBS.forEach(m => { if (m.dead <= 0) { const d = Math.hypot(m.x - ME.X, m.z - ME.Z); if (d < bd) { bd = d; b = { x: m.x, z: m.z }; } } });
+  for (const k in BOSS) { const it = INTER[k]; if (!it) continue; const d = Math.hypot(it.X - ME.X, it.Z - ME.Z); if (d < bd) { bd = d; b = { x: it.X, z: it.Z }; } }
+  const pk = pkTargets(R)[0]; if (pk) { const p = posOf(pk); if (p) { const d = Math.hypot(p.x - ME.X, p.z - ME.Z); if (d < bd) { bd = d; b = p; } } }
+  return b;
+}
+const pkKind = (u, atk, sk, crit) => 'pk:' + id8(u) + ':' + Math.min(1679615, Math.max(1, Math.round(atk))).toString(36) + ':' + sk + (crit ? 'c' : ''); // 20자 제한 → 36진수로 압축
+const HIT_CAP = 999999; // v51: 몬스터·보스·레이드 1타 상한 (PK는 기존 99,999 유지)
+function bumpBig(key, d) { let left = Math.max(1, Math.round(d)), n = 0; while (left > 0 && n++ < 10) { const c = Math.min(99999, left); room.bumpCounter(key, c); left -= c; } }
 function dropItem(boost, minG) {
   const code = rollItem(boost, minG != null ? minG : boost >= 5 ? 5 : boost >= 3 ? 3 : 0), i = itemInfo(code); G.inv.push(code); dexSave();
   if (G.inv.length > 300) { const keep = new Set(eqList(G.eq)); G.inv.sort((a, b) => (keep.has(b) - keep.has(a)) || (itemInfo(b).r - itemInfo(a).r)); G.inv.length = 300; }
@@ -3614,7 +3662,7 @@ function buy(id) { const x = SHOP_BY[id]; if (!x) return; if (x.cat !== 'use' &&
   if (x.cat === 'cos') G.shop.eq[x.slot] = x.v; if (x.cat === 'title') G.title = x.name; if (x.cat === 'pet') G.pet = x.id; if (x.cat === 'car') { G.car = x.id; G.ride = true; } if (x.cat === 'pet') { try { hpUi(); } catch (e) {} }
   saveG(); sync(true); if (myLabel) fillLabel(myLabel, myData(), true); try { SND.level(); } catch (e) {} toast(`🛍 ${x.name} 구매!` + (x.cat === 'cos' || x.cat === 'pet' ? ' 바로 장착했어요' : x.cat === 'car' ? ' 야외에서 바로 달려요 (🚗 버튼으로 타기/내리기)' : '')); renderShop(); renderMyItems(); }
 function useItem(id) { const x = SHOP_BY[id]; if (!x || !entered) return;
-  if (x.cat === 'sk') { if (!G.shop.own[id]) return; if (hallBlock('연출 스킬')) return; if (!cd('shopSk', 45000)) { toast('🎇 연출 스킬은 45초에 한 번!'); return; } room.sendFx('sk:' + x.t + ':3'); closeModals(); return; }
+  if (x.cat === 'sk') { if (!G.shop.own[id]) return; if (hallBlock('연출 스킬')) return; if (!cd('shopSk', 45000)) { toast('🎇 연출 스킬은 45초에 한 번!'); return; } room.sendFx('sk:' + x.t + ':3:o'); closeModals(); return; }
   if ((G.shop.cnt[id] | 0) <= 0) { toast('먼저 구매해 주세요'); return; } if (id === 'luck' || id === 'guard') { toast('강화소에서 체크하면 자동으로 쓰여요 🔨'); return; }
   if (['quake', 'fw', 'horn'].includes(id) && hallBlock('이 효과')) return;
   if (!cd('shopUse', 6000)) { toast('사용 아이템은 6초에 한 번!'); return; }
@@ -3882,9 +3930,9 @@ function useRpg(k) {
   if (it.type === 'bed') { if (ME.lie) { ME.lie = false; sync(true); return; } ME.X = it.X; ME.Z = it.Z + .2; ME.seat = -1; ME.lie = true; ME.ry = 0; updSitBtn && updSitBtn(); sync(true); toast('😴 누워서 존버 중… 30초마다 휴식 XP +2 (움직이면 일어나요)'); return; }
   if (it.type === 'crate') { const C = CRATE[k]; if (C.broken || !cd('atk', atkCd(280))) return; room.sendFx('brk:' + k); breakCrate(k, true); addPts(8); if (Math.random() < .3 * LK()) dropItem(0); return; }
   if (!cd('atk', atkCd(280))) return;
-  const tier = lvOf(G.pts); let dmg = Math.round(atkOf(tier) * (BUFF.until > Date.now() ? 1.5 : 1)); const crit = Math.random() < critP(tier); if (crit) dmg *= 2; dmg = Math.min(dmg, 99999);
+  const tier = lvOf(G.pts); let dmg = Math.round(atkOf(tier) * (BUFF.until > Date.now() ? 1.5 : 1)); const crit = Math.random() < critP(tier); if (crit) dmg *= 2; dmg = Math.min(dmg, HIT_CAP);
   raidHits[k] = Date.now(); // 먼저 기록: 파이어베이스는 쓰는 순간 바로 격파 이벤트를 부를 수 있음
-  room.bumpCounter(k, dmg);
+  bumpBig(k, dmg);
   room.sendFx(`hit:${k}:${dmg}${crit ? 'c' : ''}`);
   if (cd('pts-hit', 250)) addPts(3 + Math.floor((INTER[k].lv || 1) / 2)); // 평타도 경험치 쑥쑥
   if (Math.random() < (.02 + (INTER[k].lv || 1) * .001) * LK()) dropItem(INTER[k].lv >= 20 ? 1 : 0);
@@ -4116,8 +4164,8 @@ function wbAttack(tick, ph) {
 const every3 = () => 4;
 function wbHit() {
   if (!WB || WB.dead || !cd('atk', 280)) return; ME.ry = Math.atan2(WB_POS.x - ME.X, WB_POS.z - ME.Z);
-  const tier = lvOf(G.pts); let dmg = Math.round(atkOf(tier) * (BUFF.until > Date.now() ? 1.5 : 1)); const crit = Math.random() < critP(tier); if (crit) dmg *= 2; dmg = Math.max(1, Math.min(dmg, 99999));
-  WB.mine += dmg; qProg('raid'); room.bumpCounter(WB.key, dmg); room.sendFx(`wbh:${dmg}${crit ? 'c' : ''}`); if (cd('pts-hit', 250)) addPts(5); if (Math.random() < .03 * LK()) dropItem(0);
+  const tier = lvOf(G.pts); let dmg = Math.round(atkOf(tier) * (BUFF.until > Date.now() ? 1.5 : 1)); const crit = Math.random() < critP(tier); if (crit) dmg *= 2; dmg = Math.max(1, Math.min(dmg, HIT_CAP));
+  WB.mine += dmg; qProg('raid'); bumpBig(WB.key, dmg); room.sendFx(`wbh:${dmg}${crit ? 'c' : ''}`); if (cd('pts-hit', 250)) addPts(5); if (Math.random() < .03 * LK()) dropItem(0);
 }
 function wbFx(fx) {
   if (!WB) return; const dmg = parseInt(String(fx.kind).slice(4), 10) || 1, crit = /c$/.test(fx.kind); WB.contrib[fx.uid] = (WB.contrib[fx.uid] || 0) + dmg;
@@ -4531,8 +4579,8 @@ function stunMe(sec) { if (!entered || HPS.ko) return; HPS.stun = Date.now() + s
 function mobAt(x, z, R) { let best = null, bd = R; MOBS.forEach(m => { if (m.dead > 0) return; const d = Math.hypot(m.x - x, m.z - z); if (d < bd) { bd = d; best = m; } }); return best; }
 function hitMob(m) {
   if (!m || m.dead > 0 || Date.now() < (HPS.stun || 0) || !cd('atk', atkCd(260))) return; ME.ry = Math.atan2(m.x - ME.X, m.z - ME.Z);
-  const tier = lvOf(G.pts); let dmg = Math.round(atkOf(tier) * (BUFF.until > Date.now() ? 1.5 : 1)); const crit = Math.random() < critP(tier); if (crit) dmg *= 2; dmg = Math.min(dmg, 99999);
-  m.myHit = Date.now(); room.bumpCounter(m.key, dmg); room.sendFx(`mh:${m.i}:${dmg}${crit ? 'c' : ''}`);
+  const tier = lvOf(G.pts); let dmg = Math.round(atkOf(tier) * (BUFF.until > Date.now() ? 1.5 : 1)); const crit = Math.random() < critP(tier); if (crit) dmg *= 2; dmg = Math.min(dmg, HIT_CAP);
+  m.myHit = Date.now(); bumpBig(m.key, dmg); room.sendFx(`mh:${m.i}:${dmg}${crit ? 'c' : ''}`);
   if (cd('pts-hit', 250)) addPts(3 + Math.floor(Math.min(100, m.K.lv) / 2));
 }
 function mobFx(fx) { const p = String(fx.kind).split(':'), m = MOBS[parseInt(p[1], 10)]; if (!m) return; const dmg = parseInt(p[2], 10) || 1, crit = /c$/.test(p[2] || ''); const a = antOf(fx.uid); if (a) a.act = { k: 'punch', t0: clock.elapsedTime, d: .45 };
@@ -6262,7 +6310,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '50';
+const APP_V = '51';
 {
   let shown = false;
   const check = async () => {
@@ -6384,25 +6432,25 @@ function canFight(uid) { if (!uid || uid === live.uid) return false; if (DUEL &&
 function pkTarget() { if (!entered || !(inPK(ME.X, ME.Z) || (DUEL && Date.now() < DUEL.until))) return null; let best = null, bd = 4.2; remotes.forEach((r, uid) => { if (!canFight(uid)) return; const d = Math.hypot(r.cur.x - ME.X, r.cur.z - ME.Z); if (d < bd && !(r.data && r.data.pose === 'lie')) { bd = d; best = uid; } }); return best; }
 
 function pkTargets(R) { const L = []; remotes.forEach((r, uid) => { if (!canFight(uid) || (r.data && r.data.pose === 'lie')) return; const d = Math.hypot(r.cur.x - ME.X, r.cur.z - ME.Z); if (d < R) L.push([uid, d]); }); return L.sort((a, b) => a[1] - b[1]).map(x => x[0]); }
-function pkSkill(t, s) { // 스킬도 PK 상대에게 맞아요 (광역 폭풍은 범위 안 모두)
-  const L = pkTargets(s === 2 ? 9 : 7); if (!L.length) return; const atk = Math.min(99999, Math.round(atkOf(t) * ampK()));
-  (s === 2 ? L.slice(0, 4) : L.slice(0, 1)).forEach((u, j) => { const crit = Math.random() < critP(t); setTimeout(() => room.sendFx('pk:' + id8(u) + ':' + atk + (crit ? 'c' : '') + ':' + (s + 1)), 350 + j * 90); });
+function pkSkill(t, s) { // 스킬도 PK 상대에게 맞아요: 1·2번 단일, 3번 반경 11(4명), 4번 반경 20(8명)
+  const L = pkTargets(SK_RG[s]); if (!L.length) return; const atk = Math.round(atkOf(t) * ampK());
+  L.slice(0, [1, 1, 4, 8][s]).forEach((u, j) => { const crit = Math.random() < critP(t); setTimeout(() => room.sendFx(pkKind(u, atk, s + 1, crit)), 350 + j * 90); });
 }
 function pkAttack() {
   if (!entered || HPS.ko || !cd('pkAtk', atkCd(480))) return; const t = pkTarget(); if (!t) { toast(DUEL ? '🤺 결투 상대에게 가까이 가세요!' : '⚔ PK존 안의 다른 개미에게 가까이 가세요'); return; }
   const p = posOf(t); ME.ry = Math.atan2(p.x - ME.X, p.z - ME.Z); if (myAnt) myAnt.act = { k: 'punch', t0: clock.elapsedTime, d: .45 };
-  const crit = Math.random() < critP(lvOf(G.pts)); room.sendFx('pk:' + id8(t) + ':' + Math.min(99999, atkOf(lvOf(G.pts))) + (crit ? 'c' : '') + ':0');
+  const crit = Math.random() < critP(lvOf(G.pts)); room.sendFx(pkKind(t, atkOf(lvOf(G.pts)), 0, crit));
 }
 function pkFx(fx) {
-  const pr = String(fx.kind).split(':'), tgt = uidOf8(pr[1]), atk = parseInt(pr[2], 10) || 1, crit = /c$/.test(pr[2] || ''), a = antOf(fx.uid);
+  const pr = String(fx.kind).split(':'), tgt = uidOf8(pr[1]), atk = parseInt(pr[2], 36) || 1, crit = /c$/.test(pr[3] || ''), a = antOf(fx.uid);
   if (a && fx.uid !== live.uid) a.act = { k: 'punch', t0: clock.elapsedTime, d: .45 };
   const tp = tgt && posOf(tgt); if (tp) { spawn(tp.x, 1.5, tp.z, crit ? 40 : 16, crit ? 0xffd76a : 0xff4d57, crit ? 5 : 3, 6, .5); try { if (cd('pkSnd', 120)) SND.punch(crit); } catch (e) {} }
   if (tgt !== live.uid || HPS.ko) return; const ap = posOf(fx.uid);
   const ok = (DUEL && DUEL.uid === fx.uid && Date.now() < DUEL.until) || (CFG2().pk !== false && ap && inPK(ap.x, ap.z) && inPK(ME.X, ME.Z)); if (!ok) return;
   if (DUEL && Date.now() < DUEL.until && (DUEL.uid !== fx.uid || Date.now() < DUEL.t0 + 3000)) return; // 결투 중: 상대 공격만 · 시작 3초 무적
-  const sk = parseInt(pr[3], 10) || 0, SKM = [1, 1.7, 2.3, 1.9, 3.2]; // v22 PK 밸런스: 체력의 %로 깎여서 한 방에 끝나지 않아요
-  const ratio = atk / Math.max(1, atkOf(lvOf(G.pts))), pct = Math.max(.025, Math.min(.1, .05 * Math.pow(ratio, .3)));
-  const dmg = Math.max(1, Math.round(HPS.max * pct * (SKM[sk] || 1) * (crit ? 1.5 : 1))); ME.seat = -1; ME.lie = false; HPS.inv = 0;
+  const sk = parseInt(pr[3], 10) || 0, SKM = [1, 1.6, 2.6, 2.2, 4]; // v22 PK 밸런스: 체력의 %로 깎여서 한 방에 끝나지 않아요
+  const ratio = atk / Math.max(1, atkOf(lvOf(G.pts))), pct = Math.max(.03, Math.min(.18, .06 * Math.pow(ratio, .55)));
+  const dmg = Math.max(1, Math.round(HPS.max * Math.min(.6, pct * (SKM[sk] || 1) * (crit ? 1.5 : 1)))); ME.seat = -1; ME.lie = false; HPS.inv = 0;
   hurt(dmg, ap ? ap.x : ME.X, ap ? ap.z : ME.Z, crit ? '치명타!' : '');
   if (HPS.ko) { room.sendFx('pkko:' + id8(fx.uid)); }
 }
