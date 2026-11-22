@@ -729,7 +729,7 @@ body .lvx-modal{z-index:100010}
 <div class="modal" id="mBag"><div class="mbox" style="width:min(620px,100%)"><h2>🎒 내 가방</h2><div class="sub" id="bagSub"></div>
   <div class="eqs" id="bagEq"></div><div class="bagset" id="bagSet"></div><div class="spray" id="sprayBox"></div><div class="bagbtns"><button type="button" class="gbtn" id="bagAuto">🧠 제일 센 걸로 자동 장착</button><button type="button" class="gbtn" id="bagOff">🧺 전부 벗기</button><button type="button" class="gbtn hot" id="bagEnh">🔨 강화소</button></div><div class="small" style="margin:6px 0">위 부위 칸을 누르면 그 부위 장비만 보여요 · 아래 장비를 눌러 장착/해제 · 등급: F → E → D → C → B → A → S → SS → SSS (높을수록 훨씬 강하고 화려해요 · SSS는 정말 귀해요) · 몬스터·보스·상자·레이드에서 얻어요 · 🍀행운이 높으면 더 잘 나와요</div>
   <div class="inv" id="bagGrid"></div><button class="mbtn sec" data-close>닫기</button></div></div>
-<div class="modal" id="mDex"><div class="mbox" style="width:min(820px,100%)"><h2>🧬 개미 진화 도감 · 100단계</h2><div class="sub" id="dexSub"></div><div class="dexTabs" id="dexTabs"></div><div class="dex" id="dexGrid"></div>
+<div class="modal" id="mDex"><div class="mbox" style="width:min(820px,100%)"><h2>🧬 개미 진화 · 몬스터 도감</h2><div class="sub" id="dexSub"></div><div class="dexTabs" id="dexTabs"></div><div class="dex" id="dexGrid"></div>
   <div class="small" style="margin:10px 0">XP 모으는 법: 꾸벅 인사·물타기·응원 북·저금·채팅·이모티콘·🔥파이어 · 1분 머물기 +3 · 오늘 첫 입장 +20 · 108 꾸벅 완주 +108 · 🌳 시세나무</div><button class="mbtn sec" data-close>닫기</button></div></div>
 <div class="modal" id="mBgm"><div class="mbox"><h2>🎵 배경음악 · 효과음</h2><div class="sub">전부 직접 만든 합성음이에요 · «자동»은 시황에 따라 바뀝니다 (평온=주식시장, 파티=파이어, 우울=로파이)</div>
   <div class="bgms" id="bgmList"></div>
@@ -1053,7 +1053,7 @@ function takeLight(col, dist, ms) { let L = LPOOL[0]; LPOOL.forEach(x => { if (x
 function dropLight(L) { if (!L) return; L.intensity = 0; L.position.y = -50; L.userData.until = 0; }
 
 /* ---- 공용 지오메트리·재질 ---- */
-const GEO = { sph: new THREE.SphereGeometry(1, 18, 14), sphL: new THREE.SphereGeometry(1, 10, 8), cyl: new THREE.CylinderGeometry(1, 1, 1, 12), box: new THREE.BoxGeometry(1, 1, 1), cone: new THREE.ConeGeometry(1, 1, 12), circ: new THREE.CircleGeometry(1, 24) };
+const GEO = { sph: new THREE.SphereGeometry(1, 14, 10), sphL: new THREE.SphereGeometry(1, 10, 8), sphC: new THREE.SphereGeometry(1, 8, 5), cone8: new THREE.ConeGeometry(1, 1, 8), cyl: new THREE.CylinderGeometry(1, 1, 1, 12), box: new THREE.BoxGeometry(1, 1, 1), cone: new THREE.ConeGeometry(1, 1, 12), circ: new THREE.CircleGeometry(1, 24) };
 const mat = (c, o = {}) => new THREE.MeshStandardMaterial(Object.assign({ color: c, roughness: .55, metalness: .05 }, o));
 const MAT = {
   skin: mat(0x7a4423, { roughness: .45 }), skinD: mat(0x4a2612), eyeW: mat(0xffffff, { roughness: .15 }), eyeB: mat(0x101010, { roughness: .1 }),
@@ -1253,7 +1253,7 @@ function drawTicker() {
 }
 
 /* ---- 제단 ---- */
-const altar = new THREE.Group(); altar.position.set(0, 0, -10.6); scene.add(altar); if (CITY) altar.visible = false; // v46: 포춘쿠키 자판기로 교체
+const altar = new THREE.Group(); altar.position.set(0, 0, -10.6); if (!CITY) scene.add(altar); // v46: 포춘쿠키 자판기로 교체
 altar.add(mesh(GEO.box, MAT.wood, [8, 1, 2], [0, .5, 0]), mesh(GEO.box, MAT.gold, [8.2, .1, 2.1], [0, 1.02, 0]), mesh(GEO.box, MAT.red, [7.6, .7, .05], [0, .45, 1.02]));
 altar.add(mesh(new THREE.CylinderGeometry(.5, .38, .5, 16), MAT.bronze, null, [0, 1.32, 0]));
 for (let i = -1; i <= 1; i++) altar.add(mesh(GEO.cyl, mat(0x8a3a1a), [.025, .9, .025], [i * .14, 1.95, 0], [0, 0, i * .12]));
@@ -1272,7 +1272,7 @@ for (let i = 0; i < 7; i++) altar.add(mesh(GEO.cyl, MAT.gold, [.2, .05, .2], [-1
 const SMOKE_N = 46, smokeGeo = new THREE.BufferGeometry(), smokeP = new Float32Array(SMOKE_N * 3), smokeLife = new Float32Array(SMOKE_N);
 for (let i = 0; i < SMOKE_N; i++) { smokeLife[i] = Math.random() * 4; }
 smokeGeo.setAttribute('position', new THREE.BufferAttribute(smokeP, 3));
-const smoke = new THREE.Points(smokeGeo, new THREE.PointsMaterial({ color: 0xcfd6e6, size: .35, transparent: true, opacity: .28, depthWrite: false })); scene.add(smoke); if (CITY) smoke.visible = false;
+const smoke = new THREE.Points(smokeGeo, new THREE.PointsMaterial({ color: 0xcfd6e6, size: .35, transparent: true, opacity: .28, depthWrite: false })); if (!CITY) scene.add(smoke);
 
 /* ---- 상호작용 오브젝트 ---- */
 const interMeshes = [];
@@ -1290,7 +1290,7 @@ function tagInter(obj, key) { obj.traverse(o => { if (o.isMesh) { o.userData.int
   g.add(mesh(GEO.cyl, MAT.woodD, [.05, .9, .05], [.6, 1.5, .2], [0, 0, .9]));
   if (!CITY) { scene.add(g); tagInter(g, 'moktak'); } // v46: 응원 북으로 교체
 }
-const b108 = new THREE.Group(); b108.position.set(INTER.bow108.X, 0, INTER.bow108.Z); scene.add(b108);
+const b108 = new THREE.Group(); b108.position.set(INTER.bow108.X, 0, INTER.bow108.Z); if (!CITY) scene.add(b108);
 b108.add(mesh(GEO.cyl, MAT.gold, [1.15, .22, 1.15], [0, .11, 0]), mesh(new THREE.TorusGeometry(1.35, .05, 8, 40), new THREE.MeshBasicMaterial({ color: 0xffd76a }), null, [0, .05, 0], [Math.PI / 2, 0, 0]));
 if (!CITY) tagInter(b108, 'bow108'); else b108.visible = false; // v46: 108 꾸벅 발판으로 교체
 // 운세는 제단 전체 (v46: 포춘쿠키 자판기)
@@ -3166,11 +3166,34 @@ function lookPts(d) { const lk = d && d.lk; return Number.isInteger(lk) && lk >=
 function myLookPts() { return lookPts({ pts: G.pts, lk: G.look >= 0 ? G.look : undefined }); }
 function setLook(t) { G.look = t >= 0 && t < lvOf(G.pts) ? t : -1; saveG(); if (myAnt) { myAnt.tier = -1; applyTier(myAnt, lvOf(myLookPts())); try { setGear(myAnt, G.eq); } catch (e) {} } if (myLabel) fillLabel(myLabel, myData(), true); sync(true); updHud();
   toast(G.look >= 0 ? `🎭 ${G.look + 1}단계 「${LV[G.look][1]}」 모습으로 변신! (능력치는 그대로)` : '🎭 최신 모습으로 돌아왔어요'); try { if ($('mDex').classList.contains('on')) renderDex(); } catch (e) {} }
+const MPREV = {};
+function mobPreview(K) {
+  if (MPREV[K.lv] != null) return MPREV[K.lv];
+  try {
+    previewOf(0); const { sc, cam } = prevR.userData; const o = makeMob(K); o.g.rotation.y = .6; sc.add(o.g); o.g.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(o.g), cen = box.getCenter(new THREE.Vector3()), sz = box.getSize(new THREE.Vector3()), R = Math.max(sz.x, sz.y, sz.z) * .5 || 1;
+    cam.position.set(cen.x + R * .35, cen.y + R * .45, cen.z + R / Math.tan(16 * Math.PI / 180) * 1.05); cam.lookAt(cen); prevR.render(sc, cam); MPREV[K.lv] = prevR.domElement.toDataURL('image/png'); sc.remove(o.g);
+  } catch (e) { MPREV[K.lv] = ''; }
+  return MPREV[K.lv];
+}
+function renderMobDex(g) {
+  const md = G.md || {}, n = MOBK.filter(k => md[k.lv]).length, bar = el('div', 'lookBar');
+  bar.append(el('b', null, '🧌 몬스터 도감'), el('span', null, `만난 몬스터 ${n}/${MOBK.length}종 · 처치하면 기록돼요 (Lv.1 ~ Lv.1000)`)); g.appendChild(bar);
+  MOBK.forEach((K, idx) => {
+    const got = md[K.lv] | 0, c = el('div', 'c ' + (got ? 'got' : 'lock')), im = el('img', 'pv'); im.alt = got ? K.name : '???'; c.appendChild(im);
+    setTimeout(() => { im.src = mobPreview(K); if (!got) im.style.filter = 'brightness(0) opacity(.5)'; }, 30 + idx * 45);
+    c.appendChild(el('b', null, got ? K.name : `Lv.${K.lv} ???`));
+    c.appendChild(el('small', got ? null : 'need', got ? `Lv.${K.lv} · ❤ ${fmt(K.hp, 0)} · ⚔ ${fmt(K.atk, 0)}` : '🔒 아직 못 만났어요'));
+    if (got) c.appendChild(el('small', null, `🏆 처치 ${got}회 · 🎁 드랍 ${Math.round(mobDropP(K.lv) * 100)}%${K.lv >= 700 ? ' · 2개' : ''} · ✨ XP ${fmt(K.exp, 0)}`));
+    g.appendChild(c);
+  });
+}
 function renderDex() {
-  const i = lvOf(G.pts), g = $('dexGrid'); g.textContent = ''; const DTABS = [[0, 11], [12, 19], [20, 29], [30, 39], [40, 49], [50, 59], [60, 69], [70, 79], [80, 89], [90, 99]]; if (dexTab < 0 || dexTab >= DTABS.length) dexTab = Math.max(0, DTABS.findIndex(r => i >= r[0] && i <= r[1]));
+  const i = lvOf(G.pts), g = $('dexGrid'); g.textContent = ''; const DTABS = [[0, 11], [12, 19], [20, 29], [30, 39], [40, 49], [50, 59], [60, 69], [70, 79], [80, 89], [90, 99], [0, -1]]; if (dexTab < 0 || dexTab >= DTABS.length) dexTab = Math.max(0, DTABS.findIndex(r => i >= r[0] && i <= r[1]));
   $('dexSub').textContent = `지금 ${i + 1}/${LV.length}단계 · ${TIER_ICON[i]} ${LV[i][1]} — ` + (LV[i + 1] ? `다음 진화까지 ${fmt(LV[i + 1][0] - G.pts, 0)} XP!` : '🌌 최종 엔딩 달성! 차트 밖의 창조주');
-  const tabs = $('dexTabs'); tabs.textContent = ''; [['🐜 1~12 개미의 길', 0, 11], ['🏛 13~20 여의도·월가', 12, 19], ['🐉 21~30 시장의 지배자', 20, 29], ['🌌 31~40 숨은 지배자', 30, 39], ['✨ 41~50 초월자', 40, 49], ['🌍 51~60 글로벌 자본', 50, 59], ['⛈ 61~70 거시경제', 60, 69], ['🫧 71~80 위기와 반등', 70, 79], ['🚀 81~90 우주 증시', 80, 89], ['🌟 91~100 차트 밖', 90, 99]].forEach(([n, a0, a1], j) => { const b = el('button', j === dexTab ? 'on' : '', n); b.type = 'button'; const got = Math.max(0, Math.min(a1, i) - a0 + 1); b.appendChild(el('small', null, ` ${got}/${a1 - a0 + 1}`)); b.onclick = () => { dexTab = j; renderDex(); }; tabs.appendChild(b); });
+  const tabs = $('dexTabs'); tabs.textContent = ''; [['🐜 1~12 개미의 길', 0, 11], ['🏛 13~20 여의도·월가', 12, 19], ['🐉 21~30 시장의 지배자', 20, 29], ['🌌 31~40 숨은 지배자', 30, 39], ['✨ 41~50 초월자', 40, 49], ['🌍 51~60 글로벌 자본', 50, 59], ['⛈ 61~70 거시경제', 60, 69], ['🫧 71~80 위기와 반등', 70, 79], ['🚀 81~90 우주 증시', 80, 89], ['🌟 91~100 차트 밖', 90, 99], ['🧌 몬스터 도감', 0, -1]].forEach(([n, a0, a1], j) => { const b = el('button', j === dexTab ? 'on' : '', n); b.type = 'button'; const got = Math.max(0, Math.min(a1, i) - a0 + 1); b.appendChild(el('small', null, a1 < a0 ? ` ${MOBK.filter(k => (G.md || {})[k.lv]).length}/${MOBK.length}` : ` ${got}/${a1 - a0 + 1}`)); b.onclick = () => { dexTab = j; renderDex(); }; tabs.appendChild(b); });
   const [a0, a1] = DTABS[dexTab];
+  if (dexTab === 10) { renderMobDex(g); return; }
   { const lk = curLook(), bar = el('div', 'lookBar'); bar.append(el('b', null, '🎭 모습 고르기'), el('span', null, lk < i ? `지금 ${lk + 1}단계 「${LV[lk][1]}」 모습 사용 중 · 능력치는 ${i + 1}단계 그대로` : `해금한 단계(1~${i + 1}) 중 아무 모습이나 고를 수 있어요 · 능력치는 그대로`)); if (lk < i) { const b = el('button', 'gbtn', '↩ 최신 모습으로'); b.type = 'button'; b.onclick = () => setLook(-1); bar.appendChild(b); } g.appendChild(bar); }
   for (let k = a0; k <= a1; k++) {
     const l = LV[k], st = k < i ? 'got' : k === i ? 'got now' : k === i + 1 ? 'next' : 'lock';
@@ -3179,7 +3202,7 @@ function renderDex() {
     c.appendChild(el('b', null, `${k + 1}. ${k <= i + 1 || k === 29 || k === 49 || k === 99 ? l[1] : '???'}`));
     c.appendChild(el('small', 'need', k <= i ? '✅ 해금 완료' : `🔒 ${fmt(l[0], 0)} XP` + (k === i + 1 ? ` (앞으로 ${fmt(l[0] - G.pts, 0)})` : '')));
     c.appendChild(el('small', null, `⚔ 공격력 ${atkOf(k)} · ${TIER_PERK[k]}`));
-    if (SK[k]) c.appendChild(el('small', 'sk', `${SK[k][0]} — ${SK[k][1]} (쿨 ${SK[k][2]}초)`));
+    { const si = SLOT_T.indexOf(k); if (si >= 0) c.appendChild(el('small', 'sk', `${SLOT_KEY[si].toUpperCase()} ${SLOT_NM[si][0]} 해금 — ${SLOT_NM[si][1]} (쿨 ${SLOT_CD[si]}초)`)); }
     if (k === i) c.appendChild(el('small', 'me', '⬅ 지금 나'));
     if (k <= i) { const on = curLook() === k, b = el('button', 'gbtn lookB' + (on ? ' on' : ''), on ? '✅ 지금 이 모습' : '🎭 이 모습 하기'); b.type = 'button'; b.onclick = e => { e.stopPropagation(); setLook(k === i ? -1 : k); }; c.appendChild(b); }
     if (k === 29) c.appendChild(el('small', 'fin', '🐉 30단계 · 공매도 브레스 · 개미들의 숏 스퀴즈 반격을 조심!'));
@@ -3923,7 +3946,7 @@ Object.keys(BOSS).forEach(k => { BOSS[k].g.rotation.y = 0; bossLabel(k); bossDra
   if (!CITY) scene.add(mesh(new THREE.CircleGeometry(5.2, 40), mat(0x0f3b33, { roughness: .9 }), null, [LOUNGE.x, .016, LOUNGE.z], [-Math.PI / 2, 0, 0]));
   if (!CITY) for (let i = 0; i < 6; i++) { const a2 = i / 6 * Math.PI * 2; scene.add(mesh(GEO.cyl, MAT.woodD, [.12, 1.3, .12], [LOUNGE.x + Math.cos(a2) * .4, .3, LOUNGE.z + Math.sin(a2) * .4], [Math.sin(a2) * 1.2, 0, Math.cos(a2) * 1.2])); }
 }
-const fireM = new THREE.MeshBasicMaterial({ color: 0xfff0b0, transparent: true, opacity: .9, toneMapped: false }), fireCore = mesh(GEO.cone, fireM, [.5, 1.1, .5], [LOUNGE.x, .75, LOUNGE.z]); scene.add(fireCore); if (CITY) fireCore.visible = false;
+const fireM = new THREE.MeshBasicMaterial({ color: 0xfff0b0, transparent: true, opacity: .9, toneMapped: false }), fireCore = mesh(GEO.cone, fireM, [.5, 1.1, .5], [LOUNGE.x, .75, LOUNGE.z]); if (!CITY) scene.add(fireCore);
 const fireL = new THREE.PointLight(0xff9a3c, 18, 12, 1.6); fireL.position.set(LOUNGE.x, 1.6, LOUNGE.z); scene.add(fireL);
 function useRpg(k) {
   const it = INTER[k]; ME.ry = Math.atan2(it.X - ME.X, it.Z - ME.Z);
@@ -4340,7 +4363,7 @@ if (!CITY) {
 }
 // 하늘에 둥실 떠가는 구름 (실제 월드 위 — 가까이 가면 크게 보여요)
 const CLOUDS = (() => {
-  const R = sRng(515), N = 46, PER = 7, im = new THREE.InstancedMesh(GEO.sphL, new THREE.MeshLambertMaterial({ color: 0xffffff, emissive: 0x9fb4cc }), N * PER), m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3(), po = new THREE.Vector3(), list = [];
+  const R = sRng(515), N = 46, PER = 7, im = new THREE.InstancedMesh(GEO.sphC, new THREE.MeshLambertMaterial({ color: 0xffffff, emissive: 0x9fb4cc }), N * PER), m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3(), po = new THREE.Vector3(), list = [];
   for (let i = 0; i < N; i++) { const cx = -300 + R() * 360, cz = -150 + R() * 300, cy = 48 + R() * 40, s = 5 + R() * 7; const parts = []; for (let k = 0; k < PER; k++) parts.push([(k - PER / 2) * s * .55 + R() * s * .4, R() * s * .35, (R() - .5) * s * .9, s * (.6 + R() * .6)]); list.push({ cx, cy, cz, parts, v: .6 + R() * 1.2 }); }
   function draw() { let j = 0; list.forEach(C => C.parts.forEach(([x, y, z, r]) => { im.setMatrixAt(j++, m4.compose(po.set(C.cx + x, C.cy + y, C.cz + z), q, sc.set(r * 1.35, r * .62, r))); })); im.instanceMatrix.needsUpdate = true; }
   draw(); im.frustumCulled = false; scene.add(im);
@@ -4429,10 +4452,10 @@ const inHeaven = (x, z) => Math.hypot(x - HEAVEN.x, z - HEAVEN.z) < HEAVEN.r;
   const R = sRng(777), spots = [];
   const treeBad = (x, z) => Math.hypot(x - HUBP.x, z - HUBP.z) < 16 || Math.abs(z - 28) < 4.5 || (Math.abs(x + 55) < 3 && z > 28 && z < 82) || (Math.abs(x + 120) < 3 && z > 28) || (Math.abs(x + 188) < 3 && z > 28) || (Math.abs(x + 118) < 3 && z < 28) || (Math.abs(x + 190) < 3 && z < 28) || (Math.abs(x - ARENA.x) < 19 && Math.abs(z - ARENA.z) < 19) || Math.hypot(x - RAIDP.x, z - RAIDP.z) < 25 || (Math.abs(x - CAMP.x) < 14 && Math.abs(z - CAMP.z) < 10) || (x > -36 && z > 20 && z < 36) || Math.hypot(x + 46, z - 58) < 19 || wpNear(x, z).d < 4.6;
   for (let i = 0; i < 3000 && spots.length < 190; i++) { const x = -227 + R() * 197, z = -67 + R() * 174; if (treeBad(x, z)) continue; if (inLake(x, z) || Math.hypot(((x - LAKE.x) / (LAKE.rx + 3)), ((z - LAKE.z) / (LAKE.rz + 3))) < 1 || Math.abs(z - 28) < 3 || (Math.abs(x + 52) < 3 && z < 28)) continue; if (spots.some(s => Math.hypot(s[0] - x, s[1] - z) < 4)) continue; if (x > -31 && z > 22 && z < 34) continue; spots.push([x, z, .8 + R() * .7]); }
-  const trunk = new THREE.InstancedMesh(GEO.cyl, mat(0x4a2e1a), spots.length), leaf = new THREE.InstancedMesh(GEO.cone, mat(0x3f9a4a, { roughness: .8 }), spots.length * 2), m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3(), po = new THREE.Vector3();
+  const trunk = new THREE.InstancedMesh(GEO.cyl6, mat(0x4a2e1a), spots.length), leaf = new THREE.InstancedMesh(GEO.cone8, mat(0x3f9a4a, { roughness: .8 }), spots.length * 2), m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3(), po = new THREE.Vector3();
   spots.forEach(([x, z, s], i) => { trunk.setMatrixAt(i, m4.compose(po.set(x, s * .9, z), q, sc.set(.28 * s, 1.8 * s, .28 * s))); leaf.setMatrixAt(i * 2, m4.compose(po.set(x, s * 2.6, z), q, sc.set(1.5 * s, 2.4 * s, 1.5 * s))); leaf.setMatrixAt(i * 2 + 1, m4.compose(po.set(x, s * 3.7, z), q, sc.set(1.05 * s, 1.8 * s, 1.05 * s))); });
   scene.add(trunk, leaf);
-  const rocks = new THREE.InstancedMesh(GEO.sphL, mat(0x59606e, { roughness: .9 }), 80); for (let i = 0; i < 80; i++) { let x = -77 + R() * 48, z = -10 + R() * 53; if (i >= 24) { x = -227 + R() * 195; z = -67 + R() * 172; if (treeBad(x, z)) { x = -228; z = -68 + i; } } if (wpNear(x, z).d < 3.8) { x = -228; z = -68 + i; } rocks.setMatrixAt(i, m4.compose(po.set(x, .2, z), q.setFromEuler(new THREE.Euler(R(), R() * 3, 0)), sc.set(.5 + R() * .9, .35 + R() * .4, .5 + R() * .8))); } scene.add(rocks);
+  const rocks = new THREE.InstancedMesh(GEO.sphC, mat(0x59606e, { roughness: .9 }), 80); for (let i = 0; i < 80; i++) { let x = -77 + R() * 48, z = -10 + R() * 53; if (i >= 24) { x = -227 + R() * 195; z = -67 + R() * 172; if (treeBad(x, z)) { x = -228; z = -68 + i; } } if (wpNear(x, z).d < 3.8) { x = -228; z = -68 + i; } rocks.setMatrixAt(i, m4.compose(po.set(x, .2, z), q.setFromEuler(new THREE.Euler(R(), R() * 3, 0)), sc.set(.5 + R() * .9, .35 + R() * .4, .5 + R() * .8))); } scene.add(rocks);
   // 호수 + 부두
   const wm = new THREE.MeshStandardMaterial({ color: 0x1f6fb0, roughness: .15, metalness: .3, emissive: 0x0a2a55, transparent: true, opacity: .88 });
   const lake = mesh(new THREE.CircleGeometry(1, 48), wm, [LAKE.rx, LAKE.rz, 1], [LAKE.x, .05, LAKE.z], [-Math.PI / 2, 0, 0]); scene.add(lake); lake.userData.wm = wm; window.__lakeM = wm;
@@ -4495,7 +4518,7 @@ function mobDropRoll(K) {
   for (let i = 0; i < n; i++) setTimeout(() => dropItem(boost, mg), 700 + i * 900);
 }
 const MOBK = MOB_ROS.map(([id, name, lv, col, sc]) => ({ id, name, lv, hp: MOB_HP(lv), exp: MOB_EXP(lv), atk: MOB_ATK(lv), col, sc: lv >= 40 ? Math.round((1.4 + 2.2 * Math.log(lv / 40) / Math.log(25)) * 100) / 100 : sc, elite: lv >= 40 ? 1 : 0 }));
-window.__mobk = MOBK;
+window.__mobk = MOBK; window.__scene = scene; window.__cam = camera; window.__THREE = THREE;
 // 입구에서 가까울수록 약하고, 멀수록 강함
 const MOB_HOME = [[-31, 22, 0], [-34, 33, 0], [-36, 18, 0], [-39, 37, 0], [-42, 22, 1], [-44, 34, 1], [-46, 12, 1], [-49, 40, 1], [-50, 20, 2], [-55, 34, 2], [-57, 22, 2], [-60, 40, 2], [-62, 30, 3], [-66, 38, 3], [-70, 26, 3], [-73, 36, 3], [-74, 18, 4], [-76, 42, 4],
   [-95, 10, 4], [-108, 4, 4], [-122, 12, 5], [-136, 6, 5], [-100, -12, 5], [-117, -20, 6], [-133, -14, 6], [-145, -30, 6], [-105, -42, 7], [-128, -52, 7],
@@ -4564,7 +4587,7 @@ function mobCounter(m, n) {
   const prev = m.hits, first = !m.init; m.init = 1; m.hits = n; mobDraw(m);
   if (!first && Math.floor(n / m.K.hp) > Math.floor(prev / m.K.hp)) { // 처치!
     m.dead = 1.6; const P = m.o.g.position; spawn(P.x, 1, P.z, 50, m.K.col, 5, 6, 1); ringFx(P.x, P.z, 0xffd76a, 4); try { const mine = m.myHit && Date.now() - m.myHit < 12000; withVol(mine ? 1 : volAt(P.x, P.z) * .55, () => SND.ko()); } catch (e) {}
-    if (m.myHit && Date.now() - m.myHit < 12000) { addPts(m.K.exp); addCoin(mobCoin(m.K.lv)); qProg('mob'); setTimeout(() => floatAt(myAnt, `🏆 ${m.K.name.split(' ').slice(1).join(' ')} 처치 +${Math.round(m.K.exp * ptsMul(lvOf(G.pts)))}`, 'big'), 300); mobDropRoll(m.K); }
+    if (m.myHit && Date.now() - m.myHit < 12000) { try { G.md = G.md || {}; G.md[m.K.lv] = (G.md[m.K.lv] | 0) + 1; saveG(); } catch (e) {} addPts(m.K.exp); addCoin(mobCoin(m.K.lv)); qProg('mob'); setTimeout(() => floatAt(myAnt, `🏆 ${m.K.name.split(' ').slice(1).join(' ')} 처치 +${Math.round(m.K.exp * ptsMul(lvOf(G.pts)))}`, 'big'), 300); mobDropRoll(m.K); }
   }
 }
 // v31: 강한 몬스터의 기술 — 예고 장판이 1.2초 이상 보이니 피할 수 있어요 (모바일 기준 무난하게)
@@ -4983,7 +5006,7 @@ if (CITY) {
     // 줄 전구 + 파라솔
     const poles = []; for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2 + .2, x = L.x + Math.cos(a) * 8.3, z = L.z + Math.sin(a) * 8.3; if (x > 18.2) continue; poles.push([x, z]); add(GEO.cyl, M(0x2b2d35, { metalness: .5 }), [.07, 4.4, .07], [x, 2.2, z]); }
     const bulbs = []; for (let i = 0; i < poles.length; i++) { const [ax, az] = poles[i], [bx, bz] = poles[(i + 1) % poles.length]; if (Math.hypot(ax - bx, az - bz) > 12) continue; for (let k = 0; k <= 8; k++) { const u = k / 8, x = ax + (bx - ax) * u, z = az + (bz - az) * u, y = 4.3 - Math.sin(u * Math.PI) * .9; bulbs.push([x, y, z]); if (k < 8) { const u2 = (k + 1) / 8, x2 = ax + (bx - ax) * u2, z2 = az + (bz - az) * u2, y2 = 4.3 - Math.sin(u2 * Math.PI) * .9, mx = (x + x2) / 2, my = (y + y2) / 2, mz = (z + z2) / 2, ln = Math.hypot(x2 - x, y2 - y, z2 - z); const o = add(GEO.cyl, M(0x222222), [.02, ln, .02], [mx, my, mz]); o.lookAt(x2, y2, z2); o.rotateX(Math.PI / 2); } } }
-    const bi = new THREE.InstancedMesh(GEO.sphL, new THREE.MeshBasicMaterial({ color: 0xfff0b8, toneMapped: false }), bulbs.length), m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3(), po = new THREE.Vector3();
+    const bi = new THREE.InstancedMesh(GEO.sphC, new THREE.MeshBasicMaterial({ color: 0xfff0b8, toneMapped: false }), bulbs.length), m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3(), po = new THREE.Vector3();
     bulbs.forEach(([x, y, z], i) => bi.setMatrixAt(i, m4.compose(po.set(x, y - .12, z), q, sc.set(.11, .14, .11)))); scene.add(bi);
     const pc = [0xff7a59, 0xfff3e0, 0x3fb5a3]; for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2 + Math.PI / 6, tx = L.x + Math.cos(a + Math.PI / 6) * 5.4, tz = L.z + Math.sin(a + Math.PI / 6) * 5.4; if (tx >= 17) continue; add(GEO.cyl, M(0xdddddd), [.05, 2.6, .05], [tx, 1.3, tz]); add(GEO.cone, M(pc[i % 3], { roughness: .7 }), [1.55, .55, 1.55], [tx, 2.75, tz]); }
     // 🎻 베짱이 버스커 (각설탕 위에서 연주)
@@ -6310,7 +6333,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '51';
+const APP_V = '52';
 {
   let shown = false;
   const check = async () => {
