@@ -712,7 +712,7 @@ body .lvx-modal{z-index:100010}
   <div class="enhTop"><div class="enhLv" id="enhLv">+0</div><div class="enhRight"><div class="enhBarW"><i id="enhBar"></i></div><div class="enhSt" id="enhSt"></div></div></div>
   <div class="enhInfo" id="enhInfo"></div><div class="enhres" id="enhRes"></div>
   <div class="enhOpt"><label><input type="checkbox" id="enhLuck" checked> <span id="enhLuckL"></span></label><label><input type="checkbox" id="enhGuard" checked> <span id="enhGuardL"></span></label></div>
-  <div class="enhBtns"><button type="button" class="gbtn big" id="enhGo">🔨 강화하기</button><span class="enhAutoW"><select id="enhTo"><option value="5">+5까지</option><option value="10" selected>+10까지</option><option value="15">+15까지</option><option value="20">+20까지</option><option value="25">+25까지</option><option value="30">+30까지</option></select><button type="button" class="gbtn" id="enhAuto">⚡ 자동 강화</button></span></div>
+  <div class="enhBtns"><button type="button" class="gbtn big" id="enhGo">🔨 강화하기</button><span class="enhAutoW"><select id="enhTo"><option value="5">+5까지</option><option value="10" selected>+10까지</option><option value="15">+15까지</option><option value="20">+20까지</option><option value="25">+25까지</option><option value="30">+30까지</option><option value="40">+40까지</option><option value="50">+50까지</option><option value="70">+70까지</option><option value="100">+100까지</option></select><button type="button" class="gbtn" id="enhAuto">⚡ 자동 강화</button></span></div>
   <button type="button" class="gbtn" id="enhDis" style="width:100%;margin-top:8px"></button>
   <div class="enhTbl" id="enhTbl"></div>
   <div class="small" style="margin-top:6px">🪙 코인으로 강화해요 · 성공률은 단계마다 낮아지고(실패하면 다음 확률 보정) · +11부터는 성공할 때마다 위력이 크게 뛰어요 (+20 = 공격력 약 3.2배 · +30 = 약 6.9배) · +10 이상 성공하면 방 전체에 자랑돼요</div>
@@ -858,9 +858,9 @@ if (!G.enh || typeof G.enh !== 'object') G.enh = { l: 0, st: 0, f: 0 };
 if (!G.lvMig) { try { let o = 0; LV0.forEach((l, k) => { if ((G.pts || 0) >= l[0]) o = k; }); const need = LV[o][0]; if ((G.pts || 0) < need) { const d = need - (G.pts || 0); G.pts = need; if (G.sw && G.sw.base != null) G.sw.base += d; } } catch (e) {} G.lvMig = 1; LS.set('lv3d_game', G); }
 const AWK = [{ p: 8500000, n: '각성 1', d: '황금 오라', c: 0xffd76a, atk: 1.3, spd: 1.12 }, { p: 15000000, n: '각성 2', d: '번개 오라', c: 0xffe95a, atk: 1.6, spd: 1.2, bolt: 1 }, { p: 25000000, n: '각성 3', d: '초각성 장발', c: 0xffb300, atk: 2, spd: 1.3, bolt: 1 }, { p: 40000000, n: '각성 4', d: '붉은 야수', c: 0xff3b3b, atk: 2.5, spd: 1.4, bolt: 1 }, { p: 65000000, n: '각성 5', d: '신의 영역', c: 0x4fd2ff, atk: 3.2, spd: 1.55, bolt: 1 }];
 const AWK_DUR = 60000, AWK_CD = 90000, GK_CD = 150000, PTS_FIN = 1e8, PTS_MAX = 1e13; const AW = { on: 0, until: 0, cd: 0, tm: 0 };
-var ENH_MAX = 30; // 🔨 +30까지 (v29: +21~+30 추가) · 높을수록 어렵고, +11부터 위력이 기하급수로
-var ENH_P = [95, 90, 85, 80, 72, 65, 58, 50, 44, 38, 30, 26, 22, 19, 16, 13, 11, 9, 7, 5, 4.5, 4, 3.5, 3, 2.6, 2.3, 2, 1.7, 1.4, 1.2]; // +0→+1 … +19→+20 기본 성공률(%)
-var ENH_GREAT = 8, ENH_DOWN = 15; // 대성공 8%(+2, +10 미만) · +15부터 실패 시 15% 확률로 1단계 하락
+var ENH_MAX = 100; // 🔨 +30까지 (v29: +21~+30 추가) · 높을수록 어렵고, +11부터 위력이 기하급수로
+var ENH_P = [95, 90, 85, 80, 72, 65, 58, 50, 44, 38, 30, 26, 22, 19, 16, 13, 11, 9, 7, 5, 4.5, 4, 3.5, 3, 2.6, 2.3, 2, 1.7, 1.4, 1.2]; for (let i = 30; i < 100; i++) ENH_P[i] = Math.round(Math.max(.3, 1.2 * Math.pow(.98, i - 29)) * 100) / 100; // +31~+100: 1.2% → 0.3% // +0→+1 … +19→+20 기본 성공률(%)
+var ENH_GREAT = 8, ENH_DOWN = 15; // +31 이후도 같은 규칙 // 대성공 8%(+2, +10 미만) · +15부터 실패 시 15% 확률로 1단계 하락
 var COIN_OF = [3, 6, 12, 25, 50, 110, 300, 800, 2500]; // 분해: 등급별 코인
 if (typeof G.coin !== 'number' || !(G.coin >= 0)) G.coin = 0; if (G.enh.st > 0) { G.coin += G.enh.st * 10; G.enh.st = 0; } // v19 초안의 강화석 → 코인
 if (!G.shop || typeof G.shop !== 'object') G.shop = { own: {}, cnt: {}, eq: { b: 0, t: 0, n: 0 } }; G.shop.own = G.shop.own || {}; G.shop.cnt = G.shop.cnt || {}; G.shop.eq = G.shop.eq || { b: 0, t: 0, n: 0 };
@@ -3658,10 +3658,10 @@ function autoEquip() { // 부위마다 등급이 가장 높은 장비
 
 /* ================= 🔨 강화 (+0~+20 · 🪙 코인) ================= */
 function enhL() { return Math.max(0, Math.min(ENH_MAX, (G.enh && G.enh.l) | 0)); }
-function enhAtkMul(L) { L = L == null ? enhL() : L; return Math.pow(1.03, Math.min(L, 10)) * Math.pow(1.09, Math.max(0, Math.min(L, 20) - 10)) * Math.pow(1.08, Math.max(0, L - 20)); } // +10 ×1.34 · +15 ×2.07 · +20 ×3.18
-function enhHpMul(L) { L = L == null ? enhL() : L; return 1 + .03 * L; }
-function enhCost(L) { return Math.round(30 * Math.pow(1.32, L) / 10) * 10; } // +1 30코인 … +20 약 5,900코인
-function enhPity(L) { return L < 10 ? 4 : 1.5; }
+function enhAtkMul(L) { L = L == null ? enhL() : L; return Math.pow(1.03, Math.min(L, 10)) * Math.pow(1.09, Math.max(0, Math.min(L, 20) - 10)) * Math.pow(1.08, Math.max(0, Math.min(L, 30) - 20)) * Math.pow(1.04, Math.max(0, L - 30)); } // +30 ×6.9 · +50 ×15 · +100 ×107 // +10 ×1.34 · +15 ×2.07 · +20 ×3.18
+function enhHpMul(L) { L = L == null ? enhL() : L; return 1 + .03 * Math.min(L, 30) + .02 * Math.max(0, L - 30); }
+function enhCost(L) { return Math.round(30 * Math.pow(1.32, Math.min(L, 30)) * Math.pow(1.12, Math.max(0, L - 30)) / 10) * 10; } // +1 30코인 … +20 약 5,900코인
+function enhPity(L) { return L < 10 ? 4 : L < 30 ? 1.5 : .4; }
 function enhChance(luck) { const L = enhL(); if (L >= ENH_MAX) return 0; return Math.min(100, Math.round((ENH_P[L] + (G.enh.f | 0) * enhPity(L) + (luck ? 10 : 0)) * 10) / 10); }
 function enhCol(L) { return L >= 18 ? '#ff4fd8' : L >= 15 ? '#ff4a3a' : L >= 12 ? '#ffd76a' : L >= 10 ? '#ffb020' : L >= 7 ? '#b69cff' : L >= 4 ? '#41c9ff' : '#9aa6bb'; }
 const pctMul = m => '+' + Math.round((m - 1) * 100) + '%';
@@ -3683,7 +3683,7 @@ const useLuck = () => $('enhLuck').checked && (G.shop.cnt.luck | 0) > 0, useGuar
 function renderEnh() {
   const L = enhL(), co = G.coin | 0, ch = enhChance(useLuck()), cost = L < ENH_MAX ? enhCost(L) : 0, D = dismantlePlan();
   $('enhLv').textContent = '+' + L; $('enhLv').style.color = enhCol(L); $('enhLv').classList.toggle('rb', L >= 18);
-  $('enhInfo').innerHTML = L >= ENH_MAX ? `🏆 최대 강화 +30! 공격력 <b>${pctMul(enhAtkMul(L))}</b> · 체력 <b>${pctMul(enhHpMul(L))}</b>`
+  $('enhInfo').innerHTML = L >= ENH_MAX ? `🏆 최대 강화 +${ENH_MAX}! 공격력 <b>${pctMul(enhAtkMul(L))}</b> · 체력 <b>${pctMul(enhHpMul(L))}</b>`
     : `다음 <b>+${L + 1}</b> · 성공 <b>${ch}%</b>${G.enh.f ? ` <small>(실패 보정 +${Math.round(G.enh.f * enhPity(L) * 10) / 10}%p)</small>` : ''}${L < 10 ? ` · 대성공 ${ENH_GREAT}%(+2)` : ''}<br>공격력 <b>${pctMul(enhAtkMul(L))}</b> → <b>${pctMul(enhAtkMul(L + 1))}</b> · 체력 ${pctMul(enhHpMul(L))} → ${pctMul(enhHpMul(L + 1))}<br>`
       + (L >= 15 ? `<span class="warn">⚠ +15부터는 실패하면 ${ENH_DOWN}% 확률로 1단계 하락 (🛡 하락 방지권으로 막기)</span>` : L >= 10 ? '+11부터는 성공할 때마다 위력이 크게 뛰어요 🔥' : '실패해도 단계는 안 떨어져요 🙂');
   $('enhSt').textContent = `🪙 ${fmt(co, 0)} 코인 · 1회 ${fmt(cost, 0)}`; $('enhBar').style.width = (L / ENH_MAX * 100) + '%';
@@ -4238,8 +4238,8 @@ function wbStart(info) {
   const K = WBK[info.kind], b = makeBoss(K.boss); b.g.position.set(WB_POS.x, 0, WB_POS.z); b.g.scale.setScalar(.01); scene.add(b.g);
   b.g.traverse(o => { if (o.isMesh) o.userData.inter = 'wb'; });
   const L = takeLight(0xff2a3a, 22, WB_ACT + 5000); L.position.set(WB_POS.x, 6, WB_POS.z);
-  const n = Math.max(1, Math.min(40, peersData ? peersData.length : 1)), sumAtk = (peersData && peersData.length ? peersData : [{ pts: G.pts }]).slice(0, 40).reduce((a, p) => a + atkBase(lvOf(p.pts || 0)) + 10, 0);
-  WB = Object.assign(info, { K, b, L, hits: 0, max: Math.round((400 + sumAtk * 55) * (K.hp || 1)), mult: info.mult || 1, mine: 0, contrib: {}, dead: 0, lastTick: -1, grow: 0, shake: 0 });
+  const n = Math.max(1, Math.min(40, peersData ? peersData.length : 1)), sumAtk = (peersData && peersData.length ? peersData : [{ pts: G.pts, you: 1 }]).slice(0, 40).reduce((a, p) => a + (atkBase(Math.min(99, lvOf(p.pts || 0))) + 10) * (p.you ? 1 : .4), 0);
+  WB = Object.assign(info, { K, b, L, hits: 0, max: Math.round((400 + sumAtk * 38) * (K.hp || 1)), mult: info.mult || 1, mine: 0, contrib: {}, dead: 0, lastTick: -1, grow: 0, shake: 0 });
   INTER.wb.off = false; INTER.wb.name = K.name.replace(/[!]/g, ''); olabs.wb.textContent = '👹 ' + INTER.wb.name; olabs.wb.style.display = '';
   if (wbUnsub) { try { wbUnsub(); } catch (e) {} } let first = true; wbUnsub = room.onCounter(info.key, n2 => { if (!WB || WB.key !== info.key) return; WB.hits = n2; wbUi(); if (!WB.dead && n2 >= WB.max) { if (first) { wbDone.add(info.key); wbEnd(); } else wbWin(); } first = false; });
   $('wbBar').classList.add('on'); tapeNote(`🌋 시장 재난! ${K.name.replace(/!/g, '')} — 눌러서 레이드 광장으로`, { ms: 2800, go: () => tpTo(RAIDP.x, RAIDP.z - 14, '🌋 레이드 광장') }); addLog(`🌋 시장 재난 레이드: ${K.name} 야외 🌋 레이드 광장에 나타났다! 지도·포털로 이동해서 다 같이 막자!`, true);
@@ -4417,6 +4417,7 @@ function tickRaid(dt) {
   if (!entered) return; hpT += dt;
   if (hpT > .5) { hpT = 0; const now = Date.now();
     if (!HPS.ko && HPS.hp < HPS.max && now - HPS.last <= 5000 && GS().reg > 0) heal(HPS.max * GS().reg / 100 * .03);
+    if (!HPS.ko && HPS.hp < HPS.max && WB && !WB.dead && Math.hypot(ME.X - WB_POS.x, ME.Z - WB_POS.z) < 26) heal(HPS.max * .03);
     if (!HPS.ko && HPS.hp < HPS.max && now - HPS.last > 5000) { const fire = Math.hypot(ME.X - LOUNGE.x, ME.Z - LOUNGE.z) < 5.6, bed = ME.lie; heal(HPS.max * .025 * (fire || bed ? 4 : 1) * (1 + GS().reg / 25)); if ((fire || bed) && Math.random() < .3) floatAt(myAnt, '💚 회복', 'txt'); }
     hpUi(); if (!HPS.ko && Math.abs((HPS.lastSent || 0) - hpPct()) >= 5) { HPS.lastSent = hpPct(); sync(true); } }
 }
@@ -4898,7 +4899,8 @@ const CC_DAY = 60;
 function cityCoin(base, why) { const d = kstDate(); let o = LS.get('lv3d_cc', null); if (!o || o.d !== d) o = { d, n: 0 };
   const pay = Math.max(0, Math.min(Math.round(base), CC_DAY - o.n)); if (pay > 0) { o.n += pay; LS.set('lv3d_cc', o); addCoin(pay, why); toast(T(`🏙 도시 코인 +${pay} (오늘 ${o.n}/${CC_DAY})`, `🏙 City coins +${pay} (today ${o.n}/${CC_DAY})`)); }
   else toast(T(`🏙 오늘 도시 코인 한도(${CC_DAY})를 모두 받았어요`, `🏙 Daily city-coin cap (${CC_DAY}) reached`)); return pay; }
-window.__cityCoin = cityCoin; window.__t66 = { gs: () => GS(), petB, petLv, renderLux, luxBuy, setInfo: () => setInfo(G.eq), G: () => G, gear: () => myAnt && myAnt.gear ? Object.keys(myAnt.gear).filter(k => myAnt.gear[k]) : [] };
+window.__cityCoin = cityCoin; window.__t67 = { enhAtkMul, enhCost, ENH_P: () => ENH_P, enhChance, wb: () => WB };
+  window.__t66 = { gs: () => GS(), petB, petLv, renderLux, luxBuy, setInfo: () => setInfo(G.eq), G: () => G, gear: () => myAnt && myAnt.gear ? Object.keys(myAnt.gear).filter(k => myAnt.gear[k]) : [] };
   window.__t65 = { dum: () => ({ ...DUM }), dumHit, dumEnd, LV, lvOf, cpOf, atkOf, maxHp, cycOf, G: () => G, me: () => myAnt && { tier: myAnt.tier, cyc: myAnt.cyc, cycG: !!myAnt.cycG, inScene: !!(myAnt.cycG && myAnt.cycG.parent), kids: myAnt.cycG ? myAnt.cycG.children.length : 0, sc: myAnt.root.scale.x }, refresh: () => { myAnt.tier = -1; applyTier(myAnt, lvOf(myLookPts())); } };
   window.__t61 = { addPts, addCoin, hitCap: () => [HIT_CAP, SK_CAP, PTS_MAX], G: () => G };
   window.__t62 = { atkMin: () => ATK_MIN, atkCd, bq: () => JSON.parse(JSON.stringify(BQ)), act: () => ACT, BD: () => BD, openLog, openBd, bdPost, cloud: () => CLOUD_MAX, flush: bqFlush, updNote }; window.__jp = (s) => jackpot(s, 1); window.__cardLines = () => cardLines();
@@ -5927,6 +5929,7 @@ drawGb();
 function openGb() { renderGbList(); openModal('mGb'); }
 // ---- 📋 업데이트 이력 (새 업데이트마다 맨 위에 한 줄씩 추가) ----
 const CHANGELOG = [
+  ['v67 · 11월 28일', ['🌋 레이드가 너무 세서 보스 체력을 낮췄어요 (접속만 하고 안 싸우는 개미 수는 덜 반영) · 레이드 광장에서는 싸우는 중에도 체력이 차요', '🔨 강화가 +100까지 열렸어요 (+30 이후 한 단계마다 공격 +4%)']],
   ['v66 · 11월 28일', ['🪽 장비가 14칸이 됐어요: 날개·휘장 칸 추가 (풀세트는 예전 12칸 기준 그대로)', '💚 체력회복 · 🧿 상태이상 저항 능력치가 생겼어요', '💎 상점에 명품관이 열렸어요: S·SS·SSS 확정 장비, 비쌀수록 날개가 퍼덕이고 반짝여요 · 👀 미리보기', '🐾 펫 강화 (Lv3까지 보너스 최대 3.25배, 몸도 커져요)', '💧 강화 실패하면 물타기 스택이 쌓여 다음 성공률이 올라가요']],
   ['v65 · 11월 28일', ['🧬 진화가 300단계로 늘었어요! 101단계부터 ★ 각성, 201단계부터 ★★ 초월 — 1단계 모습으로 다시 태어나지만 몸이 커지고 별이 뜨고 능력치가 1.5배/2.25배', '🐣 초반 진화가 너무 빨라서 1~40단계에 필요한 XP를 늘렸어요 (지금 단계는 그대로 유지돼요)', '💥 전투력이 생겼어요. 진화할 때 얼마나 강해졌는지 %로 보여 줘요', '🎯 보스 투기장에 훈련 표적이 생겼어요. 10초 피해량을 지난 기록과 비교해 봐요', '🧮 계산기: 코스피·필라델피아 반도체지수 현재값이 자동으로 들어가요']],
   ['v64 · 11월 28일', ['🏆 주간 랭킹·클라우드 저장의 XP 1억 한도를 풀었어요', '🛠 버그 신고·개선 요청 게시판이 열렸어요 (메뉴 검색 → 버그)']],
@@ -6880,7 +6883,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '66';
+const APP_V = '67';
 {
   let shown = false;
   const check = async () => {
