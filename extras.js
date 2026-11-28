@@ -134,17 +134,17 @@
     };
     return b;
   }
-  function linkList() { return (CFG.links || []).map(function (l) { return { icon: String(l.icon || "🔗").slice(0, 4), name: String(l.name || "").slice(0, 30), desc: String(l.desc || "").slice(0, 60), url: safeLink(l.url) }; }).filter(function (l) { return l.url && l.name; }); }
+  function linkList() { return (CFG.links || []).map(function (l) { return { icon: String(l.icon || "🔗").slice(0, 4), name: String(l.name || "").slice(0, 30), desc: String(l.desc || "").slice(0, 60), url: safeLink(l.url), hot: l.hot === "yt" || l.hot === "ig" ? l.hot : "" }; }).filter(function (l) { return l.url && l.name; }); }
   function linkCards(box) {
     linkList().forEach(function (l) {
-      var a = el("a", "lvx-lk"); a.href = l.url; a.target = "_blank"; a.rel = "noopener";
+      var a = el("a", "lvx-lk"); if (l.hot) a.style.cssText = l.hot === "yt" ? "background:linear-gradient(135deg,#ff0033,#b0001f);border-color:#ff4a5a;color:#fff" : "background:linear-gradient(135deg,#833ab4,#fd1d1d 55%,#fcb045);border-color:#fd5a5a;color:#fff"; a.href = l.url; a.target = "_blank"; a.rel = "noopener";
       a.appendChild(el("span", "i", l.icon)); var t = el("span", "t"); t.appendChild(el("b", null, l.name)); t.appendChild(el("small", null, l.desc)); a.appendChild(t); a.appendChild(el("span", "go", "→"));
       box.appendChild(a);
     });
   }
   function linksBtn() {
     if (!linkList().length) return null;
-    var b = el("button", "lvx-lnk", "📣 레버가치"); b.type = "button"; b.id = "lvxLinks"; b.title = "블로그 · 오픈카톡 · 텔레그램 · 신호 웹페이지";
+    var b = el("button", "lvx-lnk", "📣 레버가치"); b.type = "button"; b.id = "lvxLinks"; b.title = "유튜브 · 인스타 · 블로그 · 오픈카톡 · 텔레그램 · 신호 웹페이지";
     b.onclick = function () {
       var m = el("div", "lvx-modal"), box = el("div", "lvx-box"); m.appendChild(box);
       box.appendChild(el("h3", null, "📣 레버가치전문가 채널"));

@@ -39,6 +39,8 @@ window.LEVER_CONFIG = {
 
   // ── 레버가치 채널 홍보 (상단 「📣 레버가치」 메뉴 · 후원 페이지 · 객장 입장 안내에 표시) ──
   links: [
+    { icon: "▶", name: "유튜브 레버가치", desc: "레버가치전문가 영상 · 구독하고 알림 받기", url: "https://www.youtube.com/@lega_value", hot: "yt" },
+    { icon: "📸", name: "인스타그램", desc: "@lega_value 릴스 · 팔로우", url: "https://www.instagram.com/lega_value/", hot: "ig" },
     { icon: "📝", name: "네이버 블로그", desc: "미국주식·AI 인프라·레버리지 분석 글", url: "https://blog.naver.com/leverage_expert" },
     { icon: "💬", name: "오픈카톡방", desc: "저점매수 신호봇 가입 · 같이 이야기해요", url: "https://open.kakao.com/o/gq92qKDi" },
     { icon: "📲", name: "텔레그램 신호봇", desc: "저점반전 신호 알림 받기", url: "https://t.me/lever_stock_bot" },

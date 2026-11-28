@@ -570,7 +570,7 @@ body .lvx-modal{z-index:100010}
 .lgLk,.enLinks{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px}
 .lgLk .lkp,.enLinks .lkp{display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border-radius:99px;font:800 12.5px/1 var(--font,inherit);color:#eef2fa;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);text-decoration:none;cursor:pointer}
 .lgLk .lkp i,.enLinks .lkp i{font-style:normal}
-.lgLk .lkp:hover,.enLinks .lkp:hover{background:rgba(255,255,255,.16)}
+.lgLk .lkp:hover,.enLinks .lkp:hover{background:rgba(255,255,255,.16)}.lkp.yt{background:linear-gradient(135deg,#ff0033,#b0001f)!important;border-color:#ff5a6a!important;color:#fff!important;box-shadow:0 0 10px rgba(255,0,51,.45)}.lkp.ig{background:linear-gradient(135deg,#833ab4,#fd1d1d 55%,#fcb045)!important;border-color:#fd5a5a!important;color:#fff!important;box-shadow:0 0 10px rgba(253,29,29,.4)}
 .lgLk .lkp.don,.enLinks .lkp.don{background:linear-gradient(135deg,#ffd76a,#ff9f1c)!important;color:#2a1600!important;border-color:transparent!important;box-shadow:none!important}
 @media (max-height:640px){#langGate .lgLogo{width:66px;height:66px}#langGate h1{font-size:34px}#langGate .lgBox{margin-bottom:4vh;padding:16px}#langGate .lgTag{margin:8px 0 12px}}
 /* ===== 입장 창: 브랜드 머리 + 제작자 링크 ===== */
@@ -769,8 +769,8 @@ body .lvx-modal{z-index:100010}
   <div class="pg" id="pg"><div class="small">종목</div><div class="small">현재가</div><div class="small">전일 종가(선택)</div></div>
   <button class="mbtn" id="pGo">적용</button><button class="mbtn sec" data-close>닫기</button></div></div>
 
-<script src="config.js?v=12" onerror="window.LEVER_CONFIG=window.LEVER_CONFIG||{}"></script>
-<script src="extras.js?v=13"></script>
+<script src="config.js?v=13" onerror="window.LEVER_CONFIG=window.LEVER_CONFIG||{}"></script>
+<script src="extras.js?v=14"></script>
 <script>/* 업데이트 직후 예전 파일이 섞여 멈추면 안내 */
 setTimeout(function(){ if (window.__room3d) return; var d=document.createElement("div"); d.style.cssText="position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);z-index:99;background:#111a2b;color:#fff;border:2px solid #f5a524;border-radius:16px;padding:18px 20px;text-align:center;font:15px/1.5 sans-serif;max-width:90vw"; d.innerHTML="<b>🔄 사이트가 업데이트됐어요</b><br>예전 파일이 남아 있어 개미시티가 안 열렸어요.<br><button style=\"margin-top:10px;padding:10px 18px;border:0;border-radius:10px;background:#f5a524;font-weight:800;cursor:pointer\">새로고침해서 입장</button>"; d.querySelector("button").onclick=function(){ location.replace(location.pathname+"?room="+(new URLSearchParams(location.search).get("room")||"")+"&r="+Date.now()); }; document.body.appendChild(d); }, 9000);</script>
 <script type="module">
@@ -4955,7 +4955,7 @@ const TREE = { x: 10.5, z: 50, top: 0 };
 const COLUS = (() => { let v = null; try { v = localStorage.getItem('lv3d_col'); } catch (e) {} return v ? v === 'us' : false; })(); if (COLUS) { const rs = document.documentElement.style; rs.setProperty('--up', '#2fd07a'); rs.setProperty('--down', '#ff4d57'); }
 const CITYW = { tick: [] };
 // ---- v69: 🌋 화산지대 서쪽 끝 관문 — 걸어 들어가면 바로 🌑 심연 대륙 · 🏦 지하금고
-const EDGE_G = [{ id: 'abyss', z: -40, col: 0x8a5aff, css: '#b89aff', t: '🌑 심연 대륙 → 60단계+' }, { id: 'vault', z: -5, col: 0xffc94a, css: '#ffd76a', t: '🏦 지하금고 → XP 1천만+' }];
+const EDGE_G = [{ id: 'abyss', z: -40, col: 0x8a5aff, css: '#b89aff', t: '🌑 심연 대륙 → 60단계+' }, { id: 'vault', z: -5, col: 0xff2a6a, css: '#ff6a9a', t: '🤪 난장판 모드 → XP 1천만+' }];
 BOUND.x0 = -239;
 EDGE_G.forEach(g => { WALK.push({ x0: -239, x1: -228, z0: g.z - 5, z1: g.z + 5 });
   const grp = new THREE.Group(); grp.position.set(-234, 0, g.z);
@@ -4966,7 +4966,7 @@ EDGE_G.forEach(g => { WALK.push({ x0: -239, x1: -228, z0: g.z - 5, z1: g.z + 5 }
   scene.add(grp); g.disc = disc; });
 let edgeCd = 0;
 CITYW.tick.push(dt => { if (REALM || RBUSY || !entered) return; EDGE_G.forEach(g => { g.disc.material.opacity = .28 + Math.sin(performance.now() / 300) * .12; }); edgeCd -= dt; if (edgeCd > 0 || ME.X > -234.5) return; const g = EDGE_G.find(g => Math.abs(ME.Z - g.z) < 4.2); if (!g) return; edgeCd = 3;
-  const ok = g.id === 'vault' ? (G.pts || 0) >= 1e7 : lvOf(G.pts) >= 59; ME.X = -228.5; ME.target = null; if (!ok) { toast(g.id === 'vault' ? '🔒 지하금고는 XP 1천만부터 들어갈 수 있어요' : '🔒 심연 대륙은 60단계부터 들어갈 수 있어요'); return; } realmEnter(g.id); });
+  const ok = g.id === 'vault' ? (G.pts || 0) >= 1e7 : lvOf(G.pts) >= 59; ME.X = -228.5; ME.target = null; if (!ok) { toast(g.id === 'vault' ? '🔒 난장판 모드는 XP 1천만부터 들어갈 수 있어요' : '🔒 심연 대륙은 60단계부터 들어갈 수 있어요'); return; } realmEnter(g.id); });
 window.__cityTick = (dt, t) => { for (const f of CITYW.tick) { try { f(dt, t); } catch (e) {} } };
 function onTreeTop() {
   try { stampSet('a'); } catch (e) {}
@@ -5956,6 +5956,7 @@ drawGb();
 function openGb() { renderGbList(); openModal('mGb'); }
 // ---- 📋 업데이트 이력 (새 업데이트마다 맨 위에 한 줄씩 추가) ----
 const CHANGELOG = [
+  ['v71 · 11월 28일', ['🤪 지하금고가 「난장판 모드」로 바뀌었어요! 들어가면 바로 시작 — 웨이브마다 더 많고 센 몹이 좀비처럼 몰려와요 (3웨이브 🗿 거인 · 5웨이브 👑 마진콜 군주)', '▶ 레버가치 유튜브 @lega_value 버튼이 생겼어요 (시장 리포트 옆) · 홍보 링크마다 유튜브·인스타가 맨 앞에']],
   ['v70 · 11월 28일', ['📈 시세 연동 버프: KORU·SOXL이 오른 날은 공격력↑, 내린 날은 방어·회복↑ (물타기 버프) — 최대 15%', '📱 폰: 공격 버튼을 꾹 누르고 있으면 계속 공격해요', '👥 친구 목록에 친구가 어디서 뭐 하는지 보여요 — 🏃 합류 · 🌀 같이 들어가기(던전·심연 등) · 📡 다른 채널이면 그 채널로']],
   ['v69 · 11월 28일', ['🏦 초고수 던전 「폐장 후 지하금고」(XP 1천만+) — ① 운반 개미·경보 드론 ② 냉각실(수리 벌레 먼저!) ③ 👑 마진콜 군주: 빨간 줄 돌진을 기둥으로 유도하면 약점 3배 ④ 과열 단계', '🔑 클리어하면 진화 간격의 4%(연습)·12%(표준) XP + 금고 조각 → 교환소에서 SS 장비·SSS 날개·SSS 휘장', '🌋 화산지대 서쪽 끝에 🌑 심연 대륙·🏦 지하금고 관문이 생겼어요 — 걸어 들어가면 바로 입장 (순간이동·메뉴 검색도 돼요)', '🌑 심연 대륙 몬스터가 더 세고(체력 3배+) 더 빨리 다시 나와요 (3~6초 · 필드 보스 90초) · XP도 1.6배', '🏆 랭킹·주간 랭킹에 몇 단계인지 같이 보여요']],
   ['v68 · 11월 28일', ['💥 랭킹(광장·주간)에 전투력이 같이 보여요', '🤖 자동사냥 버튼을 누르면 고를 수 있어요: 기본 공격만 / 스킬까지(4개 모두) / 초사이언·원기옥까지', '🌑 고렙 전용 「심연 대륙」이 열렸어요 (60단계부터 · 세계 관문/메뉴 검색 「심연」) — 아주 넓은 맵, 바깥으로 갈수록 Lv100→3000', '👾 신종 몬스터 24종 · ✨ 황금 변종(체력 3배·XP 4배·장비 확정) · 👑 필드 보스 4마리(확정 SS 이상)', '🎁 레벨이 높을수록 드랍 등급이 올라가요 (Lv300+ B · 800+ A · 1600+ S · 2500+ SS)']],
@@ -5978,18 +5979,19 @@ function updNote() {
   d.onclick = () => { d.remove(); openLog(); }; document.body.appendChild(d); requestAnimationFrame(() => { d.style.opacity = '1'; });
   setTimeout(() => { d.style.opacity = '0'; setTimeout(() => d.remove(), 700); }, 9000);
 }
-const IG = { url: 'https://www.instagram.com/lega_value/', id: '@lega_value' };
+const IG = { url: 'https://www.instagram.com/lega_value/', id: '@lega_value' }, YT = { url: 'https://www.youtube.com/@lega_value' };
+function ytOpen() { try { window.open(YT.url, '_blank', 'noopener'); } catch (e) { location.href = YT.url; } }
 function igOpen() { try { window.open(IG.url, '_blank', 'noopener'); } catch (e) { location.href = IG.url; } }
 function igInit() {
   if (document.getElementById('bIg')) return;
   const st = document.createElement('style'); st.textContent = `
-#bIg{border:0!important;color:#fff!important;font-weight:900!important;background:linear-gradient(135deg,#833ab4,#fd1d1d 55%,#fcb045)!important;box-shadow:0 0 10px rgba(253,29,29,.35)}#bIg:hover{filter:brightness(1.12)}
-@media (max-width:820px),(pointer:coarse) and (max-height:520px){header.mopen #bIg{display:inline-flex!important;order:-1;border:0!important;color:#fff!important;font-weight:900!important;background:linear-gradient(135deg,#833ab4,#fd1d1d 55%,#fcb045)!important;box-shadow:0 0 12px rgba(253,29,29,.45)}}
+#bYt{border:0!important;color:#fff!important;font-weight:900!important;background:linear-gradient(135deg,#ff0033,#b0001f)!important;box-shadow:0 0 10px rgba(255,0,51,.4)}#bYt:hover{filter:brightness(1.12)}#bIg{border:0!important;color:#fff!important;font-weight:900!important;background:linear-gradient(135deg,#833ab4,#fd1d1d 55%,#fcb045)!important;box-shadow:0 0 10px rgba(253,29,29,.35)}#bIg:hover{filter:brightness(1.12)}
+@media (max-width:820px),(pointer:coarse) and (max-height:520px){header.mopen #bYt,header.mopen #bIg{display:inline-flex!important;order:-1;border:0!important;color:#fff!important;font-weight:900!important;background:linear-gradient(135deg,#833ab4,#fd1d1d 55%,#fcb045)!important;box-shadow:0 0 12px rgba(253,29,29,.45)}}
 header{transition:transform .25s,opacity .2s}body.uihide header{transform:translateY(-170%);opacity:0;pointer-events:none}
 #uiHide{position:fixed;left:50%;transform:translateX(-50%);z-index:12;padding:3px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:rgba(10,16,28,.9);color:#cfe0ff;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit}
 body.uihide #uiHide{top:38px!important;border-color:#ffb020;color:#ffd76a;animation:uiP 1.8s ease-in-out infinite}@keyframes uiP{0%,100%{box-shadow:0 0 0 rgba(255,176,32,0)}50%{box-shadow:0 0 14px rgba(255,176,32,.8)}}`;
   document.head.appendChild(st);
-  const hb = el('button', 'hb pe', '📸 인스타그램'); hb.id = 'bIg'; hb.type = 'button'; hb.title = '레버가치전문가 ' + IG.id; hb.onclick = igOpen; const H0 = document.querySelector('header'); $('bRep').after(hb);
+  const hb = el('button', 'hb pe', '📸 인스타그램'); hb.id = 'bIg'; hb.type = 'button'; hb.title = '레버가치전문가 ' + IG.id; hb.onclick = igOpen; const H0 = document.querySelector('header'); $('bRep').after(hb); const yb = el('button', 'hb pe', '▶ 유튜브'); yb.id = 'bYt'; yb.type = 'button'; yb.title = '레버가치전문가 유튜브 @lega_value'; yb.onclick = ytOpen; $('bRep').after(yb);
   // 메뉴 숨김 화살표
   const u = el('button', 'pe', ''); u.id = 'uiHide'; u.type = 'button'; document.body.appendChild(u);
   const pos = () => { if (!document.body.classList.contains('uihide')) u.style.top = (H0.getBoundingClientRect().bottom + 3) + 'px'; };
@@ -6024,7 +6026,7 @@ const MAPB = { x0: -233, x1: 20, z0: -73, z1: 113 };
 
 
 /* ================= 🌐 v37 세계 엔진: 허브 포털 · 입장/퇴장 · 세계 번호(rg) 동기화 ================= */
-const RDEF = { sauna: { n: '♨ 찜질방' }, star: { n: '🔭 별 관측소' }, dungeon: { n: '🏰 던전', min: 8 }, race: { n: '🏁 각설탕 특급' }, mgdodge: { n: '📉 하락장 피하기' }, mgtower: { n: '📈 상한가 점프' }, mgscale: { n: '⚖ 원복 저울' }, mgbubble: { n: '🫧 버블 왕국' }, abyss: { n: '🌑 심연 대륙', min: 59 }, vault: { n: '🏦 폐장 후 지하금고' } };
+const RDEF = { sauna: { n: '♨ 찜질방' }, star: { n: '🔭 별 관측소' }, dungeon: { n: '🏰 던전', min: 8 }, race: { n: '🏁 각설탕 특급' }, mgdodge: { n: '📉 하락장 피하기' }, mgtower: { n: '📈 상한가 점프' }, mgscale: { n: '⚖ 원복 저울' }, mgbubble: { n: '🫧 버블 왕국' }, abyss: { n: '🌑 심연 대륙', min: 59 }, vault: { n: '🤪 난장판 모드' } };
 { const g = new THREE.Group(); g.position.set(HUBP.x, 0, HUBP.z); scene.add(g);
   g.add(mesh(GEO.cyl, FM(0x10303c, { roughness: .7 }), [12, .25, 12], [0, .12, 0]), mesh(GEO.cyl, FB(0x41c9ff), [12.4, .2, 12.4], [0, .06, 0]), mesh(GEO.cyl, FM(0x0b1d26, { roughness: .8 }), [10.2, .3, 10.2], [0, .13, 0]));
   const sg = signPlane('🌐 세계 포털 광장', 9, 1.5, '#d6f3ff', '#2da8e8'); sg.position.set(0, 8, -8.5); g.add(sg);
@@ -6058,7 +6060,7 @@ function renderWorlds() {
   card('📈', '상한가 점프', '봉을 밟고 상한가까지 오르기 · 매일 모양이 바뀌는 오늘의 타워', [['📈 바로 입장', () => { closeModals(); realmEnter('mgtower'); }]]);
   card('⚖', '원복 저울', '기울어지는 저울 위에서 45초 균형 잡기 · 기울기 0 = 원복', [['⚖ 바로 입장', () => { closeModals(); realmEnter('mgscale'); }]]);
   card('🫧', '버블 왕국', '부풀다가 터지는 비누방울 16송이를 밟고 정상까지 · 최고 시간 기록 · 첫 성공 코인', [['🫧 바로 입장', () => { closeModals(); realmEnter('mgbubble'); }]]);
-  card('🏦', '폐장 후 지하금고 · 초고수 던전', 'XP 1천만부터 · 연습/표준 · 운반 개미→냉각실→👑 마진콜 군주(돌진을 기둥으로!) · 진화 간격의 4%/12% XP + 🔑 조각 → SS·SSS 교환', [['🏦 바로 입장', () => { closeModals(); realmEnter('vault'); }]], (G.pts || 0) < 1e7);
+  card('🤪', '난장판 모드 · 초고수 전용', 'XP 1천만부터 · 들어가면 바로 시작! 웨이브마다 더 많고 센 몹이 좀비처럼 · 3웨이브 🗿 거인 · 5웨이브 👑 마진콜 군주 · 🔑 조각 → SS·SSS 교환', [['🤪 바로 입장', () => { closeModals(); realmEnter('vault'); }]], (G.pts || 0) < 1e7);
   card('🌑', '심연 대륙 · 고렙 전용 사냥터', '60단계부터 · 아주 넓은 맵 · 바깥으로 갈수록 Lv100→3000 · 신종 24종 · ✨황금 변종 · 👑 필드 보스 4 (확정 SS↑)', [['🌑 바로 입장', () => { closeModals(); realmEnter('abyss'); }]], lvOf(G.pts) < 59);
   card('🏰', '던전 · 폭락의 지하 묘지', '혼자 도전! 웨이브 4 + 보스 · 9단계부터 · 클리어하면 장비 상자', [['🏰 바로 입장', () => { closeModals(); realmEnter('dungeon'); }]]);
 }
@@ -6077,8 +6079,9 @@ function cmdItems() {
   const L = [];
   CMD_ACT.forEach(([id, ico, nm, kw]) => { const b = $(id); if (!b) return; L.push({ cat: '기능', ico, nm, kw, btns: [['열기', () => { closeModals(); setTimeout(() => b.click(), 60); }]] }); });
   L.push({ cat: '기능', ico: '📋', nm: '업데이트 이력', kw: '업데이트 패치 변경 새기능 이력 노트 뭐가 바뀌었', btns: [['열기', () => { closeModals(); setTimeout(openLog, 60); }]] });
-  L.push({ cat: '장소', ico: '🏦', nm: '폐장 후 지하금고 (초고수 던전)', kw: '지하금고 금고 초고수 던전 마진콜 군주 보스 조각 교환', btns: [['🏦 입장', () => { closeModals(); setTimeout(() => realmEnter('vault'), 60); }], ['📍 관문으로', () => { closeModals(); setTimeout(() => tpTo(-227, -5, '🏦 지하금고 관문'), 60); }]] });
+  L.push({ cat: '장소', ico: '🤪', nm: '난장판 모드 (초고수)', kw: '난장판 지하금고 금고 초고수 던전 웨이브 좀비 마진콜 군주 보스 조각 교환', btns: [['🤪 입장', () => { closeModals(); setTimeout(() => realmEnter('vault'), 60); }], ['📍 관문으로', () => { closeModals(); setTimeout(() => tpTo(-227, -5, '🤪 난장판 관문'), 60); }]] });
   L.push({ cat: '장소', ico: '🌑', nm: '심연 대륙 (고렙 사냥터)', kw: '심연 대륙 고렙 사냥 사냥터 몬스터 보스 레벨 필드', btns: [['🌑 입장', () => { closeModals(); setTimeout(() => realmEnter('abyss'), 60); }]] });
+  L.push({ cat: '기능', ico: '▶', nm: '유튜브 레버가치 @lega_value', kw: '유튜브 youtube 영상 구독 레버가치 lega_value 홍보 쇼츠', btns: [['열기', () => { closeModals(); setTimeout(ytOpen, 60); }]] });
   L.push({ cat: '기능', ico: '📸', nm: '인스타그램 ' + IG.id, kw: '인스타 인스타그램 릴스 영상 팔로우 레버가치 lega_value 홍보', btns: [['열기', () => { closeModals(); setTimeout(igOpen, 60); }]] });
   L.push({ cat: '기능', ico: '🛠', nm: '버그 신고 · 개선 요청', kw: '버그 신고 건의 개선 요청 문의 게시판 오류 불편 제안', btns: [['열기', () => { closeModals(); setTimeout(openBd, 60); }]] });
   TPS.forEach(([nm, x, z]) => L.push({ cat: '장소', ico: '📍', nm, kw: nm, btns: [['⚡ 이동', () => tpTo(x, z, nm)], ['🚶 걸어서', () => walkTo(x, z, null, nm)]] }));
@@ -6234,7 +6237,7 @@ async function realmLeave(cb) {
 }
 function tickRealm(dt, t) { const R = REALM; if (!R || RBUSY) return; try { R.inst.tick && R.inst.tick(dt, t, { x: ME.X - R_ORG.x, z: ME.Z - R_ORG.z, y: ME.Y || 0, ry: ME.ry }); } catch (e) { console.warn(e); } }
 
-const TPS = [['🌑 심연 대륙 관문 (화산 서쪽 끝)', -227, -40], ['🏦 지하금고 관문 (화산 서쪽 끝)', -227, -5], ['🚪 골목 문 (찜질방·관측소·던전)', -12.5, 36], ['🌐 세계 관문 (광장 안)', GATE.x + 3, GATE.z - 1.5], ['🌐 세계 포털 광장', HUBP.x, HUBP.z + 5], ['🏙 중앙 광장', 0, 9], ['🚪 야외 게이트', 13.6, -7.4], ['📖 방명록', 8.4, 0], ['☕ 병뚜껑 카페', HEAVEN.x, HEAVEN.z + 2.5], ['🌳 시세나무', 10.5, 43.4], ['🌀 포털 광장', -8.5, 23], ['📊 종목 토론 테이블', -3, 32.4], ['🏟 원형 토론장', -6, 46.2], ['🏢 원복 빌딩 계단', 15.6, -7.6], ['🌱 초보 사냥터', -32, 28], ['⚔ PK존', -46, 44.2], ['🎣 낚시터 부두', -56, 4], ['🏕 존버 캠핑장', CAMP.x, CAMP.z + 6], ['🌲 중급 숲', -100, 12], ['⚔ 보스 투기장', ARENA.x, ARENA.z - 16], ['🌋 화산지대', -165, 12], ['🌋 레이드 광장', RAIDP.x, RAIDP.z - 16], ['☠ 지옥 들판', -64, 98]];
+const TPS = [['🌑 심연 대륙 관문 (화산 서쪽 끝)', -227, -40], ['🤪 난장판 모드 관문 (화산 서쪽 끝)', -227, -5], ['🚪 골목 문 (찜질방·관측소·던전)', -12.5, 36], ['🌐 세계 관문 (광장 안)', GATE.x + 3, GATE.z - 1.5], ['🌐 세계 포털 광장', HUBP.x, HUBP.z + 5], ['🏙 중앙 광장', 0, 9], ['🚪 야외 게이트', 13.6, -7.4], ['📖 방명록', 8.4, 0], ['☕ 병뚜껑 카페', HEAVEN.x, HEAVEN.z + 2.5], ['🌳 시세나무', 10.5, 43.4], ['🌀 포털 광장', -8.5, 23], ['📊 종목 토론 테이블', -3, 32.4], ['🏟 원형 토론장', -6, 46.2], ['🏢 원복 빌딩 계단', 15.6, -7.6], ['🌱 초보 사냥터', -32, 28], ['⚔ PK존', -46, 44.2], ['🎣 낚시터 부두', -56, 4], ['🏕 존버 캠핑장', CAMP.x, CAMP.z + 6], ['🌲 중급 숲', -100, 12], ['⚔ 보스 투기장', ARENA.x, ARENA.z - 16], ['🌋 화산지대', -165, 12], ['🌋 레이드 광장', RAIDP.x, RAIDP.z - 16], ['☠ 지옥 들판', -64, 98]];
 function drawMap(cv, big) {
   const c = cv.getContext('2d'), W = cv.width, H = cv.height;
   if (REALM) { c.clearRect(0, 0, W, H); c.fillStyle = REALM.id === 'star' ? 'rgba(10,16,44,.9)' : REALM.id === 'dungeon' ? 'rgba(34,6,12,.92)' : 'rgba(40,20,8,.88)'; c.fillRect(0, 0, W, H); c.fillStyle = REALM.id === 'star' ? '#cfe0ff' : REALM.id === 'dungeon' ? '#ffb4a0' : '#ffd9a0'; c.font = `bold ${Math.round(H / 7)}px sans-serif`; c.textAlign = 'center'; c.fillText(RDEF[REALM.id].n + ' 안', W / 2, H / 2); return; }
@@ -6343,7 +6346,8 @@ function openNpc() {
   const b1 = el('button', 'mbtn', '📈 시장 리포트'); b1.type = 'button'; b1.onclick = () => { closeModals(); openRep('all'); };
   const b2 = el('button', 'mbtn sec', '🧮 원복 계산기'); b2.type = 'button'; b2.onclick = () => { closeModals(); openRep('me'); };
   const b3 = el('a', 'mbtn sec', '📢 텔레그램 신호봇'); b3.href = 'https://t.me/lever_stock_bot'; b3.target = '_blank'; b3.rel = 'noopener';
-  row.append(b1, b2, b3); B.appendChild(row); openModal('mNpc'); if (!BOT) loadBot().then(() => { if ($('mNpc').classList.contains('on')) { B.textContent = ''; openNpc(); } });
+  const by = el('a', 'mbtn lkp yt', '▶ 유튜브'); by.href = YT.url; by.target = '_blank'; by.rel = 'noopener'; const bi = el('a', 'mbtn lkp ig', '📸 인스타'); bi.href = IG.url; bi.target = '_blank'; bi.rel = 'noopener';
+  row.append(by, bi, b1, b2, b3); B.appendChild(row); openModal('mNpc'); if (!BOT) loadBot().then(() => { if ($('mNpc').classList.contains('on')) { B.textContent = ''; openNpc(); } });
   if (myAnt && cd('npc-pts', 60000)) addPts(2);
 }
 // ---- 📅 출석 체크 ----
@@ -6499,7 +6503,7 @@ function fillSignals(box, n, full) {
     if (full && s.x) d.appendChild(el('div', 'small', s.x)); box.appendChild(d);
   });
   const row = el('div', 'sigbtn'); const a1 = el('a', 'gbtn', '📲 텔레그램 신호 받기'); a1.href = 'https://t.me/lever_stock_bot'; a1.target = '_blank'; a1.rel = 'noopener';
-  const a2 = el('a', 'gbtn', '🌐 신호 전체 보기'); a2.href = 'https://levergachi.github.io/'; a2.target = '_blank'; a2.rel = 'noopener'; row.append(a1, a2); box.appendChild(row);
+  const a2 = el('a', 'gbtn', '🌐 신호 전체 보기'); a2.href = 'https://levergachi.github.io/'; a2.target = '_blank'; a2.rel = 'noopener'; const ay = el('a', 'gbtn lkp yt', '▶ 유튜브'); ay.href = YT.url; ay.target = '_blank'; ay.rel = 'noopener'; const ai = el('a', 'gbtn lkp ig', '📸 인스타'); ai.href = IG.url; ai.target = '_blank'; ai.rel = 'noopener'; row.append(ay, ai, a1, a2); box.appendChild(row);
   if (BOT.updated) box.appendChild(el('div', 'small', `봇 갱신: ${BOT.updated} · ${BOT.disclaimer || ''}`));
 }
 // ---- v28: 🇺🇸 미국 증시 뉴스 자동 한글 번역 (브라우저에서 무료 번역 · 결과는 이 기기에 저장 · 원문 보기 가능) ----
@@ -6788,7 +6792,7 @@ function skylineSvg() { let K = []; try { K = ant100(40); } catch (e) {} let lo 
   K.forEach((k, i) => { const x = 30 + i * 28.6, up = k.c >= k.o, b0 = Y(Math.max(k.o, k.c)), b1 = Math.max(b0 + 3, Y(Math.min(k.o, k.c))), c = up ? (EN() ? '#2fd07a' : '#ff4d5e') : (EN() ? '#ff4d5e' : '#3d7bff');
     o += `<rect x="${x + 7}" y="${b1}" width="6" height="${300 - b1}" fill="#1d2550"/><rect x="${x + 9}" y="${Y(k.h)}" width="2" height="${b0 - Y(k.h)}" fill="#cfd6ea"/><rect x="${x}" y="${b0}" width="20" height="${b1 - b0}" rx="2" fill="${c}"/>`; });
   return `<svg class="lgCity" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice" aria-hidden="true">${o}<rect x="0" y="292" width="1200" height="8" fill="#0d1230"/></svg>`; }
-function creditRow(cls) { const d = el('div', cls); try { LVX.linkList().forEach(l => { const a = el('a', 'lkp'); a.href = l.url; a.target = '_blank'; a.rel = 'noopener'; a.append(el('i', null, l.icon), el('span', null, trText(l.name))); d.appendChild(a); }); const b = LVX.donateBtn(); if (b) { b.classList.add('lkp', 'don'); b.id = ''; b.textContent = T('☕ 후원', '☕ Support'); d.appendChild(b); } } catch (e) {} return d; }
+function creditRow(cls) { const d = el('div', cls); try { LVX.linkList().forEach(l => { const a = el('a', 'lkp' + (l.hot ? ' ' + l.hot : '')); a.href = l.url; a.target = '_blank'; a.rel = 'noopener'; a.append(el('i', null, l.icon), el('span', null, trText(l.name))); d.appendChild(a); }); const b = LVX.donateBtn(); if (b) { b.classList.add('lkp', 'don'); b.id = ''; b.textContent = T('☕ 후원', '☕ Support'); d.appendChild(b); } } catch (e) {} return d; }
 function langGate() { return new Promise(res => { const o = el('div'); o.id = 'langGate';
   o.innerHTML = `<div class="lgSky"></div>${skylineSvg()}<div class="lgAnts">🐜<i>🐜</i><b>🐜</b>🐜</div><div class="lgBox"><div class="lgLogo">${logoSvg()}</div><h1>개미시티<span>ANT CITY</span></h1><p class="lgTag">Where the market moves the streets.<b>주식 개미들이 사는 3D 도시</b></p><div class="lgBtns"><button type="button" data-l="ko">🇰🇷 한국어</button><button type="button" data-l="en">🌐 English</button></div><div class="lgBy">제작 · <b>레버가치전문가</b> · Made by Levergachi</div><div class="lgLk"></div><p class="lgNote">In Korea, small investors are called “ants.” Welcome to their city.<br>가상 시장 · 재미용 · 투자 조언 아님 · Fictional market · Not investment advice</p></div>`;
   o.querySelector('.lgLk').replaceWith(creditRow('lgLk'));
@@ -6917,7 +6921,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '70';
+const APP_V = '71';
 {
   let shown = false;
   const check = async () => {
