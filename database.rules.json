@@ -153,7 +153,7 @@
           ".write": "auth != null && auth.uid === $uid && $wk.matches(/^w[0-9]{6}$/)",
           ".validate": "newData.hasChildren(['nick', 'p', 'ts']) && newData.child('nick').isString() && newData.child('nick').val().length >= 1 && newData.child('nick').val().length <= 12 && newData.child('p').isNumber() && newData.child('p').val() >= 0 && newData.child('p').val() <= 10000000000000 && newData.child('ts').val() <= now + 60000 && (!data.exists() || newData.child('p').val() >= data.child('p').val())",
           "$other": {
-            ".validate": "$other.matches(/^(nick|p|ts|cp)$/)"
+            ".validate": "$other.matches(/^(nick|p|ts|cp|lv)$/)"
           }
         }
       }

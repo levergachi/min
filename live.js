@@ -221,7 +221,7 @@ function localRoom(room) {
     boardVote(id) { const l = bdList(); const m = l.find(x => x.id === id); if (m && !m.mine) { m.mine = 1; m.v = (m.v || 0) + 1; try { localStorage.setItem('lv3d_board_local', JSON.stringify(l)); } catch (e) {} bdSubs.forEach(f => f(bdList())); } return Promise.resolve(); },
     boardDel(id) { const l = bdList().filter(x => x.id !== id); try { localStorage.setItem('lv3d_board_local', JSON.stringify(l)); } catch (e) {} bdSubs.forEach(f => f(bdList())); return Promise.resolve(); },
     onBoard(f) { bdSubs.add(f); f(bdList()); },
-    seasonSet(wk, nick, p, cp) { const k = 'lv3d_season_' + wk; let m = {}; try { m = JSON.parse(localStorage.getItem(k) || '{}'); } catch (e) {} m[live.uid] = { nick: clampStr(nick, 12), p: Math.max(0, Math.floor(p) || 0), cp: Math.max(0, Math.floor(cp) || 0) }; try { localStorage.setItem(k, JSON.stringify(m)); } catch (e) {} (seaSubs[wk] || new Set()).forEach(f => f(seaList(wk))); return Promise.resolve(); },
+    seasonSet(wk, nick, p, cp, lv) { const k = 'lv3d_season_' + wk; let m = {}; try { m = JSON.parse(localStorage.getItem(k) || '{}'); } catch (e) {} m[live.uid] = { nick: clampStr(nick, 12), p: Math.max(0, Math.floor(p) || 0), cp: Math.max(0, Math.floor(cp) || 0), lv: Math.max(0, Math.min(300, Math.floor(lv) || 0)) }; try { localStorage.setItem(k, JSON.stringify(m)); } catch (e) {} (seaSubs[wk] || new Set()).forEach(f => f(seaList(wk))); return Promise.resolve(); },
     onSeason(wk, f) { (seaSubs[wk] = seaSubs[wk] || new Set()).add(f); f(seaList(wk)); return () => seaSubs[wk].delete(f); },
     bumpMoktak() { moktak += 1; try { localStorage.setItem(mokKey, String(moktak)); } catch (e) {} ch.postMessage({ t: "mok", uid: live.uid, n: moktak }); subs.moktak.forEach(f => f(moktak)); },
     onMoktak(f) { subs.moktak.add(f); f(moktak); },
@@ -438,7 +438,7 @@ async function firebaseInit() {
       },
       // 📖 방명록 (채널과 상관없이 하나)
       gbAdd(nick, text) { return D.push(D.ref(db, 'guestbook'), { uid: live.uid, nick: clampStr(nick, 12), text: clampStr(text, 100), ts: D.serverTimestamp() }); },
-      seasonSet(wk, nick, p, cp) { if (!/^w[0-9]{6}$/.test(wk)) return Promise.resolve(); return D.set(D.ref(db, `season/${wk}/${live.uid}`), { nick: clampStr(nick, 12), p: Math.max(0, Math.min(CLOUD_MAX, Math.floor(p) || 0)), cp: Math.max(0, Math.min(1e15, Math.floor(cp) || 0)), ts: D.serverTimestamp() }).catch(e => console.warn('season', e && e.code)); },
+      seasonSet(wk, nick, p, cp, lv) { if (!/^w[0-9]{6}$/.test(wk)) return Promise.resolve(); return D.set(D.ref(db, `season/${wk}/${live.uid}`), { nick: clampStr(nick, 12), p: Math.max(0, Math.min(CLOUD_MAX, Math.floor(p) || 0)), cp: Math.max(0, Math.min(1e15, Math.floor(cp) || 0)), lv: Math.max(0, Math.min(300, Math.floor(lv) || 0)), ts: D.serverTimestamp() }).catch(e => console.warn('season', e && e.code)); },
       onSeason(wk, f) { if (!/^w[0-9]{6}$/.test(wk)) { f([]); return () => {}; } return D.onValue(D.query(D.ref(db, `season/${wk}`), D.orderByChild('p'), D.limitToLast(10)), s => { const arr = []; s.forEach(c => { arr.push(Object.assign({ uid: c.key }, c.val())); }); f(arr.sort((a, b) => b.p - a.p)); }, () => f([])); },
       boardAdd(nick, kind, text) { return D.push(D.ref(db, 'bugs'), { uid: live.uid, nick: clampStr(nick, 12), k: kind === 'b' ? 'b' : 'i', text: clampStr(text, 300), ts: D.serverTimestamp() }); },
       boardVote(id) { return D.set(D.ref(db, `bugsv/${String(id).replace(/[^A-Za-z0-9_-]/g, '')}/${live.uid}`), true); },

@@ -8,7 +8,7 @@
   const BASIC = (c, o) => new THREE.MeshBasicMaterial(Object.assign({ color: c, fog: false }, o || {}));
   const fmtN = n => n >= 1e12 ? (n / 1e12).toFixed(1) + '조' : n >= 1e8 ? (n / 1e8).toFixed(1) + '억' : n >= 1e4 ? (n / 1e4).toFixed(1) + '만' : Math.round(n).toLocaleString();
   // ── 몬스터 수치 (야외 공식과 같은 곡선을 Lv3000까지 이어서)
-  const HPF = L => Math.round(100 * Math.pow(100, 1.65) * Math.pow(L / 100, 1.05 + .45 * Math.log10(L / 100)) * .6);
+  const HPF = L => Math.round(100 * Math.pow(100, 1.65) * Math.pow(L / 100, 1.05 + .45 * Math.log10(L / 100)) * 2);
   const EXPF = L => Math.round(7300 * Math.pow(L / 100, 2.6) * .5);
   const COINF = L => Math.round(63 * Math.pow(L / 100, 1.6));
   const DROPP = L => Math.min(.3, .04 + L / 12000);
@@ -99,8 +99,8 @@
     if (m.hp <= 0) killMob(m);
   }
   function killMob(m) {
-    m.dead = 1; m.resp = m.boss ? 180 : 9 + rnd() * 7; m.g.visible = m.lab.visible = m.bg.visible = m.fg.visible = false; kills++; S.k++;
-    const mul = m.boss ? 15 : m.gold ? 4 : 1, xp = EXPF(m.L) * mul, cn = COINF(m.L) * (m.boss ? 10 : m.gold ? 3 : 1);
+    m.dead = 1; m.resp = m.boss ? 90 : 3 + rnd() * 3; m.g.visible = m.lab.visible = m.bg.visible = m.fg.visible = false; kills++; S.k++;
+    const mul = (m.boss ? 15 : m.gold ? 4 : 1) * 1.6, xp = EXPF(m.L) * mul, cn = COINF(m.L) * (m.boss ? 10 : m.gold ? 3 : 1);
     api.addPts(xp); addCoin(cn, '심연 사냥'); xpRun += xp; coinRun += cn;
     spark(m.x, 1.5, m.z, m.boss ? 160 : m.gold ? 70 : 30, m.boss || m.gold ? 0xffd23a : 0xb89aff, 6, 4, 1.2, 2);
     floatW(m.x, m.h + .6, m.z, `+${fmtN(xp)} XP`, 'dc');
@@ -113,10 +113,14 @@
   // 공격 (E · 꾹 누르면 연타 · 폰은 공격 버튼)
   addInter('rz_hit', { name: '⚔ 공격', X: 0, Z: -200, h: 2.2, btn: '⚔<br>공격', fn: () => { const tg = nearest(me.x, me.z, 4.4); if (!tg) { toast('⚔ 몬스터에게 가까이 가요!'); return; } api.face(tg.x, tg.z); const a = api.attack(); if (!a) return; hitMob(tg, a.dmg, a.crit); } });
   const unit = () => Math.max(1, api.unit());
-  let autoT = 0;
+  let autoT = 0; const stuck = { x: null, z: null, n: 0 };
   function tryAuto(dt) {
     if (!api.auto() || api.manual()) return; autoT -= dt; if (autoT > 0) return; autoT = .2;
-    const tg = nearest(me.x, me.z, 30); if (!tg) return; const d = hyp(tg.x - me.x, tg.z - me.z) - tg.sc * .9;
+    // 맵 전체에서 가장 가까운 몬스터(보스는 근처일 때만) → 걸어가요 · 크리스털에 걸리면 옆으로 비켜요
+    let tg = nearest(me.x, me.z, 30); if (!tg) { let bd = 1e9; mobs.forEach(m => { if (m.dead || m.boss) return; const d = hyp(m.x - me.x, m.z - me.z); if (d < bd) { bd = d; tg = m; } }); } if (!tg) return;
+    const d = hyp(tg.x - me.x, tg.z - me.z) - tg.sc * .9;
+    if (stuck.x != null && hyp(me.x - stuck.x, me.z - stuck.z) < .3 && d > 3.2) { stuck.n++; } else stuck.n = 0; stuck.x = me.x; stuck.z = me.z;
+    if (stuck.n >= 6) { stuck.n = 0; const a = rnd() * 6.283; api.walkTo(me.x + Math.cos(a) * 4, me.z + Math.sin(a) * 4); return; }
     if (d > 3.2) api.walkTo(tg.x - (tg.x - me.x) / (d + 1) * 2.4, tg.z - (tg.z - me.z) / (d + 1) * 2.4);
     else { api.face(tg.x, tg.z); const a = api.attack(); if (a) hitMob(tg, a.dmg, a.crit); if (api.autoM() >= 1) for (let s = 3; s >= 0; s--) if (api.skillReady(s)) { api.cast(s); break; } api.autoPower(); }
   }
@@ -140,12 +144,12 @@
         if (doCull) { m.g.visible = vis; m.lab.visible = m.bg.visible = m.fg.visible = vis && d < 22; }
         if (!vis && !m.aggro) return;
         // 어그로
-        const pr = hyp(pm.x, pm.z) < HUB + .5; if (!pr && d < (m.boss ? 14 : 9)) m.aggro = Math.max(m.aggro, 4);
+        const pr = hyp(pm.x, pm.z) < HUB + .5; if (!pr && d < (m.boss ? 16 : 11)) m.aggro = Math.max(m.aggro, 4);
         if (m.aggro > 0 && (d > 28 || pr)) m.aggro -= dt * 3; else if (m.aggro > 0 && d > 3) m.aggro -= dt * .3;
-        const spd = (m.boss ? 2.6 : 3.2) * (m.aggro > 0 ? 1 : .35), atkR = 1.5 + m.sc * .7;
+        const spd = (m.boss ? 3.2 : 4.2) * (m.aggro > 0 ? 1 : .35), atkR = 1.5 + m.sc * .7;
         if (m.aggro > 0 && !pr) {
-          if (m.wind > 0) { m.wind -= dt; m.g.scale.setScalar(m.sc * (1 + .2 * Math.sin((1 - m.wind / .6) * Math.PI))); if (m.wind <= 0) { m.g.scale.setScalar(m.sc); if (d < atkR + .7 && pm.y < 1.4) { const hp = api.hp(), pct = Math.min(m.boss ? .3 : .18, (.03 + .012 * Math.log2(Math.max(1, m.hp / unit()))) * (m.boss ? 1.6 : m.gold ? 1.2 : 1)); api.hurt(Math.max(1, Math.round(hp.max * pct)), m.x, m.z, m.boss ? '👑' : ''); } } }
-          else { if (d > atkR * .8) { m.x += dx / (d || 1) * spd * dt; m.z += dz / (d || 1) * spd * dt; } m.atkT -= dt; if (m.atkT <= 0 && d < atkR) { m.atkT = m.boss ? 1.4 : 1.9; m.wind = .6; } }
+          if (m.wind > 0) { m.wind -= dt; m.g.scale.setScalar(m.sc * (1 + .2 * Math.sin((1 - m.wind / .6) * Math.PI))); if (m.wind <= 0) { m.g.scale.setScalar(m.sc); if (d < atkR + .7 && pm.y < 1.4) { const hp = api.hp(), pct = Math.min(m.boss ? .35 : .22, (.05 + .015 * Math.log2(Math.max(1, m.hp / unit()))) * (m.boss ? 1.6 : m.gold ? 1.2 : 1)); api.hurt(Math.max(1, Math.round(hp.max * pct)), m.x, m.z, m.boss ? '👑' : ''); } } }
+          else { if (d > atkR * .8) { m.x += dx / (d || 1) * spd * dt; m.z += dz / (d || 1) * spd * dt; } m.atkT -= dt; if (m.atkT <= 0 && d < atkR) { m.atkT = m.boss ? 1.1 : 1.4; m.wind = .5; } }
           m.g.rotation.y = Math.atan2(dx, dz);
         } else { m.wT -= dt; if (m.wT <= 0) { m.wT = 3 + rnd() * 4; const a = rnd() * 6.283; m.wx = m.hx + Math.cos(a) * 4; m.wz = m.hz + Math.sin(a) * 4; } const wx = m.wx - m.x, wz = m.wz - m.z, wd = hyp(wx, wz); if (wd > .3) { m.x += wx / wd * spd * dt; m.z += wz / wd * spd * dt; m.g.rotation.y = Math.atan2(wx, wz); } if (m.hp < m.max) m.hp = Math.min(m.max, m.hp + m.max * .05 * dt); }
         // 안전지대 밖으로 (가운데엔 못 들어와요) · 맵 밖으로도 못 나가요
