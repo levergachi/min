@@ -1631,7 +1631,7 @@ addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && (e.key || '')
   if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift'].includes(k)) { keys.add(k); e.preventDefault(); }
   if (k === ' ') { e.preventDefault(); FLY.sp = true; if (!e.repeat) doFx('jump'); }
   if (k === 'c') FLY.ck = true;
-  if (k === 'e' && (!e.repeat || pkTarget() || nearKey === 'rz_hit' || nearKey === 'dummy' || (nearKey && /boss|wboss|mob/.test(IT(nearKey).type || '')))) useNearest();
+  if (k === 'e' && (!e.repeat || pkTarget() || /rz_hit$/.test(nearKey || '') || nearKey === 'dummy' || (nearKey && /boss|wboss|mob/.test(IT(nearKey).type || '')))) useNearest();
   if (k === 'enter') { e.preventDefault(); openPanel('tChat'); $('chatIn').focus(); }
 });
 addEventListener("keyup", e => { const k = (e.key || "").toLowerCase(); keys.delete(k); if (k === ' ') FLY.sp = false; if (k === 'c') FLY.ck = false; });
@@ -1672,14 +1672,14 @@ function tapAt(cx, cy) {
   }
   if (ray.ray.intersectPlane(floorPlane, hitP)) { ME.target = { x: clampX(hitP.x), z: clampZ(hitP.z) }; spawn(ME.target.x, .1, ME.target.z, 14, 0xf5a524, 2, 4, .5); }
 }
-const clampX = x => REALM ? Math.max(R_ORG.x + REALM.inst.bounds.x0, Math.min(R_ORG.x + REALM.inst.bounds.x1, x)) : Math.max(BOUND.x0, Math.min(BOUND.x1, x)), clampZ = z => REALM ? Math.max(R_ORG.z + REALM.inst.bounds.z0, Math.min(R_ORG.z + REALM.inst.bounds.z1, z)) : Math.max(BOUND.z0, Math.min(BOUND.z1, z));
+const clampX = x => REALM && !REALM.land ? Math.max(R_ORG.x + REALM.inst.bounds.x0, Math.min(R_ORG.x + REALM.inst.bounds.x1, x)) : Math.max(BOUND.x0, Math.min(BOUND.x1, x)), clampZ = z => REALM && !REALM.land ? Math.max(R_ORG.z + REALM.inst.bounds.z0, Math.min(R_ORG.z + REALM.inst.bounds.z1, z)) : Math.max(BOUND.z0, Math.min(BOUND.z1, z));
 let runToggle = false;
 $('aRun').onclick = () => { runToggle = !runToggle; $('aRun').classList.toggle('on', runToggle); };
 $('aJump').onclick = () => doFx('jump');
 $('aSit').onclick = () => { if (ME.fly) { FLY.dnT = performance.now() + 320; return; } if (ME.seat >= 0) standUp(); else sitNearest(); };
 [['aJump', 'up'], ['aSit', 'dn']].forEach(([id, k]) => { const b = $(id); const on = () => { FLY[k] = true; }, off = () => { FLY[k] = false; }; b.addEventListener('pointerdown', on); ['pointerup', 'pointercancel', 'pointerleave'].forEach(ev => b.addEventListener(ev, off)); });
 { const B = $('aUse'); let iv = 0, hp = 0; const stop = () => { clearInterval(iv); iv = 0; };
-  const atkTy = () => { if (!nearKey) return false; const ty = IT(nearKey).type; return ty === 'boss' || ty === 'mob' || ty === 'wboss' || ty === 'crate' || nearKey === 'rz_hit' || nearKey === 'dummy'; };
+  const atkTy = () => { if (!nearKey) return false; const ty = IT(nearKey).type; return ty === 'boss' || ty === 'mob' || ty === 'wboss' || ty === 'crate' || /rz_hit$/.test(nearKey) || nearKey === 'dummy'; };
   B.addEventListener('pointerdown', () => { hp = performance.now(); useNearest(); stop(); iv = setInterval(() => { if (!atkTy()) { stop(); return; } useNearest(); }, 210); });
   ['pointerup', 'pointerleave', 'pointercancel'].forEach(k => B.addEventListener(k, stop));
   B.onclick = () => { if (performance.now() - hp < 900) return; useNearest(); }; }
@@ -2083,7 +2083,7 @@ function onFxCb0(fx) {
 
 /* ================= 피어 ================= */
 function seatOrPos(d) {
-  if (isFinite(Number(d.x)) && isFinite(Number(d.y)) && d.x != null && d.y != null) { const w = toW(Number(d.x), Number(d.y)); return d.rg && REALM ? { x: w.x - R_FRAME.x + R_ORG.x, z: w.z - R_FRAME.z + R_ORG.z } : w; }
+  if (isFinite(Number(d.x)) && isFinite(Number(d.y)) && d.x != null && d.y != null) { const w = toW(Number(d.x), Number(d.y)); if (d.rg && LANDS && LANDS[d.rg]) return { x: w.x - R_FRAME.x + LANDS[d.rg].ox, z: w.z - R_FRAME.z + LANDS[d.rg].oz }; return d.rg && REALM ? { x: w.x - R_FRAME.x + R_ORG.x, z: w.z - R_FRAME.z + R_ORG.z } : w; }
   if (d.seat >= 0 && SEATS[d.seat % SEATS.length]) { const s = SEATS[d.seat % SEATS.length]; return { x: s.x, z: s.z }; }
   return toW(50, 92);
 }
@@ -2094,7 +2094,7 @@ function onPeersCb(arr) {
   const seen = new Set();
   arr.forEach(d => {
     if (d.you || d.uid === live.uid) { if (myLabel) fillLabel(myLabel, myData(), true); return; }
-    if ((d.rg || '') !== (REALM ? REALM.id : '')) return; // 다른 세계에 있는 개미는 안 보임
+    { const mine = REALM ? REALM.id : '', open = r => !r || !!(LANDS && LANDS[r]); if ((d.rg || '') !== mine && !(open(d.rg) && open(mine))) return; } // 다른 차원 세계 개미만 안 보임 (옆 땅은 이어져 있어요)
     seen.add(d.uid); let r = remotes.get(d.uid); const w = seatOrPos(d);
     if (!r) { r = { ant: null, L: null, cur: { x: w.x, z: w.z }, tgt: { x: w.x, z: w.z }, data: d, lastMv: 0, ry: Math.PI, sit: false, moving: false, rank: 999, col: new THREE.Color() }; remotes.set(d.uid, r); lodDirty = true; }
     r.data = d; r.tgt = w; r.sit = d.seat >= 0 && !d.mv; r.lie = d.pose === 'lie' && !d.mv; r.tgtY = Math.max(0, Math.min(30, Number(d.h) || 0)); r.swim = d.pose === 'swim'; if (r.ant) { r.ant.fly = d.pose === 'fly'; r.ant.glide = d.pose === 'glide'; r.ant.climb = d.pose === 'climb'; r.ant.swim = r.swim; r.ant.fishing = d.pose === 'fish'; } r.col.set(/^#[0-9a-fA-F]{6}$/.test(d.color || '') ? d.color : COLORS[0]);
@@ -3776,7 +3776,7 @@ function renderShop() {
     if (x.cat === 'cos' && x.slot === 't') { const pv = el('span', 'say st' + x.v, '가즈아!'); pv.style.display = 'inline-block'; info.appendChild(pv); }
     if (x.cat === 'cos' && x.slot === 'n') { const pv = el('span', 'nm nn' + x.v, PROF ? PROF.nick : '개미'); pv.style.display = 'inline-block'; info.appendChild(pv); }
     const btns = el('div', 'sb2');
-    if (x.cat === 'use') { const u = el('button', 'gbtn', `사용 (${cnt})`); u.disabled = !cnt; u.onclick = () => useItem(x.id); const b = el('button', 'gbtn hot', `🪙 ${fmt(x.p, 0)}`); b.onclick = () => buy(x.id); btns.append(u, b); }
+    if (x.cat === 'use') { const u = el('button', 'gbtn', `사용 (${cnt})`); u.disabled = !cnt; u.onclick = () => useItem(x.id); const b = el('button', 'gbtn hot', `🪙 ${fmt(x.p, 0)}`); holdBuy(b, x.id); const b10 = el('button', 'gbtn', '×10'), b100 = el('button', 'gbtn', '×100'); b10.onclick = () => buyN(x.id, 10); b100.onclick = () => buyN(x.id, 100); b10.title = `🪙 ${fmt(x.p * 10, 0)}`; b100.title = `🪙 ${fmt(x.p * 100, 0)}`; btns.append(u, b, b10, b100); }
     else if (!own) { const b = el('button', 'gbtn hot', `🪙 ${fmt(x.p, 0)}`); b.onclick = () => buy(x.id); btns.appendChild(b); }
     else if (x.cat === 'cos') { const on = G.shop.eq[x.slot] === x.v, b = el('button', 'gbtn' + (on ? ' on' : ''), on ? '✅ 사용 중' : '장착'); b.onclick = () => { G.shop.eq[x.slot] = on ? 0 : x.v; saveG(); sync(true); if (myLabel) fillLabel(myLabel, myData(), true); renderShop(); }; btns.appendChild(b); }
     else if (x.cat === 'title') { const on = G.title === x.name, b = el('button', 'gbtn' + (on ? ' on' : ''), on ? '✅ 사용 중' : '칭호 달기'); b.onclick = () => { G.title = on ? '' : x.name; saveG(); sync(true); if (myLabel) fillLabel(myLabel, myData(), true); renderShop(); }; btns.appendChild(b); }
@@ -3787,6 +3787,16 @@ function renderShop() {
     if (x.cat === 'pet' && own) { try { petEnhBtn(x, btns); } catch (e) {} }
     r.append(info, btns); B.appendChild(r); });
 }
+function buyN(id, n, quiet) { const x = SHOP_BY[id]; if (!x || x.cat !== 'use') return buy(id); const k = Math.min(n, Math.floor((G.coin || 0) / x.p)); if (k <= 0) { spendCoin(x.p); holdStop(); return 0; }
+  G.coin -= x.p * k; G.shop.cnt[id] = (G.shop.cnt[id] | 0) + k; saveG(); try { $('hCoin').textContent = '🪙 ' + fmt(G.coin, 0); } catch (e) {} try { SND.buy(); } catch (e) {}
+  if (!quiet || n > 1) toast(`🛍 ${x.name} ×${k} 구매! (보유 ${G.shop.cnt[id]}개)` + (k < n ? ' — 코인이 모자라 살 수 있는 만큼만 샀어요' : '')); renderShop(); renderMyItems(); return k; }
+// 꾹 누르기: 처음 0.35초 뒤부터 점점 빨라져요 (2초 넘으면 한 번에 5개씩)
+let holdT = 0, holdN = 0, holdId = null;
+function holdStop() { if (holdT) clearTimeout(holdT); holdT = 0; if (holdId && holdN > 1) { const x = SHOP_BY[holdId]; toast(`🛍 ${x.name} 연속 구매 끝! 이번에 ${holdN}개 (보유 ${G.shop.cnt[holdId] | 0}개)`); } holdId = null; holdN = 0; }
+function holdBuy(b, id) { b.addEventListener('pointerdown', e => { e.preventDefault(); holdStop(); holdId = id; const t0 = performance.now(); holdN = buyN(id, 1, true) || 0; if (!holdN) { holdId = null; return; }
+    const step = () => { const el2 = performance.now() - t0, k = buyN(id, el2 > 2000 ? 5 : 1, true); if (!k) return; holdN += k; holdT = setTimeout(step, Math.max(35, 160 - el2 / 12)); }; holdT = setTimeout(step, 350); });
+  b.title = '꾹 누르면 연속으로 사요'; }
+['pointerup', 'pointercancel', 'blur'].forEach(ev => window.addEventListener(ev, () => { if (holdId) holdStop(); }));
 function buy(id) { const x = SHOP_BY[id]; if (!x) return; if (x.cat !== 'use' && G.shop.own[id]) return; if (!spendCoin(x.p)) return;
   if (x.cat === 'use') G.shop.cnt[id] = (G.shop.cnt[id] | 0) + 1; else G.shop.own[id] = 1;
   if (x.cat === 'cos') G.shop.eq[x.slot] = x.v; if (x.cat === 'title') G.title = x.name; if (x.cat === 'pet') G.pet = x.id; if (x.cat === 'car') { G.car = x.id; G.ride = true; } if (x.cat === 'pet') { try { hpUi(); } catch (e) {} }
@@ -4552,7 +4562,7 @@ const ZONESW = [
 ];
 const WZ_PATH = { n: '🌐 빛의 길', sub: '파란 화살표를 따라가면 세계 포털 광장 · ⚡ 부스트 패드를 밟으면 쌩쌩' };
 function zoneAt(x, z) { if (x < -17.5 && wpNear(x, z).d < 3.2) return WZ_PATH; for (const Z of ZONESW) { if (Z.r ? Math.hypot(x - Z.cx, z - Z.cz) < Z.r : (x >= Z.x0 && x <= Z.x1 && z >= Z.z0 && z <= Z.z1)) return Z; } return null; }
-function walkable(x, z) { if (REALM) return REALM.inst.walk(x - R_ORG.x, z - R_ORG.z); for (const r of WALK) if (x >= r.x0 && x <= r.x1 && z >= r.z0 && z <= r.z1) return true; return false; }
+function walkable(x, z) { if (REALM && !REALM.land) return REALM.inst.walk(x - R_ORG.x, z - R_ORG.z); for (const r of WALK) if (x >= r.x0 && x <= r.x1 && z >= r.z0 && z <= r.z1) return true; for (const id in LANDI) if (landIn(id, x, z)) { if (LANDS[id].ok()) return true; if (performance.now() - landLockT > 4000) { landLockT = performance.now(); toast(LANDS[id].lock); } return false; } return false; }
 const LAKE = { x: -66, z: 4, rx: 10.5, rz: 12 }, PIER = { x0: -62.5, x1: -55, z0: 2.9, z1: 5.1 };
 const inLake = (x, z) => ((x - LAKE.x) / LAKE.rx) ** 2 + ((z - LAKE.z) / LAKE.rz) ** 2 < 1;
 const onPier = (x, z) => x >= PIER.x0 && x <= PIER.x1 && z >= PIER.z0 && z <= PIER.z1;
@@ -4911,7 +4921,9 @@ const CC_DAY = 60;
 function cityCoin(base, why) { const d = kstDate(); let o = LS.get('lv3d_cc', null); if (!o || o.d !== d) o = { d, n: 0 };
   const pay = Math.max(0, Math.min(Math.round(base), CC_DAY - o.n)); if (pay > 0) { o.n += pay; LS.set('lv3d_cc', o); addCoin(pay, why); toast(T(`🏙 도시 코인 +${pay} (오늘 ${o.n}/${CC_DAY})`, `🏙 City coins +${pay} (today ${o.n}/${CC_DAY})`)); }
   else toast(T(`🏙 오늘 도시 코인 한도(${CC_DAY})를 모두 받았어요`, `🏙 Daily city-coin cap (${CC_DAY}) reached`)); return pay; }
-window.__cityCoin = cityCoin; window.__t70 = { mktBuff, MKTB, GS };
+window.__cityCoin = cityCoin; window.__t72s = { open: () => openShop('use'), buyN: (i, n) => buyN(i, n), idOf: nm => (SHOP.find(x => x.name === nm) || {}).id };
+  window.__t72 = { lands: () => Object.keys(LANDI || {}), L: () => LANDI, R: () => REALM, lt: d => landTick(d, 0), pp: (x, z) => toP(x, z), rp: u => { const r = remotes.get(u); return r ? { x: r.cur.x, z: r.cur.z } : null; }, ent: () => [entered, RBUSY], landGo: i => landGo(i), put: (x, z) => { ME.X = x; ME.Z = z; }, me: () => ({ x: ME.X, z: ME.Z }), dbg: id => LANDI[id] && LANDI[id].inst && LANDI[id].inst.dbg, cur: () => REALM && REALM.id, land: () => !!(REALM && REALM.land), walk: (x, z) => walkable(x, z), org: () => ({ ...R_ORG }) };
+  window.__t70 = { mktBuff, MKTB, GS };
   window.__t69 = { edge: () => EDGE_G.map(g => g.id), bound: () => BOUND.x0 };
   window.__t67 = { enhAtkMul, enhCost, ENH_P: () => ENH_P, enhChance, wb: () => WB };
   window.__t66 = { gs: () => GS(), petB, petLv, renderLux, luxBuy, setInfo: () => setInfo(G.eq), G: () => G, gear: () => myAnt && myAnt.gear ? Object.keys(myAnt.gear).filter(k => myAnt.gear[k]) : [] };
@@ -4955,9 +4967,14 @@ const TREE = { x: 10.5, z: 50, top: 0 };
 const COLUS = (() => { let v = null; try { v = localStorage.getItem('lv3d_col'); } catch (e) {} return v ? v === 'us' : false; })(); if (COLUS) { const rs = document.documentElement.style; rs.setProperty('--up', '#2fd07a'); rs.setProperty('--down', '#ff4d57'); }
 const CITYW = { tick: [] };
 // ---- v69: 🌋 화산지대 서쪽 끝 관문 — 걸어 들어가면 바로 🌑 심연 대륙 · 🏦 지하금고
-const EDGE_G = [{ id: 'abyss', z: -40, col: 0x8a5aff, css: '#b89aff', t: '🌑 심연 대륙 → 60단계+' }, { id: 'vault', z: -5, col: 0xff2a6a, css: '#ff6a9a', t: '🤪 난장판 모드 → XP 1천만+' }];
-BOUND.x0 = -239;
-EDGE_G.forEach(g => { WALK.push({ x0: -239, x1: -228, z0: g.z - 5, z1: g.z + 5 });
+const EDGE_G0 = [{ id: 'abyss', z: -40, col: 0x8a5aff, css: '#b89aff', t: '🌑 심연 대륙 → 60단계+' }, { id: 'vault', z: -5, col: 0xff2a6a, css: '#ff6a9a', t: '🤪 난장판 모드 → XP 1천만+' }];
+const EDGE_G = [];
+BOUND.x0 = -400; BOUND.z0 = -150;
+WALK.push({ x0: -249, x1: -229, z0: 64, z1: 80 }, { x0: -208, x1: -192, z0: -90, z1: -69 });
+{ const road = (x0, x1, z0, z1, c) => { const m = new THREE.Mesh(new THREE.BoxGeometry(x1 - x0, .24, z1 - z0), new THREE.MeshStandardMaterial({ color: c, roughness: .85 })); m.position.set((x0 + x1) / 2, .1, (z0 + z1) / 2); scene.add(m); };
+  road(-249, -229, 64, 80, 0x2a2048); road(-208, -192, -90, -69, 0x3a1424);
+  [[-231, 72, Math.PI / 2, '🌑 심연 대륙 ← 60단계+ (Lv100~3000)', '#b89aff'], [-200, -71, 0, '🤪 난장판 모드 ↓ XP 1천만+', '#ff6a9a']].forEach(([x, z, ry, tx, c]) => { const s = signPlane(tx, 9, 1.1, '#ffffff', c); s.position.set(x, 5.2, z); s.rotation.y = ry; scene.add(s); }); }
+EDGE_G0.slice(0, 0).forEach(g => { WALK.push({ x0: -239, x1: -228, z0: g.z - 5, z1: g.z + 5 });
   const grp = new THREE.Group(); grp.position.set(-234, 0, g.z);
   grp.add(mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ color: 0x1a1420, roughness: .8 }), [11, .3, 10], [0, .14, 0]));
   const ring = mesh(new THREE.TorusGeometry(3.6, .45, 10, 40), new THREE.MeshStandardMaterial({ color: g.col, emissive: g.col, emissiveIntensity: .9, metalness: .6, roughness: .3 }), null, [-3.2, 3.8, 0], [0, Math.PI / 2, 0]); grp.add(ring);
@@ -5956,6 +5973,7 @@ drawGb();
 function openGb() { renderGbList(); openModal('mGb'); }
 // ---- 📋 업데이트 이력 (새 업데이트마다 맨 위에 한 줄씩 추가) ----
 const CHANGELOG = [
+  ['v72 · 11월 28일', ['🛍 상점 소모품: 가격 버튼을 꾹 누르면 점점 빠르게 연속 구매! ×10 · ×100 버튼도 생겼어요', '🗺 🌑 심연 대륙과 🤪 난장판 모드가 진짜 옆 땅이 됐어요! 레이드 광장 서쪽·화산 남쪽 길로 그냥 걸어 들어가요 (암전·순간이동 없음)']],
   ['v71 · 11월 28일', ['🤪 지하금고가 「난장판 모드」로 바뀌었어요! 들어가면 바로 시작 — 웨이브마다 더 많고 센 몹이 좀비처럼 몰려와요 (3웨이브 🗿 거인 · 5웨이브 👑 마진콜 군주)', '▶ 레버가치 유튜브 @lega_value 버튼이 생겼어요 (시장 리포트 옆) · 홍보 링크마다 유튜브·인스타가 맨 앞에']],
   ['v70 · 11월 28일', ['📈 시세 연동 버프: KORU·SOXL이 오른 날은 공격력↑, 내린 날은 방어·회복↑ (물타기 버프) — 최대 15%', '📱 폰: 공격 버튼을 꾹 누르고 있으면 계속 공격해요', '👥 친구 목록에 친구가 어디서 뭐 하는지 보여요 — 🏃 합류 · 🌀 같이 들어가기(던전·심연 등) · 📡 다른 채널이면 그 채널로']],
   ['v69 · 11월 28일', ['🏦 초고수 던전 「폐장 후 지하금고」(XP 1천만+) — ① 운반 개미·경보 드론 ② 냉각실(수리 벌레 먼저!) ③ 👑 마진콜 군주: 빨간 줄 돌진을 기둥으로 유도하면 약점 3배 ④ 과열 단계', '🔑 클리어하면 진화 간격의 4%(연습)·12%(표준) XP + 금고 조각 → 교환소에서 SS 장비·SSS 날개·SSS 휘장', '🌋 화산지대 서쪽 끝에 🌑 심연 대륙·🏦 지하금고 관문이 생겼어요 — 걸어 들어가면 바로 입장 (순간이동·메뉴 검색도 돼요)', '🌑 심연 대륙 몬스터가 더 세고(체력 3배+) 더 빨리 다시 나와요 (3~6초 · 필드 보스 90초) · XP도 1.6배', '🏆 랭킹·주간 랭킹에 몇 단계인지 같이 보여요']],
@@ -6079,7 +6097,7 @@ function cmdItems() {
   const L = [];
   CMD_ACT.forEach(([id, ico, nm, kw]) => { const b = $(id); if (!b) return; L.push({ cat: '기능', ico, nm, kw, btns: [['열기', () => { closeModals(); setTimeout(() => b.click(), 60); }]] }); });
   L.push({ cat: '기능', ico: '📋', nm: '업데이트 이력', kw: '업데이트 패치 변경 새기능 이력 노트 뭐가 바뀌었', btns: [['열기', () => { closeModals(); setTimeout(openLog, 60); }]] });
-  L.push({ cat: '장소', ico: '🤪', nm: '난장판 모드 (초고수)', kw: '난장판 지하금고 금고 초고수 던전 웨이브 좀비 마진콜 군주 보스 조각 교환', btns: [['🤪 입장', () => { closeModals(); setTimeout(() => realmEnter('vault'), 60); }], ['📍 관문으로', () => { closeModals(); setTimeout(() => tpTo(-227, -5, '🤪 난장판 관문'), 60); }]] });
+  L.push({ cat: '장소', ico: '🤪', nm: '난장판 모드 (초고수)', kw: '난장판 지하금고 금고 초고수 던전 웨이브 좀비 마진콜 군주 보스 조각 교환', btns: [['🤪 입장', () => { closeModals(); setTimeout(() => realmEnter('vault'), 60); }], ['📍 관문으로', () => { closeModals(); setTimeout(() => tpTo(-200, -67, '🤪 난장판 입구'), 60); }]] });
   L.push({ cat: '장소', ico: '🌑', nm: '심연 대륙 (고렙 사냥터)', kw: '심연 대륙 고렙 사냥 사냥터 몬스터 보스 레벨 필드', btns: [['🌑 입장', () => { closeModals(); setTimeout(() => realmEnter('abyss'), 60); }]] });
   L.push({ cat: '기능', ico: '▶', nm: '유튜브 레버가치 @lega_value', kw: '유튜브 youtube 영상 구독 레버가치 lega_value 홍보 쇼츠', btns: [['열기', () => { closeModals(); setTimeout(ytOpen, 60); }]] });
   L.push({ cat: '기능', ico: '📸', nm: '인스타그램 ' + IG.id, kw: '인스타 인스타그램 릴스 영상 팔로우 레버가치 lega_value 홍보', btns: [['열기', () => { closeModals(); setTimeout(igOpen, 60); }]] });
@@ -6193,12 +6211,7 @@ function loadRealm(id) { return RLOAD[id] || (RLOAD[id] = new Promise((res, rej)
 function realmGauge(txt, pct, col, mk) { const N = $('tapeNote'); if (!N) return; if (txt == null) { if (N.classList.contains('gauge')) N.className = ''; return; } if (tnBusy) return; if (!N.classList.contains('gauge')) N.className = 'gauge'; N.style.setProperty('--hp', pct + '%'); N.style.setProperty('--gc', col || '#e8590c'); N.classList.toggle('mk', mk != null); if (mk != null) N.style.setProperty('--mk', mk + '%'); if (N.textContent !== txt) N.textContent = txt; }
 function disposeGroup(grp) { const shared = new Set(Object.values(GEO)); grp.traverse(o => { if (o.isMesh) { if (!shared.has(o.geometry)) o.geometry.dispose(); [].concat(o.material).forEach(m => { if (m.map) m.map.dispose(); m.dispose(); }); } }); }
 function realmView() { cam.tx = ME.X; cam.tz = ME.Z; cam.ty = 2; sync(true); try { if (peersData) onPeersCb(peersData); } catch (e) { console.warn(e); } }
-async function realmEnter(id) {
-  if (REALM || RBUSY || !entered) return; if (HPS.ko) { toast('😵 기절 중에는 못 들어가요'); return; } if (RDEF[id].min && lvOf(G.pts) < RDEF[id].min) { toast(`${RDEF[id].n}은 ${RDEF[id].min + 1}단계부터 도전할 수 있어요 (지금 ${lvOf(G.pts) + 1}단계)`); return; } autoOff(); if (WB && !WB.dead && Math.hypot(ME.X - WB_POS.x, ME.Z - WB_POS.z) < 60) { toast('🌋 레이드 중에는 못 들어가요'); return; }
-  RBUSY = true; $('rFade').classList.add('on');
-  try {
-    const [build] = await Promise.all([loadRealm(id), sleep(380)]);
-    const group = new THREE.Group(); group.position.set(R_ORG.x, 0, R_ORG.z); scene.add(group); const keys = [];
+function mkApi(group, keys) {
     const sp = (n, c) => spawn(ME.X, 1.6, ME.Z, n, c, 2, 2, .8);
     const api = { THREE, group, GEO, mesh, M: (c, o) => new THREE.MeshStandardMaterial(Object.assign({ color: c }, o || {})), sign: signPlane,
       addInter: (k, d) => { INTER[k] = Object.assign({ type: 'rz' }, d, { X: R_ORG.x + d.X, Z: R_ORG.z + d.Z }); const l = el('div', 'olab', d.name); labels.appendChild(l); olabs[k] = l; keys.push(k); },
@@ -6222,6 +6235,17 @@ async function realmEnter(id) {
       floatW: (x, y, z, txt, cls) => { const p = project(R_ORG.x + x, y, R_ORG.z + z); if (!p) return; const d = el('div', 'floaty' + (cls ? ' ' + cls : ''), txt); d.style.left = p.x + 'px'; d.style.top = p.y + 'px'; d.style.transform = 'translate(-50%,-100%)'; labels.appendChild(d); setTimeout(() => d.remove(), 1400); },
       spark: (x, y, z, n, c, sp, g, life, up) => spawn(R_ORG.x + x, y, R_ORG.z + z, n, c, sp == null ? 3 : sp, g == null ? 6 : g, life || .8, up || 0),
       warp: (x, z) => { ME.X = R_ORG.x + x; ME.Z = R_ORG.z + z; ME.target = null; cam.tx = ME.X; cam.tz = ME.Z; sync(true); } };
+    return api;
+}
+async function realmEnter(id) {
+  if (LANDS && LANDS[id]) { landGo(id); return; }
+  if (REALM && REALM.land && !RBUSY) landOff();
+  if (REALM || RBUSY || !entered) return; if (HPS.ko) { toast('😵 기절 중에는 못 들어가요'); return; } if (RDEF[id].min && lvOf(G.pts) < RDEF[id].min) { toast(`${RDEF[id].n}은 ${RDEF[id].min + 1}단계부터 도전할 수 있어요 (지금 ${lvOf(G.pts) + 1}단계)`); return; } autoOff(); if (WB && !WB.dead && Math.hypot(ME.X - WB_POS.x, ME.Z - WB_POS.z) < 60) { toast('🌋 레이드 중에는 못 들어가요'); return; }
+  RBUSY = true; $('rFade').classList.add('on'); R_ORG.x = R_DEF.x; R_ORG.z = R_DEF.z;
+  try {
+    const [build] = await Promise.all([loadRealm(id), sleep(380)]);
+    const group = new THREE.Group(); group.position.set(R_ORG.x, 0, R_ORG.z); scene.add(group); const keys = [];
+    const api = mkApi(group, keys);
     const inst = build(api); REALM = { id, group, inst, keys, back: { x: ME.X, z: ME.Z }, cam: { d: cam.dist, p: cam.pitch } }; document.body.classList.add('inRealm');
     endFish(); ME.fly = false; ME.climb = false; ME.Y = 0; ME.vy = 0; ME.seat = -1; ME.lie = false; ME.target = null;
     ME.X = R_ORG.x + inst.spawn.x; ME.Z = R_ORG.z + inst.spawn.z; ME.ry = inst.spawn.ry || 0; cam.yaw = 0; cam.pitch = 1.05; cam.dist = inst.camDist ? inst.camDist() : (TOUCH ? 30 : 24); rain.visible = clouds.visible = confetti.visible = false; applyWeather(); realmView();
@@ -6230,14 +6254,43 @@ async function realmEnter(id) {
   RBUSY = false;
 }
 async function realmLeave(cb) {
+  if (REALM && REALM.land) { const id = REALM.id; landExit(id); if (cb) setTimeout(cb, 80); return; }
   if (!REALM || RBUSY) return; RBUSY = true; $('rFade').classList.add('on'); await sleep(380);
   const R = REALM; REALM = null; document.body.classList.remove('inRealm'); realmGauge(null); { const hh = document.getElementById('rzHud'); if (hh) hh.remove(); } ME.dodge = null; autoOff(); R.keys.forEach(k => { delete INTER[k]; if (olabs[k]) { olabs[k].remove(); delete olabs[k]; } }); scene.remove(R.group); disposeGroup(R.group); try { R.inst.dispose && R.inst.dispose(); } catch (e) {}
   ME.X = R.back.x; ME.Z = R.back.z; ME.target = null; ME.Y = 0; ME.vy = 0; cam.dist = R.cam.d; cam.pitch = R.cam.p; rain.visible = clouds.visible = weather === 'gloom'; confetti.visible = weather === 'party'; applyWeather(); realmView();
   $('rFade').classList.remove('on'); RBUSY = false; if (cb) setTimeout(cb, 50);
 }
-function tickRealm(dt, t) { const R = REALM; if (!R || RBUSY) return; try { R.inst.tick && R.inst.tick(dt, t, { x: ME.X - R_ORG.x, z: ME.Z - R_ORG.z, y: ME.Y || 0, ry: ME.ry }); } catch (e) { console.warn(e); } }
+// ---- 🗺 이어진 땅: 개미시티 서쪽에 붙은 땅 (가까이 가면 불러오고, 발을 들이면 그 땅 규칙이 켜져요)
+var R_DEF = { x: R_ORG.x, z: R_ORG.z };
+var LANDS = { abyss: { ox: -316, oz: 72, r: 74, near: 1, door: [-225, 72], ok: () => lvOf(G.pts) >= 59, lock: '🔒 심연 대륙은 60단계부터 들어갈 수 있어요' },
+  vault: { ox: -200, oz: -114, r: 31, near: 0, door: [-200, -65], ok: () => (G.pts || 0) >= 1e7, lock: '🔒 난장판 모드는 XP 1천만부터 들어갈 수 있어요' } };
+var LANDI = {}, landLockT = 0; // var: 시작할 때 walkable이 먼저 불려요
+function landWith(L, fn) { const sx = R_ORG.x, sz = R_ORG.z; R_ORG.x = L.ox; R_ORG.z = L.oz; try { return fn(); } finally { R_ORG.x = sx; R_ORG.z = sz; } }
+function landLoad(id) { if (LANDI[id]) return LANDI[id].p; const L = LANDS[id]; const o = LANDI[id] = { id };
+  o.p = loadRealm(id).then(build => landWith(L, () => { const group = new THREE.Group(); group.position.set(L.ox, 0, L.oz); scene.add(group); const keys = []; const api = mkApi(group, keys);
+    const g0 = api.gauge, tn = api.tapeNote; api.gauge = (...a) => { if (REALM && REALM.id === id) g0(...a); }; api.tapeNote = (...a) => { if (REALM && REALM.id === id) tn(...a); }; api.leave = () => landExit(id); api.land = true;
+    o.inst = build(api); o.group = group; o.keys = keys; return o; })).catch(e => { console.warn('land', id, e); delete LANDI[id]; });
+  return o.p; }
+function landFree(id) { const o = LANDI[id]; if (!o || !o.inst || (REALM && REALM.id === id)) return; o.keys.forEach(k => { delete INTER[k]; if (olabs[k]) { olabs[k].remove(); delete olabs[k]; } }); scene.remove(o.group); disposeGroup(o.group); try { o.inst.dispose && o.inst.dispose(); } catch (e) {} delete LANDI[id]; }
+function landIn(id, x, z) { const o = LANDI[id], L = LANDS[id]; return !!(o && o.inst && o.inst.walk(x - L.ox, z - L.oz)); }
+function inMainWalk(x, z) { for (const r of WALK) if (x >= r.x0 && x <= r.x1 && z >= r.z0 && z <= r.z1) return true; return false; }
+function landOn(id) { const o = LANDI[id], L = LANDS[id]; if (REALM && REALM.land) landOff(); R_ORG.x = L.ox; R_ORG.z = L.oz; REALM = { id, group: o.group, inst: o.inst, keys: o.keys, land: 1, back: { x: L.door[0], z: L.door[1] }, cam: { d: cam.dist, p: cam.pitch } }; tapeNote(`${RDEF[id].n}에 들어왔어요! (왔던 길로 걸어 나가면 개미시티)`, { ms: 2600, cls: 'tip' }); sync(true); try { if (peersData) onPeersCb(peersData); } catch (e) {} }
+function landOff() { if (!REALM || !REALM.land) return; const id = REALM.id; REALM = null; R_ORG.x = R_DEF.x; R_ORG.z = R_DEF.z; realmGauge(null); { const hh = document.getElementById('rzHud'); if (hh) hh.remove(); } if (AUTO) autoOff(); if (id === 'vault') { try { LANDI.vault.inst.onKo && LANDI.vault.inst.onKo(); } catch (e) {} } sync(true); try { if (peersData) onPeersCb(peersData); } catch (e) {} }
+function landExit(id) { const L = LANDS[id]; landOff(); ME.X = L.door[0]; ME.Z = L.door[1]; ME.target = null; ME.Y = 0; ME.vy = 0; cam.tx = ME.X; cam.tz = ME.Z; sync(true); toast('🏙 개미시티로 돌아왔어요'); }
+function landGo(id) { const L = LANDS[id]; if (!L.ok()) { toast(L.lock); return; } if (REALM && !REALM.land) { realmLeave(() => landGo(id)); return; } toast(`${RDEF[id].n}(으)로 가요…`); landLoad(id).then(() => { const o = LANDI[id]; if (!o || !o.inst) return; const sp = o.inst.spawn || { x: 0, z: 0 }; tpTo(L.ox + sp.x, L.oz + sp.z, RDEF[id].n); }); }
+function landTick(dt, t) {
+  if (!entered || RBUSY || (REALM && !REALM.land)) return;
+  for (const id in LANDS) { const L = LANDS[id], d = Math.hypot(ME.X - L.ox, ME.Z - L.oz); if (d < L.r + 70) landLoad(id); else if (d > L.r + 160) landFree(id); }
+  // 지금 서 있는 땅 (개미시티 길 위면 개미시티)
+  let cur = null; if (!inMainWalk(ME.X, ME.Z)) for (const id in LANDS) if (landIn(id, ME.X, ME.Z)) { cur = id; break; }
+  if (cur && (!REALM || REALM.id !== cur)) landOn(cur); else if (!cur && REALM && REALM.land) landOff();
+  // 몬스터는 가까운 땅만 움직여요 (난장판은 안에 있을 때만)
+  for (const id in LANDI) { const o = LANDI[id], L = LANDS[id]; if (!o.inst || !o.inst.tick) continue; const act = REALM && REALM.id === id; if (!act && !(L.near && Math.hypot(ME.X - L.ox, ME.Z - L.oz) < L.r + 25)) continue;
+    landWith(L, () => { try { o.inst.tick(dt, t, { x: ME.X - L.ox, z: ME.Z - L.oz, y: ME.Y || 0, ry: ME.ry }); } catch (e) { console.warn(e); } }); }
+}
+function tickRealm(dt, t) { try { landTick(dt, t); } catch (e) { console.warn('landTick', e); } const R = REALM; if (!R || RBUSY || R.land) return; try { R.inst.tick && R.inst.tick(dt, t, { x: ME.X - R_ORG.x, z: ME.Z - R_ORG.z, y: ME.Y || 0, ry: ME.ry }); } catch (e) { console.warn(e); } }
 
-const TPS = [['🌑 심연 대륙 관문 (화산 서쪽 끝)', -227, -40], ['🤪 난장판 모드 관문 (화산 서쪽 끝)', -227, -5], ['🚪 골목 문 (찜질방·관측소·던전)', -12.5, 36], ['🌐 세계 관문 (광장 안)', GATE.x + 3, GATE.z - 1.5], ['🌐 세계 포털 광장', HUBP.x, HUBP.z + 5], ['🏙 중앙 광장', 0, 9], ['🚪 야외 게이트', 13.6, -7.4], ['📖 방명록', 8.4, 0], ['☕ 병뚜껑 카페', HEAVEN.x, HEAVEN.z + 2.5], ['🌳 시세나무', 10.5, 43.4], ['🌀 포털 광장', -8.5, 23], ['📊 종목 토론 테이블', -3, 32.4], ['🏟 원형 토론장', -6, 46.2], ['🏢 원복 빌딩 계단', 15.6, -7.6], ['🌱 초보 사냥터', -32, 28], ['⚔ PK존', -46, 44.2], ['🎣 낚시터 부두', -56, 4], ['🏕 존버 캠핑장', CAMP.x, CAMP.z + 6], ['🌲 중급 숲', -100, 12], ['⚔ 보스 투기장', ARENA.x, ARENA.z - 16], ['🌋 화산지대', -165, 12], ['🌋 레이드 광장', RAIDP.x, RAIDP.z - 16], ['☠ 지옥 들판', -64, 98]];
+const TPS = [['🌑 심연 대륙 입구 (레이드 광장 서쪽)', -228, 72], ['🤪 난장판 모드 입구 (화산 남쪽)', -200, -67], ['🚪 골목 문 (찜질방·관측소·던전)', -12.5, 36], ['🌐 세계 관문 (광장 안)', GATE.x + 3, GATE.z - 1.5], ['🌐 세계 포털 광장', HUBP.x, HUBP.z + 5], ['🏙 중앙 광장', 0, 9], ['🚪 야외 게이트', 13.6, -7.4], ['📖 방명록', 8.4, 0], ['☕ 병뚜껑 카페', HEAVEN.x, HEAVEN.z + 2.5], ['🌳 시세나무', 10.5, 43.4], ['🌀 포털 광장', -8.5, 23], ['📊 종목 토론 테이블', -3, 32.4], ['🏟 원형 토론장', -6, 46.2], ['🏢 원복 빌딩 계단', 15.6, -7.6], ['🌱 초보 사냥터', -32, 28], ['⚔ PK존', -46, 44.2], ['🎣 낚시터 부두', -56, 4], ['🏕 존버 캠핑장', CAMP.x, CAMP.z + 6], ['🌲 중급 숲', -100, 12], ['⚔ 보스 투기장', ARENA.x, ARENA.z - 16], ['🌋 화산지대', -165, 12], ['🌋 레이드 광장', RAIDP.x, RAIDP.z - 16], ['☠ 지옥 들판', -64, 98]];
 function drawMap(cv, big) {
   const c = cv.getContext('2d'), W = cv.width, H = cv.height;
   if (REALM) { c.clearRect(0, 0, W, H); c.fillStyle = REALM.id === 'star' ? 'rgba(10,16,44,.9)' : REALM.id === 'dungeon' ? 'rgba(34,6,12,.92)' : 'rgba(40,20,8,.88)'; c.fillRect(0, 0, W, H); c.fillStyle = REALM.id === 'star' ? '#cfe0ff' : REALM.id === 'dungeon' ? '#ffb4a0' : '#ffd9a0'; c.font = `bold ${Math.round(H / 7)}px sans-serif`; c.textAlign = 'center'; c.fillText(RDEF[REALM.id].n + ' 안', W / 2, H / 2); return; }
@@ -6269,7 +6322,7 @@ function drawMap(cv, big) {
 }
 let mapT = 0;
 function tickMap(dt) { mapT += dt; if (mapT < .2) return; mapT = 0; drawMap($('miniMap'), false); if ($('mMap').classList.contains('on')) drawMap($('bigMap'), true); }
-function tpTo(x, z, name) { if (!entered) return; if (REALM) { realmLeave(() => tpTo(x, z, name)); return; } if (!cd('tp', movePerk().tpcd)) { toast(`순간이동은 ${movePerk().tpcd / 1000}초에 한 번!`); return; } endFish(); ME.fly = false; ME.climb = false; ME.Y = 0; ME.vy = 0; ME.seat = -1; ME.lie = false; ME.X = x; ME.Z = z; ME.target = null; { const yw = /투기장|레이드|들판/.test(name || '') ? Math.PI : 0; cam.yaw = yw; ME.ry = yw ? 0 : Math.PI; cam.tx = x; cam.tz = z; } sync(true); closeModals(); toast(`✨ ${name} (으)로 순간이동!`); spawn(x, 1, z, 50, 0x9ee8ff, 3, -2, 1); }
+function tpTo(x, z, name) { if (!entered) return; if (REALM && REALM.land) landOff(); if (REALM) { realmLeave(() => tpTo(x, z, name)); return; } if (!cd('tp', movePerk().tpcd)) { toast(`순간이동은 ${movePerk().tpcd / 1000}초에 한 번!`); return; } endFish(); ME.fly = false; ME.climb = false; ME.Y = 0; ME.vy = 0; ME.seat = -1; ME.lie = false; ME.X = x; ME.Z = z; ME.target = null; { const yw = /투기장|레이드|들판/.test(name || '') ? Math.PI : 0; cam.yaw = yw; ME.ry = yw ? 0 : Math.PI; cam.tx = x; cam.tz = z; } sync(true); closeModals(); toast(`✨ ${name} (으)로 순간이동!`); spawn(x, 1, z, 50, 0x9ee8ff, 3, -2, 1); }
 { const VIEWS = [['기본', () => matchMedia('(pointer:coarse)').matches ? 26 : 18, .5], ['넓게', () => 40, .8], ['전체 보기', () => 62, 1.2], ['가까이', () => 11, .45]]; let vi = 0;
   $('qView').onclick = () => { vi = (vi + 1) % VIEWS.length; const V = VIEWS[vi]; cam.dist = V[1](); cam.pitch = V[2]; toast(`🔭 시야: ${V[0]} (두 손가락 / 휠로 자유 조절)`); };
   $('qMap').onclick = () => $('bMap').click(); $('qWorld').onclick = () => openWorlds(); $('qSearch').onclick = () => openCmd(); $('bSearch').onclick = () => openCmd(); $('routeChip').onclick = () => { ME.target = null; ME.route = null; toast('🚶 자동 이동을 취소했어요'); }; $('bWorld').onclick = () => openWorlds(); $('qOut').onclick = () => tpTo(-32, 28, '🌱 초보 사냥터 (야외)');
@@ -6921,7 +6974,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '71';
+const APP_V = '72';
 {
   let shown = false;
   const check = async () => {
