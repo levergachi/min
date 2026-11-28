@@ -151,7 +151,7 @@ input,select{font-family:inherit}
 .gbtn.emo{font-size:21px;padding:6px 0}
 .gbtn:active{transform:scale(.95);background:#1b2536}
 .sect{font-size:11.5px;color:var(--mute);margin:10px 0 6px;font-weight:700}
-.rank{font-size:13px}.rank .r{display:flex;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid #18223299}
+.rank{font-size:13px}.rank .r .cp,.sea td.cp{color:#ffb86a;font-weight:800;font-size:11.5px;margin-left:4px;white-space:nowrap}.rank .r{display:flex;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid #18223299}
 .rank .r .i{width:20px;text-align:right;color:var(--mute);font-family:var(--mono)}.rank .r .n{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rank .r .l{font-size:11px;color:var(--acc)}.rank .r .p{font-family:var(--mono);color:var(--ink2)}
 .small{font-size:11px;color:var(--mute);line-height:1.5}
 /* 조작 */
@@ -775,7 +775,7 @@ body .lvx-modal{z-index:100010}
 setTimeout(function(){ if (window.__room3d) return; var d=document.createElement("div"); d.style.cssText="position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);z-index:99;background:#111a2b;color:#fff;border:2px solid #f5a524;border-radius:16px;padding:18px 20px;text-align:center;font:15px/1.5 sans-serif;max-width:90vw"; d.innerHTML="<b>🔄 사이트가 업데이트됐어요</b><br>예전 파일이 남아 있어 개미시티가 안 열렸어요.<br><button style=\"margin-top:10px;padding:10px 18px;border:0;border-radius:10px;background:#f5a524;font-weight:800;cursor:pointer\">새로고침해서 입장</button>"; d.querySelector("button").onclick=function(){ location.replace(location.pathname+"?room="+(new URLSearchParams(location.search).get("room")||"")+"&r="+Date.now()); }; document.body.appendChild(d); }, 9000);</script>
 <script type="module">
 import * as THREE from './vendor/three.module.min.js?v=169';
-import { initLive, onPrices, onMarket, live, usSession, META, MKT, histMin, reqQuote, CLOUD_MAX } from './live.js?v=39';
+import { initLive, onPrices, onMarket, live, usSession, META, MKT, histMin, reqQuote, CLOUD_MAX } from './live.js?v=40';
 
 /* ================= 공통 ================= */
 const $ = id => document.getElementById(id);
@@ -1610,7 +1610,7 @@ const cam = { yaw: 0, pitch: .45, dist: (matchMedia('(pointer:coarse)').matches 
 
 function myData() {
   const p = REALM ? toP(ME.X - R_ORG.x + R_FRAME.x, ME.Z - R_ORG.z + R_FRAME.z) : toP(ME.X, ME.Z);
-  return { ...(REALM ? { rg: REALM.id } : {}), nick: PROF.nick, color: PROF.color, seat: ME.seat, koru: Number(PROF.koru) || 0, soxl: Number(PROF.soxl) || 0, x: Math.round(p.x * 100) / 100, y: Math.round(p.y * 100) / 100, dir: Math.sin(ME.ry) < 0 ? 'l' : 'r', mv: ME.moving, pose: ME.fly ? 'fly' : ME.glide ? 'glide' : ME.climb ? 'climb' : ME.fishing ? 'fish' : ME.swim ? 'swim' : ME.lie ? 'lie' : ME.seat >= 0 ? 'sit' : 'stand', h: Math.round((ME.Y || 0) * 10) / 10, hp: hpPct(), ...(() => { const S = PROF && PROF.stk && (PROF.stv | 0) !== 2 ? myStock() : null; if (!S) return {}; const o = { stk: S.k, stn: S.n.slice(0, 12) }; if ((PROF.stv | 0) === 1) o.stv = 1; else if (S.pct != null) o.stp = Math.round(S.pct * 10) / 10; return o; })(), pts: G.pts, hb: PROF.hb, title: G.title, host: HOST, wp: G.eq.w || '', ht: G.eq.h || '', gr: eqStr(G.eq).slice(0, 130), en: enhL(), cs: myCs(), lk: G.look >= 0 && G.look < Math.min(100, lvOf(G.pts)) ? G.look : -1, aw: awkActive(), pet: PETS[G.pet] ? G.pet : '', car: riding() ? G.car : '' };
+  return { ...(REALM ? { rg: REALM.id } : {}), nick: PROF.nick, color: PROF.color, seat: ME.seat, koru: Number(PROF.koru) || 0, soxl: Number(PROF.soxl) || 0, x: Math.round(p.x * 100) / 100, y: Math.round(p.y * 100) / 100, dir: Math.sin(ME.ry) < 0 ? 'l' : 'r', mv: ME.moving, pose: ME.fly ? 'fly' : ME.glide ? 'glide' : ME.climb ? 'climb' : ME.fishing ? 'fish' : ME.swim ? 'swim' : ME.lie ? 'lie' : ME.seat >= 0 ? 'sit' : 'stand', h: Math.round((ME.Y || 0) * 10) / 10, hp: hpPct(), ...(() => { const S = PROF && PROF.stk && (PROF.stv | 0) !== 2 ? myStock() : null; if (!S) return {}; const o = { stk: S.k, stn: S.n.slice(0, 12) }; if ((PROF.stv | 0) === 1) o.stv = 1; else if (S.pct != null) o.stp = Math.round(S.pct * 10) / 10; return o; })(), pts: G.pts, hb: PROF.hb, title: G.title, host: HOST, wp: G.eq.w || '', ht: G.eq.h || '', gr: eqStr(G.eq).slice(0, 130), en: enhL(), cs: myCs(), lk: G.look >= 0 && G.look < Math.min(100, lvOf(G.pts)) ? G.look : -1, aw: awkActive(), cp: cpOf(lvOf(G.pts)), pet: PETS[G.pet] ? G.pet : '', car: riding() ? G.car : '' };
 }
 let lastSync = 0, syncPending = false;
 function sync(force) { if (!room || !entered) return; const now = performance.now(); if (!force && now - lastSync < 300) { syncPending = true; return; } lastSync = now; syncPending = false; room.setMe(myData()); }
@@ -2110,7 +2110,7 @@ function renderRank() {
   const list = peersData.map(d => d.you || d.uid === live.uid ? Object.assign({}, myData(), { you: true }) : d).sort((a, b) => (b.pts || 0) - (a.pts || 0)).slice(0, 10);
   if (!list.length) { R.appendChild(el('div', 'small', '아직 아무도 없어요')); return; }
   list.forEach((d, i) => { const r = el('div', 'r'); const rm = !d.you && remotes.get(d.uid), pos = d.you ? { x: ME.X, z: ME.Z } : rm ? rm.cur : null, zn = pos ? zoneAt(pos.x, pos.z) : null;
-    r.append(el('span', 'i', String(i + 1)), el('span', 'n', (d.you ? '나 · ' : '') + (d.nick || '?')), el('span', 'l', LV[lvOf(d.pts || 0)][1]), el('span', 'p', fmt(d.pts || 0, 0)));
+    r.append(el('span', 'i', String(i + 1)), el('span', 'n', (d.you ? '나 · ' : '') + (d.nick || '?')), el('span', 'l', LV[lvOf(d.pts || 0)][1]), el('span', 'p', fmt(d.pts || 0, 0)), el('span', 'cp', d.cp ? '💥' + fCP(d.cp) : ''));
     const loc = el('span', 'loc', '📍 ' + (zn ? zn.n.replace(/^\S+\s/, '') : '어딘가')); r.appendChild(loc);
     if (rm) { r.classList.add('go'); r.title = '눌러서 이 개미한테 순간이동'; r.onclick = () => { const p = rm.cur; tpTo(p.x + 1.6, p.z + 1.6, (d.nick || '개미') + ' 옆'); };
       const bx = el('span', 'rbtn'); const b1 = el('button', null, '🤺 결투'), b2 = el('button', null, '🔒 귓속말');
@@ -5641,7 +5641,7 @@ function openRegular() { if (!entered || REALM) return;
   regRefresh(); openModal('mReg'); }
 G.reg = G.reg || {}; Object.keys(G.reg).forEach(id => { if (G.reg[id]) regBuild(id); });
 window.__reg = { buy: regBuy, own: () => G.reg, RC, open: openRegular };
-Object.assign(SKYSET, { mgb: [0xff8fd0, 0xffd1f0, 0xfff4fb, 0xffe3f5] });
+Object.assign(SKYSET, { mgb: [0xff8fd0, 0xffd1f0, 0xfff4fb, 0xffe3f5], abyss: [0x05030c, 0x1a0f2e, 0x3a1f4a, 0x120a20] });
 
 /* ================= 🫧 v60 버블 왕국 — 비누방울 발판이 부풀다가 터져요 (16송이 · 최고 시간 기록) ================= */
 (window.WB_REALMS = window.WB_REALMS || {}).mgbubble = function (api) {
@@ -5929,6 +5929,7 @@ drawGb();
 function openGb() { renderGbList(); openModal('mGb'); }
 // ---- 📋 업데이트 이력 (새 업데이트마다 맨 위에 한 줄씩 추가) ----
 const CHANGELOG = [
+  ['v68 · 11월 28일', ['💥 랭킹(광장·주간)에 전투력이 같이 보여요', '🤖 자동사냥 버튼을 누르면 고를 수 있어요: 기본 공격만 / 스킬까지(4개 모두) / 초사이언·원기옥까지', '🌑 고렙 전용 「심연 대륙」이 열렸어요 (60단계부터 · 세계 관문/메뉴 검색 「심연」) — 아주 넓은 맵, 바깥으로 갈수록 Lv100→3000', '👾 신종 몬스터 24종 · ✨ 황금 변종(체력 3배·XP 4배·장비 확정) · 👑 필드 보스 4마리(확정 SS 이상)', '🎁 레벨이 높을수록 드랍 등급이 올라가요 (Lv300+ B · 800+ A · 1600+ S · 2500+ SS)']],
   ['v67 · 11월 28일', ['🌋 레이드가 너무 세서 보스 체력을 낮췄어요 (접속만 하고 안 싸우는 개미 수는 덜 반영) · 레이드 광장에서는 싸우는 중에도 체력이 차요', '🔨 강화가 +100까지 열렸어요 (+30 이후 한 단계마다 공격 +4%)']],
   ['v66 · 11월 28일', ['🪽 장비가 14칸이 됐어요: 날개·휘장 칸 추가 (풀세트는 예전 12칸 기준 그대로)', '💚 체력회복 · 🧿 상태이상 저항 능력치가 생겼어요', '💎 상점에 명품관이 열렸어요: S·SS·SSS 확정 장비, 비쌀수록 날개가 퍼덕이고 반짝여요 · 👀 미리보기', '🐾 펫 강화 (Lv3까지 보너스 최대 3.25배, 몸도 커져요)', '💧 강화 실패하면 물타기 스택이 쌓여 다음 성공률이 올라가요']],
   ['v65 · 11월 28일', ['🧬 진화가 300단계로 늘었어요! 101단계부터 ★ 각성, 201단계부터 ★★ 초월 — 1단계 모습으로 다시 태어나지만 몸이 커지고 별이 뜨고 능력치가 1.5배/2.25배', '🐣 초반 진화가 너무 빨라서 1~40단계에 필요한 XP를 늘렸어요 (지금 단계는 그대로 유지돼요)', '💥 전투력이 생겼어요. 진화할 때 얼마나 강해졌는지 %로 보여 줘요', '🎯 보스 투기장에 훈련 표적이 생겼어요. 10초 피해량을 지난 기록과 비교해 봐요', '🧮 계산기: 코스피·필라델피아 반도체지수 현재값이 자동으로 들어가요']],
@@ -5994,7 +5995,7 @@ const MAPB = { x0: -233, x1: 20, z0: -73, z1: 113 };
 
 
 /* ================= 🌐 v37 세계 엔진: 허브 포털 · 입장/퇴장 · 세계 번호(rg) 동기화 ================= */
-const RDEF = { sauna: { n: '♨ 찜질방' }, star: { n: '🔭 별 관측소' }, dungeon: { n: '🏰 던전', min: 8 }, race: { n: '🏁 각설탕 특급' }, mgdodge: { n: '📉 하락장 피하기' }, mgtower: { n: '📈 상한가 점프' }, mgscale: { n: '⚖ 원복 저울' }, mgbubble: { n: '🫧 버블 왕국' } };
+const RDEF = { sauna: { n: '♨ 찜질방' }, star: { n: '🔭 별 관측소' }, dungeon: { n: '🏰 던전', min: 8 }, race: { n: '🏁 각설탕 특급' }, mgdodge: { n: '📉 하락장 피하기' }, mgtower: { n: '📈 상한가 점프' }, mgscale: { n: '⚖ 원복 저울' }, mgbubble: { n: '🫧 버블 왕국' }, abyss: { n: '🌑 심연 대륙', min: 59 } };
 { const g = new THREE.Group(); g.position.set(HUBP.x, 0, HUBP.z); scene.add(g);
   g.add(mesh(GEO.cyl, FM(0x10303c, { roughness: .7 }), [12, .25, 12], [0, .12, 0]), mesh(GEO.cyl, FB(0x41c9ff), [12.4, .2, 12.4], [0, .06, 0]), mesh(GEO.cyl, FM(0x0b1d26, { roughness: .8 }), [10.2, .3, 10.2], [0, .13, 0]));
   const sg = signPlane('🌐 세계 포털 광장', 9, 1.5, '#d6f3ff', '#2da8e8'); sg.position.set(0, 8, -8.5); g.add(sg);
@@ -6028,6 +6029,7 @@ function renderWorlds() {
   card('📈', '상한가 점프', '봉을 밟고 상한가까지 오르기 · 매일 모양이 바뀌는 오늘의 타워', [['📈 바로 입장', () => { closeModals(); realmEnter('mgtower'); }]]);
   card('⚖', '원복 저울', '기울어지는 저울 위에서 45초 균형 잡기 · 기울기 0 = 원복', [['⚖ 바로 입장', () => { closeModals(); realmEnter('mgscale'); }]]);
   card('🫧', '버블 왕국', '부풀다가 터지는 비누방울 16송이를 밟고 정상까지 · 최고 시간 기록 · 첫 성공 코인', [['🫧 바로 입장', () => { closeModals(); realmEnter('mgbubble'); }]]);
+  card('🌑', '심연 대륙 · 고렙 전용 사냥터', '60단계부터 · 아주 넓은 맵 · 바깥으로 갈수록 Lv100→3000 · 신종 24종 · ✨황금 변종 · 👑 필드 보스 4 (확정 SS↑)', [['🌑 바로 입장', () => { closeModals(); realmEnter('abyss'); }]], lvOf(G.pts) < 59);
   card('🏰', '던전 · 폭락의 지하 묘지', '혼자 도전! 웨이브 4 + 보스 · 9단계부터 · 클리어하면 장비 상자', [['🏰 바로 입장', () => { closeModals(); realmEnter('dungeon'); }]]);
 }
 function openWorlds() { if (!entered) return; if (REALM) { toast('지금은 세계 안이에요. 🚪 문 앞에서 나가면 다시 열려요'); return; } renderWorlds(); openModal('mWorld'); }
@@ -6045,6 +6047,7 @@ function cmdItems() {
   const L = [];
   CMD_ACT.forEach(([id, ico, nm, kw]) => { const b = $(id); if (!b) return; L.push({ cat: '기능', ico, nm, kw, btns: [['열기', () => { closeModals(); setTimeout(() => b.click(), 60); }]] }); });
   L.push({ cat: '기능', ico: '📋', nm: '업데이트 이력', kw: '업데이트 패치 변경 새기능 이력 노트 뭐가 바뀌었', btns: [['열기', () => { closeModals(); setTimeout(openLog, 60); }]] });
+  L.push({ cat: '장소', ico: '🌑', nm: '심연 대륙 (고렙 사냥터)', kw: '심연 대륙 고렙 사냥 사냥터 몬스터 보스 레벨 필드', btns: [['🌑 입장', () => { closeModals(); setTimeout(() => realmEnter('abyss'), 60); }]] });
   L.push({ cat: '기능', ico: '📸', nm: '인스타그램 ' + IG.id, kw: '인스타 인스타그램 릴스 영상 팔로우 레버가치 lega_value 홍보', btns: [['열기', () => { closeModals(); setTimeout(igOpen, 60); }]] });
   L.push({ cat: '기능', ico: '🛠', nm: '버그 신고 · 개선 요청', kw: '버그 신고 건의 개선 요청 문의 게시판 오류 불편 제안', btns: [['열기', () => { closeModals(); setTimeout(openBd, 60); }]] });
   TPS.forEach(([nm, x, z]) => L.push({ cat: '장소', ico: '📍', nm, kw: nm, btns: [['⚡ 이동', () => tpTo(x, z, nm)], ['🚶 걸어서', () => walkTo(x, z, null, nm)]] }));
@@ -6165,7 +6168,7 @@ async function realmEnter(id) {
     const sp = (n, c) => spawn(ME.X, 1.6, ME.Z, n, c, 2, 2, .8);
     const api = { THREE, group, GEO, mesh, M: (c, o) => new THREE.MeshStandardMaterial(Object.assign({ color: c }, o || {})), sign: signPlane,
       addInter: (k, d) => { INTER[k] = Object.assign({ type: 'rz' }, d, { X: R_ORG.x + d.X, Z: R_ORG.z + d.Z }); const l = el('div', 'olab', d.name); labels.appendChild(l); olabs[k] = l; keys.push(k); },
-      toast, tapeNote, gauge: realmGauge, LS, kstDate, givePts, growCoin, addCoin, G, saveG, dropItem, floatMe: (t, c) => { try { floatAt(myAnt, t, c); } catch (e) {} }, hud: () => updHud(), leave: () => realmLeave(),
+      toast, tapeNote, gauge: realmGauge, LS, kstDate, givePts, growCoin, addCoin, G, saveG, dropItem, addPts: n => addPts(n), floatMe: (t, c) => { try { floatAt(myAnt, t, c); } catch (e) {} }, hud: () => updHud(), leave: () => realmLeave(),
       camera, touch: TOUCH, snd: (n, a) => { try { SND[n](a); } catch (e) {} }, cine: n => cine(n), fx: { sweat: () => sp(14, 0x9ee8ff), firework: () => { try { SND.firework(); } catch (e) {} spawn(ME.X, 3, ME.Z, 60, 0xffd76a, 6, 3, 1.5, 3); } },
       setInter: (k, x, z, off) => { const it = INTER[k]; if (it) { it.X = R_ORG.x + x; it.Z = R_ORG.z + z; it.off = !!off; } },
       unit: () => Math.round(atkOf(lvOf(G.pts)) * (BUFF.until > Date.now() ? 1.5 : 1)),
@@ -6177,7 +6180,7 @@ async function realmEnter(id) {
       walkTo: (x, z) => { ME.target = { x: R_ORG.x + x, z: R_ORG.z + z }; },
       manual: () => (ME.autoPause || 0) > 0,
       setAuto: on => { AUTO = !!on; ME.target = null; ME.autoPause = 0; ['aAuto', 'qAuto'].forEach(i => { try { $(i).classList.toggle('on', AUTO); } catch (e) {} }); },
-      auto: () => AUTO,
+      auto: () => AUTO, autoM: () => autoM(), autoPower: () => autoPower(),
       cast: s => castSkill(s), skillReady: s => { const t = lvOf(G.pts); return !HPS.ko && !!SK[t] && t >= SLOT_T[s] && skCdLeft(s) <= 0; },
       flash: (c, op, ms) => { const F = $('flash'); F.style.background = c; F.style.opacity = String(op); setTimeout(() => { F.style.opacity = '0'; F.style.background = ''; }, ms || 150); },
       hudBtn: (id, html, fn) => { let H = document.getElementById('rzHud'); if (!H) { H = el('div'); H.id = 'rzHud'; H.className = 'pe'; document.body.appendChild(H); } const b = el('button', 'rzb'); b.type = 'button'; b.id = 'rz_' + id; b.innerHTML = html; b.addEventListener('pointerdown', e => { e.preventDefault(); fn(); }); H.appendChild(b); return b; },
@@ -6324,7 +6327,7 @@ function renderAtt() { const A = G.att || { d: '', n: 0 }, today = A.d === kstDa
 // ---- 🏆 주간 시즌 랭킹 ----
 let seaList = [], seaSent = -1, seaUnsub = null;
 function seaPts() { const wk = weekId(); G.sw = G.sw || {}; if (G.sw.id !== wk) { G.sw = { id: wk, base: G.pts, max: 0 }; saveG(); } if (G.pts < G.sw.base) { G.sw.base = G.pts; saveG(); } return Math.max(G.sw.max || 0, Math.round(G.pts - G.sw.base)); }
-function seaPush(force) { if (!room || !room.seasonSet || !entered || /preview/.test(location.pathname)) return; const p = seaPts(); if (!force && p === seaSent) return; if (p < seaSent) return; seaSent = p; G.sw.max = p; saveG(); room.seasonSet(weekId(), PROF.nick, p); }
+function seaPush(force) { if (!room || !room.seasonSet || !entered || /preview/.test(location.pathname)) return; const p = seaPts(); if (!force && p === seaSent) return; if (p < seaSent) return; seaSent = p; G.sw.max = p; saveG(); room.seasonSet(weekId(), PROF.nick, p, cpOf(lvOf(G.pts))); }
 function seaStart() {
   if (!room || !room.onSeason) return; seaPts(); seaPush(true);
   if (seaUnsub) try { seaUnsub(); } catch (e) {} seaUnsub = room.onSeason(weekId(), l => { seaList = l; if ($('mSea').classList.contains('on')) renderSea(); });
@@ -6333,7 +6336,7 @@ function seaStart() {
 setInterval(() => seaPush(false), 20000);
 function renderSea() { const B = $('seaBody'); B.textContent = ''; const t = el('table', 'sea'); const my = seaPts();
   if (!seaList.length) B.appendChild(el('div', 'small', '아직 이번 주 기록이 없어요. 첫 1위의 주인공이 되어 보세요!'));
-  seaList.forEach((r, i) => { const tr = el('tr', r.uid === live.uid ? 'me' : ''); tr.append(el('td', null, ['🥇', '🥈', '🥉'][i] || (i + 1) + '위'), el('td', null, r.nick || '개미'), el('td', null, fmt(r.p || 0, 0) + ' XP')); t.appendChild(tr); });
+  seaList.forEach((r, i) => { const tr = el('tr', r.uid === live.uid ? 'me' : ''); tr.append(el('td', null, ['🥇', '🥈', '🥉'][i] || (i + 1) + '위'), el('td', null, r.nick || '개미'), el('td', null, fmt(r.p || 0, 0) + ' XP'), el('td', 'cp', r.cp ? '💥 ' + fCP(r.cp) : '')); t.appendChild(tr); });
   B.appendChild(t); B.appendChild(el('div', 'npcq', `내 이번 주 XP: ${fmt(my, 0)} · 시즌 ${weekId().slice(1)} 주`)); }
 // ---- 📸 사진 모드 ----
 function photoMode(on) { document.body.classList.toggle('photo', on); if (on) toast('📸 사진 모드: 아래 버튼으로 저장 · 끝내기'); }
@@ -6883,7 +6886,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '67';
+const APP_V = '68';
 {
   let shown = false;
   const check = async () => {
@@ -7074,7 +7077,14 @@ function parseWhisper(m) { const r = /^🔒([A-Za-z0-9_-]{4,8})\|([\s\S]*)$/.exe
 // 🤖 자동사냥
 let AUTO = false, autoT = 0;
 function autoOff(why) { if (!AUTO) return; AUTO = false; ME.target = null; $('aAuto').classList.remove('on'); $('qAuto').classList.remove('on'); if (why) toast('🤖 자동사냥 멈춤 — ' + why); }
-function autoToggle() { if (REALM) { if (REALM.inst.onAuto) REALM.inst.onAuto(); else toast('🤖 이 세계에서는 자동사냥이 안 돼요'); return; } if (AUTO) { autoOff('직접 껐어요'); return; } if (!entered) return; if (inHall(ME.X, ME.Z) || inHeaven(ME.X, ME.Z)) { toast('🤖 자동사냥은 야외에서만 돼요 — ⚔ 야외 버튼으로 나가 보세요'); return; }
+const autoM = () => (G.autoM == null ? 1 : G.autoM | 0);
+function autoPick() { let P = document.getElementById('autoPick'); if (P) { P.remove(); return; } P = el('div'); P.id = 'autoPick'; P.className = 'pe';
+  P.style.cssText = 'position:fixed;right:12px;bottom:150px;z-index:40;background:rgba(12,18,32,.96);border:1px solid #ffb020;border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 26px rgba(0,0,0,.5);min-width:210px';
+  P.appendChild(el('b', null, '🤖 자동사냥 — 어디까지 자동으로?'));
+  [['👊 기본 공격만', 0], ['✨ 스킬까지 (쿨 끝나면 Q·R·F·G)', 1], ['🌕 초사이언·원기옥까지 전부', 2]].forEach(([t, m]) => { const b = el('button', 'gbtn' + (autoM() === m ? ' hot' : ''), t); b.type = 'button'; b.onclick = () => { G.autoM = m; saveG(); P.remove(); autoToggle(true); }; P.appendChild(b); });
+  const x = el('button', 'gbtn', '닫기'); x.type = 'button'; x.onclick = () => P.remove(); P.appendChild(x); document.body.appendChild(P); }
+function autoPower() { if (autoM() < 2) return; const now = Date.now(); try { if (awkLv() && !awkActive() && AW.cd - now <= 0) awkGo(); if (lvOf(G.pts) >= 99 && !GK && gkCd - now <= 0 && !inHall(ME.X, ME.Z)) gkGo(); } catch (e) {} }
+function autoToggle(force) { if (force !== true && !AUTO && entered && (!REALM || REALM.id === 'abyss')) { autoPick(); return; } if (REALM) { if (REALM.inst.onAuto) REALM.inst.onAuto(); else toast('🤖 이 세계에서는 자동사냥이 안 돼요'); return; } if (AUTO) { autoOff('직접 껐어요'); return; } if (!entered) return; if (inHall(ME.X, ME.Z) || inHeaven(ME.X, ME.Z)) { toast('🤖 자동사냥은 야외에서만 돼요 — ⚔ 야외 버튼으로 나가 보세요'); return; }
   AUTO = true; $('aAuto').classList.add('on'); $('qAuto').classList.add('on'); toast('🤖 자동사냥 시작! 가까운 몬스터를 찾아 싸워요 (조이스틱을 움직이면 멈춰요)'); }
 $('aAuto').onclick = autoToggle; $('qAuto').onclick = autoToggle;
 function autoTick(dt) { if (!AUTO || !entered || REALM) return; autoT += dt; if (autoT < .25) return; autoT = 0;
@@ -7082,7 +7092,7 @@ function autoTick(dt) { if (!AUTO || !entered || REALM) return; autoT += dt; if 
   let best = null, bd = 32; MOBS.forEach(m => { if (m.dead > 0) return; const d = Math.hypot(m.x - ME.X, m.z - ME.Z); if (d < bd) { bd = d; best = m; } });
   if (!best) { ME.target = null; return; }
   if (bd > 2.6) { const ux = (ME.X - best.x) / bd, uz = (ME.Z - best.z) / bd; ME.target = { x: best.x + ux * 2, z: best.z + uz * 2 }; return; }
-  ME.target = null; hitMob(best); const t = lvOf(G.pts); if (skCdLeft(0) <= 0 && SK[t]) castSkill(0); }
+  ME.target = null; hitMob(best); const t = lvOf(G.pts); if (SK[t] && autoM() >= 1) for (let s = 3; s >= 0; s--) if (t >= SLOT_T[s] && skCdLeft(s) <= 0) { castSkill(s); break; } autoPower(); }
 
 /* ================= 📌 방장 공지 · 후원 문구 ================= */
 const DONATE_DEF = '100원이라도 감사하게 받겠습니다 🙏'; let BOARD = {}; window.__lvxDonateMsg = DONATE_DEF;
