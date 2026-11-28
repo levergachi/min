@@ -775,7 +775,7 @@ body .lvx-modal{z-index:100010}
 setTimeout(function(){ if (window.__room3d) return; var d=document.createElement("div"); d.style.cssText="position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);z-index:99;background:#111a2b;color:#fff;border:2px solid #f5a524;border-radius:16px;padding:18px 20px;text-align:center;font:15px/1.5 sans-serif;max-width:90vw"; d.innerHTML="<b>🔄 사이트가 업데이트됐어요</b><br>예전 파일이 남아 있어 개미시티가 안 열렸어요.<br><button style=\"margin-top:10px;padding:10px 18px;border:0;border-radius:10px;background:#f5a524;font-weight:800;cursor:pointer\">새로고침해서 입장</button>"; d.querySelector("button").onclick=function(){ location.replace(location.pathname+"?room="+(new URLSearchParams(location.search).get("room")||"")+"&r="+Date.now()); }; document.body.appendChild(d); }, 9000);</script>
 <script type="module">
 import * as THREE from './vendor/three.module.min.js?v=169';
-import { initLive, onPrices, onMarket, live, usSession, META, MKT, histMin, reqQuote, CLOUD_MAX } from './live.js?v=38';
+import { initLive, onPrices, onMarket, live, usSession, META, MKT, histMin, reqQuote, CLOUD_MAX } from './live.js?v=39';
 
 /* ================= 공통 ================= */
 const $ = id => document.getElementById(id);
@@ -5850,6 +5850,7 @@ drawGb();
 function openGb() { renderGbList(); openModal('mGb'); }
 // ---- 📋 업데이트 이력 (새 업데이트마다 맨 위에 한 줄씩 추가) ----
 const CHANGELOG = [
+  ['v64 · 11월 28일', ['🏆 주간 랭킹·클라우드 저장의 XP 1억 한도를 풀었어요', '🛠 버그 신고·개선 요청 게시판이 열렸어요 (메뉴 검색 → 버그)']],
   ['v63 · 11월 28일', ['📸 인스타그램 바로가기를 시장 리포트 옆 버튼으로 옮겼어요 (화면을 덜 가려요)']],
   ['v62 · 11월 28일', ['⚔ 보스를 연타해도 렉이 덜하고 소리가 끊기지 않게 고쳤어요. 공격은 초당 최대 5번까지 나가요', '📋 업데이트 이력과 🛠 버그 신고·개선 요청 게시판이 생겼어요 (메뉴 검색에서 열 수 있어요)', '▲ 메뉴를 숨기고 보이는 화살표가 생겼어요', '📱 폰에서는 E 대신 버튼으로 안내해요 · 상승 빨강/하락 파랑이 기본이에요']],
   ['v61', ['공격력·코인·XP 상한을 풀었어요. 이제 XP 1억 이후에도 계속 성장해요']],
@@ -5899,7 +5900,7 @@ function renderBd() {
 function openBd() { renderBd(); openModal('mBd'); }
 async function bdPost() {
   const v = ($('bdIn').value || '').trim().slice(0, 300); if (!v) return; if (!entered) { toast('입장 후 남길 수 있어요'); return; } if (!cd('bd', 30000)) { toast('글은 30초에 한 번만 남길 수 있어요'); return; }
-  try { await room.boardAdd(PROF.nick, $('bdK').value, v); $('bdIn').value = ''; toast('🛠 접수됐어요! 고마워요'); } catch (e) { toast('🛠 게시판을 아직 준비 중이에요 — 곧 열릴 예정이에요'); }
+  try { await room.boardAdd(PROF.nick, $('bdK').value, v); $('bdIn').value = ''; toast('🛠 접수됐어요! 고마워요'); } catch (e) { toast('보내기 실패: 잠시 후 다시'); }
 }
 function renderGbList() { const L = $('gbList'); L.textContent = ''; if (!GB.length) { L.appendChild(el('div', 'small', '아직 방명록이 없어요. 첫 글을 남겨 보세요!')); return; } GB.slice().reverse().forEach(m => { const d = el('div', 'gbm'); d.append(el('b', null, m.nick || '?'), el('span', null, m.text || ''), el('small', null, kstTime(m.ts || Date.now()))); L.appendChild(d); }); }
 async function gbPost() {
@@ -6800,7 +6801,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '63';
+const APP_V = '64';
 {
   let shown = false;
   const check = async () => {

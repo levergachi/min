@@ -69,7 +69,7 @@ const PUSHER_FRESH_MS = 3 * 60 * 1000; // 송신기(야후·프리/애프터 포
 const wtOf = q => (q && (q.wt || q.ts)) || 0;
 const STALE_MS = 75 * 1000; // 이 시간 동안 신호가 없으면 나간 사람으로 보고 숨김(유령 방지)
 
-export const CLOUD_MAX = 1e8; // 규칙(database.rules.json)의 pts·p 상한과 같아야 함 — 규칙 게시 후 1e13으로
+export const CLOUD_MAX = 1e13; // 규칙(database.rules.json)의 pts·p 상한과 같아야 함
 function rid() { return Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4); }
 function clampStr(s, n) { return String(s == null ? "" : s).replace(/[\u0000-\u001f]/g, "").slice(0, n); }
 
@@ -440,10 +440,10 @@ async function firebaseInit() {
       gbAdd(nick, text) { return D.push(D.ref(db, 'guestbook'), { uid: live.uid, nick: clampStr(nick, 12), text: clampStr(text, 100), ts: D.serverTimestamp() }); },
       seasonSet(wk, nick, p) { if (!/^w[0-9]{6}$/.test(wk)) return Promise.resolve(); return D.set(D.ref(db, `season/${wk}/${live.uid}`), { nick: clampStr(nick, 12), p: Math.max(0, Math.min(CLOUD_MAX, Math.floor(p) || 0)), ts: D.serverTimestamp() }).catch(e => console.warn('season', e && e.code)); },
       onSeason(wk, f) { if (!/^w[0-9]{6}$/.test(wk)) { f([]); return () => {}; } return D.onValue(D.query(D.ref(db, `season/${wk}`), D.orderByChild('p'), D.limitToLast(10)), s => { const arr = []; s.forEach(c => { arr.push(Object.assign({ uid: c.key }, c.val())); }); f(arr.sort((a, b) => b.p - a.p)); }, () => f([])); },
-      boardAdd(nick, kind, text) { return D.push(D.ref(db, 'board'), { uid: live.uid, nick: clampStr(nick, 12), k: kind === 'b' ? 'b' : 'i', text: clampStr(text, 300), ts: D.serverTimestamp() }); },
-      boardVote(id) { return D.set(D.ref(db, `boardv/${String(id).replace(/[^A-Za-z0-9_-]/g, '')}/${live.uid}`), true); },
-      boardDel(id) { return D.remove(D.ref(db, `board/${String(id).replace(/[^A-Za-z0-9_-]/g, '')}`)); },
-      onBoard(f) { let L = [], V = {}; const push = () => f(L.map(m => Object.assign({}, m, { v: Object.keys(V[m.id] || {}).length, mine: (V[m.id] || {})[live.uid] ? 1 : 0 }))); D.onValue(D.query(D.ref(db, 'board'), D.limitToLast(60)), s => { L = []; s.forEach(c => { L.push(Object.assign({ id: c.key }, c.val())); }); push(); }); D.onValue(D.ref(db, 'boardv'), s => { V = s.val() || {}; push(); }); },
+      boardAdd(nick, kind, text) { return D.push(D.ref(db, 'bugs'), { uid: live.uid, nick: clampStr(nick, 12), k: kind === 'b' ? 'b' : 'i', text: clampStr(text, 300), ts: D.serverTimestamp() }); },
+      boardVote(id) { return D.set(D.ref(db, `bugsv/${String(id).replace(/[^A-Za-z0-9_-]/g, '')}/${live.uid}`), true); },
+      boardDel(id) { return D.remove(D.ref(db, `bugs/${String(id).replace(/[^A-Za-z0-9_-]/g, '')}`)); },
+      onBoard(f) { let L = [], V = {}; const push = () => f(L.map(m => Object.assign({}, m, { v: Object.keys(V[m.id] || {}).length, mine: (V[m.id] || {})[live.uid] ? 1 : 0 }))); D.onValue(D.query(D.ref(db, 'bugs'), D.limitToLast(60)), s => { L = []; s.forEach(c => { L.push(Object.assign({ id: c.key }, c.val())); }); push(); }); D.onValue(D.ref(db, 'bugsv'), s => { V = s.val() || {}; push(); }); },
       onGuestbook(f) { D.onValue(D.query(D.ref(db, 'guestbook'), D.limitToLast(100)), s => { const arr = []; s.forEach(c => { arr.push(Object.assign({ id: c.key }, c.val())); }); f(arr); }); },
       sendFx(kind) { D.push(D.ref(db, `${R}/fx`), { uid: live.uid, kind: clampStr(kind, 20), ts: D.serverTimestamp() }); },
       onFx(f) {
