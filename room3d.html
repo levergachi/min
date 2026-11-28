@@ -687,6 +687,8 @@ body .lvx-modal{z-index:100010}
 <div class="modal" id="mGuide"><div class="mbox" style="width:min(640px,100%)"><h2>❓ 개미시티 사용법</h2><div class="sub">처음 왔다면 「🚀 처음이라면」부터! 장소 이름을 누르면 바로 순간이동해요.</div><div class="gtabs" id="gTabs"></div><div class="gbody" id="gBody"></div><button class="mbtn sec" data-close>닫기</button></div></div>
 <div class="modal" id="mNpc"><div class="mbox" style="width:min(520px,100%)"><h2>🧓 레가 아저씨</h2><div class="sub">“어이 개미 친구! 오늘 시장 딱 3줄로 알려줄게.”</div><div id="npcBody"></div><div class="small" style="margin-top:8px;color:#8fa0bd">⚠ 재미·참고용 요약이에요. 투자 조언이 아니며 투자 판단과 책임은 본인에게 있어요.</div><button class="mbtn sec" data-close>닫기</button></div></div>
 <div class="modal" id="mAtt"><div class="mbox" style="width:min(480px,100%)"><h2>📅 출석 체크</h2><div class="sub">하루 한 번 입장하면 자동 출석 + 🎁 보상 상자! 요일마다 보상이 정해져 있고, 7일 연속이면 🎁 전설 상자</div><div class="att7" id="attGrid"></div><div id="attTxt" class="small"></div><button class="mbtn sec" data-close>닫기</button></div></div>
+<div class="modal" id="mLog"><div class="mbox" style="width:min(560px,100%)"><h2>📋 업데이트 이력</h2><div class="sub">개미시티가 이렇게 바뀌었어요 (최신순)</div><div class="gbl" id="logList"></div><button class="mbtn sec" data-close>닫기</button></div></div>
+<div class="modal" id="mBd"><div class="mbox" style="width:min(560px,100%)"><h2>🛠 버그 신고 · 개선 요청</h2><div class="sub">불편한 점이나 바라는 기능을 적어 주세요 (300자 · 방장이 확인해요)</div><div class="gbin" style="flex-wrap:wrap"><select id="bdK" style="padding:10px;border-radius:10px"><option value="b">🐞 버그</option><option value="i">💡 개선 요청</option></select><input id="bdIn" maxlength="300" placeholder="예) 이 장소에서 캐릭터가 끼어요 / 이런 기능이 있으면 좋겠어요"><button type="button" id="bdGo">보내기</button></div><div class="gbl" id="bdList"></div><button class="mbtn sec" data-close>닫기</button></div></div>
 <div class="modal" id="mSea"><div class="mbox" style="width:min(480px,100%)"><h2>🏆 주간 시즌 랭킹</h2><div class="sub">이번 주(월요일 0시 시작)에 모은 XP 순위 · 모든 채널 통합 · 매주 월요일 초기화<br>지난주 1~3위는 🥇🥈🥉 칭호를 받아요</div><div id="seaBody"></div><button class="mbtn sec" data-close>닫기</button></div></div>
 <div class="modal" id="mGb"><div class="mbox" style="width:min(560px,100%)"><h2>📖 개미시티 방명록</h2><div class="sub">한 줄 인사·응원·원복 다짐을 남겨 주세요 (100자 · 하루 첫 글 XP 보너스)</div><div class="gbin"><input id="gbIn" maxlength="100" placeholder="예) 다들 원복 가즈아! 🚀"><button type="button" id="gbGo">남기기</button></div><div class="gbl" id="gbList"></div><button class="mbtn sec" data-close>닫기</button></div></div>
 <div id="megaBan"></div><div class="modal" id="mPred"><div class="mbox" style="width:min(520px,100%)"><h2>🔮 오늘의 예측</h2><div id="predBody"></div><button class="mbtn sec" data-close>닫기</button></div></div><div class="modal" id="mSig"><div class="mbox" style="width:min(560px,100%)"><h2>🤖 레버가치 저점반전 신호 TOP 10</h2><div class="sub" id="sigSub"></div><div class="disc">ⓘ 게임·교육·소통 공간입니다. 시세는 지연·오류가 있을 수 있고 매매 권유나 수익 보장이 아닙니다. 투자 판단과 책임은 본인에게 있습니다.</div><div id="sigBody" class="sigBody"></div>
@@ -773,7 +775,7 @@ body .lvx-modal{z-index:100010}
 setTimeout(function(){ if (window.__room3d) return; var d=document.createElement("div"); d.style.cssText="position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);z-index:99;background:#111a2b;color:#fff;border:2px solid #f5a524;border-radius:16px;padding:18px 20px;text-align:center;font:15px/1.5 sans-serif;max-width:90vw"; d.innerHTML="<b>🔄 사이트가 업데이트됐어요</b><br>예전 파일이 남아 있어 개미시티가 안 열렸어요.<br><button style=\"margin-top:10px;padding:10px 18px;border:0;border-radius:10px;background:#f5a524;font-weight:800;cursor:pointer\">새로고침해서 입장</button>"; d.querySelector("button").onclick=function(){ location.replace(location.pathname+"?room="+(new URLSearchParams(location.search).get("room")||"")+"&r="+Date.now()); }; document.body.appendChild(d); }, 9000);</script>
 <script type="module">
 import * as THREE from './vendor/three.module.min.js?v=169';
-import { initLive, onPrices, onMarket, live, usSession, META, MKT, histMin, reqQuote } from './live.js?v=37';
+import { initLive, onPrices, onMarket, live, usSession, META, MKT, histMin, reqQuote, CLOUD_MAX } from './live.js?v=38';
 
 /* ================= 공통 ================= */
 const $ = id => document.getElementById(id);
@@ -897,20 +899,21 @@ function ac() {
 function applyVol() { if (!BUS) return; const t = AC.currentTime; BUS.m.gain.setTargetAtTime(muted ? 0 : 1, t, .05); BUS.sf.gain.setTargetAtTime(AUD.vs, t, .05); BUS.bg.gain.setTargetAtTime(AUD.vb, t, .2); }
 let NB = null; function nbuf() { if (!NB) { const a = AC; NB = a.createBuffer(1, a.sampleRate * 2, a.sampleRate); const d = NB.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; } return NB; }
 // 범용 음 생성기 (dest: 연결할 노드, t: 시작 시각)
+let ACT = 0, INSFX = 0; // v62: 효과음 동시 재생 수
 function N(dest, t, f, dur, type = 'sine', vol = .2, att = .005, slide, det = 0) {
-  const a = AC, o = a.createOscillator(), g = a.createGain(); o.type = type; o.frequency.setValueAtTime(f, t); if (det) o.detune.value = det;
+  const a = AC, o = a.createOscillator(), g = a.createGain(); if (INSFX) { ACT++; o.onended = () => { ACT--; }; } o.type = type; o.frequency.setValueAtTime(f, t); if (det) o.detune.value = det;
   if (slide) o.frequency.exponentialRampToValueAtTime(slide, t + dur);
   g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + att); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   o.connect(g).connect(dest); o.start(t); o.stop(t + dur + .05); return o;
 }
 function NZ(dest, t, dur, vol = .2, ft = 'highpass', ff = 1200, q = .7, ff2) {
-  const a = AC, s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain(); s.buffer = nbuf(); s.loop = true;
+  const a = AC, s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain(); s.buffer = nbuf(); s.loop = true; if (INSFX) { ACT++; s.onended = () => { ACT--; }; }
   f.type = ft; f.frequency.setValueAtTime(ff, t); if (ff2) f.frequency.exponentialRampToValueAtTime(ff2, t + dur); f.Q.value = q;
   g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   s.connect(f).connect(g).connect(dest); s.start(t, Math.random()); s.stop(t + dur + .05);
 }
 let SFXV = 1; // v19: 다른 개미 소리는 거리만큼 작게 (멀면 안 들림)
-function sfx(fn) { if (muted || SFXV <= .03) return; const a = ac(); if (!a || !BUS) return; try { let d = BUS.sf; if (SFXV < .99) { d = a.createGain(); d.gain.value = SFXV; d.connect(BUS.sf); } fn(a.currentTime + .01, d); } catch (e) {} }
+function sfx(fn) { if (muted || SFXV <= .03 || ACT > 90) return; const a = ac(); if (!a || !BUS) return; INSFX = 1; try { let d = BUS.sf; if (SFXV < .99) { d = a.createGain(); d.gain.value = SFXV; d.connect(BUS.sf); } fn(a.currentTime + .01, d); } catch (e) {} finally { INSFX = 0; } }
 function volAt(x, z) { const d = Math.hypot(x - ME.X, z - ME.Z); return d <= 8 ? 1 : d >= 42 ? 0 : Math.pow(1 - (d - 8) / 34, 2); }
 function withVol(v, fn) { const prev = SFXV, oST = window.setTimeout; SFXV = v; window.setTimeout = (cb, ms, ...r) => oST(() => { const p2 = SFXV; SFXV = v; try { cb(...r); } finally { SFXV = p2; } }, ms); try { return fn(); } finally { window.setTimeout = oST; SFXV = prev; } }
 function tone(freq, dur, type = 'sine', vol = .25, delay = 0, slide) { sfx((t, d) => N(d, t + delay, freq, dur, type, vol, .005, slide)); }
@@ -942,7 +945,7 @@ const SND = {
     [261.6, 329.6, 392, 523.3, 659.3].forEach(f => { N(d, T, f, 2.6, 'sawtooth', .045, .02, null, -9); N(d, T, f, 2.6, 'sawtooth', .045, .02, null, 9); N(d, T, f * 2, 2.2, 'triangle', .04, .02); });
     for (let i = 0; i < 14; i++) N(d, T + .2 + i * .09, 1568 + Math.random() * 2600, .5, 'sine', .05, .003);
   }); },
-  punch(c) { sfx((t, d) => { N(d, t, c ? 95 : 130, .18, 'sine', .55, .002, 40); NZ(d, t, .09, c ? .45 : .3, 'lowpass', c ? 2600 : 1600); if (c) { N(d, t, 1800, .12, 'square', .05, .002, 900); N(d, t + .05, 2600, .2, 'triangle', .06); } }); },
+  punch(c) { if (!cd('sndp', 70)) return; sfx((t, d) => { N(d, t, c ? 95 : 130, .18, 'sine', .55, .002, 40); NZ(d, t, .09, c ? .45 : .3, 'lowpass', c ? 2600 : 1600); if (c) { N(d, t, 1800, .12, 'square', .05, .002, 900); N(d, t + .05, 2600, .2, 'triangle', .06); } }); },
   crash() { sfx((t, d) => { NZ(d, t, .5, .4, 'bandpass', 900, .8, 300); for (let i = 0; i < 6; i++) NZ(d, t + i * .05 + Math.random() * .05, .08, .15, 'highpass', 2500); N(d, t, 70, .3, 'sine', .4, .002, 40); }); },
   ko() { sfx((t, d) => { NZ(d, t, 1.2, .45, 'lowpass', 3000, .5, 120); N(d, t, 60, 1.2, 'sine', .6, .002, 28); [523, 659, 784, 1046, 1318].forEach((f, i) => N(d, t + .5 + i * .1, f, .35, 'square', .07)); }); },
   mk(n) { sfx((t, d) => { switch (n | 0) {
@@ -1538,7 +1541,7 @@ INTER.dr_star = { name: T('🔭 옥상 관측소 문 (E)', '🔭 Rooftop door (E
 INTER.dr_dungeon = { name: T('🏰 폐선 지하역 문 (E)', '🏰 Old Subway door (E)'), type: 'rz', X: -13.6, Z: 41, h: 3.4, get btn() { return T('🏰<br>입장', '🏰<br>Enter'); }, fn: () => realmEnter('dungeon') };
 INTER.regular = { name: T('☕ 단골 카운터 · 꾸미기 (E)', '☕ Regulars counter (E)'), type: 'rz', X: LOUNGE.x + 3.2, Z: LOUNGE.z - 3.6, h: 2.4, get btn() { return T('☕<br>단골', '☕<br>Regular'); }, fn: () => openRegular() };
 const olabs = {}; Object.keys(INTER).forEach(k => { const d = el('div', 'olab', INTER[k].name); labels.appendChild(d); olabs[k] = d; });
-const prompt = el('div', 'prompt'); prompt.append(el('kbd', null, 'E'), document.createTextNode('상호작용')); labels.appendChild(prompt);
+const prompt = el('div', 'prompt'); const PTR = matchMedia('(pointer:coarse)').matches ? 'touch' : matchMedia('(any-pointer:coarse)').matches ? 'both' : 'key'; prompt.append(el('kbd', null, PTR === 'touch' ? '버튼' : PTR === 'both' ? 'E/버튼' : 'E'), document.createTextNode('상호작용')); labels.appendChild(prompt);
 const _v = new THREE.Vector3();
 let VW = 1, VH = 1;
 function project(x, y, z) { _v.set(x, y, z).project(camera); if (_v.z > 1 || _v.z < -1) return null; return { x: (_v.x * .5 + .5) * VW, y: (-_v.y * .5 + .5) * VH }; }
@@ -3271,7 +3274,8 @@ function gearStats(eq) {
 }
 function GS() { return gearStats(G.eq); }
 function LK() { return 1 + GS().luck / 100; } // 행운: 장비·코인이 더 잘 나옴
-function atkCd(ms) { return Math.round(ms / (1 + GS().spd / 100)); } // 공격속도
+const ATK_MIN = 200; // v62: 어떤 능력치로도 공격은 초당 5번까지 (연타 렉·소리 끊김 방지)
+function atkCd(ms) { return Math.max(ATK_MIN, Math.round(ms / (1 + GS().spd / 100))); } // 공격속도
 function critP(tier) { return Math.min(.8, Math.min(.45, .15 + (tier | 0) * .01) + GS().crit / 100); }
 function ampK() { return 1 + GS().amp / 100; }
 function eqStr(eq) { return eqList(eq).map(c => itemCodeFix(c)).join(','); }
@@ -3338,7 +3342,10 @@ function skAim(R) {
 const pkKind = (u, atk, sk, crit) => 'pk:' + id8(u) + ':' + Math.min(1679615, Math.max(1, Math.round(atk))).toString(36) + ':' + sk + (crit ? 'c' : ''); // 20자 제한 → 36진수로 압축
 const HIT_CAP = 1e12; // v51: 몬스터·보스·레이드 1타 상한 (PK는 기존 99,999 유지)
 const SK_CAP = 1e12; // v54: 몬스터에게 들어가는 스킬 1타 상한 (남은 체력만큼만 실제로 깎아요)
-function bumpBig(key, d, mx) { let left = Math.max(1, Math.round(d)), n = 0; while (left > 0 && n++ < (mx || 10)) { const c = Math.min(99999, left); room.bumpCounter(key, c); left -= c; } }
+const BQ = {}; let bqT = 0;
+function bqFlush() { bqT = 0; for (const k in BQ) { const q = BQ[k]; delete BQ[k]; let left = q.d, n = 0; while (left > 0 && n++ < 10 * q.n) { const c = Math.min(99999, left); room.bumpCounter(k, c); left -= c; } } }
+function bumpBig(key, d) { const q = BQ[key] || (BQ[key] = { d: 0, n: 0 }); q.d += Math.max(1, Math.round(d)); q.n++; if (!bqT) bqT = setTimeout(bqFlush, 300); }
+addEventListener('pagehide', bqFlush); document.addEventListener('visibilitychange', () => { if (document.hidden) bqFlush(); });
 function dropItem(boost, minG) {
   const code = rollItem(boost, minG != null ? minG : boost >= 5 ? 5 : boost >= 3 ? 3 : 0), i = itemInfo(code); G.inv.push(code); dexSave();
   if (G.inv.length > 300) { const keep = new Set(eqList(G.eq)); G.inv.sort((a, b) => (keep.has(b) - keep.has(a)) || (itemInfo(b).r - itemInfo(a).r)); G.inv.length = 300; }
@@ -3847,7 +3854,7 @@ $('cardShare').onclick = () => { const cv = $('cardCv'); cv.toBlob(async b => { 
 /* ================= 🔐 계정(아이디·비번) 저장 · 이어하기 ================= */
 let ACCT = LS.get('lv3d_acct', null), acctT = null;
 async function sha(t) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); }
-function acctPack() { return { nick: (PROF && PROF.nick || ACCT.id).slice(0, 12), pts: Math.min(1e8, Math.floor(G.pts)), title: G.title || '', inv: G.inv.join(';').slice(0, 5500), eq: eqStr(G.eq).slice(0, 200), sp: Math.max(0, Math.min(99, G.spray | 0)), enh: `${enhL()},0,${G.enh.f | 0}`, look: G.look | 0, coin: Math.min(1e13, Math.floor(G.coin || 0)), shop: JSON.stringify(G.shop).slice(0, 4000), q: JSON.stringify(G.q || {}).slice(0, 600), dex: (Array.isArray(G.dex) ? G.dex : []).join(';').slice(0, 24000), ts: Date.now() }; }
+function acctPack() { return { nick: (PROF && PROF.nick || ACCT.id).slice(0, 12), pts: Math.min(CLOUD_MAX, Math.floor(G.pts)), title: G.title || '', inv: G.inv.join(';').slice(0, 5500), eq: eqStr(G.eq).slice(0, 200), sp: Math.max(0, Math.min(99, G.spray | 0)), enh: `${enhL()},0,${G.enh.f | 0}`, look: G.look | 0, coin: Math.min(1e13, Math.floor(G.coin || 0)), shop: JSON.stringify(G.shop).slice(0, 4000), q: JSON.stringify(G.q || {}).slice(0, 600), dex: (Array.isArray(G.dex) ? G.dex : []).join(';').slice(0, 24000), ts: Date.now() }; }
 function acctUnpack(d) { G.pts = Math.max(0, Number(d.pts) || 0); G.title = d.title || ''; G.inv = String(d.inv || '').split(';').map(itemCodeFix).filter(Boolean); G.eq = eqParse(d.eq); if (d.sp >= 0) G.spray = Math.min(99, d.sp | 0); if (Number.isInteger(d.look)) G.look = d.look; if (typeof d.dex === 'string') G.dex = d.dex.split(';').filter(x => /^[a-z]\d{1,2}-\d{1,2}$/.test(x)); if (typeof d.enh === 'string') { const q = d.enh.split(',').map(x => Math.max(0, x | 0)); G.enh = { l: Math.min(ENH_MAX, q[0] || 0), st: 0, f: Math.min(60, q[2] || 0) }; if (q[1] > 0) G.coin = (G.coin || 0) + q[1] * 10; }
   if (d.coin >= 0) G.coin = Math.min(1e13, Number(d.coin) || 0); try { if (typeof d.shop === 'string') { const S = JSON.parse(d.shop); if (S && S.own) G.shop = { own: S.own || {}, cnt: S.cnt || {}, eq: S.eq || { b: 0, t: 0, n: 0 } }; } } catch (e) {} try { if (typeof d.q === 'string') { const Q = JSON.parse(d.q); if (Q && Q.d) G.q = Q; } } catch (e) {} SLOT_KEYS.forEach(k => { if (G.eq[k] && !G.inv.includes(G.eq[k])) G.inv.push(G.eq[k]); }); LS.set('lv3d_game', G); }
 function acctDirty() { if (!ACCT || !live.savePut || acctT) return; acctT = setTimeout(() => { acctT = null; acctSaveNow(); }, 4000); }
@@ -3877,7 +3884,7 @@ function grantApply(g) { if (!g || !g.ts) return; G.grantDone = G.grantDone || {
   G.grantDone[g.ts] = 1; saveG(); acctFlush(); acctRefreshMe(); live.dRemove('grants/' + live.uid).catch(() => {});
   if (msg.length) { showPop ? showPop({ ic: '🛟', t: '방장 복구 지급 도착!', d: msg.join(' · ') + (g.note ? ' — ' + g.note : '') }) : 0; toast('🛟 복구 지급: ' + msg.join(' · ')); try { SND.level(); } catch (e) {} } }
 let grantOff = null; function grantListen() { if (grantOff || !live.dOn || !live.uid) return; grantOff = live.dOn('grants/' + live.uid, v => { if (v) grantApply(v); }); }
-async function grantGive(uid, nick, o) { if (!HOST) return; const v = { pts: Math.min(1e8, Math.max(0, Math.floor(o.pts) || 0)), en: Math.min(30, Math.max(0, o.en | 0)), n: Math.min(12, Math.max(0, o.n | 0)), note: String(o.note || '').slice(0, 40), ts: Date.now() };
+async function grantGive(uid, nick, o) { if (!HOST) return; const v = { pts: Math.min(CLOUD_MAX, Math.max(0, Math.floor(o.pts) || 0)), en: Math.min(30, Math.max(0, o.en | 0)), n: Math.min(12, Math.max(0, o.n | 0)), note: String(o.note || '').slice(0, 40), ts: Date.now() };
   try { await live.dSet('grants/' + uid, v); toast(`🛟 ${nick}님에게 복구 지급 보냄 (접속 중이면 바로 적용)`); return true; } catch (e) { toast('❌ 지급 실패: ' + ((e && e.code) || e)); return false; } }
 function grantAsk(uid, nick) { const p = prompt(`${nick}님 복구 지급\nXP(최소 보장값, 0=그대로)`, '0'); if (p == null) return; const en = prompt('무기 강화(최소 보장, 0~30)', '0'); if (en == null) return; const n = prompt('SSS 장비 지급 개수(0~12)', '0'); if (n == null) return; grantGive(uid, nick, { pts: Number(String(p).replace(/[^0-9]/g, '')), en: en | 0, n: n | 0, note: '기록 복구' }); }
 
@@ -4002,9 +4009,9 @@ function breakCrate(k, mine) {
 function rpgFx(fx) {
   const parts = String(fx.kind).split(':'), k = parts[1], a = antOf(fx.uid);
   if (parts[0] === 'brk') { if (fx.uid !== live.uid) breakCrate(k, false); if (a) { a.act = { k: 'punch', t0: clock.elapsedTime, d: .5 }; } return; }
-  const B = BOSS[k]; if (!B) return; const dmg = parseInt(parts[2], 10) || 1, crit = /c$/.test(parts[2] || '');
-  if (a) { a.act = { k: 'punch', t0: clock.elapsedTime, d: .45 }; const t = lvOf(a === myAnt ? G.pts : ((remotes.get(fx.uid) || {}).data || {}).pts || 0); if (t >= 8) laser(a, B); }
-  B.shake = .35; B.flash = .25; SND.punch(crit);
+  const B = BOSS[k]; if (!B) return; const dmg = parseInt(parts[2], 10) || 1, crit = /c$/.test(parts[2] || ''); const nowF = performance.now(), skipFx = B.lastFx && nowF - B.lastFx < 90; if (!skipFx) B.lastFx = nowF;
+  if (a) { a.act = { k: 'punch', t0: clock.elapsedTime, d: .45 }; const t = lvOf(a === myAnt ? G.pts : ((remotes.get(fx.uid) || {}).data || {}).pts || 0); if (t >= 8 && !skipFx) laser(a, B); }
+  B.shake = .35; B.flash = .25; if (skipFx) return; SND.punch(crit);
   const P = B.g.position; spawn(P.x + (Math.random() - .5), 2 + Math.random() * 1.5, P.z + 1, crit ? 45 : 18, crit ? 0xffd76a : 0xffffff, crit ? 5 : 3, 6, .6);
   const pp = project(P.x + (Math.random() - .5) * 1.5, 4.2, P.z); if (pp) { const d = el('div', 'floaty ' + (crit ? 'big' : 'txt'), (crit ? '💥 크리티컬 -' : '-') + fK(dmg)); d.style.left = pp.x + 'px'; d.style.top = pp.y + 'px'; d.style.transform = 'translate(-50%,-100%)'; labels.appendChild(d); setTimeout(() => d.remove(), 1700); }
 }
@@ -4816,7 +4823,8 @@ const CC_DAY = 60;
 function cityCoin(base, why) { const d = kstDate(); let o = LS.get('lv3d_cc', null); if (!o || o.d !== d) o = { d, n: 0 };
   const pay = Math.max(0, Math.min(Math.round(base), CC_DAY - o.n)); if (pay > 0) { o.n += pay; LS.set('lv3d_cc', o); addCoin(pay, why); toast(T(`🏙 도시 코인 +${pay} (오늘 ${o.n}/${CC_DAY})`, `🏙 City coins +${pay} (today ${o.n}/${CC_DAY})`)); }
   else toast(T(`🏙 오늘 도시 코인 한도(${CC_DAY})를 모두 받았어요`, `🏙 Daily city-coin cap (${CC_DAY}) reached`)); return pay; }
-window.__cityCoin = cityCoin; window.__t61 = { addPts, addCoin, hitCap: () => [HIT_CAP, SK_CAP, PTS_MAX], G: () => G }; window.__jp = (s) => jackpot(s, 1); window.__cardLines = () => cardLines();
+window.__cityCoin = cityCoin; window.__t61 = { addPts, addCoin, hitCap: () => [HIT_CAP, SK_CAP, PTS_MAX], G: () => G };
+  window.__t62 = { atkMin: () => ATK_MIN, atkCd, bq: () => JSON.parse(JSON.stringify(BQ)), act: () => ACT, BD: () => BD, openLog, openBd, bdPost, cloud: () => CLOUD_MAX, flush: bqFlush, updNote }; window.__jp = (s) => jackpot(s, 1); window.__cardLines = () => cardLines();
 function jackGive(t) {
   if (t === 'SSS') { const free = ['pgold', 'pcorn', 'palien'].filter(i => !G.shop.own[i]); let s;
     if (free.length) { const id = free[Math.floor(Math.random() * free.length)]; G.shop.own[id] = 1; G.pet = id; s = `한정 펫 ${PETS[id].e} ${PETS[id].n} 획득! (바로 장착됐어요)`; } else { addCoin(50000, '잭팟'); jackPts(5e6); s = '🪙 50,000 + ⭐ XP 500만!'; }
@@ -4851,7 +4859,7 @@ function tickHeaven(dt, t) {
    · 🐷 응원 저금통 · 🥁 응원 북 · 🥠 포춘쿠키 운세 · 🙇 108 꾸벅 발판 · 🛩 개미시티 비행선
    · 먼 배경: 도시 스카이라인 + 가상 지수 ANT100 30일 차트 빌딩(매일 새 건물) */
 const TREE = { x: 10.5, z: 50, top: 0 };
-const COLUS = (() => { let v = null; try { v = localStorage.getItem('lv3d_col'); } catch (e) {} return v ? v === 'us' : EN(); })(); if (COLUS) { const rs = document.documentElement.style; rs.setProperty('--up', '#2fd07a'); rs.setProperty('--down', '#ff4d57'); }
+const COLUS = (() => { let v = null; try { v = localStorage.getItem('lv3d_col'); } catch (e) {} return v ? v === 'us' : false; })(); if (COLUS) { const rs = document.documentElement.style; rs.setProperty('--up', '#2fd07a'); rs.setProperty('--down', '#ff4d57'); }
 const CITYW = { tick: [] };
 window.__cityTick = (dt, t) => { for (const f of CITYW.tick) { try { f(dt, t); } catch (e) {} } };
 function onTreeTop() {
@@ -5840,6 +5848,64 @@ function drawGb() {
 drawGb();
 { const sg = signPlane('📖 방명록 — 한 줄 남겨요!', 7, .9, '#fff3c4', '#ffb020'); sg.position.set(8.8, 4.55, -3.85); sg.rotation.y = -.28; sg.scale.setScalar(.8); scene.add(sg); scene.add(mesh(new THREE.RingGeometry(1.6, 2.1, 40), FB(0xffd76a, .55), null, [8.4, .03, -1.6], [-Math.PI / 2, 0, 0])); }
 function openGb() { renderGbList(); openModal('mGb'); }
+// ---- 📋 업데이트 이력 (새 업데이트마다 맨 위에 한 줄씩 추가) ----
+const CHANGELOG = [
+  ['v62 · 11월 28일', ['⚔ 보스를 연타해도 렉이 덜하고 소리가 끊기지 않게 고쳤어요. 공격은 초당 최대 5번까지 나가요', '📋 업데이트 이력과 🛠 버그 신고·개선 요청 게시판이 생겼어요 (메뉴 검색에서 열 수 있어요)', '📸 레버가치전문가 인스타그램 @lega_value 바로가기가 생겼어요', '▲ 메뉴를 숨기고 보이는 화살표가 생겼어요', '📱 폰에서는 E 대신 버튼으로 안내해요 · 상승 빨강/하락 파랑이 기본이에요']],
+  ['v61', ['공격력·코인·XP 상한을 풀었어요. 이제 XP 1억 이후에도 계속 성장해요']],
+  ['v60', ['☕ 단골 꾸미기: 라운지에 컵·의자·간판을 놓을 수 있어요', '🫧 버블 왕국: 커지고 터지는 비눗방울을 밟고 올라가는 새 월드']],
+  ['v59', ['잭팟 보상이 고정 보상으로 바뀌었어요 (운에 덜 휘둘려요)', '🔮 오늘의 예측은 참여만 해도 도장 + 코인을 줘요', '📈 상승/하락 색을 한국식·미국식으로 고를 수 있어요 (메뉴 검색: 색상)']],
+  ['v58', ['📉 폭락의 밤: 매주 금요일 밤 9시, 흔들리는 광장에서 버티면 보상', '📍 여기서 만나기: 내 위치 링크를 친구에게 보내면 바로 모여요', '⏱ 30초 동시 출발: 달리기 레이스를 같이 출발해요']]
+];
+function updNote() {
+  try { if (LS.get('lv3d_seenv', '') === APP_V) return; LS.set('lv3d_seenv', APP_V); } catch (e) { return; }
+  const c = CHANGELOG[0]; if (!c || document.getElementById('updNote')) return;
+  const d = el('div'); d.id = 'updNote'; d.style.cssText = 'position:fixed;left:50%;bottom:78px;transform:translateX(-50%);z-index:60;width:min(360px,92vw);padding:10px 14px;border-radius:14px;background:rgba(14,20,34,.94);border:1px solid #ffb020;box-shadow:0 6px 24px rgba(0,0,0,.5);color:#e8efff;font-size:13px;line-height:1.5;cursor:pointer;transition:opacity .6s;opacity:0';
+  d.appendChild(el('b', null, '🆕 업데이트 ' + c[0])); c[1].slice(0, 3).forEach(x => d.appendChild(el('div', null, x))); d.appendChild(el('small', null, '탭하면 전체 이력 · 메뉴 검색에서 「업데이트」'));
+  d.onclick = () => { d.remove(); openLog(); }; document.body.appendChild(d); requestAnimationFrame(() => { d.style.opacity = '1'; });
+  setTimeout(() => { d.style.opacity = '0'; setTimeout(() => d.remove(), 700); }, 9000);
+}
+const IG = { url: 'https://www.instagram.com/lega_value/', id: '@lega_value', title: '' }; // title: 최신 영상 제목 한 줄 (업데이트 때 갱신)
+function igOpen() { try { window.open(IG.url, '_blank', 'noopener'); } catch (e) { location.href = IG.url; } }
+function igInit() {
+  if (document.getElementById('igCard')) return;
+  const st = document.createElement('style'); st.textContent = `
+#igCard{position:fixed;left:10px;top:368px;width:210px;z-index:4;padding:10px 12px 11px;border-radius:14px;color:#fff;cursor:pointer;background:linear-gradient(135deg,#833ab4,#fd1d1d 55%,#fcb045);box-shadow:0 6px 20px rgba(0,0,0,.5);text-decoration:none;display:block;transition:transform .15s}
+#igCard:hover{transform:translateY(-2px) scale(1.02)}#igCard b{display:block;font-size:15px;letter-spacing:.2px}#igCard small{display:block;opacity:.94;font-size:11.5px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#igCard .go{display:inline-block;margin-top:7px;padding:3px 11px;border-radius:999px;background:rgba(255,255,255,.96);color:#c2185b;font-weight:900;font-size:12px}
+#bIg{display:none}
+@media (max-width:820px),(pointer:coarse) and (max-height:520px){#igCard{display:none!important}header.mopen #bIg{display:inline-flex!important;order:-1;border:0!important;color:#fff!important;font-weight:900!important;background:linear-gradient(135deg,#833ab4,#fd1d1d 55%,#fcb045)!important;box-shadow:0 0 12px rgba(253,29,29,.45)}}
+header{transition:transform .25s,opacity .2s}body.uihide header{transform:translateY(-170%);opacity:0;pointer-events:none}body.uihide #igCard{display:none!important}
+#uiHide{position:fixed;left:50%;transform:translateX(-50%);z-index:12;padding:3px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:rgba(10,16,28,.9);color:#cfe0ff;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit}
+body.uihide #uiHide{top:38px!important;border-color:#ffb020;color:#ffd76a;animation:uiP 1.8s ease-in-out infinite}@keyframes uiP{0%,100%{box-shadow:0 0 0 rgba(255,176,32,0)}50%{box-shadow:0 0 14px rgba(255,176,32,.8)}}`;
+  document.head.appendChild(st);
+  const a = document.createElement('a'); a.id = 'igCard'; a.className = 'pe'; a.href = IG.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+  a.append(el('small', null, '📸 INSTAGRAM'), el('b', null, IG.id), el('small', null, '레버가치전문가 · 팔로우하고 영상 보기'), el('small', null, IG.title ? '🎬 ' + IG.title : '🎬 최신 영상 보러 가기'), el('span', 'go', '팔로우 →'));
+  document.body.appendChild(a); const igPos = () => { const h = document.querySelector('.hud'); if (h && getComputedStyle(a).display !== 'none') { const r = h.getBoundingClientRect(); if (r.bottom > 40) a.style.top = Math.min(r.bottom + 8, innerHeight - 250) + 'px'; } }; setInterval(igPos, 1500); setTimeout(igPos, 300);
+  const hb = el('button', 'hb pe', '📸 인스타 ' + IG.id); hb.id = 'bIg'; hb.type = 'button'; hb.onclick = igOpen; const H0 = document.querySelector('header'); H0.insertBefore(hb, $('bRep'));
+  // 메뉴 숨김 화살표
+  const u = el('button', 'pe', ''); u.id = 'uiHide'; u.type = 'button'; document.body.appendChild(u);
+  const pos = () => { if (!document.body.classList.contains('uihide')) u.style.top = (H0.getBoundingClientRect().bottom + 3) + 'px'; };
+  const apply = h => { document.body.classList.toggle('uihide', h); u.textContent = h ? '▼ 메뉴 보이기' : '▲ 숨기기'; try { LS.set('lv3d_uihide', h ? 1 : 0); } catch (e) {} if (h) { H0.classList.remove('mopen'); $('bMenu').textContent = '☰ 메뉴'; } pos(); };
+  u.onclick = () => apply(!document.body.classList.contains('uihide'));
+  try { new ResizeObserver(pos).observe(H0); } catch (e) {} addEventListener('resize', pos); apply(!!LS.get('lv3d_uihide', 0)); setTimeout(pos, 600);
+}
+function openLog() { const L = $('logList'); L.textContent = ''; CHANGELOG.forEach(([v, a]) => { const d = el('div', 'gbm'); d.appendChild(el('b', null, v)); a.forEach(x => d.appendChild(el('div', null, '• ' + x))); L.appendChild(d); }); openModal('mLog'); }
+// ---- 🛠 버그 신고 · 개선 요청 게시판 ----
+let BD = [];
+function renderBd() {
+  const L = $('bdList'); if (!L) return; L.textContent = ''; if (!BD.length) { L.appendChild(el('div', 'small', '아직 글이 없어요. 불편한 점이나 바라는 점을 남겨 주세요!')); return; }
+  BD.slice().sort((a, b) => (b.ts || 0) - (a.ts || 0)).forEach(m => {
+    const d = el('div', 'gbm'); const dt = new Date(m.ts || Date.now()).toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul', month: 'numeric', day: 'numeric' });
+    d.append(el('b', null, (m.k === 'b' ? '🐞 ' : '💡 ') + (m.nick || '?')), el('span', null, m.text || ''), el('small', null, dt));
+    const up = el('button', 'mbtn sec', '👍 ' + (m.v || 0)); up.type = 'button'; up.style.cssText = 'margin-left:8px;padding:2px 8px;font-size:12px'; up.disabled = !!m.mine || m.uid === live.uid; up.onclick = async () => { try { await room.boardVote(m.id); } catch (e) { toast('공감 실패: 잠시 후 다시'); } }; d.appendChild(up);
+    if (HOST) { const x = el('button', 'mbtn sec', '🗑'); x.type = 'button'; x.style.cssText = 'margin-left:6px;padding:2px 8px;font-size:12px'; x.onclick = async () => { try { await room.boardDel(m.id); } catch (e) {} }; d.appendChild(x); }
+    L.appendChild(d); });
+}
+function openBd() { renderBd(); openModal('mBd'); }
+async function bdPost() {
+  const v = ($('bdIn').value || '').trim().slice(0, 300); if (!v) return; if (!entered) { toast('입장 후 남길 수 있어요'); return; } if (!cd('bd', 30000)) { toast('글은 30초에 한 번만 남길 수 있어요'); return; }
+  try { await room.boardAdd(PROF.nick, $('bdK').value, v); $('bdIn').value = ''; toast('🛠 접수됐어요! 고마워요'); } catch (e) { toast('🛠 게시판을 아직 준비 중이에요 — 곧 열릴 예정이에요'); }
+}
 function renderGbList() { const L = $('gbList'); L.textContent = ''; if (!GB.length) { L.appendChild(el('div', 'small', '아직 방명록이 없어요. 첫 글을 남겨 보세요!')); return; } GB.slice().reverse().forEach(m => { const d = el('div', 'gbm'); d.append(el('b', null, m.nick || '?'), el('span', null, m.text || ''), el('small', null, kstTime(m.ts || Date.now()))); L.appendChild(d); }); }
 async function gbPost() {
   const v = ($('gbIn').value || '').trim().slice(0, 100); if (!v) return; if (!entered) { toast('입장 후 남길 수 있어요'); return; } if (!cd('gb', 20000)) { toast('방명록은 20초에 한 번!'); return; }
@@ -5900,6 +5966,9 @@ function cmdRec(nm) { if (!nm) return; const r = LS.get('lv3d_cmdrec', []).filte
 function cmdItems() {
   const L = [];
   CMD_ACT.forEach(([id, ico, nm, kw]) => { const b = $(id); if (!b) return; L.push({ cat: '기능', ico, nm, kw, btns: [['열기', () => { closeModals(); setTimeout(() => b.click(), 60); }]] }); });
+  L.push({ cat: '기능', ico: '📋', nm: '업데이트 이력', kw: '업데이트 패치 변경 새기능 이력 노트 뭐가 바뀌었', btns: [['열기', () => { closeModals(); setTimeout(openLog, 60); }]] });
+  L.push({ cat: '기능', ico: '📸', nm: '인스타그램 ' + IG.id, kw: '인스타 인스타그램 릴스 영상 팔로우 레버가치 lega_value 홍보', btns: [['열기', () => { closeModals(); setTimeout(igOpen, 60); }]] });
+  L.push({ cat: '기능', ico: '🛠', nm: '버그 신고 · 개선 요청', kw: '버그 신고 건의 개선 요청 문의 게시판 오류 불편 제안', btns: [['열기', () => { closeModals(); setTimeout(openBd, 60); }]] });
   TPS.forEach(([nm, x, z]) => L.push({ cat: '장소', ico: '📍', nm, kw: nm, btns: [['⚡ 이동', () => tpTo(x, z, nm)], ['🚶 걸어서', () => walkTo(x, z, null, nm)]] }));
   const seen = {}; Object.keys(INTER).forEach(k => { const it = INTER[k]; if (!it || !it.name || it.type === 'rz' || /^(boss|crate|wboss)$/.test(it.type || '') || k === 'wb' || k === 'mob' || seen[it.name] || typeof it.X !== 'number') return; seen[it.name] = 1; const nm = it.name.replace(/\s*\(E\)/, ''); L.push({ cat: '가서 하기', ico: '👆', nm, kw: it.name, btns: [['🚶 가서 사용', () => walkTo(it.X, it.Z, k, nm)]] }); });
   L.push({ cat: T('도움말', 'Help'), ico: '🪂', nm: T('활강·비행 하는 법', 'How to glide and fly'), kw: '활강 비행 날기 날개 glide fly', btns: [[T('보기', 'Show'), () => { closeModals(); setTimeout(() => toast(T('🪂 활강: 높은 곳에서 떨어질 때 점프를 꾹 · 🕊 비행: 50단계부터 공중에서 점프 꾹(상승)·C(하강)', '🪂 Glide: hold Jump while falling · 🕊 Fly: from stage 50, hold Jump in the air to rise, C to descend')), 80); }]] });
@@ -6022,7 +6091,7 @@ async function realmEnter(id) {
       camera, touch: TOUCH, snd: (n, a) => { try { SND[n](a); } catch (e) {} }, cine: n => cine(n), fx: { sweat: () => sp(14, 0x9ee8ff), firework: () => { try { SND.firework(); } catch (e) {} spawn(ME.X, 3, ME.Z, 60, 0xffd76a, 6, 3, 1.5, 3); } },
       setInter: (k, x, z, off) => { const it = INTER[k]; if (it) { it.X = R_ORG.x + x; it.Z = R_ORG.z + z; it.off = !!off; } },
       unit: () => Math.round(atkOf(lvOf(G.pts)) * (BUFF.until > Date.now() ? 1.5 : 1)),
-      attack: o => { o = o || {}; if (Date.now() < (HPS.stun || 0) || !cd('atk', Math.round(atkCd(260) / (o.spd || 1)))) return null; const tier = lvOf(G.pts); let dmg = Math.round(atkOf(tier) * (BUFF.until > Date.now() ? 1.5 : 1) * (o.mul || 1)); const crit = !!o.crit || Math.random() < critP(tier); if (crit) dmg *= 2; return { dmg: Math.min(Math.round(dmg), 1e12), crit }; },
+      attack: o => { o = o || {}; if (Date.now() < (HPS.stun || 0) || !cd('atk', Math.max(150, Math.round(atkCd(260) / (o.spd || 1))))) return null; const tier = lvOf(G.pts); let dmg = Math.round(atkOf(tier) * (BUFF.until > Date.now() ? 1.5 : 1) * (o.mul || 1)); const crit = !!o.crit || Math.random() < critP(tier); if (crit) dmg *= 2; return { dmg: Math.min(Math.round(dmg), 1e12), crit }; },
       face: (x, z) => { ME.ry = Math.atan2(R_ORG.x + x - ME.X, R_ORG.z + z - ME.Z); },
       dodge: (dx, dz) => { if (HPS.ko || Date.now() < (HPS.stun || 0) || ME.dodge || !cd('dodge', 800)) return false; let L = Math.hypot(dx || 0, dz || 0); if (L < .01) { dx = ME.lmx || Math.sin(ME.ry); dz = ME.lmz || Math.cos(ME.ry); L = Math.hypot(dx, dz) || 1; } dx /= L; dz /= L; ME.dodge = { x: dx * 24, z: dz * 24, t: .22 }; ME.ry = Math.atan2(dx, dz); ME.dodgeEnd = Date.now() + 420; HPS.inv = Math.max(HPS.inv || 0, Date.now() + 420); ME.target = null; try { SND.jump(); } catch (e) {} spawn(ME.X, .5, ME.Z, 14, 0xcfe8ff, 2, 3, .5); return true; },
       dodging: () => Date.now() < (ME.dodgeEnd || 0),
@@ -6118,7 +6187,7 @@ const GUIDE = [
     <h4>인기 기능 TOP 5</h4><ul><li>📈 <b>시장 리포트</b> — 공포·탐욕, 지수, 국장·미장 히트맵, 레버가치 신호</li><li>🧮 <b>원복 계산기</b> — 리포트의 「내 종목」 탭: 평단 넣으면 원복까지 몇 %인지·물타기 계산</li><li>⚔ <b>사냥·보스·레이드</b> — 때리면 XP(경험치)·장비 획득, 진화!</li><li>📖 <b>방명록</b> — 광장 오른쪽 앞 빛나는 게시판</li><li>🏆 <b>주간 랭킹</b> — 매주 월요일 새 시즌, 1~3위 칭호</li></ul>
     <h4>🏙 중앙 광장은 조용한 곳</h4>전광판 보며 이야기하고, 🌳 시세나무에 오르고, ☕ 병뚜껑 카페에서 쉬는 곳이에요. 싸움은 왼쪽 문 밖 <b>야외</b>에서! 멀리서 싸우는 소리는 광장에 안 들려요.`],
   ['🗺 장소 안내', () => '<div class="gplaces" id="gPlaces"></div>'],
-  ['🎮 조작법', () => `<ul><li>이동 <span class="kbd">WASD</span>·방향키 / 달리기는 오래 누르기 · 점프 <span class="kbd">Space</span></li><li>상호작용·공격 <span class="kbd">E</span> · 스킬 <span class="kbd">Q</span> <span class="kbd">R</span> <span class="kbd">F</span> <span class="kbd">G</span></li><li>채팅 <span class="kbd">Enter</span> · 카메라: 마우스 드래그(폰은 화면 드래그), 휠로 줌</li><li>앉기·눕기: 병뚜껑 의자·벤치·침대에서 상호작용 · 일어서기는 움직이면 OK</li><li>채팅 명령: <b>/차단 닉네임</b> · <b>/차단해제 닉네임</b></li></ul>`],
+  ['🎮 조작법', () => `<ul><li>이동 <span class="kbd">WASD</span>·방향키 / 달리기는 오래 누르기 · 점프 <span class="kbd">Space</span></li><li>상호작용·공격 <span class="kbd">E</span> (폰·태블릿은 오른쪽 아래 큰 버튼) · 스킬 <span class="kbd">Q</span> <span class="kbd">R</span> <span class="kbd">F</span> <span class="kbd">G</span></li><li>채팅 <span class="kbd">Enter</span> · 카메라: 마우스 드래그(폰은 화면 드래그), 휠로 줌</li><li>앉기·눕기: 병뚜껑 의자·벤치·침대에서 상호작용 · 일어서기는 움직이면 OK</li><li>채팅 명령: <b>/차단 닉네임</b> · <b>/차단해제 닉네임</b></li></ul>`],
   ['⚔ 성장·전투', () => `<ul><li><b>XP</b> = 경험치. 인사·응원 북·사냥·낚시·방명록·출석·🌳 시세나무 등반으로 모아요 → 100단계까지 <b>진화</b> · 🎭 <b>진화 도감</b>에서 해금한 예전 모습으로 바꿀 수 있어요(능력치 그대로)</li><li>몬스터는 <b>서쪽(왼쪽)으로 갈수록 강해요</b>: 🌱 초보 사냥터 → 🌲 중급 숲 → 🌋 화산지대</li><li>⚔ <b>보스 투기장</b>(큰길에서 들판 쪽): 시장 세력 4대 보스, 채널 사람들과 체력 공유</li><li>🌋 <b>재난 레이드</b>: 8분마다 레이드 광장에 등장! 빨간 바의 <b>🚀 레이드 가기</b>로 바로 이동</li><li>🎒 <b>가방</b>: 장비 12칸 장착, 스프레이로 색 바꾸기</li><li>체력이 줄면 🏕 캠핑장 침대나 ☕ 카페 커피잔 근처에서 빨리 회복</li></ul>`],
   ['📈 주식 기능', () => `<ul><li>📈 <b>시장 리포트</b>: 공포·탐욕, VIX, 지수·금리·환율·원자재·비트코인, 옵션 벽, 국장/미장 히트맵, 뉴스</li><li>⭐ <b>내 대표 종목</b>: 입장할 때 국장·미장 아무 종목 + 평단 → 머리 위에 「현대차 -12% 물림」처럼 표시 (공개/종목만/비공개 선택)</li><li>🧮 <b>원복 계산기</b>: 원복까지 필요한 상승률, 물타기하면 평단이 얼마나 내려가는지</li><li>📢 <b>레버가치 신호</b>: 새 저점반전 신호가 뜨면 🔔 알림 + 텔레그램 바로가기</li><li>🧓 <b>레가 아저씨</b>(광장 왼쪽 앞)에게 말 걸면 오늘 시장 3줄 요약</li></ul><div class="small">⚠ 모든 숫자는 재미·참고용이며 투자 조언이 아니에요.</div>`],
   ['⚙ 편의 설정', () => '<div id="gSet"></div>']
@@ -6198,7 +6267,7 @@ function coinRain(sec) { const t0 = performance.now(); const go = () => { if (!m
 setInterval(() => { if (!entered || LS.get('lv3d_fest', '') === kstDate()) return; const hot = ['KORU', 'SOXL'].map(k => [k, qChg(prices[k])]).filter(([, c]) => isFinite(c) && c >= .08); if (!hot.length) return;
   LS.set('lv3d_fest', kstDate()); toast(`🎉 상한가 축제!! ${hot.map(([k, c]) => k + ' +' + (c * 100).toFixed(1) + '%').join(' · ')} — XP 보너스`); addLog(`🎉 상한가 축제! ${hot.map(([k, c]) => k + ' +' + (c * 100).toFixed(1) + '%').join(' · ')} 코인 비가 내린다~`, true); coinRain(8); givePts(30, .04); try { SND.firework(); } catch (e) {} }, 60000);
 // ---- 버튼 연결 ----
-$('bGb').onclick = () => openGb(); $('bAtt').onclick = () => { renderAtt(); openModal('mAtt'); }; $('bSea').onclick = () => { renderSea(); openModal('mSea'); seaPush(true); };
+$('bGb').onclick = () => openGb(); $('bdGo').onclick = bdPost; $('bdIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); bdPost(); } e.stopPropagation(); }); $('bAtt').onclick = () => { renderAtt(); openModal('mAtt'); }; $('bSea').onclick = () => { renderSea(); openModal('mSea'); seaPush(true); };
 $('wbGo').onclick = () => tpTo(RAIDP.x, RAIDP.z - 14, '🌋 레이드 광장');
 
 /* ================= 📈 v16 주식 리포트 센터 · 내 종목 수익률 · 원복 계산기 · 레버가치 신호 알림 · 🔋 절전 모드 ================= */
@@ -6582,6 +6651,8 @@ function enter() {
   else if (!EMBED && !LS.get('lv3d_repoff', false) && LS.get('lv3d_repday', '') !== kstDate()) { LS.set('lv3d_repday', kstDate()); setTimeout(() => { if (!document.querySelector('.modal.on')) openRep('all'); }, 2500); }
   try { attCheck(); } catch (e) { console.warn(e); } try { seaStart(); } catch (e) { console.warn(e); }
   if (room.onGuestbook) room.onGuestbook(l => { GB = l; drawGb(); if ($('mGb').classList.contains('on')) renderGbList(); });
+  if (room.onBoard) room.onBoard(l => { BD = l; if ($('mBd').classList.contains('on')) renderBd(); });
+  try { igInit(); } catch (e) { console.warn('ig', e); } setTimeout(updNote, 4500);
   if (!LS.get('lv3d_maphint', 0)) { LS.set('lv3d_maphint', 1); setTimeout(() => toast('🗺 오른쪽 위 지도(또는 🌀 포털)를 누르면 사냥터·투기장·레이드 광장으로 순간이동!'), 7000); }
   room.onCounter('offer', n => { offerCount = n; olabs.offer.textContent = trText('🐷 응원 저금통 · 누적 ' + fmt(n, 0) + '닢'); });
   ['koru', 'soxl'].forEach(k => room.onVotes(k + '-' + kstDate(), (c, mine) => { votes[k] = { up: c.up, down: c.down, mine }; drawVoteBoard(); if ($('mVote').classList.contains('on')) renderVoteModal(); }));
@@ -6734,7 +6805,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '61';
+const APP_V = '62';
 {
   let shown = false;
   const check = async () => {
