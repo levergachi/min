@@ -1376,9 +1376,11 @@ function spawn(x, y, z, n, color, speed, grav = 9, life = 1.4, up = 0) {
 let weather = 'calm', weatherChg = null, nextFw = 0, nextBolt = 0, wxLv = 0;
 const WX_T = [-.09, -.03, .03, .09], WX_NAME = { '-2': '⛈ 폭풍', '-1': '🌧 흐림', '0': '⛅ 평온', '1': '☀️ 맑음', '2': '🎉 축제' };
 const wxTier = (a, m) => WX_T.reduce((n, x) => n + (a >= x + m ? 1 : 0), 0) - 2;
+const MKTB = { avg: null, last: null };
+function mktBuff() { const a = MKTB.avg; if (a == null || Math.abs(a) < .3) return null; const k = Math.min(15, Math.abs(a) * 2); return a > 0 ? { up: 1, atk: k, txt: `📈 상승장 버프 공격 +${k.toFixed(1)}%` } : { up: 0, def: Math.min(15, k), reg: Math.min(20, Math.abs(a) * 3), txt: `📉 물타기 버프 방어 +${Math.min(15, k).toFixed(1)}% · 회복 +${Math.min(20, Math.abs(a) * 3).toFixed(1)}` }; }
 function computeWeather() {
   const ch = ['KORU', 'SOXL'].map(k => qChg(prices[k])).filter(isFinite);
-  const avg = ch.length ? ch.reduce((a, b) => a + b, 0) / ch.length : null;
+  const avg = ch.length ? ch.reduce((a, b) => a + b, 0) / ch.length : null; MKTB.avg = avg; { const b = mktBuff(), key = b ? b.txt.slice(0, 4) : ''; if (entered && key !== MKTB.last && b) toast(`${b.txt} — 오늘 KORU·SOXL 평균 ${avg > 0 ? '+' : ''}${avg.toFixed(2)}%`); MKTB.last = key; }
   { let lv = avg == null ? 0 : wxTier(avg, 0); if (avg != null && lv > wxLv && wxTier(avg, .01) <= wxLv) lv = wxLv; if (avg != null && lv < wxLv && wxTier(avg, -.01) >= wxLv) lv = wxLv; if (lv !== wxLv) { const up = lv > wxLv; wxLv = lv; if (weather === (lv >= 2 ? 'party' : lv <= -1 ? 'gloom' : 'calm')) applyWeather(); if (entered && cd('wxpop', 60000)) showPop({ ic: up ? '🌤' : '🌧', t: `도시 날씨: ${WX_NAME[lv]}`, b: avg == null ? '' : `KORU·SOXL 평균 ${pct(avg)}`, dur: 5000, cls: up ? 'ment' : '' }); } }
   const mode = wxLv >= 2 ? 'party' : wxLv <= -1 ? 'gloom' : 'calm';
   weatherChg = avg; if (mode !== weather) { const prev = weather; weather = mode; applyWeather(); if (entered) { if (mode === 'party') SND.party(); else if (mode === 'gloom') SND.gloom(); } bgmUpdate(); }
@@ -1676,7 +1678,11 @@ $('aRun').onclick = () => { runToggle = !runToggle; $('aRun').classList.toggle('
 $('aJump').onclick = () => doFx('jump');
 $('aSit').onclick = () => { if (ME.fly) { FLY.dnT = performance.now() + 320; return; } if (ME.seat >= 0) standUp(); else sitNearest(); };
 [['aJump', 'up'], ['aSit', 'dn']].forEach(([id, k]) => { const b = $(id); const on = () => { FLY[k] = true; }, off = () => { FLY[k] = false; }; b.addEventListener('pointerdown', on); ['pointerup', 'pointercancel', 'pointerleave'].forEach(ev => b.addEventListener(ev, off)); });
-$('aUse').onclick = () => useNearest();
+{ const B = $('aUse'); let iv = 0, hp = 0; const stop = () => { clearInterval(iv); iv = 0; };
+  const atkTy = () => { if (!nearKey) return false; const ty = IT(nearKey).type; return ty === 'boss' || ty === 'mob' || ty === 'wboss' || ty === 'crate' || nearKey === 'rz_hit' || nearKey === 'dummy'; };
+  B.addEventListener('pointerdown', () => { hp = performance.now(); useNearest(); stop(); iv = setInterval(() => { if (!atkTy()) { stop(); return; } useNearest(); }, 210); });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(k => B.addEventListener(k, stop));
+  B.onclick = () => { if (performance.now() - hp < 900) return; useNearest(); }; }
 function seatTaken(i) { return peersData.some(p => !p.you && p.seat === i); }
 function sitNearest() { let best = -1, bd = 1e9; SEATS.forEach((s, i) => { if (seatTaken(i)) return; const d = Math.hypot(s.x - ME.X, s.z - ME.Z); if (d < bd) { bd = d; best = i; } }); if (best >= 0) { const s = SEATS[best]; ME.target = { x: s.x, z: s.z, seat: best }; } else toast('빈 의자가 없어요 — 잠깐 서서 구경해요'); }
 function sitOn(i) { if (seatTaken(i)) { toast('이미 다른 개미가 앉아 있어요'); return; } const s = SEATS[i]; ME.X = s.x; ME.Z = s.z; ME.seat = i; ME.ry = s.ry != null ? s.ry : Math.PI; ME.lie = false; ME.moving = false; sync(true); updSitBtn(); }
@@ -1775,7 +1781,7 @@ function endingFx(t) {
 }
 function updHud() {
   const i = lvOf(G.pts), cur = LV[i][0], nxt = LV[i + 1] ? LV[i + 1][0] : null;
-  try { updSkBtn(); } catch (e) {} $('hStage').textContent = `🧬 진화 ${i + 1}/${LV.length}단계 · 💥 전투력 ${fCP(cpOf(i))}`;
+  try { updSkBtn(); } catch (e) {} { const mb = mktBuff(); $('hStage').textContent = `🧬 진화 ${i + 1}/${LV.length}단계 · 💥 전투력 ${fCP(cpOf(i))}${mb ? ' · ' + (mb.up ? '📈' : '📉') : ''}`; $('hStage').title = mb ? mb.txt : ''; }
   $('hLv').textContent = TIER_ICON[i] + ' ' + LV[i][1]; $('hPts').textContent = fmt(G.pts, (G.pts % 1) ? 1 : 0);
   const awN = awkLv(), awX = !nxt && AWK[awN] ? AWK[awN] : null, awP = awN ? AWK[awN - 1].p : cur; $('hBar').style.width = (nxt ? (G.pts - cur) / (nxt - cur) * 100 : awX ? Math.max(0, (G.pts - awP) / (awX.p - awP) * 100) : 100) + '%';
   $('hNx').textContent = (nxt ? `${i + 1}단계 · 다음까지 ${fmt(nxt - G.pts, 0)} XP` : (awX ? `🌟 각성 ${awN}/5 · 다음 각성까지 ${fmt(awX.p - G.pts, 0)} XP` : G.pts >= PTS_MAX ? '♾️ 원복신 — XP 1억 달성' : `🌟 각성 5/5 · 1억까지 ${fmt(PTS_MAX - G.pts, 0)} XP`)); $('hCoin').textContent = '🪙 ' + fmt(G.coin | 0, 0);
@@ -2255,6 +2261,7 @@ function frPeers(arr) { arr.forEach(d => { if (!d.you && d.uid !== live.uid) lea
 function tap2(b, label, fn) { let t = 0; b.onclick = e => { e.stopPropagation(); if (!t) { b.textContent = '한번 더 누르면 실행'; b.classList.add('warn'); t = setTimeout(() => { t = 0; b.textContent = label; b.classList.remove('warn'); }, 3500); return; } clearTimeout(t); t = 0; b.textContent = label; b.classList.remove('warn'); fn(); }; return b; }
 const sbtn = (t, fn) => { const b = el('button', null, t); b.type = 'button'; if (fn) b.onclick = e => { e.stopPropagation(); fn(); }; return b; };
 function frRow(id) { const r = el('div', 'frRow' + (isOnline(id) ? ' on' : '')); r.append(el('span', 'fn', frName(id)), el('span', 'fs', seenTxt(id))); r.querySelector('.fn').onclick = () => userMenu(id, frName(id)); return r; }
+const CTAP = {}; function confirmTap(k) { const n = Date.now(); if (CTAP[k] && n - CTAP[k] < 3000) return true; CTAP[k] = n; toast('한 번 더 누르면 그 채널로 이동해요'); return false; }
 function renderFr() { const L = $('frList'), H = $('frHd'); if (!L) return; const U = live.uid; L.textContent = '';
   const reqs = Object.keys(FREQ).filter(id => !MYFR[id]), frs = Object.keys(MYFR).filter(isFr), pend = Object.keys(MYFR).filter(id => !isFr(id));
   H.textContent = `⭐ 친구 ${frs.length}명 · 🟢 접속 ${frs.filter(isOnline).length}명`;
@@ -2266,7 +2273,12 @@ function renderFr() { const L = $('frList'), H = $('frHd'); if (!L) return; cons
   if (!frs.length) L.appendChild(el('div', 'small', '아직 친구가 없어요. 채팅 닉네임·랭킹의 ⭐ 버튼이나 위 칸으로 친구 신청 → 상대가 수락하면 친구! 친구끼리는 쪽지를 주고받을 수 있어요.'));
   frs.sort((a, b) => (isOnline(b) - isOnline(a)) || (((SEEN[b] || {}).off || 0) - ((SEEN[a] || {}).off || 0))).forEach(id => { const r = frRow(id), here = remotes.has(id), nm = frName(id);
     r.append(sbtn('✉️ 쪽지', () => openMail('w', { uid: id, n: nm })));
-    if (here) r.append(sbtn('🔒 귓속말', () => whisperTo(nm)), sbtn('🏃 이동', () => { const rm = remotes.get(id); if (rm) tpTo(rm.cur.x + 1.6, rm.cur.z + 1.6, nm + ' 옆'); }));
+    if (here) { const rm = remotes.get(id), rg = rm && rm.data && rm.data.rg, zn = rm && !rg ? zoneAt(rm.cur.x, rm.cur.z) : null;
+      r.appendChild(el('span', 'fs', rg ? `📍 ${(RDEF[rg] || {}).n || '다른 세계'}에서 노는 중` : `📍 ${zn ? zn.n : '개미시티'}`));
+      r.append(sbtn('🔒 귓속말', () => whisperTo(nm)));
+      if (rg && RDEF[rg]) r.append(sbtn('🌀 같이 들어가기', () => { closeModals(); if (REALM && REALM.id === rg) { toast('이미 같은 세계에 있어요'); return; } const go = () => realmEnter(rg); if (REALM) realmLeave(go); else go(); }));
+      else r.append(sbtn('🏃 합류', () => { const rm2 = remotes.get(id); if (!rm2) return; const go = () => tpTo(rm2.cur.x + 1.6, rm2.cur.z + 1.6, nm + ' 옆'); if (REALM) realmLeave(go); else go(); })); }
+    else if (isOnline(id) && SEEN[id] && SEEN[id].rm && SEEN[id].rm !== ROOM) r.append(sbtn('📡 그 채널로', () => { if (confirmTap('ch' + id)) location.href = location.pathname + '?room=' + encodeURIComponent(SEEN[id].rm); }));
     r.append(tap2(sbtn('💔'), '💔', () => frDel(id))); L.appendChild(r); });
   if (pend.length) { L.appendChild(el('div', 'sect', `⏳ 수락 기다리는 중 ${pend.length}`)); pend.forEach(id => { const r = frRow(id); r.append(sbtn('신청 취소', () => frCancel(id))); L.appendChild(r); }); } }
 
@@ -3323,7 +3335,7 @@ function gearStats(eq) {
   for (const k in STCAP) o[k] = Math.min(STCAP[k], o[k]); for (const k in o) o[k] = sv(o[k]);
   const v = Object.assign(o, { a: o.atk, h: o.hp, set: S }); if (eq === G.eq) GSC = { k: key, v }; return v;
 }
-function GS() { return gearStats(G.eq); }
+function GS() { const o = Object.assign({}, gearStats(G.eq)), b = mktBuff(); if (b) { if (b.atk) o.atk += b.atk; if (b.def) o.def = Math.min(STCAP.def, o.def + b.def); if (b.reg) o.reg = Math.min(STCAP.reg, (o.reg || 0) + b.reg); } return o; }
 function LK() { return 1 + GS().luck / 100; } // 행운: 장비·코인이 더 잘 나옴
 const ATK_MIN = 200; // v62: 어떤 능력치로도 공격은 초당 5번까지 (연타 렉·소리 끊김 방지)
 function atkCd(ms) { return Math.max(ATK_MIN, Math.round(ms / (1 + GS().spd / 100))); } // 공격속도
@@ -4899,7 +4911,8 @@ const CC_DAY = 60;
 function cityCoin(base, why) { const d = kstDate(); let o = LS.get('lv3d_cc', null); if (!o || o.d !== d) o = { d, n: 0 };
   const pay = Math.max(0, Math.min(Math.round(base), CC_DAY - o.n)); if (pay > 0) { o.n += pay; LS.set('lv3d_cc', o); addCoin(pay, why); toast(T(`🏙 도시 코인 +${pay} (오늘 ${o.n}/${CC_DAY})`, `🏙 City coins +${pay} (today ${o.n}/${CC_DAY})`)); }
   else toast(T(`🏙 오늘 도시 코인 한도(${CC_DAY})를 모두 받았어요`, `🏙 Daily city-coin cap (${CC_DAY}) reached`)); return pay; }
-window.__cityCoin = cityCoin; window.__t69 = { edge: () => EDGE_G.map(g => g.id), bound: () => BOUND.x0 };
+window.__cityCoin = cityCoin; window.__t70 = { mktBuff, MKTB, GS };
+  window.__t69 = { edge: () => EDGE_G.map(g => g.id), bound: () => BOUND.x0 };
   window.__t67 = { enhAtkMul, enhCost, ENH_P: () => ENH_P, enhChance, wb: () => WB };
   window.__t66 = { gs: () => GS(), petB, petLv, renderLux, luxBuy, setInfo: () => setInfo(G.eq), G: () => G, gear: () => myAnt && myAnt.gear ? Object.keys(myAnt.gear).filter(k => myAnt.gear[k]) : [] };
   window.__t65 = { dum: () => ({ ...DUM }), dumHit, dumEnd, LV, lvOf, cpOf, atkOf, maxHp, cycOf, G: () => G, me: () => myAnt && { tier: myAnt.tier, cyc: myAnt.cyc, cycG: !!myAnt.cycG, inScene: !!(myAnt.cycG && myAnt.cycG.parent), kids: myAnt.cycG ? myAnt.cycG.children.length : 0, sc: myAnt.root.scale.x }, refresh: () => { myAnt.tier = -1; applyTier(myAnt, lvOf(myLookPts())); } };
@@ -5943,6 +5956,7 @@ drawGb();
 function openGb() { renderGbList(); openModal('mGb'); }
 // ---- 📋 업데이트 이력 (새 업데이트마다 맨 위에 한 줄씩 추가) ----
 const CHANGELOG = [
+  ['v70 · 11월 28일', ['📈 시세 연동 버프: KORU·SOXL이 오른 날은 공격력↑, 내린 날은 방어·회복↑ (물타기 버프) — 최대 15%', '📱 폰: 공격 버튼을 꾹 누르고 있으면 계속 공격해요', '👥 친구 목록에 친구가 어디서 뭐 하는지 보여요 — 🏃 합류 · 🌀 같이 들어가기(던전·심연 등) · 📡 다른 채널이면 그 채널로']],
   ['v69 · 11월 28일', ['🏦 초고수 던전 「폐장 후 지하금고」(XP 1천만+) — ① 운반 개미·경보 드론 ② 냉각실(수리 벌레 먼저!) ③ 👑 마진콜 군주: 빨간 줄 돌진을 기둥으로 유도하면 약점 3배 ④ 과열 단계', '🔑 클리어하면 진화 간격의 4%(연습)·12%(표준) XP + 금고 조각 → 교환소에서 SS 장비·SSS 날개·SSS 휘장', '🌋 화산지대 서쪽 끝에 🌑 심연 대륙·🏦 지하금고 관문이 생겼어요 — 걸어 들어가면 바로 입장 (순간이동·메뉴 검색도 돼요)', '🌑 심연 대륙 몬스터가 더 세고(체력 3배+) 더 빨리 다시 나와요 (3~6초 · 필드 보스 90초) · XP도 1.6배', '🏆 랭킹·주간 랭킹에 몇 단계인지 같이 보여요']],
   ['v68 · 11월 28일', ['💥 랭킹(광장·주간)에 전투력이 같이 보여요', '🤖 자동사냥 버튼을 누르면 고를 수 있어요: 기본 공격만 / 스킬까지(4개 모두) / 초사이언·원기옥까지', '🌑 고렙 전용 「심연 대륙」이 열렸어요 (60단계부터 · 세계 관문/메뉴 검색 「심연」) — 아주 넓은 맵, 바깥으로 갈수록 Lv100→3000', '👾 신종 몬스터 24종 · ✨ 황금 변종(체력 3배·XP 4배·장비 확정) · 👑 필드 보스 4마리(확정 SS 이상)', '🎁 레벨이 높을수록 드랍 등급이 올라가요 (Lv300+ B · 800+ A · 1600+ S · 2500+ SS)']],
   ['v67 · 11월 28일', ['🌋 레이드가 너무 세서 보스 체력을 낮췄어요 (접속만 하고 안 싸우는 개미 수는 덜 반영) · 레이드 광장에서는 싸우는 중에도 체력이 차요', '🔨 강화가 +100까지 열렸어요 (+30 이후 한 단계마다 공격 +4%)']],
@@ -6903,7 +6917,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '69';
+const APP_V = '70';
 {
   let shown = false;
   const check = async () => {
