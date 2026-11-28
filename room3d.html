@@ -5850,7 +5850,8 @@ drawGb();
 function openGb() { renderGbList(); openModal('mGb'); }
 // ---- 📋 업데이트 이력 (새 업데이트마다 맨 위에 한 줄씩 추가) ----
 const CHANGELOG = [
-  ['v62 · 11월 28일', ['⚔ 보스를 연타해도 렉이 덜하고 소리가 끊기지 않게 고쳤어요. 공격은 초당 최대 5번까지 나가요', '📋 업데이트 이력과 🛠 버그 신고·개선 요청 게시판이 생겼어요 (메뉴 검색에서 열 수 있어요)', '📸 레버가치전문가 인스타그램 @lega_value 바로가기가 생겼어요', '▲ 메뉴를 숨기고 보이는 화살표가 생겼어요', '📱 폰에서는 E 대신 버튼으로 안내해요 · 상승 빨강/하락 파랑이 기본이에요']],
+  ['v63 · 11월 28일', ['📸 인스타그램 바로가기를 시장 리포트 옆 버튼으로 옮겼어요 (화면을 덜 가려요)']],
+  ['v62 · 11월 28일', ['⚔ 보스를 연타해도 렉이 덜하고 소리가 끊기지 않게 고쳤어요. 공격은 초당 최대 5번까지 나가요', '📋 업데이트 이력과 🛠 버그 신고·개선 요청 게시판이 생겼어요 (메뉴 검색에서 열 수 있어요)', '▲ 메뉴를 숨기고 보이는 화살표가 생겼어요', '📱 폰에서는 E 대신 버튼으로 안내해요 · 상승 빨강/하락 파랑이 기본이에요']],
   ['v61', ['공격력·코인·XP 상한을 풀었어요. 이제 XP 1억 이후에도 계속 성장해요']],
   ['v60', ['☕ 단골 꾸미기: 라운지에 컵·의자·간판을 놓을 수 있어요', '🫧 버블 왕국: 커지고 터지는 비눗방울을 밟고 올라가는 새 월드']],
   ['v59', ['잭팟 보상이 고정 보상으로 바뀌었어요 (운에 덜 휘둘려요)', '🔮 오늘의 예측은 참여만 해도 도장 + 코인을 줘요', '📈 상승/하락 색을 한국식·미국식으로 고를 수 있어요 (메뉴 검색: 색상)']],
@@ -5864,24 +5865,18 @@ function updNote() {
   d.onclick = () => { d.remove(); openLog(); }; document.body.appendChild(d); requestAnimationFrame(() => { d.style.opacity = '1'; });
   setTimeout(() => { d.style.opacity = '0'; setTimeout(() => d.remove(), 700); }, 9000);
 }
-const IG = { url: 'https://www.instagram.com/lega_value/', id: '@lega_value', title: '' }; // title: 최신 영상 제목 한 줄 (업데이트 때 갱신)
+const IG = { url: 'https://www.instagram.com/lega_value/', id: '@lega_value' };
 function igOpen() { try { window.open(IG.url, '_blank', 'noopener'); } catch (e) { location.href = IG.url; } }
 function igInit() {
-  if (document.getElementById('igCard')) return;
+  if (document.getElementById('bIg')) return;
   const st = document.createElement('style'); st.textContent = `
-#igCard{position:fixed;left:10px;top:368px;width:210px;z-index:4;padding:10px 12px 11px;border-radius:14px;color:#fff;cursor:pointer;background:linear-gradient(135deg,#833ab4,#fd1d1d 55%,#fcb045);box-shadow:0 6px 20px rgba(0,0,0,.5);text-decoration:none;display:block;transition:transform .15s}
-#igCard:hover{transform:translateY(-2px) scale(1.02)}#igCard b{display:block;font-size:15px;letter-spacing:.2px}#igCard small{display:block;opacity:.94;font-size:11.5px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#igCard .go{display:inline-block;margin-top:7px;padding:3px 11px;border-radius:999px;background:rgba(255,255,255,.96);color:#c2185b;font-weight:900;font-size:12px}
-#bIg{display:none}
-@media (max-width:820px),(pointer:coarse) and (max-height:520px){#igCard{display:none!important}header.mopen #bIg{display:inline-flex!important;order:-1;border:0!important;color:#fff!important;font-weight:900!important;background:linear-gradient(135deg,#833ab4,#fd1d1d 55%,#fcb045)!important;box-shadow:0 0 12px rgba(253,29,29,.45)}}
-header{transition:transform .25s,opacity .2s}body.uihide header{transform:translateY(-170%);opacity:0;pointer-events:none}body.uihide #igCard{display:none!important}
+#bIg{border:0!important;color:#fff!important;font-weight:900!important;background:linear-gradient(135deg,#833ab4,#fd1d1d 55%,#fcb045)!important;box-shadow:0 0 10px rgba(253,29,29,.35)}#bIg:hover{filter:brightness(1.12)}
+@media (max-width:820px),(pointer:coarse) and (max-height:520px){header.mopen #bIg{display:inline-flex!important;order:-1;border:0!important;color:#fff!important;font-weight:900!important;background:linear-gradient(135deg,#833ab4,#fd1d1d 55%,#fcb045)!important;box-shadow:0 0 12px rgba(253,29,29,.45)}}
+header{transition:transform .25s,opacity .2s}body.uihide header{transform:translateY(-170%);opacity:0;pointer-events:none}
 #uiHide{position:fixed;left:50%;transform:translateX(-50%);z-index:12;padding:3px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:rgba(10,16,28,.9);color:#cfe0ff;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit}
 body.uihide #uiHide{top:38px!important;border-color:#ffb020;color:#ffd76a;animation:uiP 1.8s ease-in-out infinite}@keyframes uiP{0%,100%{box-shadow:0 0 0 rgba(255,176,32,0)}50%{box-shadow:0 0 14px rgba(255,176,32,.8)}}`;
   document.head.appendChild(st);
-  const a = document.createElement('a'); a.id = 'igCard'; a.className = 'pe'; a.href = IG.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
-  a.append(el('small', null, '📸 INSTAGRAM'), el('b', null, IG.id), el('small', null, '레버가치전문가 · 팔로우하고 영상 보기'), el('small', null, IG.title ? '🎬 ' + IG.title : '🎬 최신 영상 보러 가기'), el('span', 'go', '팔로우 →'));
-  document.body.appendChild(a); const igPos = () => { const h = document.querySelector('.hud'); if (h && getComputedStyle(a).display !== 'none') { const r = h.getBoundingClientRect(); if (r.bottom > 40) a.style.top = Math.min(r.bottom + 8, innerHeight - 250) + 'px'; } }; setInterval(igPos, 1500); setTimeout(igPos, 300);
-  const hb = el('button', 'hb pe', '📸 인스타 ' + IG.id); hb.id = 'bIg'; hb.type = 'button'; hb.onclick = igOpen; const H0 = document.querySelector('header'); H0.insertBefore(hb, $('bRep'));
+  const hb = el('button', 'hb pe', '📸 인스타그램'); hb.id = 'bIg'; hb.type = 'button'; hb.title = '레버가치전문가 ' + IG.id; hb.onclick = igOpen; const H0 = document.querySelector('header'); $('bRep').after(hb);
   // 메뉴 숨김 화살표
   const u = el('button', 'pe', ''); u.id = 'uiHide'; u.type = 'button'; document.body.appendChild(u);
   const pos = () => { if (!document.body.classList.contains('uihide')) u.style.top = (H0.getBoundingClientRect().bottom + 3) + 'px'; };
@@ -6805,7 +6800,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '62';
+const APP_V = '63';
 {
   let shown = false;
   const check = async () => {
