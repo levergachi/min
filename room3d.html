@@ -815,10 +815,21 @@ const SRC = { finnhub: 'Finnhub', pusher: '야후·프리/애프터', db: '공�
 function setRoomPill(n) { $('roomPill').textContent = ROOM ? LVX.chLabel(ROOM, n == null ? (peersData ? peersData.length : 0) : n) + ' ▾' : '채널 고르는 중…'; }
 
 /* ================= 게임 데이터 ================= */
-const LV = [[0, '아기개미'], [10, '개미'], [30, '불개미'], [70, '일개미반장'], [130, '슈퍼개미'], [220, '큰손'], [350, '세력'], [550, '여왕개미'], [800, '로봇개미'], [1200, '황금 로봇개미'], [2000, '우주 로봇개미'], [3500, '원복 성불'], [5000, '월가 환생개미'], [6500, '단타 닌자'], [8200, '차트 도사'], [10000, '레버리지 광전사'], [12000, '퀀트 마법사'], [14500, '주식시장 고래'], [17000, '기관투자자'], [20000, '월가의 늑대'], [23500, '달러 포식자'], [27500, '월가의 상어'], [32000, '금융 문어'], [37000, '글로벌 투자은행'], [42500, '헤지펀드 매니저'], [48500, '공매도 독수리'], [55000, '숏의 사신'], [62000, '공매도 와이번'], [70000, '월가의 마왕'], [80000, '외국계 헤지펀드 흑룡'], [90000, '호가창의 망령'], [101000, '초고속 매매 귀신'], [113000, '옵션의 마녀'], [126000, '감마 폭풍술사'], [140000, '다크풀의 지배자'], [155000, '변동성 흡혈귀'], [171000, '알고리즘 폭군'], [188000, '유동성 포식자'], [206000, '글로벌 자본의 뱀'], [225000, '월가의 절대군주'], [245000, '국채의 거인'], [267000, '달러 제국 황제'], [290000, '연준의 대마법사'], [315000, '영원의 황소신'], [342000, '대공황의 마왕'], [371000, '블랙스완 재앙신'], [402000, '시간선의 트레이더'], [435000, '은하계 증시 지배자'], [470000, '시장의 심판자'], [510000, '원복의 절대신'], [552000, 'ETF 대장군'], [596000, '인덱스 군주'], [642000, '어닝 서프라이즈 신관'], [690000, '자사주 불사조'], [740000, '배당금 연금술사'], [792000, '선물시장 기사왕'], [847000, '파생상품 도박왕'], [904000, '환율 대마도사'], [964000, '안전자산 수호신'], [1026000, '글로벌 펀드마스터'], [1091000, '금리 폭풍왕'], [1159000, '인플레이션 화염거인'], [1231000, '디플레이션 빙결신'], [1305000, '국채 해일룡'], [1383000, '원유 화산군주'], [1464000, '금괴 골렘'], [1549000, '공급망 히드라'], [1638000, '통화전쟁 마녀'], [1731000, '유동성 해일신'], [1828000, '경기순환 타이탄'], [1929000, '버블의 황제'], [2035000, '폭락 예언자'], [2145000, '서킷브레이커 집행자'], [2261000, '청산의 심판관'], [2382000, '숏 스퀴즈 황소왕'], [2508000, '반등의 불사신'], [2640000, '패닉셀 군주'], [2778000, '검은 월요일의 망령'], [2922000, '퀀트 폭풍신'], [3072000, '시장 리셋 거신'], [3230000, '달 증권거래소장'], [3394000, '화성 개미 황제'], [3566000, '성운 채굴왕'], [3745000, '블랙홀 청산자'], [3933000, '초신성 매수신'], [4129000, '평행세계 트레이더'], [4334000, '양자 차트 조율사'], [4548000, '시간역행 중개인'], [4772000, '은하 헤지펀드 황제'], [5005000, '다중우주 시장왕'], [5250000, '차트의 수호자'], [5505000, '확률의 편집자'], [5772000, '가격의 설계자'], [6050000, '운명의 호가창'], [6342000, '매수·매도의 심판자'], [6646000, '시간을 먹는 자'], [6964000, '무한시장 엔진'], [7297000, '차원 봉합사'], [7644000, '태초의 개미'], [8007000, '차트 밖의 창조주']];
+const LV0 = [[0, '아기개미'], [10, '개미'], [30, '불개미'], [70, '일개미반장'], [130, '슈퍼개미'], [220, '큰손'], [350, '세력'], [550, '여왕개미'], [800, '로봇개미'], [1200, '황금 로봇개미'], [2000, '우주 로봇개미'], [3500, '원복 성불'], [5000, '월가 환생개미'], [6500, '단타 닌자'], [8200, '차트 도사'], [10000, '레버리지 광전사'], [12000, '퀀트 마법사'], [14500, '주식시장 고래'], [17000, '기관투자자'], [20000, '월가의 늑대'], [23500, '달러 포식자'], [27500, '월가의 상어'], [32000, '금융 문어'], [37000, '글로벌 투자은행'], [42500, '헤지펀드 매니저'], [48500, '공매도 독수리'], [55000, '숏의 사신'], [62000, '공매도 와이번'], [70000, '월가의 마왕'], [80000, '외국계 헤지펀드 흑룡'], [90000, '호가창의 망령'], [101000, '초고속 매매 귀신'], [113000, '옵션의 마녀'], [126000, '감마 폭풍술사'], [140000, '다크풀의 지배자'], [155000, '변동성 흡혈귀'], [171000, '알고리즘 폭군'], [188000, '유동성 포식자'], [206000, '글로벌 자본의 뱀'], [225000, '월가의 절대군주'], [245000, '국채의 거인'], [267000, '달러 제국 황제'], [290000, '연준의 대마법사'], [315000, '영원의 황소신'], [342000, '대공황의 마왕'], [371000, '블랙스완 재앙신'], [402000, '시간선의 트레이더'], [435000, '은하계 증시 지배자'], [470000, '시장의 심판자'], [510000, '원복의 절대신'], [552000, 'ETF 대장군'], [596000, '인덱스 군주'], [642000, '어닝 서프라이즈 신관'], [690000, '자사주 불사조'], [740000, '배당금 연금술사'], [792000, '선물시장 기사왕'], [847000, '파생상품 도박왕'], [904000, '환율 대마도사'], [964000, '안전자산 수호신'], [1026000, '글로벌 펀드마스터'], [1091000, '금리 폭풍왕'], [1159000, '인플레이션 화염거인'], [1231000, '디플레이션 빙결신'], [1305000, '국채 해일룡'], [1383000, '원유 화산군주'], [1464000, '금괴 골렘'], [1549000, '공급망 히드라'], [1638000, '통화전쟁 마녀'], [1731000, '유동성 해일신'], [1828000, '경기순환 타이탄'], [1929000, '버블의 황제'], [2035000, '폭락 예언자'], [2145000, '서킷브레이커 집행자'], [2261000, '청산의 심판관'], [2382000, '숏 스퀴즈 황소왕'], [2508000, '반등의 불사신'], [2640000, '패닉셀 군주'], [2778000, '검은 월요일의 망령'], [2922000, '퀀트 폭풍신'], [3072000, '시장 리셋 거신'], [3230000, '달 증권거래소장'], [3394000, '화성 개미 황제'], [3566000, '성운 채굴왕'], [3745000, '블랙홀 청산자'], [3933000, '초신성 매수신'], [4129000, '평행세계 트레이더'], [4334000, '양자 차트 조율사'], [4548000, '시간역행 중개인'], [4772000, '은하 헤지펀드 황제'], [5005000, '다중우주 시장왕'], [5250000, '차트의 수호자'], [5505000, '확률의 편집자'], [5772000, '가격의 설계자'], [6050000, '운명의 호가창'], [6342000, '매수·매도의 심판자'], [6646000, '시간을 먹는 자'], [6964000, '무한시장 엔진'], [7297000, '차원 봉합사'], [7644000, '태초의 개미'], [8007000, '차트 밖의 창조주']];
 const TIER_PERK = ['꼬물꼬물 작은 몸', '어엿한 개미 몸', '머리띠 「물타기」 해금', '머리띠 「풀매수」 해금', '🦸 빨간 망토 + 「상한가」「가즈아」 머리띠', '💰 발밑 황금 오라', '🕶️ 세력 선글라스', '👑 왕관 + 요정 날개', '🤖 은빛 로봇 몸 + 레이저 바이저', '🥇 번쩍이는 황금 로봇', '🚀 우주 크리스탈 몸 + 후광', '🪷 황금 왕관·날개·후광 풀세트 (전설) → 이제 월가로!', '😇 천사 날개 + 후광 + 달러 동전', '🥷 검은 복면 + 쌍검 + 잔상', '🧙 마법사 로브 + 캔들 지팡이', '💪 근육질 + 3X 문양 + 붉은 오라', '🧑‍💻 헤드셋 + 홀로그램 차트', '🐋 정장 고래 + 물보라', '🏛️ 은행 건물 로봇', '🐺 정장 늑대 + 시가', '💵 달러 먹는 괴물', '🦈 정장 상어 + 이빨', '🐙 실크햇 문어 + 모니터', '🏦 거대 금융 로봇', '🕴️ 검은 수트 + 붉은 눈 + 롱숏 오라', '🦅 거대 검은 날개 독수리', '💀 후드 사신 + 붉은 낫', '🐲 붉은 핏줄 와이번', '👹 황금 뿔 마왕 + 망토', '🐉 검정·황금 흑룡', '투명 유령 + 호가창 망토', '전기 망토 + 흐릿한 잔상', '보라 드레스 + 풋옵션 카드', '회오리 지팡이 + 부유 구체', '은폐 장막 + 심해 촉수', '박쥐 날개 + 붉은 눈', '기계 왕관 + 드론 군단', '진공 입 + 유동성 고리', '지구를 감싼 황금 뱀', '👑 황금 금융 로봇 + 왕좌 → 시장 지배자 전용 레이드 시대!', '은행 기둥을 든 거인', '황금 갑옷 + 달러 왕관', '금리 지팡이 + 회색 망토', '별빛 뿔 황금 황소', '붕괴한 증시 갑옷', '검은 백조 날개', '시계 갑옷 + 시간 고리', '별자리 날개 + 우주 차트', '양손 저울 + 황금 가면', '🌟 신성한 흑금룡 + 우주 오라 (1차 엔딩)', '인덱스 깃발 + 복제 병사', '지수 왕관 + 지수 고리', '실적 구슬 + 빛의 제단', '불사조 불꽃 날개', '황금 동전 연금술', '장창 + 기사 망토', '카드·주사위 도박왕', '환율 마법진 + 통화 구슬', '금괴 방패 + 수호 깃발', '🌍 세계지도 망토 + 자본 왕홀 (60단계 마일스톤)', '뇌운 왕관 + 번개 지팡이', '불붙은 가격표 + 용암 몸', '얼음 갑옷 + 눈꽃', '푸른 채권 비늘 용', '원유 분수 + 화산 왕관', '금괴로 된 거인', '컨테이너 촉수 히드라', '통화 가면 마녀', '화폐 물결 + 파도 왕관', '⚖️ 반은 황소·반은 곰 (70단계 마일스톤)', '거품 왕관 + 유리 갑옷', '검은 수정구 + 붉은 예언', '정지 표지판 + 보안 갑옷', '심판 망치 + 붉은 계약서', '황금 뿔 + 상승 차트 망토', 'V자 부활 날개', '공포 연기 + 붉은 손', '1987 전광판 유령', '회로 구름 + 드론 군단', '🔄 초거대 리셋 거신 (80단계 마일스톤)', '우주복 + 달의 거래소', '로켓 갑옷 + 화성 왕관', '성운 망토 + 우주 보석', '블랙홀 원반 + 중력 고리', '태양 코어 + 항성 날개', '다른 색 분신 3체', '확률 격자 + 양자 분신', '역회전 시계 + 과거 차트', '성운 흑룡 + 왕관', '🪐 차원의 왕좌 (90단계 마일스톤)', '투명 캔들 방패', '육각 확률 보드 + 편집 펜', '가격축 저울 + 설계도', '호가창으로 된 형상', '양면 가면 + 롱·숏 검', '시계를 먹는 우주 괴수', '무한 루프 + 기계 행성', '성간 바늘 + 차원 망토', '🐣 다시 아기개미…? + 초월 후광', '🌟 빛의 창조자 (최종 엔딩)'];
 const TIER_ICON = ['🐣', '🐜', '🔥', '👷', '🦸', '💰', '🕶️', '👑', '🤖', '🥇', '🚀', '🪷', '😇', '🥷', '🧙', '💪', '🧑‍💻', '🐋', '🏛️', '🐺', '💵', '🦈', '🐙', '🏦', '🕴️', '🦅', '💀', '🐲', '👹', '🐉', '👻', '⚡', '🔮', '🌪️', '🕳️', '🧛', '🤖', '🌀', '🐍', '👑', '🏛️', '💵', '🧙‍♂️', '🐂', '🚨', '🦢', '⏳', '🌌', '⚖️', '✨', '🏳️', '📊', '🔮', '🔥', '⚗️', '🛡️', '🎲', '💱', '🥇', '🌍', '⛈️', '🌋', '❄️', '🌊', '🛢️', '🧱', '🐙', '🎭', '💧', '⚖️', '🫧', '🔮', '🛑', '🔨', '🐂', '🐦‍🔥', '😱', '👻', '🛰️', '🔄', '🌙', '🚀', '💎', '🕳️', '☀️', '👥', '⚛️', '⏪', '🐲', '🪐', '🛡️', '✏️', '📐', '📜', '🎭', '⌛', '♾️', '🪡', '🐣', '🌟'];
-const lvOf = p => { let i = 0; LV.forEach((l, k) => { if (p >= l[0]) i = k; }); return i; };
+// ---- v65: 진화 300단계 ----
+// 1~40단계: 예전보다 최대 15배 많은 XP 필요(태어나자마자 연속 진화 방지) · 41~100단계는 그대로
+// 101~200(★ 각성): 1단계 모습부터 다시, 크기↑·은빛 별·발자국 빛 · 능력치 ×1.5 / 201~300(★★ 초월): 금빛 · ×2.25
+const CYC_N = ['', '★ ', '★★ '], CYC_NAME = ['', '각성', '초월'], CYC_MUL = [1, 1.5, 2.25], CYC_SC = [1, 1.15, 1.3], CYC_COL = [0, 0xcfe8ff, 0xffd76a];
+const LV = (() => { const L = LV0.map(([p, n], i) => [i === 0 ? 0 : Math.round(p * (i < 40 ? 1 + 14 * Math.pow((40 - i) / 40, 2) : 1) / 10) * 10, n]);
+  const top = L[99][0], r2 = Math.pow(1e10 / top, 1 / 100), r3 = Math.pow(1e12 / 1e10, 1 / 100);
+  for (let c = 1; c <= 2; c++) for (let i = 0; i < 100; i++) { const k = c * 100 + i, p = c === 1 ? top * Math.pow(r2, i + 1) : 1e10 * Math.pow(r3, i + 1); L.push([Math.round(p / 1000) * 1000, CYC_N[c] + LV0[i][1]]); }
+  return L; })();
+for (let k = 100; k < 300; k++) { const b = k % 100, c = (k / 100) | 0; TIER_ICON[k] = TIER_ICON[b]; TIER_PERK[k] = `${CYC_N[c]}${CYC_NAME[c]}: ${TIER_PERK[b]} · ${c === 1 ? '은빛 별·발자국 빛·둥실' : '금빛 별 2개·잔상·둥실'} · 능력치 ×${CYC_MUL[c]}`; }
+const lvOf = p => { let i = LV.length - 1; while (i > 0 && p < LV[i][0]) i--; return i; };
+const cycOf = t => Math.min(2, (t / 100) | 0);
+const fCP = n => n >= 1e12 ? (n / 1e12).toFixed(1) + '조' : n >= 1e8 ? (n / 1e8).toFixed(1) + '억' : n >= 1e4 ? (n / 1e4).toFixed(1) + '만' : String(n);
 const HBS = [['원복', 0], ['존버', 0], ['손절X', 0], ['물타기', 30], ['풀매수', 70], ['상한가', 130], ['가즈아', 130]];
 const COLORS = ['#e5484d', '#f5a524', '#30a46c', '#3e63dd', '#8e4ec6', '#d6409f'];
 const N1 = ['원복', '존버', '물타기', '손절금지', '풀매수', '상한가', '익절', '불타기', '장투', '떡상'], N2 = ['개미', '시민', '주주', '홀더', '러너', '일개미'];
@@ -844,6 +855,7 @@ let G = Object.assign({ pts: 0, title: '', b108: { d: '', n: 0 } }, LS.get('lv3d
 let PROF = LS.get('lv3d_prof', null);
 const saveG = () => { LS.set('lv3d_game', G); if (typeof acctDirty === 'function') acctDirty(); };
 if (!G.enh || typeof G.enh !== 'object') G.enh = { l: 0, st: 0, f: 0 };
+if (!G.lvMig) { try { let o = 0; LV0.forEach((l, k) => { if ((G.pts || 0) >= l[0]) o = k; }); const need = LV[o][0]; if ((G.pts || 0) < need) { const d = need - (G.pts || 0); G.pts = need; if (G.sw && G.sw.base != null) G.sw.base += d; } } catch (e) {} G.lvMig = 1; LS.set('lv3d_game', G); }
 const AWK = [{ p: 8500000, n: '각성 1', d: '황금 오라', c: 0xffd76a, atk: 1.3, spd: 1.12 }, { p: 15000000, n: '각성 2', d: '번개 오라', c: 0xffe95a, atk: 1.6, spd: 1.2, bolt: 1 }, { p: 25000000, n: '각성 3', d: '초각성 장발', c: 0xffb300, atk: 2, spd: 1.3, bolt: 1 }, { p: 40000000, n: '각성 4', d: '붉은 야수', c: 0xff3b3b, atk: 2.5, spd: 1.4, bolt: 1 }, { p: 65000000, n: '각성 5', d: '신의 영역', c: 0x4fd2ff, atk: 3.2, spd: 1.55, bolt: 1 }];
 const AWK_DUR = 60000, AWK_CD = 90000, GK_CD = 150000, PTS_FIN = 1e8, PTS_MAX = 1e13; const AW = { on: 0, until: 0, cd: 0, tm: 0 };
 var ENH_MAX = 30; // 🔨 +30까지 (v29: +21~+30 추가) · 높을수록 어렵고, +11부터 위력이 기하급수로
@@ -1438,7 +1450,18 @@ function makeAnt(color, hb, pts, host) {
   applyTier(A, lvOf(pts || 0));
   return A;
 }
+const CYCR = {};
 function applyTier(a, t0) {
+  if (a.tier === t0) return; const c = cycOf(t0); a.tier = -1; applyTier0(a, t0 % 100); a.tier = t0; a.cyc = c;
+  if (a.cycG) { a.cycG.parent && a.cycG.parent.remove(a.cycG); a.cycG = null; }
+  if (!c) return;
+  if (!CYCR.g) { CYCR.g = new THREE.OctahedronGeometry(.2); CYCR.r = new THREE.TorusGeometry(.85, .06, 6, 40); CYCR.a = new THREE.CylinderGeometry(.75, .95, 2.6, 24, 1, true); CYCR.am = [null, new THREE.MeshBasicMaterial({ color: 0xbfe0ff, transparent: true, opacity: .16, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false }), new THREE.MeshBasicMaterial({ color: 0xffc94a, transparent: true, opacity: .2, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false })]; CYCR.m = [null, new THREE.MeshBasicMaterial({ color: 0xcfe8ff, toneMapped: false, transparent: true, opacity: .9 }), new THREE.MeshBasicMaterial({ color: 0xffd76a, toneMapped: false, transparent: true, opacity: .95 })]; }
+  a.baseSc = (a.baseSc || 1) * CYC_SC[c]; a.root.scale.multiplyScalar(CYC_SC[c]); a.hover = (a.hover || 0) + .12 * c;
+  const g = new THREE.Group(); a.cycG = g; const h = (a.labelH || 2.35) + .05; const au = new THREE.Mesh(CYCR.a, CYCR.am[c]); au.position.y = 1.3; g.add(au);
+  for (let i = 0; i < c; i++) { const s = new THREE.Mesh(CYCR.g, CYCR.m[c]); s.position.set(c === 1 ? .55 : (i ? .6 : -.6), h - .5, 0); g.add(s); }
+  const r = new THREE.Mesh(CYCR.r, CYCR.m[c]); r.rotation.x = Math.PI / 2; r.position.y = .05; g.add(r); a.root.add(g);
+}
+function applyTier0(a, t0) {
   if (a.tier === t0) return; a.tier = t0; const c = a.acc; const t = t0 >= 12 ? -99 : t0; // 13단계부터는 FORMS 가 모양을 맡음
   a.vestM.color.set(a.color).multiplyScalar(.42);
   c.cape.visible = t >= 4; c.ring.visible = t >= 5 || a.host; c.shades.visible = t >= 6 && t < 8; c.crown.visible = t === 7 || t === 11 || a.host; c.wings.visible = t >= 7 && t < 8 || t === 11;
@@ -1457,6 +1480,7 @@ function setAntLook(a, color, hb, pts, host) {
 }
 function animAnt(a, dt, t) {
   a.phase += dt * (a.moving ? (a.run ? 15 : 10) : 0);
+  if (a.cycG) { a.cycG.children.forEach((o, i) => { if (o.geometry === CYCR.g) o.rotation.y += dt * 2.2; }); if (a.moving && !REDUCE && (a === myAnt || Math.random() < .4)) { a.trT = (a.trT || 0) + dt; if (a.trT > .14) { a.trT = 0; const P = a.root.position; try { spawn(P.x, P.y + .12, P.z, a.cyc > 1 ? 3 : 2, CYC_COL[a.cyc], .5, -.4, .8); } catch (e) {} } } }
   const sw = a.moving ? Math.sin(a.phase) * (a.run ? .9 : .65) : 0, bob = a.moving && !REDUCE ? Math.abs(Math.sin(a.phase)) * .08 : 0;
   // 점프 (fx 기반 포물선)
   let jy = 0; if (a.jumpT >= 0) { a.jumpT += dt; const u = a.jumpT / .7; if (u >= 1) { a.jumpT = -1; if (a === myAnt) SND.land(); } else jy = 4 * 1.5 * u * (1 - u); }
@@ -1540,6 +1564,27 @@ INTER.dr_sauna = { name: T('♨ 보리탕 찜질방 문 (E)', '♨ Barley Sauna 
 INTER.dr_star = { name: T('🔭 옥상 관측소 문 (E)', '🔭 Rooftop door (E)'), type: 'rz', X: -13.6, Z: 36, h: 3.4, get btn() { return T('🔭<br>입장', '🔭<br>Enter'); }, fn: () => realmEnter('star') };
 INTER.dr_dungeon = { name: T('🏰 폐선 지하역 문 (E)', '🏰 Old Subway door (E)'), type: 'rz', X: -13.6, Z: 41, h: 3.4, get btn() { return T('🏰<br>입장', '🏰<br>Enter'); }, fn: () => realmEnter('dungeon') };
 INTER.regular = { name: T('☕ 단골 카운터 · 꾸미기 (E)', '☕ Regulars counter (E)'), type: 'rz', X: LOUNGE.x + 3.2, Z: LOUNGE.z - 3.6, h: 2.4, get btn() { return T('☕<br>단골', '☕<br>Regular'); }, fn: () => openRegular() };
+INTER.dummy = { name: '🎯 훈련 표적 (E 연타 10초)', type: 'rz', X: ARENA.x, Z: ARENA.z + 12, h: 3.2, btn: '🎯<br>훈련', fn: () => dumHit() };
+{ const g = new THREE.Group(); g.position.set(ARENA.x, 0, ARENA.z + 12); const wd = new THREE.MeshStandardMaterial({ color: 0x8a5a2b, roughness: .8 });
+  const p = new THREE.Mesh(new THREE.CylinderGeometry(.14, .18, 2.4, 10), wd); p.position.y = 1.2; g.add(p);
+  [[.95, 0xffffff], [.72, 0xe5484d], [.5, 0xffffff], [.28, 0xe5484d]].forEach(([r, c], i) => { const d = new THREE.Mesh(new THREE.CylinderGeometry(r, r, .08, 28), new THREE.MeshStandardMaterial({ color: c, roughness: .6 })); d.rotation.x = Math.PI / 2; d.position.set(0, 2.3, .06 + i * .012); g.add(d); });
+  scene.add(g); window.__dumG = g; }
+const DUM = { on: 0, t0: 0, d: 0, n: 0 };
+function dumHit() {
+  const it = INTER.dummy; ME.ry = Math.atan2(it.X - ME.X, it.Z - ME.Z); if (!cd('atk', atkCd(280))) return;
+  if (!DUM.on) { DUM.on = 1; DUM.sid = (DUM.sid || 0) + 1; const sid = DUM.sid; DUM.t0 = Date.now(); DUM.d = 0; DUM.n = 0; tapeNote('🎯 훈련 시작! 10초 동안 최대한 때려 보세요', { ms: 2200, cls: 'tip' }); setTimeout(() => dumEnd(sid), 10000); }
+  const tier = lvOf(G.pts); let dmg = Math.round(atkOf(tier) * (BUFF.until > Date.now() ? 1.5 : 1)); const crit = Math.random() < critP(tier); if (crit) dmg *= 2; dmg = Math.min(dmg, HIT_CAP);
+  DUM.d += dmg; DUM.n++; if (myAnt) myAnt.act = { k: 'punch', t0: clock.elapsedTime, d: .45 }; try { SND.punch(crit); } catch (e) {}
+  if (window.__dumG) { window.__dumG.rotation.z = (Math.random() - .5) * .25; setTimeout(() => { window.__dumG && (window.__dumG.rotation.z = 0); }, 120); }
+  try { spawn(it.X, 2.3, it.Z + .3, crit ? 26 : 10, crit ? 0xffd76a : 0xffffff, crit ? 4 : 2.5, 6, .5); floatAtObj(it.X + (Math.random() - .5), 3.4, it.Z, (crit ? '💥 ' : '-') + fCP(dmg)); } catch (e) {}
+}
+function dumEnd(sid) {
+  if (!DUM.on || (sid && sid !== DUM.sid)) return; DUM.on = 0; const t = lvOf(G.pts), d = DUM.d, R = G.dum || {}, prev = R.last; const best = Math.max(R.best || 0, d);
+  let msg = `🎯 10초 피해 ${fCP(d)} (${DUM.n}타) · 💥 전투력 ${fCP(cpOf(t))}`;
+  if (prev && prev.d > 0) { const pc = Math.round((d / prev.d - 1) * 100); msg += ` · 지난번(${prev.t + 1}단계 ${fCP(prev.d)}) 대비 ${pc >= 0 ? '+' : ''}${pc}%`; }
+  if (d >= best && R.best) msg += ' · 🏆 최고 기록!';
+  G.dum = { best, last: { d, t } }; saveG(); toast(msg); addLog(msg);
+}
 const olabs = {}; Object.keys(INTER).forEach(k => { const d = el('div', 'olab', INTER[k].name); labels.appendChild(d); olabs[k] = d; });
 const prompt = el('div', 'prompt'); const PTR = matchMedia('(pointer:coarse)').matches ? 'touch' : matchMedia('(any-pointer:coarse)').matches ? 'both' : 'key'; prompt.append(el('kbd', null, PTR === 'touch' ? '버튼' : PTR === 'both' ? 'E/버튼' : 'E'), document.createTextNode('상호작용')); labels.appendChild(prompt);
 const _v = new THREE.Vector3();
@@ -1562,7 +1607,7 @@ const cam = { yaw: 0, pitch: .45, dist: (matchMedia('(pointer:coarse)').matches 
 
 function myData() {
   const p = REALM ? toP(ME.X - R_ORG.x + R_FRAME.x, ME.Z - R_ORG.z + R_FRAME.z) : toP(ME.X, ME.Z);
-  return { ...(REALM ? { rg: REALM.id } : {}), nick: PROF.nick, color: PROF.color, seat: ME.seat, koru: Number(PROF.koru) || 0, soxl: Number(PROF.soxl) || 0, x: Math.round(p.x * 100) / 100, y: Math.round(p.y * 100) / 100, dir: Math.sin(ME.ry) < 0 ? 'l' : 'r', mv: ME.moving, pose: ME.fly ? 'fly' : ME.glide ? 'glide' : ME.climb ? 'climb' : ME.fishing ? 'fish' : ME.swim ? 'swim' : ME.lie ? 'lie' : ME.seat >= 0 ? 'sit' : 'stand', h: Math.round((ME.Y || 0) * 10) / 10, hp: hpPct(), ...(() => { const S = PROF && PROF.stk && (PROF.stv | 0) !== 2 ? myStock() : null; if (!S) return {}; const o = { stk: S.k, stn: S.n.slice(0, 12) }; if ((PROF.stv | 0) === 1) o.stv = 1; else if (S.pct != null) o.stp = Math.round(S.pct * 10) / 10; return o; })(), pts: G.pts, hb: PROF.hb, title: G.title, host: HOST, wp: G.eq.w || '', ht: G.eq.h || '', gr: eqStr(G.eq), en: enhL(), cs: myCs(), lk: G.look >= 0 && G.look < lvOf(G.pts) ? G.look : -1, aw: awkActive(), pet: PETS[G.pet] ? G.pet : '', car: riding() ? G.car : '' };
+  return { ...(REALM ? { rg: REALM.id } : {}), nick: PROF.nick, color: PROF.color, seat: ME.seat, koru: Number(PROF.koru) || 0, soxl: Number(PROF.soxl) || 0, x: Math.round(p.x * 100) / 100, y: Math.round(p.y * 100) / 100, dir: Math.sin(ME.ry) < 0 ? 'l' : 'r', mv: ME.moving, pose: ME.fly ? 'fly' : ME.glide ? 'glide' : ME.climb ? 'climb' : ME.fishing ? 'fish' : ME.swim ? 'swim' : ME.lie ? 'lie' : ME.seat >= 0 ? 'sit' : 'stand', h: Math.round((ME.Y || 0) * 10) / 10, hp: hpPct(), ...(() => { const S = PROF && PROF.stk && (PROF.stv | 0) !== 2 ? myStock() : null; if (!S) return {}; const o = { stk: S.k, stn: S.n.slice(0, 12) }; if ((PROF.stv | 0) === 1) o.stv = 1; else if (S.pct != null) o.stp = Math.round(S.pct * 10) / 10; return o; })(), pts: G.pts, hb: PROF.hb, title: G.title, host: HOST, wp: G.eq.w || '', ht: G.eq.h || '', gr: eqStr(G.eq), en: enhL(), cs: myCs(), lk: G.look >= 0 && G.look < Math.min(100, lvOf(G.pts)) ? G.look : -1, aw: awkActive(), pet: PETS[G.pet] ? G.pet : '', car: riding() ? G.car : '' };
 }
 let lastSync = 0, syncPending = false;
 function sync(force) { if (!room || !entered) return; const now = performance.now(); if (!force && now - lastSync < 300) { syncPending = true; return; } lastSync = now; syncPending = false; room.setMe(myData()); }
@@ -1581,7 +1626,7 @@ addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && (e.key || '')
   if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift'].includes(k)) { keys.add(k); e.preventDefault(); }
   if (k === ' ') { e.preventDefault(); FLY.sp = true; if (!e.repeat) doFx('jump'); }
   if (k === 'c') FLY.ck = true;
-  if (k === 'e' && (!e.repeat || pkTarget() || nearKey === 'rz_hit' || (nearKey && /boss|wboss|mob/.test(IT(nearKey).type || '')))) useNearest();
+  if (k === 'e' && (!e.repeat || pkTarget() || nearKey === 'rz_hit' || nearKey === 'dummy' || (nearKey && /boss|wboss|mob/.test(IT(nearKey).type || '')))) useNearest();
   if (k === 'enter') { e.preventDefault(); openPanel('tChat'); $('chatIn').focus(); }
 });
 addEventListener("keyup", e => { const k = (e.key || "").toLowerCase(); keys.delete(k); if (k === ' ') FLY.sp = false; if (k === 'c') FLY.ck = false; });
@@ -1697,12 +1742,13 @@ function upd108() {
   $('ringN').textContent = n; $('ringC').setAttribute('stroke-dashoffset', String(113.1 * (1 - n / 108)));
 }
 // XP 배율: 모두 2.5배(방장 3배) · 초반(5단계 전)은 4배로 진화 맛보기 · 레이드 버프 중엔 +1배
-function ptsMul(t) { return (HOST ? 3 : 2.5) * (t < 5 ? 1.6 : 1) + (typeof BUFF !== 'undefined' && BUFF.until > Date.now() ? 1 : 0); }
+function ptsMul(t) { return (HOST ? 3 : 2.5) + (typeof BUFF !== 'undefined' && BUFF.until > Date.now() ? 1 : 0); }
 function addPts(n) {
   const before = lvOf(G.pts), awB = awkLv(); let nearK = 1; { const nx0 = LV[before + 1] && LV[before + 1][0]; if (nx0 && n > 0 && nx0 - G.pts > 0 && nx0 - G.pts <= spanOf() * .12) { nearK = 1.3; if (nearNote !== before) { nearNote = before; setTimeout(() => { try { tapeNote(`🔥 진화 임박! 다음 단계까지 ${fmt(nx0 - G.pts, 0)} — XP +30% 부스트`, { ms: 2600, cls: 'tip' }); } catch (e) {} }, 300); } } } const gain = Math.round(n * ptsMul(before) * petB('pts') * nearK); const p0 = G.pts; G.pts = Math.min(PTS_MAX, G.pts + gain); G.coinF = (G.coinF || 0) + gain / 40; if (G.coinF >= 1) { const c = Math.floor(G.coinF); G.coinF -= c; G.coin = Math.min(1e13, (G.coin || 0) + c); } qProg('pts'); saveG(); const after = lvOf(G.pts); updHud();
   { const awA = awkLv(); if (awA > awB) setTimeout(() => awkUnlock(awA), 1200); if (p0 < PTS_FIN && G.pts >= PTS_FIN) setTimeout(() => { try { coinRain(10); } catch (e) {} addLog('♾️ XP 1억 달성!! 「원복신」 — 그래도 여정은 계속돼요, 상한은 없어요', true); room.sendFx('final1e8'); }, 1500); }
   if (after > before && after === 49) setTimeout(() => endingFx(49), 900);
   if (after > before && after === 99) setTimeout(() => endingFx(99), 900);
+  if (after > before && cycOf(after) > cycOf(before)) setTimeout(() => { const c = cycOf(after); try { coinRain(8); } catch (e) {} toast(`${CYC_N[c]}${CYC_NAME[c]}!! 1단계 모습으로 다시 태어났어요 — 몸이 커지고 ${c === 1 ? '은빛' : '금빛'} 별이 떠요 · 능력치 ×${CYC_MUL[c]}`); addLog(`${CYC_N[c]} ${PROF && PROF.nick}님이 ${CYC_NAME[c]} 회차에 들어섰어요! (${after + 1}단계)`, true); }, 2600);
   if (after > before && [59, 69, 79, 89].includes(after)) setTimeout(() => milestoneFx(after), 900);
   if (after > before && after === 98) setTimeout(() => toast('🐣 …어라? 다시 아기개미?! 태초의 개미 — 초월 후광이 빛나요. 마지막 한 걸음!'), 1600);
   if (after > before) addCoin(30 + after * 5, '진화 축하');
@@ -1726,7 +1772,7 @@ function endingFx(t) {
 }
 function updHud() {
   const i = lvOf(G.pts), cur = LV[i][0], nxt = LV[i + 1] ? LV[i + 1][0] : null;
-  try { updSkBtn(); } catch (e) {} $('hStage').textContent = `🧬 진화 ${i + 1}/${LV.length}단계 · ⚔ 공격력 ${atkOf(i)}`;
+  try { updSkBtn(); } catch (e) {} $('hStage').textContent = `🧬 진화 ${i + 1}/${LV.length}단계 · 💥 전투력 ${fCP(cpOf(i))}`;
   $('hLv').textContent = TIER_ICON[i] + ' ' + LV[i][1]; $('hPts').textContent = fmt(G.pts, (G.pts % 1) ? 1 : 0);
   const awN = awkLv(), awX = !nxt && AWK[awN] ? AWK[awN] : null, awP = awN ? AWK[awN - 1].p : cur; $('hBar').style.width = (nxt ? (G.pts - cur) / (nxt - cur) * 100 : awX ? Math.max(0, (G.pts - awP) / (awX.p - awP) * 100) : 100) + '%';
   $('hNx').textContent = (nxt ? `${i + 1}단계 · 다음까지 ${fmt(nxt - G.pts, 0)} XP` : (awX ? `🌟 각성 ${awN}/5 · 다음 각성까지 ${fmt(awX.p - G.pts, 0)} XP` : G.pts >= PTS_MAX ? '♾️ 원복신 — XP 1억 달성' : `🌟 각성 5/5 · 1억까지 ${fmt(PTS_MAX - G.pts, 0)} XP`)); $('hCoin').textContent = '🪙 ' + fmt(G.coin | 0, 0);
@@ -1738,7 +1784,7 @@ function updHud() {
 }
 const tierGrow = t => Math.pow(1.065, Math.min(99, t)); // 단계가 오를수록 보상 기하급수 (99단계 ≈ 500배)
 let nearNote = -1;
-function spanOf() { const t = lvOf(G.pts), nx = LV[t + 1] ? LV[t + 1][0] : PTS_FIN; return Math.max(10, nx - LV[t][0]); }
+function spanOf() { const t = lvOf(G.pts), nx = LV[t + 1] ? LV[t + 1][0] : LV[t][0] * 1.05; return Math.max(10, nx - LV[t][0]); }
 function growPts(base, cap) { const t = lvOf(G.pts), m = ptsMul(t) * petB('pts'), g = base * m; return Math.round(Math.max(g, Math.min(g * tierGrow(t), spanOf() * (cap || .06)))); } // 최소 기존값, 최대 한 단계의 cap 비율
 function givePts(base, cap) { const gain = growPts(base, cap); addPts(gain / (ptsMul(lvOf(G.pts)) * petB('pts'))); return gain; }
 const growCoin = base => Math.round(Math.min(1e13, base * Math.pow(1.08, Math.min(99, lvOf(G.pts)))));
@@ -3118,7 +3164,7 @@ function squeezeFx(fx) {
 }
 const skCd = {};
 // ✨ 스킬 슬롯 4개: 1단계 기본기 · 7단계 연속타격 · 15단계 광역폭풍 · 23단계 궁극기
-var SLOT_T = [0, 6, 14, 22]; const FINALS = new Set([29, 49, 99]);
+var SLOT_T = [0, 6, 14, 22]; const FINALS = new Set([29, 49, 99]); for (let t = 100; t < 300; t++) { SK[t] = SK[99]; FINALS.add(t); }
 var SLOT_NM = [['🔥 파이어볼', '화염구 한 발 — 가볍고 빠른 기본기'], ['⚡ 관통 일격', '한 명에게 꽂히는 강력한 일점 타격'], ['🌪 광역 폭풍', '주변(반경 13) 전부에게 폭풍 피해'], ['💥 궁극기', '넓은 범위(반경 24)를 쓸어버리는 초광역']];
 var SLOT_CD = [4, 6, 9, 16], SLOT_MUL = [3, 8, 6, 16], SLOT_KEY = ['q', 'r', 'f', 'g'];
 function skName(t, s) { return FINALS.has(t) && s === 3 ? SK[t][0] : SLOT_NM[s][0]; }
@@ -3173,7 +3219,7 @@ if (typeof G.look !== 'number') G.look = -1;
 function curLook() { const i = lvOf(G.pts); return G.look >= 0 && G.look < i ? G.look : i; }
 function lookPts(d) { const lk = d && d.lk; return Number.isInteger(lk) && lk >= 0 && lk < lvOf((d && d.pts) || 0) ? LV[lk][0] : ((d && d.pts) || 0); }
 function myLookPts() { return lookPts({ pts: G.pts, lk: G.look >= 0 ? G.look : undefined }); }
-function setLook(t) { G.look = t >= 0 && t < lvOf(G.pts) ? t : -1; saveG(); if (myAnt) { myAnt.tier = -1; applyTier(myAnt, lvOf(myLookPts())); try { setGear(myAnt, G.eq); } catch (e) {} } if (myLabel) fillLabel(myLabel, myData(), true); sync(true); updHud();
+function setLook(t) { G.look = t >= 0 && t < Math.min(100, lvOf(G.pts)) ? t : -1; saveG(); if (myAnt) { myAnt.tier = -1; applyTier(myAnt, lvOf(myLookPts())); try { setGear(myAnt, G.eq); } catch (e) {} } if (myLabel) fillLabel(myLabel, myData(), true); sync(true); updHud();
   toast(G.look >= 0 ? `🎭 ${G.look + 1}단계 「${LV[G.look][1]}」 모습으로 변신! (능력치는 그대로)` : '🎭 최신 모습으로 돌아왔어요'); try { if ($('mDex').classList.contains('on')) renderDex(); } catch (e) {} }
 // 도감 마일스톤 보상: [필요 종수(0=전종), XP, XP상한, 코인, 아이템 boost, 최소 등급, 칭호]
 const DEX_RW = [[5, 60, .05, 500, 0, 1, ''], [10, 150, .08, 1500, 4, 2, ''], [20, 400, .12, 4000, 8, 3, ''], [30, 1000, .2, 10000, 12, 4, ''], [0, 3000, .3, 30000, 20, 5, '🧌 몬스터 도감 마스터']];
@@ -3905,8 +3951,9 @@ acctUi();
 /* ================= ⚔ 투기장(야외) · 💬 라운지 · 😴 캠핑장(야외) ================= */
 function atkBase(t) { return t <= 29 ? Math.round(8 * Math.pow(1.17, t)) : t <= 49 ? Math.round(8 * Math.pow(1.17, 29) * Math.pow(1.07, t - 29)) : Math.round(8 * Math.pow(1.17, 29) * Math.pow(1.07, 20) * Math.pow(1.03, t - 49)); } // 31단계부터는 완만하게 (50단계 약 2,900)
 //  // 진화할수록 기하급수로 강해짐 (1단계 8 → 30단계 약 760)
-function atkOf(t) { return Math.round((atkBase(t) + (HOST ? 5 : 0)) * (1 + GS().atk / 100) * enhAtkMul() * awkAtk() * petB('atk') * masteryMul()); }
-function maxHp(t) { return Math.round((100 + t * 25 + (HOST ? 30 : 0)) * (1 + GS().hp / 100) * enhHpMul() * petB('hp')); } // 진화할수록 공격력↑ (최대 7, 방장 +1)
+function atkOf(t) { return Math.round((atkBase(t) + (HOST ? 5 : 0)) * (1 + GS().atk / 100) * enhAtkMul() * awkAtk() * petB('atk') * masteryMul() * CYC_MUL[cycOf(t)]); }
+function cpOf(t) { return Math.round(atkOf(t) * (1 + critP(t)) * (1 + GS().spd / 200) + maxHp(t) * 2); } // 💥 전투력
+function maxHp(t) { return Math.round((100 + Math.min(t, 99) * 25 + (HOST ? 30 : 0)) * (1 + GS().hp / 100) * enhHpMul() * petB('hp') * CYC_MUL[cycOf(t)] * (t > 99 ? 1 + (t % 100) * .01 : 1)); } // 진화할수록 공격력↑ (최대 7, 방장 +1)
 const BOSS = {}, CRATE = {}, rpgPieces = []; let raidHits = {};
 function signPlane(txt, w, h, col, glow) {
   txt = trText(txt);
@@ -4823,7 +4870,8 @@ const CC_DAY = 60;
 function cityCoin(base, why) { const d = kstDate(); let o = LS.get('lv3d_cc', null); if (!o || o.d !== d) o = { d, n: 0 };
   const pay = Math.max(0, Math.min(Math.round(base), CC_DAY - o.n)); if (pay > 0) { o.n += pay; LS.set('lv3d_cc', o); addCoin(pay, why); toast(T(`🏙 도시 코인 +${pay} (오늘 ${o.n}/${CC_DAY})`, `🏙 City coins +${pay} (today ${o.n}/${CC_DAY})`)); }
   else toast(T(`🏙 오늘 도시 코인 한도(${CC_DAY})를 모두 받았어요`, `🏙 Daily city-coin cap (${CC_DAY}) reached`)); return pay; }
-window.__cityCoin = cityCoin; window.__t61 = { addPts, addCoin, hitCap: () => [HIT_CAP, SK_CAP, PTS_MAX], G: () => G };
+window.__cityCoin = cityCoin; window.__t65 = { dum: () => ({ ...DUM }), dumHit, dumEnd, LV, lvOf, cpOf, atkOf, maxHp, cycOf, G: () => G, me: () => myAnt && { tier: myAnt.tier, cyc: myAnt.cyc, cycG: !!myAnt.cycG, inScene: !!(myAnt.cycG && myAnt.cycG.parent), kids: myAnt.cycG ? myAnt.cycG.children.length : 0, sc: myAnt.root.scale.x }, refresh: () => { myAnt.tier = -1; applyTier(myAnt, lvOf(myLookPts())); } };
+  window.__t61 = { addPts, addCoin, hitCap: () => [HIT_CAP, SK_CAP, PTS_MAX], G: () => G };
   window.__t62 = { atkMin: () => ATK_MIN, atkCd, bq: () => JSON.parse(JSON.stringify(BQ)), act: () => ACT, BD: () => BD, openLog, openBd, bdPost, cloud: () => CLOUD_MAX, flush: bqFlush, updNote }; window.__jp = (s) => jackpot(s, 1); window.__cardLines = () => cardLines();
 function jackGive(t) {
   if (t === 'SSS') { const free = ['pgold', 'pcorn', 'palien'].filter(i => !G.shop.own[i]); let s;
@@ -5850,6 +5898,7 @@ drawGb();
 function openGb() { renderGbList(); openModal('mGb'); }
 // ---- 📋 업데이트 이력 (새 업데이트마다 맨 위에 한 줄씩 추가) ----
 const CHANGELOG = [
+  ['v65 · 11월 28일', ['🧬 진화가 300단계로 늘었어요! 101단계부터 ★ 각성, 201단계부터 ★★ 초월 — 1단계 모습으로 다시 태어나지만 몸이 커지고 별이 뜨고 능력치가 1.5배/2.25배', '🐣 초반 진화가 너무 빨라서 1~40단계에 필요한 XP를 늘렸어요 (지금 단계는 그대로 유지돼요)', '💥 전투력이 생겼어요. 진화할 때 얼마나 강해졌는지 %로 보여 줘요', '🎯 보스 투기장에 훈련 표적이 생겼어요. 10초 피해량을 지난 기록과 비교해 봐요', '🧮 계산기: 코스피·필라델피아 반도체지수 현재값이 자동으로 들어가요']],
   ['v64 · 11월 28일', ['🏆 주간 랭킹·클라우드 저장의 XP 1억 한도를 풀었어요', '🛠 버그 신고·개선 요청 게시판이 열렸어요 (메뉴 검색 → 버그)']],
   ['v63 · 11월 28일', ['📸 인스타그램 바로가기를 시장 리포트 옆 버튼으로 옮겼어요 (화면을 덜 가려요)']],
   ['v62 · 11월 28일', ['⚔ 보스를 연타해도 렉이 덜하고 소리가 끊기지 않게 고쳤어요. 공격은 초당 최대 5번까지 나가요', '📋 업데이트 이력과 🛠 버그 신고·개선 요청 게시판이 생겼어요 (메뉴 검색에서 열 수 있어요)', '▲ 메뉴를 숨기고 보이는 화살표가 생겼어요', '📱 폰에서는 E 대신 버튼으로 안내해요 · 상승 빨강/하락 파랑이 기본이에요']],
@@ -6801,7 +6850,7 @@ requestAnimationFrame(loop);
 
 
 /* ================= 🔄 자동 업데이트: 새 버전이 올라오면 안내 후 자동 새로고침 ================= */
-const APP_V = '64';
+const APP_V = '65';
 {
   let shown = false;
   const check = async () => {
@@ -6835,7 +6884,8 @@ function evoCard(after, before) {
   $('evoTitle').textContent = `🎉 진화! ${after + 1}단계 ${nm}`;
   const L = [];
   L.push(['🧬 새 모습', TIER_PERK[after]]);
-  L.push(['⚔ 공격력', `${fmt(atkOf(before), 0)} → ${fmt(atkOf(after), 0)}`]); L.push(['❤ 최대 체력', `${fmt(maxHp(before), 0)} → ${fmt(maxHp(after), 0)}`]);
+  const pc = (a, b) => a > 0 ? ` (+${Math.round((b / a - 1) * 100)}%)` : '';
+  L.push(['⚔ 공격력', `${fmt(atkOf(before), 0)} → ${fmt(atkOf(after), 0)}${pc(atkOf(before), atkOf(after))}`]); L.push(['❤ 최대 체력', `${fmt(maxHp(before), 0)} → ${fmt(maxHp(after), 0)}${pc(maxHp(before), maxHp(after))}`]); L.push(['💥 전투력', `${fCP(cpOf(before))} → ${fCP(cpOf(after))}${pc(cpOf(before), cpOf(after))}`]);
   if (SK[after] && (!SK[before] || SK[after][0] !== SK[before][0])) L.push(['✨ 기본 스킬(Q)', `${SK[after][0]} — ${SK[after][1]}`]);
   SLOT_T.forEach((t, i) => { if (i && t > before && t <= after) L.push(['🔓 새 스킬 슬롯', `${['Q', 'R', 'F', 'G'][i]} ${SLOT_NM[i][0]} — ${SLOT_NM[i][1]}`]); });
   MPERK.forEach(([t, d]) => { if (t > before && t <= after) L.push(['🚀 새 능력', d]); });

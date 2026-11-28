@@ -552,6 +552,11 @@ var KMETA={KORU:{n:"KORU",u:"$",d:2},SOXL:{n:"SOXL",u:"$",d:2},NASDAQ:{n:"나스
 var SRC={finnhub:"Finnhub",pusher:"송신기",db:"공유DB",manual:"직접입력"};
 function idxKey(){return cur==="koru"?"KOSPI":"SOX";}
 function realIdx(q){return q&&!q.proxy&&q.src!=="manual"&&q.p>0;}
+var MKTIDX={};
+function idxQ(){var k=idxKey(),q=livePrices[k];return realIdx(q)?q:(MKTIDX[k]||q);}
+function loadMktIdx(){try{var C=window.LEVER_CONFIG&&window.LEVER_CONFIG.firebase;if(!C||!C.databaseURL)return;var b=C.databaseURL.replace(/\/$/,"");
+  ["KOSPI","SOX"].forEach(function(k){fetch(b+"/mkt/q/"+k+".json",{cache:"no-store"}).then(function(r){return r.json();}).then(function(v){if(v&&v.p>0){MKTIDX[k]={p:+v.p,pc:+v.pc||0,ts:v.ts||Date.now(),src:"db"};renderLive();applyLive();}}).catch(function(){});});}catch(e){}}
+setTimeout(loadMktIdx,800);setInterval(loadMktIdx,300000);
 function qName(k,q){return q&&q.proxy?KMETA[k].px:KMETA[k].n;}
 function qVal(k,q){if(!q)return "—";var u=q.proxy?"$":KMETA[k].u;return u+fmt(q.p,q.proxy?2:KMETA[k].d);}
 function qChg(q){return q&&q.pc?q.p/q.pc-1:NaN;}
@@ -578,7 +583,7 @@ function renderLive(){
     $("auto").addEventListener("change",function(e){S[cur].auto=e.target.checked;save();applyLive();});
   } else $("liveChip").innerHTML="";
   // 현재 지수 자동 반영 칩 (진짜 지수일 때만)
-  var iq=livePrices[idxKey()];
+  var iq=idxQ();
   if(realIdx(iq)){
     $("idxChip").innerHTML='<label class="chip"><input type="checkbox" id="autoIdx" '+(S[cur].autoIdx!==false?"checked":"")+'> 실시간 '+esc(KMETA[idxKey()].n)+' '+fmt(iq.p,2)+' 자동 반영</label>';
     $("autoIdx").addEventListener("change",function(e){S[cur].autoIdx=e.target.checked;save();applyLive();});
@@ -589,7 +594,7 @@ function renderLive(){
 function applyLive(){
   var changed=false, q=livePrices[PROD[cur].sym];
   if(q&&q.src!=="manual"&&S[cur].auto){var v=String(q.p);if(S[cur].px!==v){S[cur].px=v;$("px").value=v;changed=true;}}
-  var iq=livePrices[idxKey()];
+  var iq=idxQ();
   if(realIdx(iq)&&S[cur].autoIdx!==false){var w=String(iq.p);if(S[cur].idx!==w){S[cur].idx=w;$("idx").value=w;changed=true;}}
   if(changed){save();render();}
 }
@@ -599,7 +604,7 @@ document.querySelectorAll(".tab").forEach(function(b){b.addEventListener("click"
 FIELDS.forEach(function(f){var el=$(f);if(!el)return;var ev=(el.tagName==="SELECT"||el.type==="checkbox")?"change":"input";
   el.addEventListener(ev,function(){
     if(f==="px"&&S[cur].auto&&livePrices[PROD[cur].sym]&&livePrices[PROD[cur].sym].src!=="manual"){S[cur].auto=false;renderLive();}
-    if(f==="idx"&&S[cur].autoIdx!==false&&realIdx(livePrices[idxKey()])){S[cur].autoIdx=false;renderLive();}
+    if(f==="idx"&&S[cur].autoIdx!==false&&realIdx(idxQ())){S[cur].autoIdx=false;renderLive();}
     read();if(f==="vol")$("volR").value=Number(el.value)||0;render();});});
 $("volR").addEventListener("input",function(){$("vol").value=this.value;read();render();});
 $("exBtn").addEventListener("click",function(){var e=PROD[cur].example;if(!e)return;Object.assign(S[cur],{avg:e.avg,px:e.px,idx:e.idx,period:e.period,vol:e.vol,auto:false,autoIdx:false});save();fill();renderLive();render();});
